@@ -35,8 +35,12 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H 212.227.26.187 >> ~/.ssh/known_hosts
 
+      - name: Set up SSH agent and add private key
+        run: |
+          eval "$(ssh-agent -s)"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+        shell: bash
+
       - name: Deploy to server
         run: |
           ssh root@212.227.26.187 "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose up -d"
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
