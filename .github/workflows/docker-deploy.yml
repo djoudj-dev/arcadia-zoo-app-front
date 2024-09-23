@@ -49,4 +49,5 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no root@212.227.26.187 "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose up -d"
+          ssh -o StrictHostKeyChecking=no root@212.227.26.187 "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose up -d"
+        shell: bash
