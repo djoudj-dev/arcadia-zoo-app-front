@@ -30,6 +30,11 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest
 
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 212.227.26.187 >> ~/.ssh/known_hosts
+
       - name: Deploy to server
         run: |
           ssh root@212.227.26.187 "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose up -d"
