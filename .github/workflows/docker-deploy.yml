@@ -32,13 +32,19 @@ jobs:
 
       - name: Add server to known hosts
         run: |
+          echo "Creating .ssh directory and setting permissions..."
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "Running ssh-keyscan to add the server to known hosts..."
           ssh-keyscan -H 212.227.26.187 >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          echo "ssh-keyscan completed successfully."
 
       - name: Set up SSH agent and add private key
         run: |
           eval "$(ssh-agent -s)"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+          ssh-add -l # Vérifier les clés chargées dans l'agent SSH
         shell: bash
 
       - name: Deploy to server
