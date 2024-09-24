@@ -27,15 +27,19 @@ jobs:
           docker build -t djoudj/arcadia-zoo-app-front:latest .
           docker push djoudj/arcadia-zoo-app-front:latest
 
+          - name: Create SSH key file
+          run: echo "${{ secrets.VPS_KEY }}" > /tmp/ssh_key && chmod 600 /tmp/ssh_key
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
+          key_path: /tmp/ssh_key
+          port: ${{ secrets.VPS_PORT }}
           script: |
             docker pull djoudj/arcadia-zoo-app-front:latest
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
             docker run -d --name arcadia-zoo-app-front -p 80:80 djoudj/arcadia-zoo-app-front:latest
-          debug: true # Active le mode debug
+          debug: true
