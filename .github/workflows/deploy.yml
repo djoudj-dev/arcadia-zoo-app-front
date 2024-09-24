@@ -24,8 +24,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t your-dockerhub-username/your-app:latest .
-          docker push your-dockerhub-username/your-app:latest
+          docker build -t djoudj/arcadia-zoo-app-front:latest .
+          docker push djoudj/arcadia-zoo-app-front:latest
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.5
@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            docker pull your-dockerhub-username/your-app:latest
-            docker stop your-app || true
-            docker rm your-app || true
-            docker run -d --name your-app -p 80:80 your-dockerhub-username/your-app:latest
+            docker pull djoudj/arcadia-zoo-app-front:latest
+            docker stop arcadia-zoo-app-front || true
+            docker rm arcadia-zoo-app-front || true
+            docker run -d --name arcadia-zoo-app-front -p 80:80 djoudj/arcadia-zoo-app-front:latest
