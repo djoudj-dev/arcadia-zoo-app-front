@@ -1,4 +1,4 @@
-# Utiliser une image de base officielle Node.js
+# Utiliser une image de base officielle Node.js()
 
 FROM node:18
 
