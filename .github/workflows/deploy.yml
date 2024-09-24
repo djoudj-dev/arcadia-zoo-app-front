@@ -31,6 +31,7 @@ jobs:
         run: |
           echo "${{ secrets.VPS_KEY }}" | base64 --decode > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
+          ls -lah /tmp
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
@@ -46,3 +47,11 @@ jobs:
             docker run -d --name arcadia-zoo-app-front -p 8080:8080 djoudj/arcadia-zoo-app-front:latest
 
           debug: true
+
+      - name: Debugging SSH key
+        run: |
+          if [ -f /tmp/ssh_key ]; then
+            echo "SSH key exists"
+          else
+            echo "SSH key does not exist"
+          fi
