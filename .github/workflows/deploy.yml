@@ -29,15 +29,17 @@ jobs:
 
       - name: Create SSH key file
         run: |
-          echo "${{ secrets.VPS_KEY }}" > /tmp/ssh_key
+          echo "${{ secrets.VPS_KEY }}" | base64 --decode > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
 
       - name: Check SSH Key
         run: |
           echo "Checking SSH key file:"
           ls -lah /tmp/ssh_key
+          echo "First 10 characters of the key:"
           head -c 10 /tmp/ssh_key
-          echo "..."
+          echo
+          echo "Last 10 characters of the key:"
           tail -c 10 /tmp/ssh_key
 
       - name: Deploy to VPS
@@ -48,8 +50,9 @@ jobs:
           key_path: /tmp/ssh_key
           port: ${{ secrets.VPS_PORT }}
           script: |
+            set -e
             docker pull djoudj/arcadia-zoo-app-front:latest
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
-            docker run -d --name arcadia-zoo-app-front -p 80:80 djoudj/arcadia-zoo-app-front:latest
+            docker run -d --name arcadia-zoo-app-front -p 8080:8080 djoudj/arcadia-zoo-app-front:latest
           debug: true
