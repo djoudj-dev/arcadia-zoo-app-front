@@ -36,7 +36,7 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           echo "Running ssh-keyscan to add the server to known hosts..."
-          ssh-keyscan -H 212.227.26.187 >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
           echo "ssh-keyscan completed successfully."
 
@@ -44,10 +44,14 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
-          ssh-add -l # Vérifier les clés chargées dans l'agent SSH
+          if ! ssh-add -l | grep -q "ED25519"; then
+            echo "Error: Failed to load SSH key."
+            exit 1
+          fi
         shell: bash
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no root@212.227.26.187 "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose -f /home/djoudj/Workzone/Projet Arcadia/arcadia-zoo-app-font/docker-compose.yml up -d"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} \
+          "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose -f /home/djoudj/Workzone/Projet\ Arcadia/arcadia-zoo-app-front/docker-compose.yml up -d"
         shell: bash
