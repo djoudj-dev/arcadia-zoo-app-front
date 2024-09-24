@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/your-app:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest
 
       - name: Add server to known hosts
         run: |
@@ -45,5 +45,5 @@ jobs:
       - name: Deploy to server via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} \
-          "cd /path/to/project && docker-compose down && docker-compose pull && docker-compose up -d"
+          "cd /home/djoudj/arcadia-zoo-app-front && docker-compose down && docker-compose pull && docker-compose up -d"
         shell: bash
