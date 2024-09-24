@@ -1,4 +1,4 @@
-name: Docker Deploy
+name: CI/CD Deployment
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - develop
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,30 +28,22 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/your-app:latest
 
       - name: Add server to known hosts
         run: |
-          echo "Creating .ssh directory and setting permissions..."
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "Running ssh-keyscan to add the server to known hosts..."
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-          echo "ssh-keyscan completed successfully."
 
       - name: Set up SSH agent and add private key
         run: |
           eval "$(ssh-agent -s)"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
-          if ! ssh-add -l | grep -q "ED25519"; then
-            echo "Error: Failed to load SSH key."
-            exit 1
-          fi
+          ssh-add -l
         shell: bash
 
-      - name: Deploy to server
+      - name: Deploy to server via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} \
-          "docker pull ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest && docker-compose -f /home/djoudj/Workzone/Projet\ Arcadia/arcadia-zoo-app-front/docker-compose.yml up -d"
+          "cd /path/to/project && docker-compose down && docker-compose pull && docker-compose up -d"
         shell: bash
