@@ -1,6 +1,6 @@
 # Utiliser une image de base officielle Node.js
 
-FROM node:14
+FROM node:18
 
 # Définir le répertoire de travail dans le conteneur
 
@@ -20,7 +20,7 @@ COPY . .
 
 # Exposer le port sur lequel l'application va tourner
 
-EXPOSE 3000
+EXPOSE 4200
 
 # Démarrer l'application
 
