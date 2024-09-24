@@ -34,13 +34,8 @@ jobs:
 
       - name: Check SSH Key
         run: |
-          echo "Checking SSH key file:"
+          cat /tmp/ssh_key
           ls -lah /tmp/ssh_key
-          echo "First 10 characters of the key:"
-          head -c 10 /tmp/ssh_key
-          echo
-          echo "Last 10 characters of the key:"
-          tail -c 10 /tmp/ssh_key
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
