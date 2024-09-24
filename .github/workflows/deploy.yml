@@ -39,8 +39,3 @@ jobs:
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
             docker run -d --name arcadia-zoo-app-front -p 8080:8080 djoudj/arcadia-zoo-app-front:latest
-
-            script: |
-  echo "Attempting to connect to the server"
-  docker pull djoudj/arcadia-zoo-app-front:latest
-  ...
