@@ -28,14 +28,14 @@ jobs:
           docker push djoudj/arcadia-zoo-app-front:latest
 
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          port: ${{ secrets.VPS_PORT }}
           script: |
             docker pull djoudj/arcadia-zoo-app-front:latest
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
             docker run -d --name arcadia-zoo-app-front -p 80:80 djoudj/arcadia-zoo-app-front:latest
+          debug: true # Active le mode debug
