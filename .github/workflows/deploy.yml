@@ -31,18 +31,18 @@ jobs:
         run: |
           echo "${{ secrets.VPS_KEY }}" | base64 --decode > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
-          ls -l /tmp/ssh_key  # Affichez le fichier pour vérifier sa création
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key_path: /tmp/ssh_key # Assurez-vous que le chemin est correct
+          key_path: /tmp/ssh_key
           port: ${{ secrets.VPS_PORT }}
           script: |
             docker pull djoudj/arcadia-zoo-app-front:latest
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
             docker run -d --name arcadia-zoo-app-front -p 8080:8080 djoudj/arcadia-zoo-app-front:latest
+
           debug: true
