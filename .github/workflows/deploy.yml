@@ -42,7 +42,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
+          key_path: /tmp/ssh_key
           port: ${{ secrets.VPS_PORT }}
           script: |
             docker pull djoudj/arcadia-zoo-app-front:latest
