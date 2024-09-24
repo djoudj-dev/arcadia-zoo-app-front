@@ -39,3 +39,7 @@ jobs:
             docker stop arcadia-zoo-app-front || true
             docker rm arcadia-zoo-app-front || true
             docker run -d --name arcadia-zoo-app-front -p 8080:8080 djoudj/arcadia-zoo-app-front:latest
+
+      - name: Debug SSH
+        run: |
+          echo "Attempting to connect..."
