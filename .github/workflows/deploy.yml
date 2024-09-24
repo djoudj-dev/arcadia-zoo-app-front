@@ -34,11 +34,11 @@ jobs:
 
       - name: Check SSH Key
         run: |
-          echo "SSH Key first 10 characters:"
-          head -c 10 /tmp/ssh_key
-          echo "SSH Key last 10 characters:"
-          tail -c 10 /tmp/ssh_key
+          echo "Checking SSH key file:"
           ls -lah /tmp/ssh_key
+          head -c 10 /tmp/ssh_key
+          echo "..."
+          tail -c 10 /tmp/ssh_key
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
