@@ -32,6 +32,14 @@ jobs:
           echo "${{ secrets.VPS_KEY }}" > /tmp/ssh_key
           chmod 600 /tmp/ssh_key
 
+      - name: Check SSH Key
+        run: |
+          echo "SSH Key first 10 characters:"
+          head -c 10 /tmp/ssh_key
+          echo "SSH Key last 10 characters:"
+          tail -c 10 /tmp/ssh_key
+          ls -lah /tmp/ssh_key
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.8
         with:
