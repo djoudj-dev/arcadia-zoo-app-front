@@ -13,18 +13,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_TOKEN }} # Utilisation du token GitHub
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16" # Assure-toi que c'est la bonne version pour ton projet
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build -- --configuration production
+
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
             cd /var/www/arcadia-zoo-app-front
             git pull origin main
+            rsync -avz dist/arcadia-zoo-app-front/* /var/www/arcadia-zoo-app-front/
             docker-compose down
             docker-compose up -d --build
           EOF
