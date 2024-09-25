@@ -34,9 +34,9 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
-            cd /var/www/arcadia-zoo-app-front
+            cd /var/www/vhosts/nedellec-julien.fr
             # Copier les fichiers de build vers le répertoire approprié
-            rsync -avz --delete dist/arcadia-zoo-app-front/* /var/www/nedellec-julien.fr/
+            rsync -avz --delete dist/arcadia-zoo-app-front/* /var/www/vhosts/nedellec-julien.fr/httpdocs/
             # Utiliser docker-compose pour reconstruire et relancer les containers
             docker-compose down
             docker-compose up -d --build
