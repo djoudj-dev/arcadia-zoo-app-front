@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "16" # Assure-toi que c'est la bonne version pour ton projet
+          node-version: "18.19" # Assure-toi que c'est la bonne version pour ton projet
 
       - name: Install dependencies
         run: npm install
