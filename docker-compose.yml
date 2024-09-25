@@ -1,10 +1,11 @@
 version: "3"
 services:
   frontend:
-    image: node:16 # Utilise une image Node.js pour Angular ou tout autre environnement de front-end
+    image: node:18 # Utilise la version de Node.js appropriée pour ton projet
     working_dir: /app
     volumes:
-      - .:/app # Monte le répertoire actuel dans le conteneur
+      - .:/app # Monte le répertoire actuel dans le conteneur pour hot-reload
+      - /app/node_modules # Évite que les modules Node.js soient écrasés par ceux du host
     ports:
       - "4200:4200" # Le port utilisé pour Angular en mode développement
-    command: npm start # La commande qui démarre ton serveur Angular
+    command: npm start # La commande qui démarre le serveur Angular en mode développement

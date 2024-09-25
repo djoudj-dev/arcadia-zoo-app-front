@@ -1,27 +1,28 @@
-# Utiliser une image de base officielle Node.js()
+# Utiliser une image de base officielle Node.js pour le build
 
-FROM node:18
+FROM node:18 as build
 
 # Définir le répertoire de travail dans le conteneur
 
 WORKDIR /app
 
-# Copier le fichier package.json et package-lock.json
+# Copier le fichier package.json et installer les dépendances
 
 COPY package\*.json ./
-
-# Installer les dépendances de l'application
-
 RUN npm install
 
-# Copier le reste des fichiers de l'application
+# Copier le reste des fichiers de l'application et construire le projet Angular
 
 COPY . .
+RUN npm run build -- --configuration production
 
-# Exposer le port sur lequel l'application va tourner
+# Utiliser Nginx pour servir l'application en production
 
-EXPOSE 4200
+FROM nginx:alpine
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
 
-# Démarrer l'application
+# Exposer le port 80 pour le serveur Nginx
 
-CMD ["npm", "start"]
+EXPOSE 80
+
+# Nginx démarre automatiquement, donc pas besoin de CMD

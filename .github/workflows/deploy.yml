@@ -35,8 +35,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
             cd /var/www/arcadia-zoo-app-front
-            git pull origin main
-            rsync -avz dist/arcadia-zoo-app-front/* /var/www/arcadia-zoo-app-front/
+            # Copier les fichiers de build vers le répertoire approprié
+            rsync -avz --delete dist/arcadia-zoo-app-front/* /var/www/nedellec-julien.fr/
+            # Utiliser docker-compose pour reconstruire et relancer les containers
             docker-compose down
             docker-compose up -d --build
           EOF
