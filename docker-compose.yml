@@ -1,6 +1,9 @@
 version: "3"
 services:
   frontend:
+    build:
+      context: . # Le répertoire actuel où se trouve le Dockerfile
+      dockerfile: Dockerfile # Utilise ce Dockerfile pour construire l'image
     ports:
       - "4200:80" # Utiliser le port 4200 en local pour éviter les conflits avec le port 80
     volumes:

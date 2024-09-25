@@ -22,7 +22,7 @@ FROM nginx:alpine
 
 # Copier les fichiers compilés de l'étape précédente
 
-COPY --from=build /app/dist/arcadia-zoo-app /usr/share/nginx/html
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
 
 # Exposer le port 80 pour Nginx
 
