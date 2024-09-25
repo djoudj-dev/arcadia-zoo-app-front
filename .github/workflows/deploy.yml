@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main # La branche que tu veux déployer
+      - main
 
 jobs:
   deploy:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }} # Utilisation du token GitHub
 
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.5.3
@@ -21,27 +23,8 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
-            # Créer le répertoire s'il n'existe pas
-            mkdir -p /var/www/arcadia.nedellec-julien.fr
-            
-            # Aller dans le répertoire
-            cd /var/www/arcadia.nedellec-julien.fr
-            
-            # Initialiser le dépôt Git s'il n'est pas déjà initialisé
-            if [ ! -d ".git" ]; then
-              git init
-              git remote add origin https://github.com/JulienNedellec/arcadia-zoo-app-front.git
-            fi
-            
-            # Tirer la dernière version du code
+            cd /var/www/arcadia-zoo-app-front
             git pull origin main
-            
-            # Vérifier la présence de docker-compose.yml
-            if [ -f "docker-compose.yml" ]; then
-              docker-compose down
-              docker-compose up -d --build
-            else
-              echo "Le fichier docker-compose.yml est introuvable !"
-              exit 1
-            fi
+            docker-compose down
+            docker-compose up -d --build
           EOF
