@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
-            cd /var/www/arcadia-zoo-app-front
+            cd /var/www/arcadia.nedellec-julien.fr
             git pull origin main
             docker-compose down
             docker-compose up -d --build
