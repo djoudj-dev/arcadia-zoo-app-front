@@ -31,24 +31,6 @@ jobs:
       - name: Build project
         run: npm run build -- --configuration production
 
-      - name: Deploy to VPS
+      - name: Deploy build files to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
-            # Se placer dans le répertoire contenant les fichiers Angular
-            cd /var/www/vhosts/nedellec-julien.fr/httpdocs/
-
-            # Vérifier si le dossier dist existe et contient les fichiers compilés
-            if [ -d dist/arcadia-zoo-app-front ]; then
-              echo "Dossier dist/arcadia-zoo-app-front trouvé, copie des fichiers en cours..."
-              rsync -avz --delete dist/arcadia-zoo-app-front/* /var/www/vhosts/nedellec-julien.fr/httpdocs/
-            else
-              echo "Erreur: Le dossier dist/arcadia-zoo-app-front est introuvable."
-              exit 1
-            fi
-
-            # Optionnel : Redémarrer les conteneurs si Docker Compose est utilisé
-            if [ -f docker-compose.yml ]; then
-              docker-compose down
-              docker-compose up -d --build
-            fi
-          EOF
+          rsync -avz --delete dist/arcadia-zoo-app-front/* root@${{ secrets.VPS_HOST }}:/var/www/vhosts/nedellec-julien.fr/httpdocs/
