@@ -15,8 +15,8 @@ RUN npm run build -- --configuration production
 # Étape 2 : Utiliser Nginx pour servir l'application
 FROM nginx:alpine
 
-# Copier les fichiers compilés de l'étape précédente dans le répertoire Nginx
-COPY --from=build /app/dist/arcadia-zoo-app-front /var/www/vhosts/nedellec-julien.fr/httpdocs
+# Copier les fichiers compilés dans le répertoire approprié pour ton déploiement
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 80
