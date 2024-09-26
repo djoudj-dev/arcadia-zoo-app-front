@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.19" # Assure-toi que c'est la bonne version pour ton projet
+          node-version: "18.19"
 
       - name: Install dependencies
         run: npm install
@@ -36,7 +36,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} << 'EOF'
             cd /var/www/vhosts/nedellec-julien.fr
             # Copier les fichiers de build vers le répertoire approprié
-            rsync -avz --delete dist/arcadia-zoo-app/* /var/www/vhosts/nedellec-julien.fr/httpdocs/
+            rsync -avz --delete dist/arcadia-zoo-app-front/* /var/www/vhosts/nedellec-julien.fr/httpdocs/
             # Utiliser docker-compose pour reconstruire et relancer les containers
             docker-compose down
             docker-compose up -d --build

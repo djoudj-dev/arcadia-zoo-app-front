@@ -5,9 +5,9 @@ services:
       context: . # Le répertoire actuel où se trouve le Dockerfile
       dockerfile: Dockerfile # Utilise ce Dockerfile pour construire l'image
     ports:
-      - "4200:80" # Utiliser le port 4200 en local pour éviter les conflits avec le port 80
+      - "80:80" # Expose le port 80 du conteneur sur le port 80 du serveur
     volumes:
-      - .:/app # Monte le répertoire de développement en local
+      - ./dist:/usr/share/nginx/html # Monte le répertoire de build dans Nginx
     environment:
-      - NODE_ENV=development
-    command: npm start # Démarre le serveur Angular en mode développement
+      - NODE_ENV=production
+    restart: always # Relance automatiquement le conteneur en cas de problème
