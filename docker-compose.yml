@@ -2,12 +2,9 @@ version: "3"
 services:
   frontend:
     build:
-      context: . # Le répertoire actuel où se trouve le Dockerfile
-      dockerfile: Dockerfile # Utilise ce Dockerfile pour construire l'image
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "80:80" # Expose le port 80 du conteneur sur le port 80 du serveur
+      - "80:80"
     volumes:
-      - ./dist:/usr/share/nginx/html # Monte le répertoire de build dans Nginx
-    environment:
-      - NODE_ENV=production
-    restart: always # Relance automatiquement le conteneur en cas de problème
+      - /var/www/vhosts/nedellec-julien.fr/httpdocs:/usr/share/nginx/html
