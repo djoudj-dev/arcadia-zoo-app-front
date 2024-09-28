@@ -1,9 +1,10 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { SubnavComponent } from '../subnav/subnav.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [],
+  imports: [SubnavComponent],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css',
 })
