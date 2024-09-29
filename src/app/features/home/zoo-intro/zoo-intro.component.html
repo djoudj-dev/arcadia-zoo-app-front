@@ -20,33 +20,54 @@
   <!-- Section des habitats -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Carte 1 -->
-    <div class="flex flex-col items-center">
+    <div class="relative group flex flex-col items-center w-full h-48">
+      <!-- Image avec effet de grisé au survol -->
       <img
         src="images/home/savane.svg"
-        alt="Habitat 1"
-        class="w-full h-48 object-cover rounded-lg"
+        alt="Savane"
+        class="w-full h-full object-cover rounded-lg grayscale group-hover:grayscale-0 transition duration-300 ease-in-out"
       />
-      <h2 class="mt-4 text-lg font-semibold">Savane</h2>
+
+      <!-- Couche de titre qui apparaît au survol -->
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out rounded-lg"
+      >
+        <span class="text-white text-lg font-semibold">Savane</span>
+      </div>
     </div>
 
     <!-- Carte 2 -->
-    <div class="flex flex-col items-center">
+    <div class="relative group flex flex-col items-center w-full h-48">
+      <!-- Image avec effet de grisé au survol -->
       <img
         src="images/home/jungle.svg"
-        alt="Habitat 2"
-        class="w-full h-48 object-cover rounded-lg"
+        alt="Jungle"
+        class="w-full h-full object-cover rounded-lg grayscale group-hover:grayscale-0 transition duration-300 ease-in-out"
       />
-      <h2 class="mt-4 text-lg font-semibold">Jungle</h2>
+
+      <!-- Couche de titre qui apparaît au survol -->
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out rounded-lg"
+      >
+        <span class="text-white text-lg font-semibold">Jungle</span>
+      </div>
     </div>
 
     <!-- Carte 3 -->
-    <div class="flex flex-col items-center">
+    <div class="relative group flex flex-col items-center w-full h-48">
+      <!-- Image avec effet de grisé au survol -->
       <img
         src="images/home/marais.svg"
-        alt="Habitat 3"
-        class="w-full h-48 object-cover rounded-lg"
+        alt="Marais"
+        class="w-full h-full object-cover rounded-lg grayscale group-hover:grayscale-0 transition duration-300 ease-in-out"
       />
-      <h2 class="mt-4 text-lg font-semibold">Marais</h2>
+
+      <!-- Couche de titre qui apparaît au survol -->
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out rounded-lg"
+      >
+        <span class="text-white text-lg font-semibold">Marais</span>
+      </div>
     </div>
   </div>
 </section>
