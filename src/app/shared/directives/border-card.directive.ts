@@ -23,6 +23,6 @@ export class BorderCardDirective {
   }
 
   setBorder(color: string) {
-    this.el.nativeElement.style.border = `solid 2px ${color}`;
+    this.el.nativeElement.style.border = `solid 1px ${color}`;
   }
 }
