@@ -11,16 +11,19 @@
   <!-- Utilisation de flex pour une seule ligne -->
   <div class="flex flex-nowrap justify-center gap-6 px-12">
     <!-- Habitat 1 : Jungle -->
-    <div
+    <a
+      href="#"
       class="w-1/4 flex flex-col items-center rounded-lg shadow"
       appBorderCard
     >
-      <!-- w-1/4 pour occuper un quart de la ligne -->
-      <app-button
-        [text]="'Jungle'"
-        [type]="'button'"
-        class="focus:outline-none text-white font-sans bg-tertiary font-medium text-sm w-full py-2 text-center"
-      ></app-button>
+      <div class="w-full">
+        <app-button
+          [text]="'Jungle'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+        ></app-button>
+      </div>
+
       <div class="relative group w-full h-64">
         <img
           src="images/home/jungle.svg"
@@ -28,19 +31,22 @@
           class="w-full h-full object-cover"
         />
       </div>
-    </div>
+    </a>
 
     <!-- Habitat 2 : Savane -->
-    <div
+    <a
+      href="#"
       class="w-1/4 flex flex-col items-center rounded-lg shadow"
       appBorderCard
     >
-      <!-- w-1/4 -->
-      <app-button
-        [text]="'Savane'"
-        [type]="'button'"
-        class="focus:outline-none text-white font-sans bg-tertiary font-medium text-sm w-full py-2 text-center"
-      ></app-button>
+      <div class="w-full">
+        <app-button
+          [text]="'Savane'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+        ></app-button>
+      </div>
+
       <div class="relative group w-full h-64">
         <img
           src="images/home/savane.svg"
@@ -48,19 +54,22 @@
           class="w-full h-full object-cover"
         />
       </div>
-    </div>
+    </a>
 
     <!-- Habitat 3 : Marais -->
-    <div
+    <a
+      href="#"
       class="w-1/4 flex flex-col items-center rounded-lg shadow"
       appBorderCard
     >
-      <!-- w-1/4 -->
-      <app-button
-        [text]="'Marais'"
-        [type]="'button'"
-        class="focus:outline-none text-white font-sans bg-tertiary font-medium text-sm w-full py-2 text-center"
-      ></app-button>
+      <div class="w-full">
+        <app-button
+          [text]="'Marais'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+        ></app-button>
+      </div>
+
       <div class="relative group w-full h-64">
         <img
           src="images/home/marais.svg"
@@ -68,6 +77,6 @@
           class="w-full h-full object-cover"
         />
       </div>
-    </div>
+    </a>
   </div>
 </section>
