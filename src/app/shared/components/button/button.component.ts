@@ -9,9 +9,9 @@ import { CommonModule } from '@angular/common';
     [ngClass]="{
       'bg-tertiary hover:bg-inherit': variant === 'tertiary',
       'bg-primary hover:bg-primary-dark': variant === 'primary',
-      'bg-secondary hover:bg-secondary-dark': variant === 'secondary'
+      'bg-quaternary hover:bg-quaternary-dark': variant === 'quaternary'
     }"
-    class="focus:outline-none text-white text-base font-sans w-full py-2 text-center"
+    class="focus:outline-none text-white text-base font-sans w-full py-2 text-center rounded-t-lg"
   >
     {{ text }}
   </button> `,
@@ -19,5 +19,5 @@ import { CommonModule } from '@angular/common';
 export class ButtonComponent {
   @Input() text: string = 'Button';
   @Input() type: string = 'button';
-  @Input() variant: 'primary' | 'secondary' | 'tertiary' = 'primary';
+  @Input() variant: 'primary' | 'quaternary' | 'tertiary' = 'primary';
 }
