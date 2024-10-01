@@ -1,20 +1,38 @@
 <section class="w-screen bg-primary shadow pt-4">
   <!-- Titre de la section -->
   <div class="text-center mb-4">
-    <h1
-      class="text-xl sm:text-2xl md:text-3xl font-bold text-secondary font-serif"
-    >
+    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold font-serif mt-6 mb-8">
       Nos Services
     </h1>
   </div>
 
-  <!-- Utilisation de flex pour une seule ligne -->
-  <div class="flex flex-nowrap justify-center gap-6 px-12">
+  <!-- Utilisation de flex avec un layout en colonne pour mobile -->
+  <div
+    class="flex flex-col sm:flex-row sm:flex-nowrap justify-center gap-6 px-6 sm:px-12 mt-8"
+  >
     <!-- Service 1 : Restauration -->
-    <div class="relative group w-full h-64">
+    <div class="relative group w-full sm:w-auto h-auto">
       <img
-        src="images/services/restauration.svg"
-        alt="Habitat de la Jungle"
+        src="images/img_services/restauration.svg"
+        alt="Restauration."
+        class="w-full h-full object-cover rounded-b-lg"
+      />
+    </div>
+
+    <!-- Service 2 : Visite -->
+    <div class="relative group w-full sm:w-auto h-auto sm:mx-12">
+      <img
+        src="images/img_services/visite.svg"
+        alt="Visite."
+        class="w-full h-full object-cover rounded-b-lg"
+      />
+    </div>
+
+    <!-- Service 3 : Train -->
+    <div class="relative group w-full sm:w-auto h-auto">
+      <img
+        src="images/img_services/train.svg"
+        alt="Train"
         class="w-full h-full object-cover rounded-b-lg"
       />
     </div>
