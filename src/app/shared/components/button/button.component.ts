@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
       'bg-tertiary hover:bg-inherit': variant === 'tertiary',
       'bg-primary hover:bg-primary-dark': variant === 'primary',
       'bg-quaternary hover:bg-quaternary-dark': variant === 'quaternary',
-      'rounded-t-lg': !noRounded
+      'rounded-t-lg': !noRounded,
+      'rounded-lg': rounded
     }"
     class="focus:outline-none text-white text-base font-sans w-full py-2 text-center"
   >
@@ -22,4 +23,5 @@ export class ButtonComponent {
   @Input() type: string = 'button';
   @Input() variant: 'primary' | 'quaternary' | 'tertiary' = 'primary';
   @Input() noRounded: boolean = false;
+  @Input() rounded: boolean = false;
 }

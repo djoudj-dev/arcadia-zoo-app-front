@@ -1,1 +1,106 @@
-<p>form-review works!</p>
+<section class="w-screen bg-secondary shadow pt-4">
+  <!-- Titre de la section -->
+  <div class="text-center mb-4">
+    <h1
+      class="text-xl sm:text-2xl md:text-3xl font-bold text-primary font-serif mt-6 mb-8"
+    >
+      Donnez votre avis
+    </h1>
+  </div>
+
+  <form
+    class="w-full sm:max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md"
+  >
+    <!-- Nom et Date côte à côte -->
+    <div class="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+      <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
+        <label
+          for="website-admin"
+          class="block mb-2 text-lg font-medium text-gray-900"
+        >
+          Votre nom :
+        </label>
+        <input
+          type="text"
+          id="website-admin"
+          class="rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-green-500 focus:border-green-500 block w-full text-sm p-2.5"
+          placeholder="Votre nom"
+        />
+      </div>
+
+      <div class="w-full sm:w-1/2">
+        <label
+          for="default-datepicker"
+          class="block mb-2 text-lg font-medium text-gray-900"
+        >
+          Date de votre passage :
+        </label>
+        <input
+          type="date"
+          id="default-datepicker"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+          placeholder="Sélectionner une date"
+        />
+      </div>
+    </div>
+
+    <!-- Champ Commentaire -->
+    <div class="mb-4">
+      <label for="message" class="block mb-2 text-lg font-medium text-gray-900">
+        Votre commentaire :
+      </label>
+      <textarea
+        id="message"
+        rows="4"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
+        placeholder="Votre message"
+      ></textarea>
+    </div>
+
+    <!-- Note du Zoo -->
+    <div class="mb-4">
+      <label class="block mb-2 text-lg font-medium text-gray-900">
+        Notez le Zoo :
+      </label>
+      <div class="flex space-x-1">
+        <!-- Icônes étoiles -->
+        <svg
+          class="w-6 h-6 text-yellow-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.4 4.32h4.548c.959 0 1.357 1.225.586 1.81l-3.674 2.667 1.4 4.32c.3.921-.755 1.688-1.54 1.12L10 14.348l-3.674 2.667c-.784.568-1.838-.199-1.54-1.12l1.4-4.32L2.512 9.06c-.771-.585-.373-1.81.586-1.81h4.548l1.4-4.32z"
+          />
+        </svg>
+        <!-- Ajoutez d'autres étoiles ici -->
+      </div>
+    </div>
+
+    <!-- Case à cocher -->
+    <div class="flex items-start mb-4">
+      <input
+        id="accept-checkbox"
+        type="checkbox"
+        class="w-4 h-4 border-gray-300 rounded focus:ring-green-500"
+      />
+      <label
+        for="accept-checkbox"
+        class="ml-2 text-sm font-medium text-gray-900"
+      >
+        En cochant cette case, vous acceptez la publication de votre nom et
+        commentaire sur le site.
+      </label>
+    </div>
+
+    <!-- Bouton d'envoi -->
+    <div class="w-full">
+      <app-button
+        [text]="'Envoyer'"
+        [type]="'button'"
+        [variant]="'tertiary'"
+        [rounded]="true"
+      ></app-button>
+    </div>
+  </form>
+</section>
