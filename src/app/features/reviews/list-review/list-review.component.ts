@@ -52,7 +52,6 @@ import { StarRatingComponent } from '../../../shared/components/star-rating/star
   `,
   standalone: true,
   imports: [DatePipe, StarRatingComponent],
-  styleUrls: ['./list-review.component.css'],
 })
 export class ListReviewComponent {
   @Input() stars: number[] = [1, 2, 3, 4, 5];
