@@ -60,21 +60,9 @@
     <!-- Note du Zoo -->
     <div class="mb-4">
       <label class="block mb-2 text-lg font-medium text-gray-900">
-        Notez le Zoo :
+        Notez le Zoo (sur 5) :
       </label>
-      <div class="flex space-x-1">
-        <!-- Icônes étoiles -->
-        <svg
-          class="w-6 h-6 text-yellow-500"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.4 4.32h4.548c.959 0 1.357 1.225.586 1.81l-3.674 2.667 1.4 4.32c.3.921-.755 1.688-1.54 1.12L10 14.348l-3.674 2.667c-.784.568-1.838-.199-1.54-1.12l1.4-4.32L2.512 9.06c-.771-.585-.373-1.81.586-1.81h4.548l1.4-4.32z"
-          />
-        </svg>
-        <!-- Ajoutez d'autres étoiles ici -->
-      </div>
+      <app-star-rating [(rating)]="rating" [stars]="stars" />
     </div>
 
     <!-- Case à cocher -->
