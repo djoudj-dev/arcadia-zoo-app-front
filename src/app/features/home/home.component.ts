@@ -3,6 +3,7 @@ import { ZooIntroComponent } from './zoo-intro/zoo-intro.component';
 import { HabitatsOverviewComponent } from './habitats-overview/habitats-overview.component';
 import { ServicesOverviewComponent } from './services-overview/services-overview.component';
 import { FormReviewComponent } from '../reviews/form-review/form-review.component';
+import { ListReviewComponent } from '../reviews/list-review/list-review.component';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +13,7 @@ import { FormReviewComponent } from '../reviews/form-review/form-review.componen
     HabitatsOverviewComponent,
     ServicesOverviewComponent,
     FormReviewComponent,
+    ListReviewComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
