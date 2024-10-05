@@ -10,41 +10,48 @@ import { CommonModule } from '@angular/common';
   styleUrl: './nav.component.css',
 })
 export class NavComponent implements AfterViewInit {
-  // Implémentation de AfterViewInit pour s'assurer que le DOM est chargé
   ngAfterViewInit(): void {
-    const toggleMenuBtn =
-      document.querySelector<HTMLButtonElement>('#menu-toggler');
-    const toggleMenuImg =
-      document.querySelector<HTMLImageElement>('#menu-toggler img');
-    const mainNavlist = document.querySelector<HTMLDivElement>('#main-navlist');
-    const menuLinks =
-      document.querySelectorAll<HTMLAnchorElement>('#main-navlist a');
+    // Sélectionne le bouton de basculement du menu et la liste de navigation principale
+    const toggleMenuBtn = document.getElementById(
+      'menu-toggler'
+    ) as HTMLButtonElement;
+    const mainNavlist = document.getElementById(
+      'main-navlist'
+    ) as HTMLDivElement;
 
-    // Vérification que les éléments existent avant de les utiliser
-    if (toggleMenuBtn && toggleMenuImg && mainNavlist) {
-      [toggleMenuBtn, ...Array.from(menuLinks)].forEach((element) => {
-        element.addEventListener(
-          'click',
-          this.toggleNav.bind(this, toggleMenuImg, mainNavlist, toggleMenuBtn)
-        );
+    // Vérifie que les éléments existent avant d'ajouter les écouteurs d'événements
+    if (toggleMenuBtn && mainNavlist) {
+      // Ajoute un écouteur d'événement au bouton de basculement pour afficher/masquer le menu
+      toggleMenuBtn.addEventListener('click', () => {
+        // Bascule la classe 'hidden' sur la liste de navigation
+        const isHidden = mainNavlist.classList.toggle('hidden');
+
+        // Met à jour l'attribut aria-expanded pour l'accessibilité
+        toggleMenuBtn.setAttribute('aria-expanded', (!isHidden).toString());
+
+        // Change l'icône du bouton en fonction de l'état du menu
+        const toggleMenuImg = toggleMenuBtn.querySelector('img');
+        if (toggleMenuImg) {
+          toggleMenuImg.src = isHidden ? 'images/menu.svg' : 'images/cross.svg';
+        }
       });
-    }
-  }
 
-  // Méthode pour gérer l'affichage/masquage du menu
-  toggleNav(
-    toggleMenuImg: HTMLImageElement,
-    mainNavlist: HTMLDivElement,
-    toggleMenuBtn: HTMLButtonElement
-  ): void {
-    if (mainNavlist.classList.contains('hidden')) {
-      mainNavlist.classList.remove('hidden');
-      toggleMenuImg.setAttribute('src', 'images/cross.svg');
-      toggleMenuBtn.setAttribute('aria-expanded', 'true');
-    } else {
-      mainNavlist.classList.add('hidden');
-      toggleMenuImg.setAttribute('src', 'images/menu.svg');
-      toggleMenuBtn.setAttribute('aria-expanded', 'false');
+      // Ajoute des écouteurs d'événements aux liens du menu pour fermer le menu après un clic
+      mainNavlist.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          // Cache la liste de navigation
+          mainNavlist.classList.add('hidden');
+
+          // Met à jour l'attribut aria-expanded pour indiquer que le menu est fermé
+          toggleMenuBtn.setAttribute('aria-expanded', 'false');
+
+          // Réinitialise l'icône du bouton
+          const toggleMenuImg = toggleMenuBtn.querySelector('img');
+          if (toggleMenuImg) {
+            toggleMenuImg.src = 'images/menu.svg';
+          }
+        });
+      });
     }
   }
 }
