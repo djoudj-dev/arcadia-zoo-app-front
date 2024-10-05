@@ -5,8 +5,5 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './zoo-intro.component.html',
-  styleUrl: './zoo-intro.component.css'
 })
-export class ZooIntroComponent {
-
-}
+export class ZooIntroComponent {}
