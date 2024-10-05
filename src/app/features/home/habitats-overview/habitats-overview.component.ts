@@ -7,6 +7,5 @@ import { BorderCardDirective } from '../../../shared/directives/border-card.dire
   standalone: true,
   imports: [ButtonComponent, BorderCardDirective],
   templateUrl: './habitats-overview.component.html',
-  styleUrl: './habitats-overview.component.css',
 })
 export class HabitatsOverviewComponent {}

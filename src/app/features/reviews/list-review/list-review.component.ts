@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { Review } from './review.model';
 
 @Component({
   selector: 'app-list-review',
@@ -55,7 +56,7 @@ import { StarRatingComponent } from '../../../shared/components/star-rating/star
 })
 export class ListReviewComponent {
   @Input() stars: number[] = [1, 2, 3, 4, 5];
-  @Input() reviews: any[] = [
+  @Input() reviews: Review[] = [
     {
       name: 'John Doe',
       date: '2023-10-01',
@@ -71,7 +72,7 @@ export class ListReviewComponent {
     // Ajoutez d'autres avis ici
   ];
 
-  trackByFn(index: number, item: any): number {
+  trackByFn(index: number) {
     return index; // ou tout autre identifiant unique de l'élément
   }
 }
