@@ -1,18 +1,17 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Review } from './review.model';
-import { REVIEW } from './list-mock.component';
+import { Review } from '../../../core/models/review.model';
+import { REVIEW } from '../mocks/list-mock.component';
 import { RateComponent } from '../../../shared/components/rate/rate.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
-  selector: 'app-list-review',
-  templateUrl: './list-review.component.html',
-  styleUrl: './list-review.component.css',
+  selector: 'app-review',
+  templateUrl: './review.component.html',
   standalone: true,
   imports: [DatePipe, RateComponent, ButtonComponent],
 })
-export class ListReviewComponent {
+export class ReviewComponent {
   @Input() stars: number[] = [1, 2, 3, 4, 5];
   @Input() rating: number = 0;
   @Output() ratingChange: EventEmitter<number> = new EventEmitter<number>();

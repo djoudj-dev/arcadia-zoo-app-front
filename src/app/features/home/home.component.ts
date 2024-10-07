@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ZooIntroComponent } from './zoo-intro/zoo-intro.component';
 import { HabitatsOverviewComponent } from './habitats-overview/habitats-overview.component';
 import { ServicesOverviewComponent } from './services-overview/services-overview.component';
-import { ListReviewComponent } from '../reviews/list-review/list-review.component';
+import { ReviewComponent } from '../reviews/review/review.component';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +11,7 @@ import { ListReviewComponent } from '../reviews/list-review/list-review.componen
     ZooIntroComponent,
     HabitatsOverviewComponent,
     ServicesOverviewComponent,
-    ListReviewComponent,
+    ReviewComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
