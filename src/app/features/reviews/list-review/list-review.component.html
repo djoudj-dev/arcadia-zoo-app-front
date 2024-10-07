@@ -1,19 +1,19 @@
-<section class="bg-primary shadow pt-4 pb-4">
+<section class="bg-primary shadow py-4">
   <!-- Titre de la section -->
   <div class="text-center mb-4">
-    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold font-serif">
-      Ils ont donné leur avis
+    <h1 class="text-xl font-bold md:text-2xl lg:text-3xl font-serif">
+      Ce qu'ils pensent d'Arcadia
     </h1>
   </div>
 
   <div class="relative px-4 max-w-full mx-auto overflow-hidden">
-    <!-- Boutons de défilement gauche et droite -->
+    <!-- Bouton de défilement gauche -->
     <button
-      (click)="scrollLeft()"
-      class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full z-10"
+      (click)="previousReview()"
+      class="absolute left-2 lg:left-[calc(25%-2rem)] top-1/2 transform -translate-y-1/2 bg-quinary p-2 md:p-3 rounded-full z-10"
     >
       <svg
-        class="w-6 h-6"
+        class="w-5 h-5 md:w-6 md:h-6 text-white"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -28,38 +28,40 @@
       </svg>
     </button>
 
-    <div #scrollContainer class="flex space-x-4 overflow-x-auto scrollbar-hide">
-      @for (review of reviews; track review) {
-      <div
-        class="bg-[#A3B583] rounded-lg p-6 shadow-md w-full max-w-md flex-shrink-0"
-      >
-        <!-- Flex pour organiser nom et date -->
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="font-serif text-lg font-bold">
-            {{ review.name }}
-          </h3>
-          <!-- Date à droite -->
-          <div class="text-right font-serif text-sm">
-            <p>Le {{ review.date | date : "dd/MM/yyyy" }}</p>
-          </div>
+    <!-- Carte d'avis unique en accordéon -->
+    <div
+      class="bg-secondary rounded-lg p-4 shadow-md w-full max-w-sm md:max-w-md mx-auto"
+    >
+      <!-- Flex pour organiser nom et date -->
+      <div class="flex justify-between items-center">
+        <h3 class="font-serif text-md md:text-lg font-bold text-quinary">
+          {{ reviews[currentReviewIndex].name }}
+        </h3>
+        <!-- Date à droite -->
+        <div class="text-right font-serif text-xs md:text-sm text-quinary">
+          <p>Le {{ reviews[currentReviewIndex].date | date : "dd/MM/yyyy" }}</p>
         </div>
-        <!-- Affichage des étoiles -->
-        <div class="flex space-x-1 mb-4">
-          <app-rate [rating]="review.rating" [stars]="stars"></app-rate>
-        </div>
-        <!-- Message -->
-        <p class="font-serif text-md">{{ review.message }}</p>
       </div>
-      }
+      <!-- Affichage des étoiles -->
+      <div class="flex space-x-1 mb-4">
+        <app-rate
+          [rating]="reviews[currentReviewIndex].rating"
+          [stars]="stars"
+        ></app-rate>
+      </div>
+      <!-- Message -->
+      <p class="font-serif text-sm md:text-md text-quinary">
+        {{ reviews[currentReviewIndex].message }}
+      </p>
     </div>
 
     <!-- Bouton de défilement droite -->
     <button
-      (click)="scrollRight()"
-      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-200 p-2 rounded-full z-10"
+      (click)="nextReview()"
+      class="absolute right-2 lg:right-[calc(25%-2rem)] top-1/2 transform -translate-y-1/2 bg-quinary p-2 md:p-3 rounded-full z-10"
     >
       <svg
-        class="w-6 h-6"
+        class="w-5 h-5 md:w-6 md:h-6 text-primary"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -74,4 +76,151 @@
       </svg>
     </button>
   </div>
+
+  <!-- Bandeau en bas avec le bouton "Laissez-nous votre avis" -->
+  <div
+    class="bg-secondary text-primary rounded-lg py-3 px-4 mt-6 flex flex-col md:flex-row justify-around items-center space-y-2 md:space-y-0 mx-auto w-full md:w-1/2"
+  >
+    <p class="text-center text-quinary text-lg md:text-left font-semibold">
+      LAISSEZ-NOUS VOTRE AVIS
+    </p>
+
+    <!-- Ajustement de la taille du bouton en fonction de la taille de l'écran -->
+    <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
+      <app-button
+        [text]="'Donner mon avis'"
+        [type]="'button'"
+        [variant]="'tertiary'"
+        [rounded]="true"
+        (click)="openModal()"
+      ></app-button>
+    </div>
+  </div>
+
+  <!-- Modal backdrop -->
+  @if (isModalOpen) {
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <!-- Modal container -->
+    <div
+      class="bg-primary w-full sm:max-w-md mx-auto p-6 rounded-lg shadow-lg relative"
+    >
+      <!-- Close button -->
+      <button
+        (click)="closeModal()"
+        class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      <!-- Formulaire à l'intérieur du modal -->
+      <h1
+        class="text-xl sm:text-2xl md:text-3xl font-bold text-quinary text-center mb-6"
+      >
+        Donnez votre avis
+      </h1>
+
+      <form
+        class="w-full mx-auto bg-secondary rounded-lg shadow-md space-y-6 px-2 pb-2 pt-2"
+      >
+        <!-- Nom et Date côte à côte -->
+        <div class="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+          <div class="w-full sm:w-1/2">
+            <label
+              for="website-admin"
+              class="block mb-2 text-lg font-medium text-gray-900"
+            >
+              Votre nom :
+            </label>
+            <input
+              type="text"
+              id="website-admin"
+              class="w-full rounded-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-green-500 focus:border-green-500 block text-sm p-2.5"
+              placeholder="Votre nom"
+            />
+          </div>
+
+          <div class="w-full sm:w-1/2">
+            <label
+              for="default-datepicker"
+              class="block mb-2 text-lg font-medium text-gray-900"
+            >
+              Date de visite :
+            </label>
+            <input
+              type="date"
+              id="default-datepicker"
+              class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5"
+              placeholder="Sélectionner une date"
+            />
+          </div>
+        </div>
+
+        <!-- Champ Commentaire -->
+        <div class="mb-4">
+          <label
+            for="message"
+            class="block mb-2 text-lg font-medium text-gray-900"
+          >
+            Votre commentaire :
+          </label>
+          <textarea
+            id="message"
+            rows="4"
+            class="w-full block p-2.5 text-sm text-quinary bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500"
+            placeholder="Votre message"
+          ></textarea>
+        </div>
+
+        <!-- Note du Zoo -->
+        <div class="mb-4">
+          <label class="block mb-2 text-lg font-medium text-quinary">
+            Notez le Zoo (sur 5) :
+          </label>
+          <app-rate [(rating)]="rating" [stars]="stars"></app-rate>
+        </div>
+
+        <!-- Case à cocher -->
+        <div class="flex items-start mb-4">
+          <input
+            id="accept-checkbox"
+            type="checkbox"
+            class="w-4 h-4 border-gray-300 rounded focus:ring-secondary"
+          />
+          <label
+            for="accept-checkbox"
+            class="ml-2 text-sm font-medium text-gray-900"
+          >
+            En cochant cette case, vous acceptez la publication de votre nom et
+            commentaire sur le site.
+          </label>
+        </div>
+
+        <!-- Bouton d'envoi -->
+        <div class="w-full px-4">
+          <app-button
+            [text]="'Envoyer'"
+            [type]="'button'"
+            [variant]="'tertiary'"
+            [rounded]="true"
+          ></app-button>
+        </div>
+      </form>
+    </div>
+  </div>
+  }
 </section>
