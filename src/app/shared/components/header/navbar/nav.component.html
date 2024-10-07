@@ -10,9 +10,11 @@
     >
       Zoo Arcadia
     </a>
+    <!-- Bouton menu hamburger visible uniquement sur mobile -->
     <button
+      (click)="toggleMenu()"
       aria-controls="main-navlist"
-      aria-expanded="false"
+      [attr.aria-expanded]="isMenuOpen"
       id="menu-toggler"
       class="cursor-pointer w-7 md:hidden"
     >
@@ -24,8 +26,9 @@
       />
     </button>
     <ul
-      id="main-navlist"
-      class="bg-secondary hidden text-center w-full pt-4 text-primary md:w-auto md:block md:pt-0"
+      id="main-navlist-mobile"
+      [class.hidden]="!isMenuOpen"
+      class="bg-secondary text-center w-full pt-4 text-primary md:hidden"
     >
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
