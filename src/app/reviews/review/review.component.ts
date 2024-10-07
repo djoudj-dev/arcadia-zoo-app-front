@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Review } from '../../../core/models/review.model';
+import { Review } from '../../core/models/review.model';
 import { REVIEW } from '../mocks/list-mock.component';
-import { RateComponent } from '../../../shared/components/rate/rate.component';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { RateComponent } from '../../shared/components/rate/rate.component';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-review',
