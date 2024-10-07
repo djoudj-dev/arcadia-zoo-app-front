@@ -3,6 +3,7 @@ import { ZooIntroComponent } from './zoo-intro/zoo-intro.component';
 import { HabitatsOverviewComponent } from './habitats-overview/habitats-overview.component';
 import { ServicesOverviewComponent } from './services-overview/services-overview.component';
 import { ReviewComponent } from '../reviews/review/review.component';
+import { AnimalsOverviewComponent } from './animals-overview/animals-overview.component';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { ReviewComponent } from '../reviews/review/review.component';
   imports: [
     ZooIntroComponent,
     HabitatsOverviewComponent,
+    AnimalsOverviewComponent,
     ServicesOverviewComponent,
     ReviewComponent,
   ],
