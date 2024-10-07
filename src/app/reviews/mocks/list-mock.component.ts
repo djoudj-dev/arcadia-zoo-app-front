@@ -1,4 +1,4 @@
-import { Review } from '../../../core/models/review.model';
+import { Review } from '../../core/models/review.model';
 
 export const REVIEW: Review[] = [
   {
