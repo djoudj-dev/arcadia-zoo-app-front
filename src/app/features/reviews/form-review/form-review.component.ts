@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { StarRatingComponent } from '../../../shared/components/rate/rate.component';
+import { RateComponent } from '../../../shared/components/rate/rate.component';
 
 @Component({
   selector: 'app-form-review',
   standalone: true,
-  imports: [FormsModule, ButtonComponent, StarRatingComponent],
+  imports: [FormsModule, ButtonComponent, RateComponent],
   templateUrl: './form-review.component.html',
   styleUrl: './form-review.component.css',
 })

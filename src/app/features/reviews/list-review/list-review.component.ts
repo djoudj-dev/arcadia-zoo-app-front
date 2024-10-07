@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Review } from './review.model';
 import { REVIEW } from './list-mock.component';
 import { RateComponent } from '../../../shared/components/rate/rate.component';
-import { FormsModule } from '@angular/forms'; // Ajout pour NgModel
 
 @Component({
   selector: 'app-list-review',
@@ -32,7 +31,9 @@ import { FormsModule } from '@angular/forms'; // Ajout pour NgModel
           </div>
 
           <!-- Affichage des étoiles -->
-          <app-rate [(ngModel)]="rating" name="rating"></app-rate>
+          <div class="flex space-x-1 mb-4">
+            <app-rate [rating]="review.rating" [stars]="stars"></app-rate>
+          </div>
 
           <!-- Message -->
           <p class="font-serif text-md">{{ review.message }}</p>
@@ -42,10 +43,10 @@ import { FormsModule } from '@angular/forms'; // Ajout pour NgModel
     </section>
   `,
   standalone: true,
-  imports: [RateComponent, DatePipe, FormsModule], // Ajout de FormsModule
+  imports: [DatePipe, RateComponent],
 })
-export class ListReviewComponent implements OnInit {
-  rating = 5;
+export class ListReviewComponent {
+  @Input() stars: number[] = [1, 2, 3, 4, 5];
 
   reviews: Review[] = [];
 
