@@ -6,6 +6,5 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   standalone: true,
   imports: [ButtonComponent],
   templateUrl: './services-overview.component.html',
-  styleUrl: './services-overview.component.css',
 })
 export class ServicesOverviewComponent {}
