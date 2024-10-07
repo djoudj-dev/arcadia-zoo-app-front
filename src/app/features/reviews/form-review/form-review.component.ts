@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { StarRatingComponent } from '../../../shared/components/rate/rate.component';
 
 @Component({
   selector: 'app-form-review',

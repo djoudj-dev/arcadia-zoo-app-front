@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { Component, OnInit } from '@angular/core';
 import { Review } from './review.model';
 import { REVIEW } from './list-mock.component';
+import { RateComponent } from '../../../shared/components/rate/rate.component';
+import { FormsModule } from '@angular/forms'; // Ajout pour NgModel
 
 @Component({
   selector: 'app-list-review',
@@ -31,19 +32,7 @@ import { REVIEW } from './list-mock.component';
           </div>
 
           <!-- Affichage des étoiles -->
-          <div class="flex space-x-1 mb-4">
-            @for (star of stars; track star) {
-            <svg
-              class="w-6 h-6"
-              [attr.fill]="star <= review.rating ? '#FFC107' : '#E0E0E0'"
-              viewBox="0 0 20 20"
-            >
-              <path
-                d="M10 0l2.6 6.8H20l-5 4.2 1.8 7.2-6.4-4.6-6.4 4.6 1.8-7.2-5-4.2h7.4z"
-              />
-            </svg>
-            }
-          </div>
+          <app-rate [(ngModel)]="rating" name="rating"></app-rate>
 
           <!-- Message -->
           <p class="font-serif text-md">{{ review.message }}</p>
@@ -53,10 +42,10 @@ import { REVIEW } from './list-mock.component';
     </section>
   `,
   standalone: true,
-  imports: [DatePipe, StarRatingComponent],
+  imports: [RateComponent, DatePipe, FormsModule], // Ajout de FormsModule
 })
-export class ListReviewComponent {
-  @Input() stars: number[] = [1, 2, 3, 4, 5];
+export class ListReviewComponent implements OnInit {
+  rating = 5;
 
   reviews: Review[] = [];
 
