@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { ANIMALS } from '../../../reviews/mocks/animals-mock.component';
-import { Animal } from '../../../core/models/animals.model';
+import { Animal } from '../../../core/models/animal.model';
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-animals-overview',
   standalone: true,
-  imports: [BorderCardAnimalDirective],
+  imports: [BorderCardAnimalDirective, RouterLink],
   templateUrl: './animals-overview.component.html',
 })
 export class AnimalsOverviewComponent {
@@ -24,5 +25,9 @@ export class AnimalsOverviewComponent {
     this.displayedAnimals = this.animals
       .sort(() => 0.5 - Math.random())
       .slice(0, 4);
+  }
+
+  logAnimalId(id: number) {
+    console.log('Clicked animal ID:', id);
   }
 }

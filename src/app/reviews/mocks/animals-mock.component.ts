@@ -1,4 +1,4 @@
-import { Animal } from '../../core/models/animals.model';
+import { Animal } from '../../core/models/animal.model';
 
 export const ANIMALS: Animal[] = [
   {

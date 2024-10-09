@@ -1,0 +1,43 @@
+<!-- détails de l'animal-->
+@if (animal) {
+<section class="w-full bg-primary shadow py-4">
+  <!-- Titre de la section -->
+  <div class="text-center">
+    <h1
+      class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
+    >
+      {{ animal.name }}
+    </h1>
+    <h3 class="text-lg text-quinary font-sans">
+      {{ animal.species }}
+    </h3>
+  </div>
+
+  <!-- Carte de l'animal -->
+  <div
+    class="flex justify-center pt-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-auto"
+  >
+    <div
+      class="bg-secondary shadow-lg rounded-lg p-6 text-center"
+      appBorderCardAnimal
+    >
+      <div class="w-full h-full overflow-hidden rounded-lg">
+        <img
+          [src]="animal.image"
+          [alt]="animal.name"
+          class="w-96 h-96 object-cover rounded-lg"
+        />
+        <h2 class="text-xl font-bold text-primary mt-4">
+          {{ animal.name }}
+        </h2>
+        <p class="text-gray-600">{{ animal.species }}</p>
+        <p class="text-sm text-gray-500 mt-2">{{ animal.habitat }}</p>
+        <p class="text-sm text-gray-500 mt-2">
+          Poids : {{ animal.weightRange }}
+        </p>
+        <p class="text-sm text-gray-500 mt-2">Régime : {{ animal.diet }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+}

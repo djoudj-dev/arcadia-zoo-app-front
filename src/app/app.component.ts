@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { NavComponent } from './shared/components/header/navbar/nav.component';
 import { HomeComponent } from './features/home/home.component';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { FooterComponent } from './shared/components/footer/footer.component';
   standalone: true,
   imports: [
     RouterOutlet,
+    RouterLink,
     NavComponent,
     CommonModule,
     HomeComponent,
