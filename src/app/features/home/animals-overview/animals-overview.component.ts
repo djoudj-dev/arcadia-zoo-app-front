@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { ANIMALS } from '../../../reviews/mocks/animals-mock.component';
 import { Animal } from '../../../core/models/animals.model';
+import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 
 @Component({
   selector: 'app-animals-overview',
   standalone: true,
-  imports: [],
+  imports: [BorderCardAnimalDirective],
   templateUrl: './animals-overview.component.html',
 })
 export class AnimalsOverviewComponent {
