@@ -13,7 +13,10 @@
     <!-- Boucle @for pour afficher les cartes d'animaux -->
     @for (animal of animals.slice(0, 4); track animals) {
     <div class="flex justify-center pt-4 w-auto">
-      <div class="bg-secondary shadow-md rounded-lg p-4 text-center">
+      <div
+        class="bg-secondary shadow-lg rounded-lg p-4 text-center"
+        appBorderCardAnimal
+      >
         <img
           [src]="animal.image"
           [alt]="animal.name"
