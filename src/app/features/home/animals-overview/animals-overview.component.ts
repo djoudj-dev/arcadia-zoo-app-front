@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ANIMALS } from '../../../reviews/mocks/animals-mock.component';
+import { Animal } from '../../../core/models/animals.model';
 
 @Component({
   selector: 'app-animals-overview',
@@ -6,4 +8,20 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './animals-overview.component.html',
 })
-export class AnimalsOverviewComponent {}
+export class AnimalsOverviewComponent {
+  animals: Animal[] = ANIMALS;
+  displayedAnimals: Animal[] = [];
+
+  ngOnInit() {
+    this.updateDisplayedAnimals();
+    setInterval(() => {
+      this.updateDisplayedAnimals();
+    }, 5000);
+  }
+
+  updateDisplayedAnimals() {
+    this.displayedAnimals = this.animals
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 4);
+  }
+}
