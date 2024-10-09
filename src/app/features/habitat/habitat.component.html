@@ -1,0 +1,40 @@
+<!-- Détails de l'habitat-->
+@if (habitat) {
+<section class="w-full bg-primary shadow py-4">
+  <!--Titre de la section-->
+  <div class="text-center">
+    <h1
+      class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
+    >
+      '{{ habitat.name }}'
+    </h1>
+    <h1 class="text-lg text-quinary font-sans">
+      Découvrez les habitats de notre zoo
+    </h1>
+  </div>
+
+  <!--Carte de l'habitat-->
+  <div class="flex justify-center items-center w-full px-4">
+    <div
+      class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
+    >
+      <!--Image de l'habitat-->
+      <div class="w-full flex justify-center">
+        <img
+          [src]="habitat.image"
+          [alt]="habitat.name"
+          class="w-1/2 h-1/2 object-cover rounded-lg shadow-lg"
+        />
+      </div>
+
+      <!--Détails de l'habitat-->
+      <div class="w-1/2 mt-2 text-left">
+        <p class="text-quinary text-2xl font-semibold">{{ habitat.name }}</p>
+        <p class="text-gray-600 text-base mt-2">
+          <span>Déscription :</span> {{ habitat.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+}
