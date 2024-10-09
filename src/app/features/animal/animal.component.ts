@@ -19,13 +19,8 @@ export class AnimalComponent implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log('Route param ID:', id); // Ajoute ce log
+    console.log('Route param ID:', id);
 
-    // Utilisez ANIMALS pour récupérer l'animal
     this.animal = ANIMALS.find((animal) => animal.id === Number(id));
-
-    if (!this.animal) {
-      console.error('Animal not found with ID:', id);
-    }
   }
 }
