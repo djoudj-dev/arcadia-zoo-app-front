@@ -24,24 +24,61 @@
       </div>
 
       <!-- Détails de l'animal -->
-      <div class="w-full mt-4 text-left sm:w-3/4 md:w-1/2">
-        <p class="text-quinary text-xl font-semibold text-center md:text-2xl">
-          {{ animal.species }}
+      <div
+        class="bg-primary rounded-lg w-full mt-4 text-left sm:w-3/4 md:w-1/2 text-quinary ps-4 py-2"
+      >
+        <p class="text-tertiary text-xl font-semibold text-center md:text-2xl">
+          {{ animal.species }} - ( {{ animal.name }})
         </p>
-        <p class="text-gray-600 text-sm mt-2 md:text-base">
+        <p class="text-sm mt-2 md:text-base">
           <span class="font-bold">Habitat :</span> {{ animal.habitat }}
         </p>
-        <p class="text-gray-600 text-sm mt-2 md:text-base">
+        <p class="text-sm mt-2 md:text-base">
           <span class="font-bold">Caractéristiques :</span>
           {{ animal.characteristics }}
         </p>
-        <p class="text-gray-600 text-sm mt-2 md:text-base">
+        <p class="text-sm mt-2 md:text-base">
           <span class="font-bold">Poids :</span> {{ animal.weightRange }}
         </p>
-        <p class="text-gray-600 text-sm mt-2 md:text-base">
+        <p class="text-sm mt-2 md:text-base">
           <span class="font-bold">Régime :</span> {{ animal.diet }}
         </p>
       </div>
+
+      <!-- Section des notes vétérinaires -->
+      @if (animal.vetNote) {
+      <div
+        class="bg-primary rounded-lg w-full mt-6 text-left sm:w-3/4 md:w-1/2 px-4 py-2"
+      >
+        <h2 class="text-xl font-bold text-tertiary">Note du vétérinaire</h2>
+        @if (animal.vetNote.animalState) {
+        <p class="text-gray-600 text-sm mt-2 md:text-base">
+          <span class="font-bold">État de l'animal :</span>
+          {{ animal.vetNote.animalState }}
+        </p>
+        } @if (animal.vetNote.food) {
+        <p class="text-gray-600 text-sm mt-2 md:text-base">
+          <span class="font-bold">Nourriture proposée :</span>
+          {{ animal.vetNote.food }}
+        </p>
+        } @if (animal.vetNote.foodWeight) {
+        <p class="text-gray-600 text-sm mt-2 md:text-base">
+          <span class="font-bold">Grammage :</span>
+          {{ animal.vetNote.foodWeight }} kg
+        </p>
+        } @if (animal.vetNote.visitDate) {
+        <p class="text-gray-600 text-sm mt-2 md:text-base">
+          <span class="font-bold">Date de passage :</span>
+          {{ animal.vetNote.visitDate | date : "dd/MM/yyyy" }}
+        </p>
+        } @if (animal.vetNote.additionalDetails) {
+        <p class="text-gray-600 text-sm mt-2 md:text-base">
+          <span class="font-bold">Détails supplémentaires :</span>
+          {{ animal.vetNote.additionalDetails }}
+        </p>
+        }
+      </div>
+      }
 
       <!-- Boutons de retour -->
       <div class="w-full flex justify-center pt-6 space-x-4">

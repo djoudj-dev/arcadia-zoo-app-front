@@ -7,11 +7,19 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Habitat } from '../../core/models/habitat.model';
 import { HABITATS } from '../../reviews/mocks/habitats-mock.component';
+import { VetNote } from '../../core/models/vetnote.model';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-animal',
   standalone: true,
-  imports: [RouterLink, NavComponent, FooterComponent, ButtonComponent],
+  imports: [
+    RouterLink,
+    NavComponent,
+    FooterComponent,
+    ButtonComponent,
+    DatePipe,
+  ],
   templateUrl: './animal.component.html',
   styles: [
     `
@@ -25,6 +33,7 @@ import { HABITATS } from '../../reviews/mocks/habitats-mock.component';
 export class AnimalComponent implements OnInit {
   animal: Animal | undefined;
   habitat: Habitat | undefined;
+  vetNote: VetNote | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
