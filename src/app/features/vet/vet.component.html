@@ -1,0 +1,164 @@
+<section
+  class="min-h-screen bg-primary flex flex-col items-center justify-start p-4"
+>
+  <h1 class="text-2xl sm:text-4xl font-bold text-quinary mb-8">
+    Espace Vétérinaire
+  </h1>
+
+  <!-- Formulaire pour remplir un compte rendu -->
+  <form
+    [formGroup]="vetNoteForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-secondary p-4 rounded-lg shadow-md w-full max-w-3xl space-y-4"
+  >
+    <!-- Sélection de l'animal -->
+    <div>
+      <label for="animalId" class="block text-sm font-bold text-quinary"
+        >Animal</label
+      >
+      <select
+        id="animalId"
+        formControlName="animalId"
+        class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+      >
+        <option value="" disabled selected>Choisissez un animal</option>
+        @for (animal of animals; track animal.id) {
+        <option [value]="animal.id">{{ animal.name }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- État de l'animal -->
+    <div>
+      <label for="animalState" class="block text-sm font-bold text-gray-700"
+        >État de l'animal</label
+      >
+      <input
+        id="animalState"
+        formControlName="animalState"
+        type="text"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+        placeholder="Entrez l'état de l'animal"
+      />
+    </div>
+
+    <!-- Nourriture donnée -->
+    <div>
+      <label for="food" class="block text-sm font-bold text-gray-700"
+        >Nourriture donnée</label
+      >
+      <input
+        id="food"
+        formControlName="food"
+        type="text"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+        placeholder="Entrez la nourriture donnée"
+      />
+    </div>
+
+    <!-- Grammage de la nourriture -->
+    <div>
+      <label for="foodWeight" class="block text-sm font-bold text-gray-700"
+        >Grammage de la nourriture (kg)</label
+      >
+      <input
+        id="foodWeight"
+        formControlName="foodWeight"
+        type="number"
+        step="0.1"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+        placeholder="Entrez le grammage"
+      />
+    </div>
+
+    <!-- Date de passage -->
+    <div>
+      <label for="visitDate" class="block text-sm font-bold text-gray-700"
+        >Date de passage</label
+      >
+      <input
+        id="visitDate"
+        formControlName="visitDate"
+        type="date"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+      />
+    </div>
+
+    <!-- Détails supplémentaires -->
+    <div>
+      <label
+        for="additionalDetails"
+        class="block text-sm font-bold text-gray-700"
+        >Détails supplémentaires</label
+      >
+      <textarea
+        id="additionalDetails"
+        formControlName="additionalDetails"
+        rows="4"
+        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+        placeholder="Entrez des détails supplémentaires"
+      ></textarea>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="flex justify-center">
+      <button
+        type="submit"
+        [disabled]="vetNoteForm.invalid"
+        class="bg-tertiary hover:bg-quaternary text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-quaternary disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+      >
+        Soumettre
+      </button>
+    </div>
+  </form>
+
+  <!-- Liste des comptes rendus déjà remplis -->
+  <div class="w-full max-w-3xl space-y-6 mt-8">
+    @for (note of vetNotes; track note.id) {
+    <div class="bg-white p-4 rounded-lg shadow-md shadow-secondary">
+      <!-- Trouver l'animal correspondant à l'ID dans la note -->
+      @for (animal of animals; track animal.id) { @if (animal.id ===
+      note.animalId) {
+      <h2 class="text-xl font-bold text-tertiary mb-2">
+        Nom de l'animal: {{ animal.name }}
+      </h2>
+      } }
+
+      <!-- Avis de l'animal (visible par défaut) -->
+      <p class="text-sm text-gray-600">
+        <span class="font-bold">État de l'animal :</span> {{ note.animalState }}
+      </p>
+
+      <!-- Bouton pour afficher/masquer les détails -->
+      <button
+        class="text-primary hover:text-secondary font-semibold mt-2"
+        (click)="toggleDetails(note)"
+      >
+        {{ note.showDetails ? "Masquer les détails" : "Voir les détails" }}
+      </button>
+
+      <!-- Détails supplémentaires (affichés uniquement si showDetails est vrai) -->
+      @if (note.showDetails) {
+      <div class="mt-4">
+        <p class="text-sm text-gray-600">
+          <span class="font-bold">Nourriture :</span> {{ note.food }}
+        </p>
+        <p class="text-sm text-gray-600">
+          <span class="font-bold">Grammage :</span> {{ note.foodWeight }} kg
+        </p>
+        <p class="text-sm text-gray-600">
+          <span class="font-bold">Date de passage :</span>
+          {{ note.visitDate | date : "dd/MM/yyyy" }}
+        </p>
+        @if (note.additionalDetails) {
+        <p class="text-sm text-gray-600">
+          <span class="font-bold">Détails supplémentaires :</span>
+          {{ note.additionalDetails }}
+        </p>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</section>
