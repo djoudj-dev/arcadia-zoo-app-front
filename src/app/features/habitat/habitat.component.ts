@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { Habitat } from '../../core/models/habitat.model';
 import { HABITATS } from '../../reviews/mocks/habitats-mock.component';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-habitat',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ButtonComponent],
   templateUrl: './habitat.component.html',
   styles: [
     `
@@ -27,5 +28,9 @@ export class HabitatComponent {
     console.log('Route param ID:', id);
 
     this.habitat = HABITATS.find((habitat) => habitat.id === Number(id));
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
   }
 }

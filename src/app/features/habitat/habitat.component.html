@@ -1,4 +1,4 @@
-<!-- Détails de l'habitat-->
+<!-- Détails de l'habitat -->
 @if (habitat) {
 <section class="w-full bg-primary shadow py-4">
   <!--Titre de la section-->
@@ -11,36 +11,39 @@
     <h1 class="text-lg text-quinary font-sans">
       Découvrez les habitats de notre zoo
     </h1>
-    <!--Image de l'habitat-->
-    <div class="w-full flex justify-center">
+    <!-- Image de l'habitat -->
+    <div class="w-full flex justify-center rounded-lg overflow-hidden pb-2">
       <img
         [src]="habitat.image"
         [alt]="habitat.name"
-        class="w-1/2 h-96 object-cover rounded-lg shadow-lg pb-4"
+        class="w-full lg:w-2/3 h-96 object-cover rounded-lg"
       />
     </div>
   </div>
 
   <!--Carte de l'habitat-->
-  <div class="flex justify-center items-center w-full px-4">
+  <div class="flex justify-center items-center w-full">
     <div
       class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
     >
       <!--Détails de l'habitat-->
-      <div class="w-1/2 mt-2 text-left">
-        <p class="text-gray-600 text-base mt-2">
-          <span>Description :</span> {{ habitat.description }}
+      <div class="w-full pb-4">
+        <p class="text-quinary text-4xl text-center">
+          <span>Description de l'habitat</span>
         </p>
+        <p class="text-center pt-2">{{ habitat.description }}</p>
       </div>
       <!--Card des animaux de l'habitat-->
       <div class="w-full flex flex-col items-center">
-        <h2 class="text-xl text-quinary font-bold font-serif">Animaux</h2>
+        <h2 class="text-2xl text-quinary font-bold font-serif pt-2">
+          Les animaux de l'habitat
+        </h2>
         <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
           <!--Boucle pour afficher les animaux de l'habitat-->
           @for (animal of habitat.animals; track animal.id) {
           <a
             [routerLink]="['/animal', animal.id]"
-            class="w-1/4 flex flex-col items-center rounded-lg shadow"
+            class="w-full sm:w-1/2 lg:w-1/3 flex flex-col items-center rounded-lg shadow"
             appBorderCard
           >
             <div class="w-full">
@@ -61,6 +64,17 @@
           </a>
           }
         </div>
+      </div>
+      <!-- Bouton de retour -->
+      <div class="w-full flex justify-center pt-8">
+        <app-button
+          [text]="'Retour'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+          [rounded]="true"
+          class="w-1/4 lg:w-1/4 font-bold"
+          (click)="goBack()"
+        ></app-button>
       </div>
     </div>
   </div>
