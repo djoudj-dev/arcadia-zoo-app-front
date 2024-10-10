@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { Service } from '../../../core/models/service.model';
+import { SERVICES } from '../../../reviews/mocks/services-mock.component';
 
 @Component({
   selector: 'app-services-overview',
@@ -11,6 +13,8 @@ export class ServicesOverviewComponent {
   @ViewChild('service1', { static: true }) service1!: ElementRef;
   @ViewChild('service2', { static: true }) service2!: ElementRef;
   @ViewChild('service3', { static: true }) service3!: ElementRef;
+
+  services: Service[] = SERVICES;
 
   ngAfterViewInit() {
     this.addTouchListeners(this.service1);
