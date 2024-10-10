@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AnimalComponent } from './features/animal/animal.component';
 import { HomeComponent } from './features/home/home.component';
-import { HabitatComponent } from './features/habitat/habitat.component';
+import { HabitatComponent } from './features/habitats/habitat/habitat.component';
 import { HabitatsComponent } from './features/habitats/habitats.component';
 
 export const routes: Routes = [
