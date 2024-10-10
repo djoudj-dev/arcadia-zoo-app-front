@@ -5,7 +5,7 @@ export const HABITATS = [
     id: 1,
     name: 'Savane',
     description:
-      "La savane est une formation végétale composée d'herbes et d'arbres espacés. Elle est caractéristique des régions tropicales et équatoriales.",
+      "La savane est une vaste plaine ouverte, parsemée d'herbes hautes et d'arbres disséminés. Elle abrite une incroyable diversité d'animaux adaptés aux conditions chaudes et sèches des régions tropicales, comme les lions, les éléphants, et les antilopes. Venez découvrir ces majestueuses créatures dans leur habitat naturel.",
     image: 'images/img_home/savane.webp',
     animals: [
       ANIMALS.find((animal) => animal.id === 9),
@@ -18,7 +18,7 @@ export const HABITATS = [
     id: 2,
     name: 'Jungle',
     description:
-      'La jungle est une formation végétale dense et impénétrable, caractéristique des régions tropicales.',
+      "La jungle est une forêt dense et luxuriante, offrant un refuge à une multitude d'espèces exotiques. Laissez-vous envoûter par l'ambiance mystérieuse et les sons fascinants des animaux cachés dans cet écosystème unique. Explorez cet environnement riche et vibrant où la vie règne en maître.",
     image: 'images/img_home/jungle.webp',
     animals: [
       ANIMALS.find((animal) => animal.id === 1),
@@ -31,7 +31,7 @@ export const HABITATS = [
     id: 3,
     name: 'Marais',
     description:
-      'Le marais est une zone humide où l’eau est stagnante ou peu profonde, et où la végétation est abondante.',
+      "Le marais est un habitat mystérieux et fascinant, où l'eau et la terre se mélangent pour créer une zone humide grouillante de vie. Des espèces uniques comme les reptiles et les amphibiens prospèrent dans ces conditions humides. Découvrez un écosystème délicat et essentiel pour l'équilibre naturel.",
     image: 'images/img_home/marais.webp',
     animals: [
       ANIMALS.find((animal) => animal.id === 5),

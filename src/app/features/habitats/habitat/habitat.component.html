@@ -8,16 +8,24 @@
     >
       {{ habitat.name }}
     </h1>
-    <h1 class="text-lg text-quinary font-sans">
-      <p class="text-center py-4">{{ habitat.description }}</p>
-    </h1>
-    <!-- Image de l'habitat -->
-    <div class="w-full flex justify-center rounded-lg overflow-hidden pb-2">
-      <img
-        [src]="habitat.image"
-        [alt]="habitat.name"
-        class="w-full lg:w-2/3 h-96 object-cover rounded-lg"
-      />
+    <div class="w-full flex flex-col items-center">
+      <!-- Description de l'habitat -->
+      <div class="w-full lg:w-2/3">
+        <h1 class="text-lg text-quinary font-sans text-center py-4">
+          {{ habitat.description }}
+        </h1>
+      </div>
+
+      <!-- Image de l'habitat -->
+      <div
+        class="w-full lg:w-2/3 rounded-lg overflow-hidden pb-2 flex justify-center"
+      >
+        <img
+          [src]="habitat.image"
+          [alt]="habitat.name"
+          class="w-full h-96 object-cover rounded-lg"
+        />
+      </div>
     </div>
   </div>
 
