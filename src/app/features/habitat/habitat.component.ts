@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Habitat } from '../../core/models/habitat.model';
 import { HABITATS } from '../../reviews/mocks/habitats-mock.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-habitat',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './habitat.component.html',
   styles: [
     `

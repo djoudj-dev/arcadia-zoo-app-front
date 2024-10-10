@@ -11,6 +11,14 @@
     <h1 class="text-lg text-quinary font-sans">
       Découvrez les habitats de notre zoo
     </h1>
+    <!--Image de l'habitat-->
+    <div class="w-full flex justify-center">
+      <img
+        [src]="habitat.image"
+        [alt]="habitat.name"
+        class="w-1/2 h-96 object-cover rounded-lg shadow-lg pb-4"
+      />
+    </div>
   </div>
 
   <!--Carte de l'habitat-->
@@ -18,20 +26,41 @@
     <div
       class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
     >
-      <!--Image de l'habitat-->
-      <div class="w-full flex justify-center">
-        <img
-          [src]="habitat.image"
-          [alt]="habitat.name"
-          class="w-1/2 h-1/2 object-cover rounded-lg shadow-lg"
-        />
-      </div>
-
       <!--Détails de l'habitat-->
       <div class="w-1/2 mt-2 text-left">
         <p class="text-gray-600 text-base mt-2">
-          <span>Déscription :</span> {{ habitat.description }}
+          <span>Description :</span> {{ habitat.description }}
         </p>
+      </div>
+      <!--Card des animaux de l'habitat-->
+      <div class="w-full flex flex-col items-center">
+        <h2 class="text-xl text-quinary font-bold font-serif">Animaux</h2>
+        <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
+          <!--Boucle pour afficher les animaux de l'habitat-->
+          @for (animal of habitat.animals; track animal.id) {
+          <a
+            [routerLink]="['/animal', animal.id]"
+            class="w-1/4 flex flex-col items-center rounded-lg shadow"
+            appBorderCard
+          >
+            <div class="w-full">
+              <div
+                class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
+              >
+                {{ animal.name }}
+              </div>
+            </div>
+
+            <div class="relative group w-full h-64">
+              <img
+                [src]="animal.image"
+                [alt]="'Animal ' + animal.name"
+                class="w-full h-full object-cover rounded-b-lg"
+              />
+            </div>
+          </a>
+          }
+        </div>
       </div>
     </div>
   </div>
