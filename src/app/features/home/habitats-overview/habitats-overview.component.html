@@ -15,9 +15,10 @@
   <div
     class="flex flex-col sm:flex-row sm:flex-nowrap justify-center gap-6 px-6 sm:px-12 pb-4"
   >
-    <!-- Habitat 1 : Jungle -->
+    <!-- Utilisation d'une seule boucle @for pour afficher tous les habitats -->
+    @for (habitat of habitats; track habitat.id) {
     <a
-      href="#"
+      [routerLink]="['/habitat', habitat.id]"
       class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
       appBorderCard
     >
@@ -25,63 +26,19 @@
         <div
           class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
         >
-          La jungle
+          {{ habitat.name }}
+          <!-- Dynamique pour chaque habitat -->
         </div>
       </div>
 
       <div class="relative group w-full h-64">
         <img
-          src="images/img_home/jungle.webp"
-          alt="Habitat de la Jungle"
+          [src]="habitat.image"
+          [alt]="'Habitat de ' + habitat.name"
           class="w-full h-full object-cover rounded-b-lg"
         />
       </div>
     </a>
-
-    <!-- Habitat 2 : Savane -->
-    <a
-      href="#"
-      class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
-      appBorderCard
-    >
-      <div class="w-full">
-        <div
-          class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
-        >
-          La savane
-        </div>
-      </div>
-
-      <div class="relative group w-full h-64">
-        <img
-          src="images/img_home/savane.webp"
-          alt="Habitat de la Savane"
-          class="w-full h-full object-cover rounded-b-lg"
-        />
-      </div>
-    </a>
-
-    <!-- Habitat 3 : Marais -->
-    <a
-      href="#"
-      class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
-      appBorderCard
-    >
-      <div class="w-full">
-        <div
-          class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
-        >
-          Les marais
-        </div>
-      </div>
-
-      <div class="relative group w-full h-64">
-        <img
-          src="images/img_home/marais.webp"
-          alt="Habitat du Marais"
-          class="w-full h-full object-cover rounded-b-lg"
-        />
-      </div>
-    </a>
+    }
   </div>
 </section>
