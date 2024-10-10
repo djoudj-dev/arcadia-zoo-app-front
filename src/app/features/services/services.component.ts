@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { Service } from '../../core/models/service.model';
 import { SERVICES } from '../../reviews/mocks/services-mock.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, RouterLink],
   templateUrl: './services.component.html',
 })
 export class ServicesComponent {
