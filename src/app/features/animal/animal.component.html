@@ -20,7 +20,7 @@
         <img
           [src]="animal.image"
           [alt]="animal.name"
-          class="w-1/2 h-1/2 object-cover rounded-lg shadow-lg"
+          class="w-1/2 h-80 object-cover rounded-lg shadow-lg"
         />
       </div>
 
@@ -42,22 +42,20 @@
           <span>Régime :</span> {{ animal.diet }}
         </p>
       </div>
-      <!-- Bouton de retour -->
-      <div class="w-full flex justify-center pt-8">
+      <!-- Boutons de retour -->
+      <div class="w-full flex justify-center pt-8 space-x-4">
         <app-button
           [text]="'Retour accueil'"
           [type]="'button'"
-          [variant]="'tertiary'"
+          [color]="'tertiary'"
           [rounded]="true"
           class="w-1/4 lg:w-1/4 font-bold"
           (click)="goBack()"
         ></app-button>
-      </div>
-      <div class="w-full flex justify-center pt-8">
         <app-button
           [text]="'Retour habitat'"
           [type]="'button'"
-          [variant]="'tertiary'"
+          [color]="'quinary'"
           [rounded]="true"
           class="w-1/4 lg:w-1/4 font-bold"
           (click)="goHabitat()"
