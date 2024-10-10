@@ -7,4 +7,5 @@ export interface VetNote {
   foodWeight: number;
   visitDate: Date;
   additionalDetails: string;
+  showDetails?: boolean;
 }
