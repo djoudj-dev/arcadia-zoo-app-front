@@ -1,3 +1,5 @@
+import { VetNote } from './vetnote.model';
+
 export interface Animal {
   id: number;
   name: string;
@@ -9,4 +11,5 @@ export interface Animal {
   image: string;
   habitats: string[];
   habitatId: number;
+  vetNote?: VetNote;
 }

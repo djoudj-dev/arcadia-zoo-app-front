@@ -1,4 +1,6 @@
 import { Animal } from '../../core/models/animal.model';
+import { VetNote } from '../../core/models/vetnote.model';
+import { MOCK_VET_NOTES } from './vet-note-mock.component';
 
 export const ANIMALS: Animal[] = [
   {
@@ -13,6 +15,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Raihan se nourrit de grands herbivores comme les cerfs, sangliers, buffles, ainsi que de plus petites proies comme les singes et les oiseaux.`,
     habitats: ['jungle'],
     habitatId: 2,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 1),
   },
   {
     id: 2,
@@ -25,6 +28,7 @@ export const ANIMALS: Animal[] = [
     diet: `Omnivore. Ziko mange des fruits, graines, feuilles, insectes, et parfois de petits animaux comme des lézards ou des oiseaux.`,
     habitats: ['jungle'],
     habitatId: 2,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 2),
   },
   {
     id: 3,
@@ -37,6 +41,7 @@ export const ANIMALS: Animal[] = [
     diet: `Herbivore. Kapi mange des fruits, graines, noix, baies, et parfois des fleurs et du nectar.`,
     habitats: ['jungle'],
     habitatId: 2,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 3),
   },
   {
     id: 4,
@@ -49,6 +54,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Liana chasse des petits mammifères, oiseaux, lézards, et avale ses proies entières.`,
     habitats: ['jungle'],
     habitatId: 2,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 4),
   },
   // Ajoute les propriétés des animaux des marais selon Marais.txt
   {
@@ -62,6 +68,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Grom mange des poissons, oiseaux, amphibiens et parfois de grands mammifères lorsqu'ils s'approchent trop de l'eau. Il est opportuniste et se nourrit également de charognes.`,
     habitats: ['marais'],
     habitatId: 3,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 5),
   },
   {
     id: 6,
@@ -74,6 +81,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Nymbus se nourrit de poissons, grenouilles, insectes aquatiques et petits reptiles qu'il attrape dans l'eau ou à proximité des rives.`,
     habitats: ['marais'],
     habitatId: 3,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 6),
   },
   {
     id: 7,
@@ -86,6 +94,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Flip mange des insectes, des petits invertébrés comme les vers, les mouches et parfois de petits poissons ou têtards.`,
     habitats: ['marais'],
     habitatId: 3,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 7),
   },
   {
     id: 8,
@@ -98,6 +107,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Sly se nourrit principalement de poissons, grenouilles et autres petits animaux aquatiques. Il chasse en nageant dans l'eau, parfois en s'approchant des nids d'oiseaux près des rives.`,
     habitats: ['marais'],
     habitatId: 3,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 8),
   },
   // Ajoute les propriétés des animaux de la savane selon Savane.txt
   {
@@ -111,6 +121,7 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Aslan se nourrit de grands herbivores comme les zèbres, les gnous, les buffles et parfois des girafes. Il chasse en groupe, souvent avec l'aide des lionnes de la troupe.`,
     habitats: ['savane'],
     habitatId: 1,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 9),
   },
   {
     id: 10,
@@ -123,6 +134,7 @@ export const ANIMALS: Animal[] = [
     diet: `Herbivore. Tembo mange des feuilles, de l'écorce, des fruits, des branches et des herbes. Il peut consommer jusqu'à 150 kg de nourriture par jour.`,
     habitats: ['savane'],
     habitatId: 1,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 10),
   },
   {
     id: 11,
@@ -135,6 +147,7 @@ export const ANIMALS: Animal[] = [
     diet: `Herbivore. Zuri se nourrit principalement des feuilles d'acacias, mais elle mange aussi d'autres feuillages, fleurs et fruits disponibles dans les arbres.`,
     habitats: ['savane'],
     habitatId: 1,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 11),
   },
   {
     id: 12,
@@ -147,5 +160,6 @@ export const ANIMALS: Animal[] = [
     diet: `Carnivore. Dash chasse principalement des petites antilopes comme les gazelles, ainsi que des lièvres et parfois de jeunes gnous ou zèbres. Il utilise sa vitesse pour attraper ses proies en les poursuivant.`,
     habitats: ['savane'],
     habitatId: 1,
+    vetNote: MOCK_VET_NOTES.find((note: VetNote) => note.animalId === 12),
   },
 ];
