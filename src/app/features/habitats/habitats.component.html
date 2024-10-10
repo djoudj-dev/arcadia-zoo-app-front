@@ -1,0 +1,56 @@
+<!--Page avec les 3 Habitats-->
+<section class="w-screen bg-secondary shadow pb-4 pt-4">
+  <!-- Titre de la section -->
+  <div class="text-center mb-4">
+    <h1
+      class="text-xl sm:text-2xl md:text-6xl font-bold text-primary font-serif"
+    >
+      Nos Habitats
+    </h1>
+    <h3 class="text-lg text-quinary font-sans">
+      Découvrez les habitats naturels de nos animaux
+    </h3>
+  </div>
+
+  <!-- Utilisation de flex avec un layout en colonne pour mobile -->
+  <div
+    class="flex flex-col sm:flex-row sm:flex-nowrap justify-center gap-6 px-6 sm:px-12 pb-4"
+  >
+    <!-- Utilisation d'une seule boucle @for pour afficher tous les habitats -->
+    @for (habitat of habitats; track habitat.id) {
+    <a
+      [routerLink]="['/habitat', habitat.id]"
+      class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
+      appBorderCard
+    >
+      <div class="w-full">
+        <div
+          class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
+        >
+          {{ habitat.name }}
+          <!-- Dynamique pour chaque habitat -->
+        </div>
+      </div>
+
+      <div class="relative group w-full h-64">
+        <img
+          [src]="habitat.image"
+          [alt]="'Habitat de ' + habitat.name"
+          class="w-full h-full object-cover rounded-b-lg"
+        />
+      </div>
+    </a>
+    }
+  </div>
+  <!-- Bouton de retour -->
+  <div class="flex justify-center">
+    <app-button
+      [text]="'Retour accueil'"
+      [type]="'button'"
+      [color]="'tertiary'"
+      [rounded]="true"
+      class="w-1/4 lg:w-1/4 font-bold"
+      (click)="goBack()"
+    ></app-button>
+  </div>
+</section>

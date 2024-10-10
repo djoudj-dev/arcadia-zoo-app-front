@@ -4,7 +4,7 @@
     class="bg-secondary w-full mx-auto p-4 flex items-center justify-between flex-wrap md:p-5"
   >
     <a
-      href="#top"
+      [routerLink]="['/']"
       aria-label="Accueil du portfolio"
       class="text-lg lg:text-xl text-primary font-bold"
     >
@@ -43,7 +43,7 @@
     >
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          href="#accueil"
+          [routerLink]="['/']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
           >Accueil</a
         >
@@ -57,7 +57,7 @@
       </li>
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          href="#habitats"
+          [routerLink]="['/habitats']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
           >Habitats</a
         >
