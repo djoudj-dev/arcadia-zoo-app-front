@@ -9,7 +9,7 @@
       {{ habitat.name }}
     </h1>
     <h1 class="text-lg text-quinary font-sans">
-      Découvrez les habitats de notre zoo
+      <p class="text-center py-4">{{ habitat.description }}</p>
     </h1>
     <!-- Image de l'habitat -->
     <div class="w-full flex justify-center rounded-lg overflow-hidden pb-2">
@@ -26,16 +26,9 @@
     <div
       class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
     >
-      <!--Détails de l'habitat-->
-      <div class="w-full pb-4">
-        <p class="text-quinary text-4xl text-center">
-          <span>Description de l'habitat</span>
-        </p>
-        <p class="text-center pt-2">{{ habitat.description }}</p>
-      </div>
       <!--Card des animaux de l'habitat-->
       <div class="w-full flex flex-col items-center">
-        <h2 class="text-2xl text-quinary font-bold font-serif pt-2">
+        <h2 class="text-4xl text-quinary font-bold font-serif pt-2">
           Les animaux de l'habitat
         </h2>
         <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
