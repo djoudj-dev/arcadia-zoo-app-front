@@ -1,44 +1,52 @@
-<section class="min-h-screen flex items-center justify-center bg-gray-50">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md">
-    <h2 class="text-xl sm:text-2xl font-bold text-center mb-6 text-gray-900">Connexion</h2>
+<section class="h-auto flex items-center justify-center bg-primary">
+  <div
+    class="bg-secondary p-6 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md my-8"
+  >
+    <h2 class="text-xl sm:text-2xl font-bold text-center mb-6 text-quinary">
+      Connexion
+    </h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <!-- Champ d'email -->
       @if (loginForm.get('username')) {
-        <div class="mb-4">
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            id="email"
-            formControlName="username"
-            type="email"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-            placeholder="Entrez votre email"
-          />
-          @if (loginForm.get('username')?.invalid && loginForm.get('username')?.touched) {
-            <div class="text-red-500 text-xs mt-2">
-              Un email valide est requis.
-            </div>
-          }
-        </div>
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-700"
+          >Email</label
+        >
+        <input
+          id="email"
+          formControlName="username"
+          type="email"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          placeholder="Entrez votre email"
+        />
+        @if (loginForm.get('username')?.invalid &&
+        loginForm.get('username')?.touched) {
+        <div class="text-red-500 text-xs mt-2">Un email valide est requis.</div>
+        }
+      </div>
       }
 
       <!-- Champ de mot de passe -->
       @if (loginForm.get('password')) {
-        <div class="mb-6">
-          <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-          <input
-            id="password"
-            formControlName="password"
-            type="password"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-            placeholder="Entrez votre mot de passe"
-          />
-          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-            <div class="text-red-500 text-xs mt-2">
-              Le mot de passe doit comporter au moins 6 caractères.
-            </div>
-          }
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700"
+          >Mot de passe</label
+        >
+        <input
+          id="password"
+          formControlName="password"
+          type="password"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          placeholder="Entrez votre mot de passe"
+        />
+        @if (loginForm.get('password')?.invalid &&
+        loginForm.get('password')?.touched) {
+        <div class="text-red-500 text-xs mt-2">
+          Le mot de passe doit comporter au moins 6 caractères.
         </div>
+        }
+      </div>
       }
 
       <!-- Bouton de connexion -->
