@@ -8,11 +8,12 @@ import {
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Service } from '../../../core/models/service.model';
 import { SERVICES } from '../../../reviews/mocks/services-mock.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-services-overview',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, RouterLink],
   templateUrl: './services-overview.component.html',
 })
 export class ServicesOverviewComponent implements AfterViewInit {
