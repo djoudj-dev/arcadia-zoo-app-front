@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NavComponent } from '../../shared/components/header/navbar/nav.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Habitat } from '../../core/models/habitat.model';
+import { HABITATS } from '../../reviews/mocks/habitats-mock.component';
 
 @Component({
   selector: 'app-animal',
@@ -22,6 +24,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 })
 export class AnimalComponent implements OnInit {
   animal: Animal | undefined;
+  habitat: Habitat | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
@@ -29,10 +32,24 @@ export class AnimalComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     console.log('Route param ID:', id);
 
+    // Récupérer l'animal
     this.animal = ANIMALS.find((animal) => animal.id === Number(id));
+
+    // Récupérer l'habitat associé à l'animal
+    if (this.animal) {
+      this.habitat = HABITATS.find(
+        (habitat) => habitat.id === this.animal?.habitatId
+      );
+    }
   }
 
   goBack() {
     this.router.navigate(['/']);
+  }
+
+  goHabitat() {
+    if (this.habitat) {
+      this.router.navigate(['/habitat', this.habitat.id]); // Redirection vers l'habitat spécifique
+    }
   }
 }

@@ -12,6 +12,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '150 à 300 kg selon le sexe et la sous-espèce',
     diet: `Carnivore. Raihan se nourrit de grands herbivores comme les cerfs, sangliers, buffles, ainsi que de plus petites proies comme les singes et les oiseaux.`,
     habitats: ['jungle'],
+    habitatId: 2,
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '5 à 35 kg selon l’espèce',
     diet: `Omnivore. Ziko mange des fruits, graines, feuilles, insectes, et parfois de petits animaux comme des lézards ou des oiseaux.`,
     habitats: ['jungle'],
+    habitatId: 2,
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '0,3 à 1,5 kg selon l’espèce',
     diet: `Herbivore. Kapi mange des fruits, graines, noix, baies, et parfois des fleurs et du nectar.`,
     habitats: ['jungle'],
+    habitatId: 2,
   },
   {
     id: 4,
@@ -45,6 +48,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '1 à 20 kg selon l’espèce',
     diet: `Carnivore. Liana chasse des petits mammifères, oiseaux, lézards, et avale ses proies entières.`,
     habitats: ['jungle'],
+    habitatId: 2,
   },
   // Ajoute les propriétés des animaux des marais selon Marais.txt
   {
@@ -57,6 +61,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '500 à 1 000 kg pour les grands spécimens',
     diet: `Carnivore. Grom mange des poissons, oiseaux, amphibiens et parfois de grands mammifères lorsqu'ils s'approchent trop de l'eau. Il est opportuniste et se nourrit également de charognes.`,
     habitats: ['marais'],
+    habitatId: 3,
   },
   {
     id: 6,
@@ -68,6 +73,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '1 à 2,5 kg selon l’espèce',
     diet: `Carnivore. Nymbus se nourrit de poissons, grenouilles, insectes aquatiques et petits reptiles qu'il attrape dans l'eau ou à proximité des rives.`,
     habitats: ['marais'],
+    habitatId: 3,
   },
   {
     id: 7,
@@ -79,6 +85,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '0,1 à 0,5 kg selon l’espèce',
     diet: `Carnivore. Flip mange des insectes, des petits invertébrés comme les vers, les mouches et parfois de petits poissons ou têtards.`,
     habitats: ['marais'],
+    habitatId: 3,
   },
   {
     id: 8,
@@ -90,6 +97,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '1 à 10 kg selon l’espèce',
     diet: `Carnivore. Sly se nourrit principalement de poissons, grenouilles et autres petits animaux aquatiques. Il chasse en nageant dans l'eau, parfois en s'approchant des nids d'oiseaux près des rives.`,
     habitats: ['marais'],
+    habitatId: 3,
   },
   // Ajoute les propriétés des animaux de la savane selon Savane.txt
   {
@@ -102,6 +110,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '150 à 250 kg (les mâles étant plus grands que les femelles)',
     diet: `Carnivore. Aslan se nourrit de grands herbivores comme les zèbres, les gnous, les buffles et parfois des girafes. Il chasse en groupe, souvent avec l'aide des lionnes de la troupe.`,
     habitats: ['savane'],
+    habitatId: 1,
   },
   {
     id: 10,
@@ -113,6 +122,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '4 000 à 6 000 kg',
     diet: `Herbivore. Tembo mange des feuilles, de l'écorce, des fruits, des branches et des herbes. Il peut consommer jusqu'à 150 kg de nourriture par jour.`,
     habitats: ['savane'],
+    habitatId: 1,
   },
   {
     id: 11,
@@ -124,6 +134,7 @@ export const ANIMALS: Animal[] = [
     weightRange: '800 à 1 200 kg',
     diet: `Herbivore. Zuri se nourrit principalement des feuilles d'acacias, mais elle mange aussi d'autres feuillages, fleurs et fruits disponibles dans les arbres.`,
     habitats: ['savane'],
+    habitatId: 1,
   },
   {
     id: 12,
@@ -135,5 +146,6 @@ export const ANIMALS: Animal[] = [
     weightRange: '40 à 65 kg',
     diet: `Carnivore. Dash chasse principalement des petites antilopes comme les gazelles, ainsi que des lièvres et parfois de jeunes gnous ou zèbres. Il utilise sa vitesse pour attraper ses proies en les poursuivant.`,
     habitats: ['savane'],
+    habitatId: 1,
   },
 ];

@@ -26,7 +26,9 @@
 
       <!-- Détails de l'animal -->
       <div class="w-1/2 mt-2 text-left">
-        <p class="text-quinary text-2xl font-semibold">{{ animal.species }}</p>
+        <p class="text-quinary text-2xl font-semibold text-center">
+          {{ animal.species }}
+        </p>
         <p class="text-gray-600 text-base mt-2">
           <span>Habitat :</span> {{ animal.habitat }}
         </p>
@@ -40,19 +42,28 @@
           <span>Régime :</span> {{ animal.diet }}
         </p>
       </div>
+      <!-- Bouton de retour -->
+      <div class="w-full flex justify-center pt-8">
+        <app-button
+          [text]="'Retour accueil'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+          [rounded]="true"
+          class="w-1/4 lg:w-1/4 font-bold"
+          (click)="goBack()"
+        ></app-button>
+      </div>
+      <div class="w-full flex justify-center pt-8">
+        <app-button
+          [text]="'Retour habitat'"
+          [type]="'button'"
+          [variant]="'tertiary'"
+          [rounded]="true"
+          class="w-1/4 lg:w-1/4 font-bold"
+          (click)="goHabitat()"
+        ></app-button>
+      </div>
     </div>
-  </div>
-
-  <!-- Bouton de retour -->
-  <div class="w-full flex justify-center mt-4">
-    <app-button
-      [text]="'Retour'"
-      [type]="'button'"
-      [variant]="'tertiary'"
-      [rounded]="true"
-      class="w-1/4 lg:w-1/4"
-      (click)="goBack()"
-    ></app-button>
   </div>
 </section>
 }

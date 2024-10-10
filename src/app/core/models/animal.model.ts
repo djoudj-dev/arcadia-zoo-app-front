@@ -8,4 +8,5 @@ export interface Animal {
   diet: string;
   image: string;
   habitats: string[];
+  habitatId: number;
 }
