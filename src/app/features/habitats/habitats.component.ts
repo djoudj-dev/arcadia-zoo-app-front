@@ -9,7 +9,6 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   standalone: true,
   imports: [RouterLink, ButtonComponent],
   templateUrl: './habitats.component.html',
-  styleUrl: './habitats.component.css',
 })
 export class HabitatsComponent {
   habitats: Habitat[] = HABITATS;
