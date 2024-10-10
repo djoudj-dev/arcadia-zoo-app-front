@@ -5,6 +5,7 @@ import { HabitatComponent } from './features/habitats/habitat/habitat.component'
 import { HabitatsComponent } from './features/habitats/habitats.component';
 import { ServicesComponent } from './features/services/services.component';
 import { ServiceComponent } from './features/services/service/service.component';
+import { ContactComponent } from './features/contact/contact.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,5 +14,6 @@ export const routes: Routes = [
   { path: 'habitats', component: HabitatsComponent, title: 'Habitat' },
   { path: 'services', component: ServicesComponent, title: 'Services' },
   { path: 'service/:id', component: ServiceComponent, title: 'Service' },
+  { path: 'contact', component: ContactComponent, title: 'Contact' },
   { path: '**', redirectTo: '' },
 ];
