@@ -24,9 +24,14 @@
         class="w-full h-full object-cover rounded-full"
       />
       <div
-        class="overlay absolute inset-0 flex items-center justify-center rounded-full bg-quaternary bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute inset-0 flex flex-col items-center justify-center bg-quaternary bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
       >
-        <span class="text-white font-sans text-4xl">{{ service.name }}</span>
+        <span class="text-quinary text-2xl md:text-3xl font-sans">{{
+          service.name
+        }}</span>
+        <span class="text-primary text-center text-lg px-2 mt-2">{{
+          service.description
+        }}</span>
       </div>
     </div>
     }
