@@ -8,6 +8,7 @@ import { ServiceComponent } from './features/services/service/service.component'
 import { ContactComponent } from './features/contact/contact.component';
 import { LoginComponent } from './core/login/login.component';
 import { VetComponent } from './features/vet/vet.component';
+import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,6 +19,11 @@ export const routes: Routes = [
   { path: 'service/:id', component: ServiceComponent, title: 'Service' },
   { path: 'contact', component: ContactComponent, title: 'Contact' },
   { path: 'login', component: LoginComponent, title: 'Connexion' },
-  { path: 'vet', component: VetComponent, title: 'Vétérinaire' },
+  {
+    path: 'vet',
+    component: VetComponent,
+    title: 'Vétérinaire',
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: '' },
 ];
