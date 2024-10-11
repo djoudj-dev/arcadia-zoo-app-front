@@ -8,7 +8,7 @@ import { ServiceComponent } from './features/services/service/service.component'
 import { ContactComponent } from './features/contact/contact.component';
 import { LoginComponent } from './core/login/login.component';
 import { VetComponent } from './features/vet/vet.component';
-import { authGuard } from './core/auth.guard';
+import { authGuard } from './core/auth/guard/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

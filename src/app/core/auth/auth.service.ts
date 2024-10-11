@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from './models/user.model';
-import { users } from './mocks/user-mock.component';
+import { User } from '../models/user.model';
+import { users } from '../mocks/user-mock.component';
 
 @Injectable({
   providedIn: 'root',
