@@ -1,5 +1,5 @@
-import { Animal } from '../../core/models/animal.model';
-import { VetNote } from '../../core/models/vetnote.model';
+import { Animal } from '../models/animal.model';
+import { VetNote } from '../models/vetnote.model';
 import { MOCK_VET_NOTES } from './vet-note-mock.component';
 
 export const ANIMALS: Animal[] = [

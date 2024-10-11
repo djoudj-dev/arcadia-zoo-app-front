@@ -1,4 +1,4 @@
-import { Vet } from '../../core/models/vet.model';
+import { Vet } from '../models/vet.model';
 
 export const MOCK_VETS: Vet[] = [
   // Spécialistes pour les animaux de la jungle

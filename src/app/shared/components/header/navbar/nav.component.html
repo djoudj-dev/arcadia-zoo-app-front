@@ -19,21 +19,13 @@
       class="cursor-pointer w-7 md:hidden"
     >
       <!-- Icône du menu hamburger (fermé) -->
-      <img
-        *ngIf="!isMenuOpen"
-        width="28"
-        height="28"
-        src="images/menu.svg"
-        alt="Ouvrir le menu"
-      />
+      @if (!isMenuOpen) {
+      <img width="28" height="28" src="images/menu.svg" alt="Ouvrir le menu" />
+      }
       <!-- Icône du menu ouvert (croix) -->
-      <img
-        *ngIf="isMenuOpen"
-        width="28"
-        height="28"
-        src="images/cross.svg"
-        alt="Fermer le menu"
-      />
+      @if (isMenuOpen) {
+      <img width="28" height="28" src="images/cross.svg" alt="Fermer le menu" />
+      }
     </button>
 
     <!-- Menu visible sur grand écran et caché sur mobile -->
@@ -69,6 +61,23 @@
           >Contact</a
         >
       </li>
+      @if (authService.isAuthenticated() && authService.hasRole('vet')) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          [routerLink]="['/vet']"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+          >Vétérinaire</a
+        >
+      </li>
+      } @if (authService.isAuthenticated()) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          (click)="logout()"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+          >Déconnexion</a
+        >
+      </li>
+      } @if (!authService.isAuthenticated()) {
       <li class="block py-3 md:inline md:py-0">
         <a
           [routerLink]="['/login']"
@@ -76,6 +85,7 @@
           >Connexion</a
         >
       </li>
+      }
     </ul>
   </div>
   <!-- Menu pour mobile -->
@@ -112,6 +122,23 @@
         >Contact</a
       >
     </li>
+    @if ("authService.hasRole('vet')") {
+    <li class="block py-3 md:inline md:py-0 md:mr-6">
+      <a
+        [routerLink]="['/vet']"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+        >Vétérinaire</a
+      >
+    </li>
+    } @if (authService.isAuthenticated()) {
+    <li class="block py-3 md:inline md:py-0 md:mr-6">
+      <a
+        (click)="logout()"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+        >Déconnexion</a
+      >
+    </li>
+    } @if (!authService.isAuthenticated()) {
     <li class="block py-3 md:inline md:py-0">
       <a
         [routerLink]="['/login']"
@@ -119,6 +146,7 @@
         >Connexion</a
       >
     </li>
+    }
   </ul>
 </nav>
 <app-banner></app-banner>

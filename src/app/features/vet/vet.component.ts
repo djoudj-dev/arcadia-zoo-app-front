@@ -8,10 +8,10 @@ import {
 } from '@angular/forms';
 import { VetNote } from '../../core/models/vetnote.model';
 import { Vet } from '../../core/models/vet.model';
-import { MOCK_VET_NOTES } from '../../reviews/mocks/vet-note-mock.component';
-import { MOCK_VETS } from '../../reviews/mocks/vet-mock.component';
+import { MOCK_VET_NOTES } from '../../core/mocks/vet-note-mock.component';
+import { MOCK_VETS } from '../../core/mocks/vet-mock.component';
 import { Animal } from '../../core/models/animal.model';
-import { ANIMALS } from '../../reviews/mocks/animals-mock.component';
+import { ANIMALS } from '../../core/mocks/animals-mock.component';
 import { DatePipe } from '@angular/common';
 
 @Component({
