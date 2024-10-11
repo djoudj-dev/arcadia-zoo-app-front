@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { BannerComponent } from '../banner/banner.component';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/auth.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-nav',
