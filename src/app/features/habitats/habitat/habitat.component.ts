@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Habitat } from '../../../core/models/habitat.model';
-import { HABITATS } from '../../../reviews/mocks/habitats-mock.component';
+import { HABITATS } from '../../../core/mocks/habitats-mock.component';
 
 @Component({
   selector: 'app-habitat',

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 import { Habitat } from '../../../core/models/habitat.model';
-import { HABITATS } from '../../../reviews/mocks/habitats-mock.component';
+import { HABITATS } from '../../../core/mocks/habitats-mock.component';
 import { RouterLink } from '@angular/router';
 
 @Component({

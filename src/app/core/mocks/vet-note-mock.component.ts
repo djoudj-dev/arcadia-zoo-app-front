@@ -1,4 +1,4 @@
-import { VetNote } from '../../core/models/vetnote.model';
+import { VetNote } from '../models/vetnote.model';
 
 export const MOCK_VET_NOTES: VetNote[] = [
   {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Service } from '../../../core/models/service.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SERVICES } from '../../../reviews/mocks/services-mock.component';
+import { SERVICES } from '../../../core/mocks/services-mock.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
