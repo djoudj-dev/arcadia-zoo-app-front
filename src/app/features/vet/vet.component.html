@@ -120,7 +120,8 @@
       @for (animal of animals; track animal.id) { @if (animal.id ===
       note.animalId) {
       <h2 class="text-xl font-bold text-tertiary mb-2">
-        Nom de l'animal: {{ animal.name }}
+        Fiche de : {{ animal.name }} | Fait le :
+        {{ note.visitDate | date : "dd/MM/yyyy" }}
       </h2>
       } }
 
@@ -131,7 +132,7 @@
 
       <!-- Bouton pour afficher/masquer les détails -->
       <button
-        class="text-primary hover:text-secondary font-semibold mt-2"
+        class="text-tertiary hover:text-secondary font-semibold mt-2"
         (click)="toggleDetails(note)"
       >
         {{ note.showDetails ? "Masquer les détails" : "Voir les détails" }}
