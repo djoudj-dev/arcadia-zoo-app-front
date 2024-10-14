@@ -4,4 +4,5 @@ export interface Review {
   date: string;
   message: string;
   rating: number;
+  accepted: boolean;
 }
