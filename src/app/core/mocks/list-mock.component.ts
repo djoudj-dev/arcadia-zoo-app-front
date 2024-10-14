@@ -8,6 +8,7 @@ export const REVIEW: Review[] = [
     message:
       'Super expérience, je recommande vivement le zoo ! Les animaux sont bien soignés et le personnel est très accueillant.',
     rating: 5,
+    accepted: true,
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const REVIEW: Review[] = [
     message:
       'Très bon accueil et les habitats des animaux sont impressionnants. Idéal pour une sortie en famille.',
     rating: 4,
+    accepted: true,
   },
   {
     id: 3,
@@ -24,6 +26,7 @@ export const REVIEW: Review[] = [
     message:
       'Nous avons passé une agréable journée. Cependant, certains enclos étaient un peu trop bondés à mon goût.',
     rating: 3,
+    accepted: true,
   },
   {
     id: 4,
@@ -32,6 +35,7 @@ export const REVIEW: Review[] = [
     message:
       'Le personnel était chaleureux et la visite guidée très enrichissante. À refaire sans hésitation !',
     rating: 5,
+    accepted: true,
   },
   {
     id: 5,
@@ -40,6 +44,7 @@ export const REVIEW: Review[] = [
     message:
       "Une belle journée en famille. Toutefois, j'aurais aimé plus d'espaces ombragés pour les visiteurs.",
     rating: 4,
+    accepted: true,
   },
   {
     id: 6,
@@ -48,6 +53,7 @@ export const REVIEW: Review[] = [
     message:
       'Le zoo est magnifique et les animaux semblent en pleine santé. Je reviendrai avec plaisir.',
     rating: 5,
+    accepted: true,
   },
   {
     id: 7,
@@ -56,6 +62,7 @@ export const REVIEW: Review[] = [
     message:
       'Les enfants ont adoré, surtout la visite en petit train. Une belle sortie éducative.',
     rating: 4,
+    accepted: true,
   },
   {
     id: 8,
@@ -64,6 +71,7 @@ export const REVIEW: Review[] = [
     message:
       'Les animaux sont superbes, mais le prix d’entrée est un peu élevé selon moi.',
     rating: 3,
+    accepted: true,
   },
   {
     id: 9,
@@ -72,6 +80,7 @@ export const REVIEW: Review[] = [
     message:
       'Une superbe expérience, j’ai particulièrement apprécié les espaces dédiés à la conservation des espèces menacées.',
     rating: 5,
+    accepted: true,
   },
   {
     id: 10,
@@ -80,6 +89,7 @@ export const REVIEW: Review[] = [
     message:
       "Le zoo est bien entretenu, mais j'ai trouvé la restauration sur place assez limitée.",
     rating: 4,
+    accepted: true,
   },
   {
     id: 11,
@@ -88,5 +98,6 @@ export const REVIEW: Review[] = [
     message:
       'La diversité des animaux est impressionnante, un très bon moment passé en famille.',
     rating: 5,
+    accepted: true,
   },
 ];
