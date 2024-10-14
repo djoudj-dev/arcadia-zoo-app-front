@@ -1,8 +1,6 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  Output,
   ViewChild,
   OnInit,
   AfterViewInit,
@@ -12,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ModalService } from '../modal.service';
 import { RateComponent } from '../../shared/components/rate/rate.component';
+import { Review } from '../../core/models/review.model';
+import { ReviewService } from '../review/review.service';
 
 @Component({
   selector: 'app-add-review',
@@ -21,23 +21,22 @@ import { RateComponent } from '../../shared/components/rate/rate.component';
   styleUrls: ['./add-review.component.css'],
 })
 export class AddReviewComponent implements OnInit, AfterViewInit {
-  successMessage: string = '';
   @Input() stars: number[] = [1, 2, 3, 4, 5];
   @ViewChild('reviewForm') private reviewForm!: ElementRef<HTMLFormElement>;
-  @Output() add = new EventEmitter<{
-    name: string;
-    date: string;
-    message: string;
-    rating: number;
-  }>();
 
+  successMessage: string = '';
+  errorMessage: string = '';
   name: string = '';
   date: string = '';
   message: string = '';
   rating: number = 0;
+  accepted: boolean = false;
   isModalOpen: boolean = false;
 
-  constructor(private modalService: ModalService) {} // Injectez le service
+  constructor(
+    private modalService: ModalService,
+    private reviewService: ReviewService
+  ) {}
 
   ngOnInit() {
     this.modalService.modalOpen$.subscribe((isOpen) => {
@@ -52,23 +51,36 @@ export class AddReviewComponent implements OnInit, AfterViewInit {
   }
 
   addReview() {
-    console.log('Add review');
-    this.add.emit({
+    if (!this.accepted) {
+      this.errorMessage =
+        'Vous devez accepter la publication de votre nom et commentaire pour envoyer votre avis.';
+      return;
+    }
+
+    const newReview: Review = {
+      id: Date.now(), // Utiliser un timestamp pour un ID unique
       name: this.name,
       date: this.date,
       message: this.message,
       rating: this.rating,
-    });
+      accepted: this.accepted,
+    };
+
+    this.reviewService.addReview(newReview);
+
+    this.successMessage = 'Votre avis a été envoyé avec succès !';
+    this.errorMessage = '';
+
     if (this.reviewForm && this.reviewForm.nativeElement) {
       this.reviewForm.nativeElement.reset();
     }
-    this.successMessage = 'Votre avis a été envoyé avec succès !';
+
     setTimeout(() => {
       this.modalService.closeModal();
     }, 2500);
   }
 
   closeModal() {
-    this.modalService.closeModal(); // Utilisez le service pour fermer le modal
+    this.modalService.closeModal();
   }
 }

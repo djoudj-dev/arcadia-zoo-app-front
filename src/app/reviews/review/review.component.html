@@ -32,6 +32,7 @@
     </button>
 
     <!-- Carte d'avis unique en accordéon -->
+    @if (reviews$ | async; as reviews) { @if (reviews.length > 0) {
     <div
       class="bg-secondary rounded-lg p-4 shadow-md w-3/4 max-w-sm md:max-w-md mx-auto"
     >
@@ -57,6 +58,11 @@
         {{ reviews[currentReviewIndex].message }}
       </p>
     </div>
+    } @else {
+    <p class="text-center text-quinary">
+      Aucun avis disponible pour le moment.
+    </p>
+    } }
 
     <!-- Bouton de défilement droite -->
     <button
@@ -100,4 +106,4 @@
     </div>
   </div>
 </section>
-<app-add-review />
+<app-add-review></app-add-review>

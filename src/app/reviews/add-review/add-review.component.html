@@ -43,6 +43,14 @@
       <p class="font-bold">Merci pour votre avis !</p>
       <p>{{ successMessage }}</p>
     </div>
+    } @if (errorMessage){
+    <div
+      class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4"
+      role="alert"
+    >
+      <p class="font-bold">Erreur !</p>
+      <p>{{ errorMessage }}</p>
+    </div>
     }
 
     <form
@@ -119,15 +127,13 @@
       <!-- Case à cocher -->
       <div class="flex items-start mb-4">
         <input
-          id="accept-checkbox"
+          id="checkbox"
           type="checkbox"
+          [(ngModel)]="accepted"
+          name="accepted"
           class="w-4 h-4 border-gray-300 rounded focus:ring-secondary"
-          required
         />
-        <label
-          for="accept-checkbox"
-          class="ml-2 text-sm font-medium text-gray-900"
-        >
+        <label for="checkbox" class="ml-2 text-sm font-medium text-gray-900">
           En cochant cette case, vous acceptez la publication de votre nom et
           commentaire sur le site.
         </label>
