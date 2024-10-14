@@ -6,23 +6,24 @@ import {
   AfterViewInit,
   Input,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ModalService } from '../modal.service';
 import { RateComponent } from '../../shared/components/rate/rate.component';
 import { Review } from '../../core/models/review.model';
 import { ReviewService } from '../review/review.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-review',
   standalone: true,
-  imports: [ButtonComponent, FormsModule, RateComponent],
+  imports: [ButtonComponent, RateComponent, FormsModule],
   templateUrl: './add-review.component.html',
   styleUrls: ['./add-review.component.css'],
 })
 export class AddReviewComponent implements OnInit, AfterViewInit {
   @Input() stars: number[] = [1, 2, 3, 4, 5];
-  @ViewChild('reviewForm') private reviewForm!: ElementRef<HTMLFormElement>;
+  @ViewChild('reviewForm', { static: true })
+  reviewForm!: ElementRef<HTMLFormElement>;
 
   successMessage: string = '';
   errorMessage: string = '';
@@ -45,8 +46,9 @@ export class AddReviewComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    if (this.reviewForm && this.reviewForm.nativeElement) {
-      this.reviewForm.nativeElement.reset();
+    // Réinitialiser le formulaire à l'ouverture de la modal
+    if (this.reviewForm && this.isModalOpen) {
+      this.resetForm();
     }
   }
 
@@ -71,16 +73,32 @@ export class AddReviewComponent implements OnInit, AfterViewInit {
     this.successMessage = 'Votre avis a été envoyé avec succès !';
     this.errorMessage = '';
 
-    if (this.reviewForm && this.reviewForm.nativeElement) {
-      this.reviewForm.nativeElement.reset();
-    }
+    // Réinitialiser le formulaire après l'envoi
+    this.resetForm();
 
+    // Fermez la modal après un certain temps
     setTimeout(() => {
       this.modalService.closeModal();
+      this.successMessage = '';
+      this.errorMessage = '';
     }, 2500);
   }
 
   closeModal() {
     this.modalService.closeModal();
+  }
+
+  resetForm() {
+    // Réinitialisation des champs
+    this.name = '';
+    this.date = '';
+    this.message = '';
+    this.rating = 0;
+    this.accepted = false;
+
+    // Réinitialisation visuelle du formulaire
+    if (this.reviewForm) {
+      this.reviewForm.nativeElement.reset();
+    }
   }
 }
