@@ -16,7 +16,7 @@
     class="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-4 mb-4 px-4"
   >
     <!-- Boucle @for pour afficher les cartes d'animaux -->
-    @for (animal of animals.slice(0, 4); track animal.id) {
+    @for (animal of displayedAnimals; track animal.id) {
     <div
       class="flex justify-center pt-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-auto"
     >
