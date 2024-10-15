@@ -5,4 +5,5 @@ export interface Review {
   message: string;
   rating: number;
   accepted: boolean;
+  validated: boolean;
 }

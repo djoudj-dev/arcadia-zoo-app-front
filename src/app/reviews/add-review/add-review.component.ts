@@ -5,8 +5,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ModalService } from '../modal.service';
-import { ReviewService } from '../review/review.service';
+import { ModalService } from '../services/modal.service';
+import { ReviewService } from '../services/review.service';
 import { Review } from '../../core/models/review.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { RateComponent } from '../../shared/components/rate/rate.component';
