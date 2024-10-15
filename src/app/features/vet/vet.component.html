@@ -1,134 +1,145 @@
 <section class="min-h-screen bg-primary p-4 flex flex-col items-center">
-  <!-- Titre de la section -->
   <h1 class="text-2xl sm:text-4xl font-bold text-quinary mb-8">
     Espace Vétérinaire
   </h1>
 
-  <!-- Formulaire pour remplir un compte rendu vétérinaire -->
-  <form
-    [formGroup]="vetNoteForm"
-    (ngSubmit)="onSubmit()"
-    class="bg-secondary p-6 rounded-lg shadow-md w-full max-w-3xl space-y-6"
-  >
-    <!-- Sélection de l'animal -->
-    <div>
-      <label for="animalId" class="block text-sm font-bold text-quinary">
-        Animal
-      </label>
-      <select
-        id="animalId"
-        formControlName="animalId"
-        class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-      >
-        <option value="" disabled selected>Choisissez un animal</option>
-        @for (animal of animals; track animal.id) {
-        <option [value]="animal.id">{{ animal.name }}</option>
-        }
-      </select>
-    </div>
+  <!-- Bouton pour ouvrir la modale du formulaire -->
+  <app-button
+    [text]="'Ajouter un compte rendu vétérinaire'"
+    [type]="'button'"
+    [color]="'tertiary'"
+    [rounded]="true"
+    class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold pb-8"
+    (click)="openModal()"
+  ></app-button>
 
-    <!-- Conteneur pour afficher "État de l'animal" et "Nourriture donnée" côte à côte -->
-    <div class="flex flex-col sm:flex-row sm:space-x-4">
-      <!-- État de l'animal -->
-      <div class="w-full sm:w-1/2">
-        <label for="animalState" class="block text-sm font-bold text-quinary">
-          État de l'animal
+  <!-- Modal pour le formulaire de compte rendu vétérinaire -->
+  <app-modal [isOpen]="isModalOpen" (close)="closeModal()">
+    <form
+      [formGroup]="vetNoteForm"
+      (ngSubmit)="onSubmit()"
+      class="bg-primary p-6 rounded-lg shadow-md space-y-6"
+    >
+      <!-- Sélection de l'animal -->
+      <div>
+        <label for="animalId" class="block text-sm font-bold text-quinary">
+          Animal
         </label>
-        <input
-          id="animalState"
-          formControlName="animalState"
-          type="text"
+        <select
+          id="animalId"
+          formControlName="animalId"
           class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-          placeholder="Entrez l'état de l'animal"
-        />
+        >
+          <option value="" disabled selected>Choisissez un animal</option>
+          @for (animal of animals; track animal.id) {
+          <option [value]="animal.id">{{ animal.name }}</option>
+          }
+        </select>
       </div>
 
-      <!-- Nourriture donnée -->
-      <div class="w-full sm:w-1/2">
-        <label for="food" class="block text-sm font-bold text-quinary">
-          Nourriture donnée
-        </label>
-        <input
-          id="food"
-          formControlName="food"
-          type="text"
-          class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-          placeholder="Entrez la nourriture donnée"
-        />
-      </div>
-    </div>
+      <!-- État de l'animal et Nourriture donnée côte à côte -->
+      <div class="flex flex-col sm:flex-row sm:space-x-4">
+        <div class="w-full sm:w-1/2">
+          <label for="animalState" class="block text-sm font-bold text-quinary">
+            État de l'animal
+          </label>
+          <input
+            id="animalState"
+            formControlName="animalState"
+            type="text"
+            class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            placeholder="Entrez l'état de l'animal"
+          />
+        </div>
 
-    <!-- Conteneur pour afficher "Grammage de la nourriture" et "Date de passage" côte à côte -->
-    <div class="flex flex-col sm:flex-row sm:space-x-4">
-      <!-- Grammage de la nourriture -->
-      <div class="w-full sm:w-1/2">
-        <label for="foodWeight" class="block text-sm font-bold text-quinary">
-          Grammage de la nourriture (kg)
-        </label>
-        <input
-          id="foodWeight"
-          formControlName="foodWeight"
-          type="number"
-          step="0.1"
-          class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-          placeholder="Entrez le grammage"
-        />
+        <div class="w-full sm:w-1/2">
+          <label for="food" class="block text-sm font-bold text-quinary">
+            Nourriture donnée
+          </label>
+          <input
+            id="food"
+            formControlName="food"
+            type="text"
+            class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            placeholder="Entrez la nourriture donnée"
+          />
+        </div>
       </div>
 
-      <!-- Date de passage -->
-      <div class="w-full sm:w-1/2">
-        <label for="visitDate" class="block text-sm font-bold text-quinary">
-          Date de passage
-        </label>
-        <input
-          id="visitDate"
-          formControlName="visitDate"
-          type="date"
-          class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-        />
+      <!-- Grammage de la nourriture et Date de passage côte à côte -->
+      <div class="flex flex-col sm:flex-row sm:space-x-4">
+        <div class="w-full sm:w-1/2">
+          <label for="foodWeight" class="block text-sm font-bold text-quinary">
+            Poids de la nourriture (kg)
+          </label>
+          <input
+            id="foodWeight"
+            formControlName="foodWeight"
+            type="number"
+            step="0.1"
+            class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            placeholder="Entrez le grammage"
+          />
+        </div>
+
+        <div class="w-full sm:w-1/2">
+          <label for="visitDate" class="block text-sm font-bold text-quinary">
+            Date de passage
+          </label>
+          <input
+            id="visitDate"
+            formControlName="visitDate"
+            type="date"
+            class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          />
+        </div>
       </div>
-    </div>
 
-    <!-- Détails supplémentaires -->
-    <div>
-      <label
-        for="additionalDetails"
-        class="block text-sm font-bold text-quinary"
-      >
-        Détails supplémentaires
-      </label>
-      <textarea
-        id="additionalDetails"
-        formControlName="additionalDetails"
-        rows="4"
-        class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-        placeholder="Entrez des détails supplémentaires"
-      ></textarea>
-    </div>
+      <!-- Détails supplémentaires -->
+      <div>
+        <label
+          for="additionalDetails"
+          class="block text-sm font-bold text-quinary"
+        >
+          Détails supplémentaires
+        </label>
+        <textarea
+          id="additionalDetails"
+          formControlName="additionalDetails"
+          rows="4"
+          class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          placeholder="Entrez des détails supplémentaires"
+        ></textarea>
+      </div>
 
-    <!-- Bouton de soumission -->
-    <div class="flex justify-center">
-      <button
-        type="submit"
-        [disabled]="vetNoteForm.invalid"
-        class="bg-tertiary hover:bg-quaternary text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-quaternary disabled:bg-gray-300 disabled:cursor-not-allowed transition"
-      >
-        Soumettre
-      </button>
-    </div>
-  </form>
+      <!-- Bouton de soumission -->
+      <div class="flex justify-center">
+        <app-button
+          [text]="'Soumettre'"
+          [type]="'submit'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+        ></app-button>
+      </div>
+    </form>
+  </app-modal>
 
-  <!-- Liste des comptes rendus déjà remplis -->
+  <!-- Formulaire d'avis sur les habitats -->
+  <app-note-habitat
+    [habitats]="habitats"
+    (submitNote)="handleSubmitHabitat($event)"
+  ></app-note-habitat>
+
+  <!-- Liste des comptes rendus -->
   <div class="w-full max-w-5xl mt-8">
     <h2 class="text-xl sm:text-2xl font-bold text-quinary mb-4">
       Comptes rendus vétérinaires
     </h2>
 
-    <!-- Grille des cartes: 1 colonne sur mobile, 2 colonnes sur petit écran, 3 colonnes sur écran large -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-      @for (note of vetNotes; track note.id) {
+      @for (note of visibleVetNotes; track note.id) {
       <div class="bg-white p-6 rounded-lg shadow-md flex" appBorderCardAnimal>
-        <!-- Image de l'animal à gauche avec une taille fixe -->
         <div class="w-24 h-24 flex-shrink-0">
           @for (animal of animals; track animal.id) { @if (animal.id ===
           note.animalId) {
@@ -140,24 +151,20 @@
           } }
         </div>
 
-        <!-- Contenu textuel à droite -->
         <div class="flex-1 pl-4">
-          <!-- Titre avec le nom de l'animal et la date de la visite -->
           @for (animal of animals; track animal.id) { @if (animal.id ===
           note.animalId) {
           <h3 class="text-lg font-bold text-tertiary mb-2">
             {{ animal.name }} - Visite le
-            {{ note.visitDate | date : "dd/MM/yyyy" }}
+            {{ note.visitDate | date : "dd/MM/yyyy" : "fr" }}
           </h3>
           } }
 
-          <!-- Affichage de l'état de l'animal -->
           <p class="text-sm text-quinary">
             <span class="font-bold">État de l'animal :</span>
             {{ note.animalState }}
           </p>
 
-          <!-- Bouton pour afficher ou masquer les détails -->
           <button
             class="mt-2 text-sm font-semibold text-tertiary hover:text-quinary"
             (click)="toggleDetails(note)"
@@ -165,7 +172,6 @@
             {{ note.showDetails ? "Masquer les détails" : "Voir les détails" }}
           </button>
 
-          <!-- Détails supplémentaires si showDetails est activé -->
           @if (note.showDetails) {
           <div class="mt-4">
             <p class="text-sm text-gray-700">
@@ -182,6 +188,28 @@
           }
         </div>
       </div>
+      }
+    </div>
+
+    <div class="flex justify-center mt-6 space-x-4">
+      @if (visibleVetNotes.length < vetNotes.length) {
+      <app-button
+        [text]="'Voir plus'"
+        [type]="'button'"
+        [color]="'tertiary'"
+        [rounded]="true"
+        class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+        (click)="loadMore()"
+      ></app-button>
+      } @if (visibleVetNotes.length > notesToShow) {
+      <app-button
+        [text]="'Voir moins'"
+        [type]="'button'"
+        [color]="'quinary'"
+        [rounded]="true"
+        class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+        (click)="showLess()"
+      ></app-button>
       }
     </div>
   </div>

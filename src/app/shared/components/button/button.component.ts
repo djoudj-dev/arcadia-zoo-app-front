@@ -36,4 +36,5 @@ export class ButtonComponent {
     | 'quinary' = 'secondary';
   @Input() noRounded: boolean = false;
   @Input() rounded: boolean = false;
+  @Input() disabled: boolean = false;
 }
