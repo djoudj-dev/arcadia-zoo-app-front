@@ -1,14 +1,8 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Service } from '../../../core/models/service.model';
-import { SERVICES } from '../../../core/mocks/services-mock.component';
 import { RouterLink } from '@angular/router';
+import { ServiceService } from '../../zoo-services/service/service.service';
 
 @Component({
   selector: 'app-services-overview',
@@ -16,30 +10,15 @@ import { RouterLink } from '@angular/router';
   imports: [ButtonComponent, RouterLink],
   templateUrl: './services-overview.component.html',
 })
-export class ServicesOverviewComponent implements AfterViewInit {
-  @ViewChildren('service') serviceElements!: QueryList<ElementRef>;
+export class ServicesOverviewComponent implements OnInit {
+  services: Service[] = [];
 
-  services: Service[] = SERVICES;
+  constructor(private serviceService: ServiceService) {} // Injection du service
 
-  ngAfterViewInit() {
-    this.serviceElements.forEach((element) => {
-      this.addTouchListeners(element);
-    });
-  }
-
-  addTouchListeners(element: ElementRef) {
-    const el = element.nativeElement;
-    el.addEventListener('touchstart', () => {
-      const overlay = el.querySelector('.overlay');
-      if (overlay) {
-        overlay.classList.add('opacity-100');
-      }
-    });
-    el.addEventListener('touchend', () => {
-      const overlay = el.querySelector('.overlay');
-      if (overlay) {
-        overlay.classList.remove('opacity-100');
-      }
+  ngOnInit(): void {
+    // Récupérer les services via le ServiceService
+    this.serviceService.getServices().subscribe((data) => {
+      this.services = data;
     });
   }
 }
