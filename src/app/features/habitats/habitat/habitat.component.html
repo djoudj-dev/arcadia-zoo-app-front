@@ -1,4 +1,3 @@
-<!-- Détails de l'habitat -->
 @if (habitat) {
 <section class="w-full bg-primary shadow py-4">
   <div class="text-center">
@@ -39,7 +38,7 @@
           Les animaux de l'habitat
         </h2>
         <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
-          <!--Boucle pour afficher les animaux de l'habitat-->
+          <!-- Boucle pour afficher les animaux de l'habitat -->
           @for (animal of habitat.animals; track animal.id) {
           <a
             [routerLink]="['/animal', animal.id]"
