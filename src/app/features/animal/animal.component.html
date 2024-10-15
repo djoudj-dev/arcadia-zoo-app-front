@@ -31,7 +31,7 @@
           {{ animal.species }} - ( {{ animal.name }})
         </p>
         <p class="text-sm mt-2 md:text-base">
-          <span class="font-bold">Habitat :</span> {{ animal.habitat }}
+          <span class="font-bold">Habitat :</span> {{ habitat?.name }}
         </p>
         <p class="text-sm mt-2 md:text-base">
           <span class="font-bold">Caractéristiques :</span>
@@ -51,32 +51,26 @@
         class="bg-primary rounded-lg w-full mt-6 text-left sm:w-3/4 md:w-1/2 px-4 py-2"
       >
         <h2 class="text-xl font-bold text-tertiary">Note du vétérinaire</h2>
-        @if (animal.vetNote.animalState) {
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">État de l'animal :</span>
           {{ animal.vetNote.animalState }}
         </p>
-        } @if (animal.vetNote.food) {
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Nourriture proposée :</span>
           {{ animal.vetNote.food }}
         </p>
-        } @if (animal.vetNote.foodWeight) {
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Grammage :</span>
           {{ animal.vetNote.foodWeight }} kg
         </p>
-        } @if (animal.vetNote.visitDate) {
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Date de passage :</span>
           {{ animal.vetNote.visitDate | date : "dd/MM/yyyy" }}
         </p>
-        } @if (animal.vetNote.additionalDetails) {
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Détails supplémentaires :</span>
           {{ animal.vetNote.additionalDetails }}
         </p>
-        }
       </div>
       }
 
