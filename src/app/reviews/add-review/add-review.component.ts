@@ -1,71 +1,77 @@
+import { Component, OnInit } from '@angular/core';
 import {
-  Component,
-  ElementRef,
-  ViewChild,
-  OnInit,
-  AfterViewInit,
-  Input,
-} from '@angular/core';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ModalService } from '../modal.service';
-import { RateComponent } from '../../shared/components/rate/rate.component';
-import { Review } from '../../core/models/review.model';
 import { ReviewService } from '../review/review.service';
-import { FormsModule } from '@angular/forms';
+import { Review } from '../../core/models/review.model';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { RateComponent } from '../../shared/components/rate/rate.component';
 
 @Component({
   selector: 'app-add-review',
   standalone: true,
-  imports: [ButtonComponent, RateComponent, FormsModule],
   templateUrl: './add-review.component.html',
-  styleUrls: ['./add-review.component.css'],
+  imports: [ReactiveFormsModule, ButtonComponent, RateComponent],
 })
-export class AddReviewComponent implements OnInit, AfterViewInit {
-  @Input() stars: number[] = [1, 2, 3, 4, 5];
-  @ViewChild('reviewForm', { static: true })
-  reviewForm!: ElementRef<HTMLFormElement>;
-
+export class AddReviewComponent implements OnInit {
+  addReviewForm!: FormGroup;
   successMessage: string = '';
   errorMessage: string = '';
-  name: string = '';
-  date: string = '';
-  message: string = '';
-  rating: number = 0;
-  accepted: boolean = false;
   isModalOpen: boolean = false;
 
+  // Déclaration de la propriété stars
+  stars: number[] = [1, 2, 3, 4, 5]; // Par défaut, 5 étoiles
+
   constructor(
+    private formBuilder: FormBuilder,
     private modalService: ModalService,
     private reviewService: ReviewService
   ) {}
 
   ngOnInit() {
+    // Initialisation du formulaire avec des validators
+    this.addReviewForm = this.formBuilder.group({
+      name: [
+        '',
+        [Validators.required, Validators.pattern('^[a-zA-ZÀ-ÿ\\s\\-]+$')], // Regex pour les lettres et espaces uniquement
+      ],
+      date: ['', Validators.required], // Pas besoin de pattern ici car le type `date` est géré nativement
+      message: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(500),
+        ], // Validation de longueur pour le commentaire
+      ],
+      rating: [0, Validators.required], // Note obligatoire
+      accepted: [false, Validators.requiredTrue], // L'utilisateur doit cocher pour accepter les conditions
+    });
+
+    // Souscription à l'état de la modal
     this.modalService.modalOpen$.subscribe((isOpen) => {
       this.isModalOpen = isOpen;
+
+      if (this.isModalOpen) {
+        this.resetForm();
+      }
     });
   }
 
-  ngAfterViewInit() {
-    // Réinitialiser le formulaire à l'ouverture de la modal
-    if (this.reviewForm && this.isModalOpen) {
-      this.resetForm();
-    }
-  }
-
+  // Ajouter un nouvel avis
   addReview() {
-    if (!this.accepted) {
-      this.errorMessage =
-        'Vous devez accepter la publication de votre nom et commentaire pour envoyer votre avis.';
+    if (this.addReviewForm.invalid) {
+      this.errorMessage = 'Veuillez remplir correctement le formulaire.';
       return;
     }
 
     const newReview: Review = {
-      id: Date.now(), // Utiliser un timestamp pour un ID unique
-      name: this.name,
-      date: this.date,
-      message: this.message,
-      rating: this.rating,
-      accepted: this.accepted,
+      id: Date.now(), // Générer un ID unique
+      ...this.addReviewForm.value, // Récupérer toutes les valeurs du formulaire
     };
 
     this.reviewService.addReview(newReview);
@@ -73,32 +79,28 @@ export class AddReviewComponent implements OnInit, AfterViewInit {
     this.successMessage = 'Votre avis a été envoyé avec succès !';
     this.errorMessage = '';
 
-    // Réinitialiser le formulaire après l'envoi
-    this.resetForm();
-
-    // Fermez la modal après un certain temps
     setTimeout(() => {
       this.modalService.closeModal();
       this.successMessage = '';
-      this.errorMessage = '';
+      this.resetForm();
     }, 2500);
   }
 
+  // Méthode pour fermer la modal
   closeModal() {
     this.modalService.closeModal();
   }
 
+  // Réinitialiser le formulaire
   resetForm() {
-    // Réinitialisation des champs
-    this.name = '';
-    this.date = '';
-    this.message = '';
-    this.rating = 0;
-    this.accepted = false;
+    this.addReviewForm.reset({
+      rating: 0, // Réinitialisation à une note de 0 par défaut
+      accepted: false, // Par défaut, la case n'est pas cochée
+    });
+  }
 
-    // Réinitialisation visuelle du formulaire
-    if (this.reviewForm) {
-      this.reviewForm.nativeElement.reset();
-    }
+  // Fonction pour faciliter l'accès aux contrôles du formulaire dans le template
+  get f() {
+    return this.addReviewForm.controls;
   }
 }
