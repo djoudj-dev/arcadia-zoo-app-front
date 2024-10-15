@@ -13,6 +13,10 @@
 
   <!-- Liste des animaux avec la directive @for -->
   <div
+    appRandomAnimals
+    [animals]="animals"
+    [count]="4"
+    (updateAnimals)="onUpdateDisplayedAnimals($event)"
     class="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-4 mb-4 px-4"
   >
     <!-- Boucle @for pour afficher les cartes d'animaux -->

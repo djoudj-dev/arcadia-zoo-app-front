@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Animal } from '../../../core/models/animal.model';
+import { AnimalService } from '../../animal/service/animal.service';
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 import { RouterLink } from '@angular/router';
-import { AnimalService } from '../../animal/service/animal.service';
-
+import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
 @Component({
   selector: 'app-animals-overview',
   standalone: true,
-  imports: [BorderCardAnimalDirective, RouterLink],
+  imports: [BorderCardAnimalDirective, RouterLink, RandomAnimalsDirective],
   templateUrl: './animals-overview.component.html',
 })
 export class AnimalsOverviewComponent implements OnInit {
@@ -17,21 +17,15 @@ export class AnimalsOverviewComponent implements OnInit {
   constructor(private animalService: AnimalService) {}
 
   ngOnInit() {
-    // Récupérer les animaux depuis le service
+    // Récupérer les animaux via le service
     this.animalService.getAnimals().subscribe((data) => {
       this.animals = data;
-      this.updateDisplayedAnimals(); // Met à jour les animaux affichés au chargement
-      setInterval(() => {
-        this.updateDisplayedAnimals(); // Mise à jour toutes les 5 secondes
-      }, 5000);
     });
   }
 
-  // Met à jour les animaux affichés en prenant un sous-ensemble aléatoire
-  updateDisplayedAnimals() {
-    this.displayedAnimals = this.animals
-      .sort(() => 0.5 - Math.random()) // Mélange aléatoire des animaux
-      .slice(0, 4); // Sélectionne les 4 premiers animaux après le mélange
+  // Méthode pour mettre à jour la liste d'animaux affichés
+  onUpdateDisplayedAnimals(updatedAnimals: Animal[]) {
+    this.displayedAnimals = updatedAnimals;
   }
 
   // Log l'ID de l'animal cliqué
