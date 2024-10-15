@@ -10,6 +10,7 @@
     >
       Zoo Arcadia
     </a>
+
     <!-- Bouton menu hamburger visible uniquement sur mobile -->
     <button
       (click)="toggleMenu()"
@@ -28,7 +29,7 @@
       }
     </button>
 
-    <!-- Menu visible sur grand écran et caché sur mobile -->
+    <!-- Menu visible sur grand écran -->
     <ul
       id="main-navlist"
       class="hidden md:flex items-center w-full md:w-auto pt-4 md:pt-0 text-primary"
@@ -37,116 +38,148 @@
         <a
           [routerLink]="['/']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Accueil</a
         >
+          Accueil
+        </a>
       </li>
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/services']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Services</a
         >
+          Services
+        </a>
       </li>
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/habitats']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Habitats</a
         >
+          Habitats
+        </a>
       </li>
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/contact']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Contact</a
         >
+          Contact
+        </a>
       </li>
-      @if (authService.isAuthenticated() && authService.hasRole('vet')) {
+
+      <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
+      @if (hasRole('vet')) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/vet']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Vétérinaire</a
         >
+          Vétérinaire
+        </a>
       </li>
-      } @if (authService.isAuthenticated()) {
+      }
+
+      <!-- Lien Déconnexion si l'utilisateur est authentifié -->
+      @if (isAuthenticated()) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           (click)="logout()"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Déconnexion</a
         >
+          Déconnexion
+        </a>
       </li>
-      } @if (!authService.isAuthenticated()) {
+      }
+
+      <!-- Lien Connexion si l'utilisateur n'est pas authentifié -->
+      @if (!isAuthenticated()) {
       <li class="block py-3 md:inline md:py-0">
         <a
           [routerLink]="['/login']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
-          >Connexion</a
         >
+          Connexion
+        </a>
       </li>
       }
     </ul>
   </div>
+
   <!-- Menu pour mobile -->
   <ul
     id="main-navlist-mobile"
     [class.hidden]="!isMenuOpen"
     class="bg-secondary text-center w-full pt-4 text-primary md:hidden"
   >
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Accueil</a
       >
+        Accueil
+      </a>
     </li>
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/services']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Services</a
       >
+        Services
+      </a>
     </li>
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/habitats']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Habitats</a
       >
+        Habitats
+      </a>
     </li>
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/contact']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Contact</a
       >
+        Contact
+      </a>
     </li>
-    @if ("authService.hasRole('vet')") {
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+
+    <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
+    @if (hasRole('vet')) {
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/vet']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Vétérinaire</a
       >
+        Vétérinaire
+      </a>
     </li>
-    } @if (authService.isAuthenticated()) {
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    }
+
+    <!-- Lien Déconnexion sur mobile si l'utilisateur est authentifié -->
+    @if (isAuthenticated()) {
+    <li class="block py-3 md:mr-6">
       <a
         (click)="logout()"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Déconnexion</a
       >
+        Déconnexion
+      </a>
     </li>
-    } @if (!authService.isAuthenticated()) {
-    <li class="block py-3 md:inline md:py-0">
+    }
+
+    <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié -->
+    @if (!isAuthenticated()) {
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/login']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
-        >Connexion</a
       >
+        Connexion
+      </a>
     </li>
     }
   </ul>
 </nav>
-<app-banner></app-banner>
+
+<app-banner />
