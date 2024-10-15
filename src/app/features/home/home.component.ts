@@ -16,6 +16,5 @@ import { AnimalsOverviewComponent } from './animals-overview/animals-overview.co
     ReviewComponent,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
 })
 export class HomeComponent {}
