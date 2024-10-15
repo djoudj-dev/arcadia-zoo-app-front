@@ -9,8 +9,15 @@ import { users } from '../mocks/user-mock.component';
 export class AuthService {
   private currentUser: User | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Initialisation depuis le localStorage au démarrage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      this.currentUser = JSON.parse(storedUser);
+    }
+  }
 
+  // Connexion : vérifier l'utilisateur et stocker dans le localStorage
   login(username: string, password: string): boolean {
     const user = users.find(
       (u) => u.username === username && u.password === password
@@ -23,19 +30,20 @@ export class AuthService {
     return false;
   }
 
+  // Déconnexion : suppression des données utilisateur
   logout(): void {
     this.currentUser = null;
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
 
+  // Vérifier si l'utilisateur est authentifié
   isAuthenticated(): boolean {
-    return this.currentUser !== null || localStorage.getItem('user') !== null;
+    return this.currentUser !== null;
   }
 
+  // Vérifier le rôle de l'utilisateur
   hasRole(roleName: string): boolean {
-    const user =
-      this.currentUser || JSON.parse(localStorage.getItem('user') || '{}');
-    return user.role && user.role.name === roleName;
+    return this.currentUser?.role?.name === roleName;
   }
 }
