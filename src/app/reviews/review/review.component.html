@@ -9,10 +9,11 @@
     </h3>
   </div>
 
+  <!-- Contenu des avis -->
   <div class="relative px-4 max-w-full mx-auto overflow-hidden">
     <!-- Bouton de défilement gauche -->
     <button
-      (click)="previousReview()"
+      (click)="changeReview('previous')"
       class="absolute left-2 sm:left-[calc(20%-4rem)] md:left-[calc(15%-2rem)] lg:left-[calc(25%-2rem)] xl:left-[calc(35%-2rem)] top-1/2 transform -translate-y-1/2 bg-quinary p-2 md:p-3 rounded-full z-10"
     >
       <svg
@@ -32,7 +33,9 @@
     </button>
 
     <!-- Carte d'avis unique en accordéon -->
-    @if (reviews$ | async; as reviews) { @if (reviews.length > 0) {
+    @if (reviews$ | async; as reviews) {
+    <!-- Si des avis existent -->
+    @if (reviews.length > 0) {
     <div
       class="bg-secondary rounded-lg p-4 shadow-md w-3/4 max-w-sm md:max-w-md mx-auto"
     >
@@ -51,9 +54,10 @@
         <app-rate
           [rating]="reviews[currentReviewIndex].rating"
           [stars]="stars"
+          [isReadOnly]="true"
         ></app-rate>
       </div>
-      <!-- Message -->
+      <!-- Message de l'avis -->
       <p class="font-serif text-sm md:text-md text-quinary">
         {{ reviews[currentReviewIndex].message }}
       </p>
@@ -66,7 +70,7 @@
 
     <!-- Bouton de défilement droite -->
     <button
-      (click)="nextReview()"
+      (click)="changeReview('next')"
       class="absolute right-2 sm:right-[calc(20%-4rem)] md:right-[calc(15%-2rem)] lg:right-[calc(25%-2rem)] xl:right-[calc(35%-2rem)] top-1/2 transform -translate-y-1/2 bg-quinary p-2 md:p-3 rounded-full z-10"
     >
       <svg
@@ -106,4 +110,6 @@
     </div>
   </div>
 </section>
+
+<!-- Composant pour ajouter un avis -->
 <app-add-review></app-add-review>

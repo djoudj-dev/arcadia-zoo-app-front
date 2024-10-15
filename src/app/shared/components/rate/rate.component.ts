@@ -1,9 +1,9 @@
 import {
   Component,
-  Input,
-  Output,
   EventEmitter,
   forwardRef,
+  Input,
+  Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -12,9 +12,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   standalone: true,
   template: `
     <div class="star-rating">
-      <!-- Utilisation de @for avec une expression de tracking -->
       @for (star of stars; track star) {
-      <span (click)="changeRate(star)">
+      <span
+        [class.read-only]="isReadOnly"
+        (click)="!isReadOnly && changeRate(star)"
+      >
         <i class="star" [class.filled]="star <= rating">★</i>
       </span>
       }
@@ -30,6 +32,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       .filled {
         color: gold;
       }
+      .read-only {
+        cursor: default; /* Rend les étoiles non interactives */
+      }
     `,
   ],
   providers: [
@@ -43,6 +48,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 export class RateComponent implements ControlValueAccessor {
   @Input() rating: number = 0;
   @Input() stars: number[] = [1, 2, 3, 4, 5];
+  @Input() isReadOnly: boolean = false; // Nouvelle propriété
   @Output() ratingChange: EventEmitter<number> = new EventEmitter<number>();
 
   onChange: (rating: number) => void = () => {};
@@ -63,9 +69,12 @@ export class RateComponent implements ControlValueAccessor {
   }
 
   changeRate(newRate: number): void {
-    this.rating = newRate;
-    this.onChange(this.rating);
-    this.ratingChange.emit(this.rating);
-    this.onTouched();
+    if (!this.isReadOnly) {
+      // Vérifie si le composant est modifiable
+      this.rating = newRate;
+      this.onChange(this.rating);
+      this.ratingChange.emit(this.rating);
+      this.onTouched();
+    }
   }
 }
