@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Habitat } from '../../core/models/habitat.model';
-import { HABITATS } from '../../core/mocks/habitats-mock.component';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonComponent } from '../../shared/components/button/button.component'; // Import du service
+import { HabitatService } from './service/habitat.service';
 
 @Component({
   selector: 'app-habitats',
@@ -10,12 +10,22 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   imports: [RouterLink, ButtonComponent],
   templateUrl: './habitats.component.html',
 })
-export class HabitatsComponent {
-  habitats: Habitat[] = HABITATS;
+export class HabitatsComponent implements OnInit {
+  habitats: Habitat[] = [];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private habitatService: HabitatService, // Utilisation du service
+    private router: Router
+  ) {}
 
-  goBack() {
+  ngOnInit(): void {
+    // Utiliser le service pour récupérer les habitats
+    this.habitatService.getHabitats().subscribe((data) => {
+      this.habitats = data;
+    });
+  }
+
+  goBack(): void {
     this.router.navigate(['/']);
   }
 }
