@@ -3,10 +3,10 @@ import { Review } from '../../core/models/review.model';
 import { RateComponent } from '../../shared/components/rate/rate.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { ModalService } from '../modal.service';
+import { ModalService } from '../services/modal.service';
 import { AddReviewComponent } from '../add-review/add-review.component';
 import { Observable } from 'rxjs';
-import { ReviewService } from './review.service';
+import { ReviewService } from '../services/review.service';
 
 @Component({
   selector: 'app-review', // Définition du sélecteur HTML du composant
