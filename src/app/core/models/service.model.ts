@@ -1,9 +1,9 @@
 export interface Service {
   id: number;
-  name: string;
-  description: string;
-  image: string;
-  location: string;
-  hours: string;
-  features: string[];
+  name: string; // Nom du service (ex : 'Restauration', 'Visite guidée')
+  description: string; // Description du service
+  image: string; // URL de l'image du service
+  location: string; // Emplacement du service dans le zoo
+  hours: string; // Horaires d'ouverture (ex : '9h-18h')
+  features: string[]; // Caractéristiques (ex : ['Accès handicapé', 'Wi-Fi gratuit'])
 }
