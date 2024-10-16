@@ -1,1 +1,316 @@
-<!--DashBoard admin-->préparation
+<div class="admin-dashboard p-8 bg-gray-100">
+  <h1 class="text-3xl font-bold mb-8">Admin Dashboard</h1>
+
+  <!-- Section de gestion des comptes -->
+  <section class="account-management mb-12 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Création et gestion des comptes</h2>
+    <form class="space-y-4">
+      <div>
+        <label for="email" class="block text-lg font-medium mb-2">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label for="password" class="block text-lg font-medium mb-2"
+          >Mot de passe:</label
+        >
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label for="role" class="block text-lg font-medium mb-2">Rôle:</label>
+        <select
+          id="role"
+          name="role"
+          class="w-full p-2 border border-gray-300 rounded-md"
+        >
+          <option value="employe">Employé</option>
+          <option value="veterinaire">Vétérinaire</option>
+        </select>
+      </div>
+      <button
+        type="submit"
+        class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Créer Compte
+      </button>
+    </form>
+
+    <div class="account-list mt-8">
+      <h3 class="text-xl font-semibold mb-4">Liste des comptes</h3>
+      <!-- Tableau pour afficher les comptes -->
+      <table class="w-full border-collapse bg-white">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Email</th>
+            <th class="border p-4 text-left">Rôle</th>
+            <th class="border p-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section de modification des services -->
+  <section class="services-management mb-12 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Modification des services</h2>
+    <form class="space-y-4">
+      <div>
+        <label for="service-name" class="block text-lg font-medium mb-2"
+          >Nom du service:</label
+        >
+        <input
+          type="text"
+          id="service-name"
+          name="service-name"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <button
+        type="submit"
+        class="mt-4 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+      >
+        Ajouter/Mettre à jour Service
+      </button>
+    </form>
+
+    <div class="service-list mt-8">
+      <h3 class="text-xl font-semibold mb-4">Liste des services</h3>
+      <!-- Tableau pour afficher les services -->
+      <table class="w-full border-collapse bg-white">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Nom du service</th>
+            <th class="border p-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section de gestion des habitats -->
+  <section class="habitats-management mb-12 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Gestion des habitats</h2>
+    <form class="space-y-4">
+      <div>
+        <label for="habitat-name" class="block text-lg font-medium mb-2"
+          >Nom de l'habitat:</label
+        >
+        <input
+          type="text"
+          id="habitat-name"
+          name="habitat-name"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label for="habitat-description" class="block text-lg font-medium mb-2"
+          >Description:</label
+        >
+        <textarea
+          id="habitat-description"
+          name="habitat-description"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        ></textarea>
+      </div>
+      <div>
+        <label for="habitat-images" class="block text-lg font-medium mb-2"
+          >Images:</label
+        >
+        <input
+          type="file"
+          id="habitat-images"
+          name="habitat-images"
+          multiple
+          class="w-full"
+        />
+      </div>
+      <button
+        type="submit"
+        class="mt-4 px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+      >
+        Ajouter/Mettre à jour Habitat
+      </button>
+    </form>
+
+    <div class="habitat-list mt-8">
+      <h3 class="text-xl font-semibold mb-4">Liste des habitats</h3>
+      <!-- Tableau pour afficher les habitats -->
+      <table class="w-full border-collapse bg-white">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Nom de l'habitat</th>
+            <th class="border p-4 text-left">Description</th>
+            <th class="border p-4 text-left">Images</th>
+            <th class="border p-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section de gestion des animaux -->
+  <section class="animals-management mb-12 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Gestion des animaux</h2>
+    <form class="space-y-4">
+      <div>
+        <label for="animal-name" class="block text-lg font-medium mb-2"
+          >Prénom de l'animal:</label
+        >
+        <input
+          type="text"
+          id="animal-name"
+          name="animal-name"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label for="animal-race" class="block text-lg font-medium mb-2"
+          >Race:</label
+        >
+        <input
+          type="text"
+          id="animal-race"
+          name="animal-race"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label for="animal-images" class="block text-lg font-medium mb-2"
+          >Images:</label
+        >
+        <input
+          type="file"
+          id="animal-images"
+          name="animal-images"
+          multiple
+          class="w-full"
+        />
+      </div>
+      <div>
+        <label for="animal-habitat" class="block text-lg font-medium mb-2"
+          >Habitat:</label
+        >
+        <select
+          id="animal-habitat"
+          name="animal-habitat"
+          class="w-full p-2 border border-gray-300 rounded-md"
+        >
+          <!-- Les options dynamiques seront insérées ici -->
+        </select>
+      </div>
+      <button
+        type="submit"
+        class="mt-4 px-6 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
+      >
+        Ajouter/Mettre à jour Animal
+      </button>
+    </form>
+
+    <div class="animal-list mt-8">
+      <h3 class="text-xl font-semibold mb-4">Liste des animaux</h3>
+      <!-- Tableau pour afficher les animaux -->
+      <table class="w-full border-collapse bg-white">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Prénom</th>
+            <th class="border p-4 text-left">Race</th>
+            <th class="border p-4 text-left">Images</th>
+            <th class="border p-4 text-left">Habitat</th>
+            <th class="border p-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section des comptes rendus des vétérinaires -->
+  <section class="veterinarian-reports mb-12 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Comptes rendus des vétérinaires</h2>
+    <div class="filters mb-6 space-y-4">
+      <div>
+        <label for="filter-animal" class="block text-lg font-medium mb-2"
+          >Filtrer par animal:</label
+        >
+        <select
+          id="filter-animal"
+          name="filter-animal"
+          class="w-full p-2 border border-gray-300 rounded-md"
+        >
+          <!-- Les options dynamiques seront insérées ici -->
+        </select>
+      </div>
+      <div>
+        <label for="filter-date" class="block text-lg font-medium mb-2"
+          >Filtrer par date:</label
+        >
+        <input
+          type="date"
+          id="filter-date"
+          name="filter-date"
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <button
+        type="button"
+        class="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+      >
+        Appliquer Filtres
+      </button>
+    </div>
+
+    <div class="report-list">
+      <h3 class="text-xl font-semibold mb-4">Liste des comptes rendus</h3>
+      <!-- Tableau pour afficher les comptes rendus -->
+      <table class="w-full border-collapse bg-white">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Animal</th>
+            <th class="border p-4 text-left">Date</th>
+            <th class="border p-4 text-left">Rapport</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Section du dashboard de consultation des habitats -->
+  <section class="habitats-dashboard p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">
+      Dashboard de consultation des habitats
+    </h2>
+    <div class="statistics">
+      <!-- Les statistiques dynamiques seront insérées ici -->
+    </div>
+  </section>
+</div>
