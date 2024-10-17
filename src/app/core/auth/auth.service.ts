@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models/user.model';
-import { USERS } from '../mocks/user-mock.component';
+import { Injectable } from '@angular/core';
+import { Role } from '../models/role.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ export class AuthService {
   private currentUser: User | null = null;
 
   constructor(private router: Router) {
-    // Initialisation depuis le localStorage au démarrage
+    // Charger l'utilisateur à partir du localStorage s'il est présent
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       this.currentUser = JSON.parse(storedUser);
@@ -19,7 +19,8 @@ export class AuthService {
 
   // Connexion : vérifier l'utilisateur et stocker dans le localStorage
   login(username: string, password: string): boolean {
-    const user = USERS.find(
+    const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(
       (u) => u.username === username && u.password === password
     );
     if (user) {
@@ -42,10 +43,20 @@ export class AuthService {
     return this.currentUser !== null;
   }
 
-  // Vérifier le rôle de l'utilisateur
+  // Vérifier si l'utilisateur a un rôle spécifique
   hasRole(roleName: string): boolean {
-    return (
-      this.currentUser?.role.some((role) => role.name === roleName) ?? false
-    );
+    if (this.currentUser && this.currentUser.role) {
+      if (Array.isArray(this.currentUser.role)) {
+        const hasRole = this.currentUser.role.some(
+          (role: Role) => role.name === roleName
+        );
+        console.log(`Utilisateur a-t-il le rôle '${roleName}' ?`, hasRole);
+        return hasRole;
+      }
+      const isRole = (this.currentUser.role as Role).name === roleName;
+      console.log(`Utilisateur a-t-il le rôle '${roleName}' ?`, isRole);
+      return isRole;
+    }
+    return false;
   }
 }

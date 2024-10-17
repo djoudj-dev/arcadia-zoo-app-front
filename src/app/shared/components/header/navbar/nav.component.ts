@@ -26,9 +26,9 @@ export class NavComponent {
     this.router.navigate(['/login']);
   }
 
-  // Vérifier si l'utilisateur a un rôle spécifique
-  hasRole(role: string): boolean {
-    return this.authService.hasRole(role);
+  // Vérifier si l'utilisateur a le rôle 'vet'
+  hasRole(roleName: string): boolean {
+    return this.authService.hasRole(roleName);
   }
 
   // Vérifier si l'utilisateur est authentifié
