@@ -1,19 +1,23 @@
-import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
+import { ROLES } from './role-mock.component';
 
-const roles: Role[] = [
-  { id: 1, name: 'admin' },
-  { id: 2, name: 'vet' },
-  { id: 3, name: 'user' },
-];
-
-export const users: User[] = [
+export const USERS: User[] = [
   {
     id: 1,
     username: 'admin@example.com',
     password: 'admin123',
-    role: roles[0],
+    role: [ROLES[0]], // Assignez un tableau de rôles
   },
-  { id: 2, username: 'vet@example.com', password: 'vet123', role: roles[1] },
-  { id: 3, username: 'user@example.com', password: 'user123', role: roles[2] },
+  {
+    id: 2,
+    username: 'vet@example.com',
+    password: 'vet123',
+    role: [ROLES[1]], // Assignez un tableau de rôles
+  },
+  {
+    id: 3,
+    username: 'employe@example.com',
+    password: 'employe123',
+    role: [ROLES[2]], // Assignez un tableau de rôles
+  },
 ];
