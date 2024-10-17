@@ -24,9 +24,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadUsers() {
-    this.adminService.getAllUsers().subscribe((users: User[]) => {
-      this.users = users;
-    });
+    this.users = this.adminService.getAllUsers(); // Récupère les utilisateurs directement
   }
 
   loadRoles() {

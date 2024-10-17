@@ -14,20 +14,15 @@ export class AdminService {
 
   private localStorageKey = 'users';
 
-  // Récupère tous les utilisateurs à partir de localStorage
-  getAllUsers(): Observable<User[]> {
-    const users = JSON.parse(
-      localStorage.getItem(this.localStorageKey) || '[]'
-    );
-    return of(users);
+  // Récupère tous les utilisateurs à partir du localStorage
+  getAllUsers(): User[] {
+    return JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
   }
 
   // Crée un nouvel utilisateur et l'ajoute dans localStorage
-  createUser(user: User) {
-    const users = JSON.parse(
-      localStorage.getItem(this.localStorageKey) || '[]'
-    );
-    user.id = users.length ? users[users.length - 1].id + 1 : 1; // Génère un nouvel id
+  createUser(user: User): void {
+    const users = this.getAllUsers();
+    user.id = users.length ? users[users.length - 1].id + 1 : 1; // Génère un id unique
     users.push(user);
     localStorage.setItem(this.localStorageKey, JSON.stringify(users));
   }
