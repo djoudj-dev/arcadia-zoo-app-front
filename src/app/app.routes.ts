@@ -26,7 +26,7 @@ export const routes: Routes = [
     title: 'Admin',
   },
   {
-    path: 'vet',
+    path: 'vétérinaire',
     component: VetComponent,
     title: 'Vétérinaire',
     canActivate: [authGuard],

@@ -68,10 +68,10 @@
       </li>
 
       <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
-      @if (hasRole('vet')) {
+      @if (hasRole('vétérinaire')) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          [routerLink]="['/vet']"
+          [routerLink]="['/vétérinaire']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
         >
           Vétérinaire
@@ -145,10 +145,10 @@
     </li>
 
     <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
-    @if (hasRole('vet')) {
+    @if (hasRole('vétérinaire')) {
     <li class="block py-3 md:mr-6">
       <a
-        [routerLink]="['/vet']"
+        [routerLink]="['/vétérinaire']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
