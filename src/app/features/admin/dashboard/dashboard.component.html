@@ -21,6 +21,7 @@
             <input
               type="email"
               id="email"
+              [(ngModel)]="newUser.username"
               name="email"
               required
               class="w-full p-2 border border-gray-300 rounded-md"
@@ -33,6 +34,7 @@
             <input
               type="password"
               id="password"
+              [(ngModel)]="newUser.password"
               name="password"
               required
               class="w-full p-2 border border-gray-300 rounded-md"
@@ -44,12 +46,15 @@
             >
             <select
               id="role"
+              [(ngModel)]="newUser.role"
               name="role"
               class="w-full p-2 border border-gray-300 rounded-md"
+              required
             >
-              <option value="admin">- Choisir un rôle -</option>
-              <option value="employe">Employé</option>
-              <option value="veterinaire">Vétérinaire</option>
+              <option value="">- Choisir un rôle -</option>
+              @for (role of roles; track role.id) {
+              <option [value]="role.name">{{ role.name }}</option>
+              }
             </select>
           </div>
           <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
@@ -58,6 +63,7 @@
               [type]="'button'"
               [color]="'tertiary'"
               [rounded]="true"
+              (click)="createAccount()"
             ></app-button>
           </div>
         </form>
@@ -68,20 +74,21 @@
         <h3 class="text-xl font-semibold mb-4">Liste des comptes</h3>
         <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
           <thead>
-            <tr class="bg-gray-200">
-              <th class="border p-4 text-left">Email</th>
-              <th class="border p-4 text-left">Rôle</th>
-              <th class="border p-4 text-left">Actions</th>
+            <tr
+              class="bg-gray-200 text-left text-sm font-semibold text-gray-700"
+            >
+              <th class="border p-3">Email</th>
+              <th class="border p-3">Rôle</th>
+              <th class="border p-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             @for (user of users; track user.id) {
-            <tr>
-              <td class="border p-4">{{ user.username }}</td>
-              @for (role of user.role; track role.id) {
-              <td class="border p-4">{{ role.name }}</td>
-              }
-              <td class="border p-4">
+            <tr class="border-b last:border-0">
+              <td class="border p-3">{{ user.username }}</td>
+              <td class="border p-3">{{ user.role }}</td>
+
+              <td class="border p-3">
                 <!-- Actions avec flexbox pour aligner les boutons et des tailles réduites -->
                 <div class="flex space-x-2">
                   <app-button
@@ -89,14 +96,15 @@
                     [type]="'button'"
                     [color]="'secondary'"
                     [rounded]="true"
-                    [customClass]="'text-xxs px-1 py-0.5 w-auto'"
+                    [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
                   ></app-button>
                   <app-button
                     [text]="'Supprimer'"
                     [type]="'button'"
                     [color]="'red'"
                     [rounded]="true"
-                    [customClass]="'text-xxs px-1 py-0.5 w-auto'"
+                    [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
+                    (click)="deleteAccount(user.id)"
                   ></app-button>
                 </div>
               </td>
