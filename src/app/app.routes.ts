@@ -1,33 +1,71 @@
 import { Routes } from '@angular/router';
-import { AnimalComponent } from './features/animal/animal.component';
 import { HomeComponent } from './features/home/home.component';
-import { HabitatComponent } from './features/habitats/habitat/habitat.component';
-import { HabitatsComponent } from './features/habitats/habitats.component';
-import { ServicesComponent } from './features/zoo-services/services.component';
-import { ServiceComponent } from './features/zoo-services/zoo-service/service.component';
-import { ContactComponent } from './features/contact/contact.component';
 import { LoginComponent } from './core/login/login.component';
-import { VetComponent } from './features/vet/vet.component';
 import { authGuard } from './core/auth/guard/auth.guard';
-import { DashboardComponent } from './features/admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'animal/:id', component: AnimalComponent, title: 'Animal' },
-  { path: 'habitat/:id', component: HabitatComponent, title: 'Habitat' },
-  { path: 'habitats', component: HabitatsComponent, title: 'Habitat' },
-  { path: 'services', component: ServicesComponent, title: 'Services' },
-  { path: 'service/:id', component: ServiceComponent, title: 'Service' },
-  { path: 'contact', component: ContactComponent, title: 'Contact' },
+  {
+    path: 'animal/:id',
+    loadComponent: () =>
+      import('./features/animal/animal.component').then(
+        (m) => m.AnimalComponent
+      ),
+    title: 'Animal',
+  },
+  {
+    path: 'habitat/:id',
+    loadComponent: () =>
+      import('./features/habitats/habitat/habitat.component').then(
+        (m) => m.HabitatComponent
+      ),
+    title: 'Habitat',
+  },
+  {
+    path: 'habitats',
+    loadComponent: () =>
+      import('./features/habitats/habitats.component').then(
+        (m) => m.HabitatsComponent
+      ),
+    title: 'Habitat',
+  },
+  {
+    path: 'services',
+    loadComponent: () =>
+      import('./features/zoo-services/services.component').then(
+        (m) => m.ServicesComponent
+      ),
+    title: 'Services',
+  },
+  {
+    path: 'service/:id',
+    loadComponent: () =>
+      import('./features/zoo-services/zoo-service/service.component').then(
+        (m) => m.ServiceComponent
+      ),
+    title: 'Service',
+  },
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./features/contact/contact.component').then(
+        (m) => m.ContactComponent
+      ),
+    title: 'Contact',
+  },
   { path: 'login', component: LoginComponent, title: 'Connexion' },
   {
     path: 'admin',
-    component: DashboardComponent,
+    loadComponent: () =>
+      import('./features/admin/dashboard/dashboard.component').then(
+        (m) => m.DashboardComponent
+      ),
     title: 'Admin',
   },
   {
     path: 'vétérinaire',
-    component: VetComponent,
+    loadComponent: () =>
+      import('./features/vet/vet.component').then((m) => m.VetComponent),
     title: 'Vétérinaire',
     canActivate: [authGuard],
   },
