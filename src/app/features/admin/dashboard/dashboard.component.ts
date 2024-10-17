@@ -3,16 +3,18 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 import { User } from '../../../core/models/user.model';
 import { AdminService } from '../service/admin.service';
 import { Role } from '../../../core/models/role.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, FormsModule],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
   users: User[] = [];
   roles: Role[] = [];
+  newUser: Partial<User> = {}; // Stocke les données du nouveau compte
 
   constructor(private adminService: AdminService) {}
 
@@ -23,15 +25,30 @@ export class DashboardComponent implements OnInit {
 
   loadUsers() {
     this.adminService.getAllUsers().subscribe((users: User[]) => {
-      console.log('Utilisateurs récupérés:', users); // Vérifiez si les utilisateurs sont bien chargés
       this.users = users;
     });
   }
 
   loadRoles() {
     this.adminService.getRoles().subscribe((roles: Role[]) => {
-      console.log('Rôles récupérés:', roles); // Vérifiez si les rôles sont bien chargés
       this.roles = roles;
     });
+  }
+
+  // Méthode pour créer un compte
+  createAccount() {
+    if (this.newUser.username && this.newUser.password && this.newUser.role) {
+      this.adminService.createUser(this.newUser as User);
+      this.loadUsers(); // Recharge les utilisateurs après création
+      this.newUser = {}; // Réinitialise le formulaire
+    } else {
+      console.log('Veuillez remplir tous les champs');
+    }
+  }
+
+  // Méthode pour supprimer un compte
+  deleteAccount(userId: number) {
+    this.adminService.deleteUser(userId);
+    this.loadUsers(); // Recharge les utilisateurs après suppression
   }
 }
