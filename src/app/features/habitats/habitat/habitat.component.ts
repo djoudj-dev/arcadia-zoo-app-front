@@ -3,11 +3,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Habitat } from '../../../core/models/habitat.model'; // Import du service
 import { HabitatService } from '../service/habitat.service';
+import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 
 @Component({
   selector: 'app-habitat',
   standalone: true,
-  imports: [RouterLink, ButtonComponent],
+  imports: [RouterLink, ButtonComponent, BorderCardDirective],
   templateUrl: './habitat.component.html',
   styles: [
     `
