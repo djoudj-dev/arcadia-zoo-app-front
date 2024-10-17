@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models/user.model';
-import { users } from '../mocks/user-mock.component';
+import { USERS } from '../mocks/user-mock.component';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class AuthService {
 
   // Connexion : vérifier l'utilisateur et stocker dans le localStorage
   login(username: string, password: string): boolean {
-    const user = users.find(
+    const user = USERS.find(
       (u) => u.username === username && u.password === password
     );
     if (user) {
@@ -44,6 +44,8 @@ export class AuthService {
 
   // Vérifier le rôle de l'utilisateur
   hasRole(roleName: string): boolean {
-    return this.currentUser?.role?.name === roleName;
+    return (
+      this.currentUser?.role.some((role) => role.name === roleName) ?? false
+    );
   }
 }

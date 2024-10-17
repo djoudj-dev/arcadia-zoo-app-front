@@ -75,7 +75,33 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Les lignes dynamiques seront insérées ici -->
+            @for (user of users; track user.id) {
+            <tr>
+              <td class="border p-4">{{ user.username }}</td>
+              @for (role of user.role; track role.id) {
+              <td class="border p-4">{{ role.name }}</td>
+              }
+              <td class="border p-4">
+                <!-- Actions avec flexbox pour aligner les boutons et des tailles réduites -->
+                <div class="flex space-x-2">
+                  <app-button
+                    [text]="'Modifier'"
+                    [type]="'button'"
+                    [color]="'secondary'"
+                    [rounded]="true"
+                    [customClass]="'text-xxs px-1 py-0.5 w-auto'"
+                  ></app-button>
+                  <app-button
+                    [text]="'Supprimer'"
+                    [type]="'button'"
+                    [color]="'red'"
+                    [rounded]="true"
+                    [customClass]="'text-xxs px-1 py-0.5 w-auto'"
+                  ></app-button>
+                </div>
+              </td>
+            </tr>
+            }
           </tbody>
         </table>
       </div>

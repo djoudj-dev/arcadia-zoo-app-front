@@ -1,26 +1,30 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { User } from '../../../core/models/user.model';
-import { Observable, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+import { Observable, of } from 'rxjs';
+import { USERS } from '../../../core/mocks/user-mock.component';
+import { Role } from '../../../core/models/role.model';
+import { ROLES } from '../../../core/mocks/role-mock.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
+  // private http = inject(HttpClient);
+  // private apiUrl = environment.apiUrl;
 
-  users = signal<User[]>([]);
+  // users = signal<User[]>([]);
 
   getAllUsers(): Observable<User[]> {
-    return this.http
-      .get<User[]>(`${this.apiUrl}/users`)
-      .pipe(tap((users) => this.users.set(users)));
+    console.log('Mock USERS:', USERS); // Vérifiez si les utilisateurs sont dans le mock
+    return of(USERS);
+  }
+
+  getRoles(): Observable<Role[]> {
+    return of(ROLES);
   }
 
   // Créer un utilisateur
   createUser(user: User) {
-    return this.http.post(`${this.apiUrl}/users`, user);
+    USERS.push(user);
   }
 }
