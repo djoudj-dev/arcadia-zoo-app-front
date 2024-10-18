@@ -16,7 +16,7 @@ RUN npm run build -- --configuration production
 FROM nginx:alpine
 
 # Copier les fichiers compilés dans le répertoire approprié pour ton déploiement
-COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
+COPY --from=build /app/dist/arcadia-zoo-app-front /var/www/nedellec-julien.fr/html
 
 # Exposer le port 80
 EXPOSE 80
