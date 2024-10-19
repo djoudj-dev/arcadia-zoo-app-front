@@ -36,13 +36,6 @@ jobs:
           # Copier les fichiers de build vers le VPS avec l'option StrictHostKeyChecking et définir le propriétaire correct
           rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 49999" --rsync-path="sudo rsync" --chown=www-data:www-data dist/arcadia-zoo-app-front/ ubuntu@${{ secrets.VPS_HOST }}:/var/www/nedellec-julien.fr/html/
 
-          # Déplacer index.html à la racine s'il est dans un sous-dossier
-          ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} << 'EOF'
-            if [ -d /var/www/nedellec-julien.fr/html/browser ]; then
-              sudo mv /var/www/nedellec-julien.fr/html/browser/index.html /var/www/nedellec-julien.fr/html/
-            fi
-          EOF
-
           # Vérifier si le fichier index.html est bien présent
           ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} "ls -l /var/www/nedellec-julien.fr/html/"
 
