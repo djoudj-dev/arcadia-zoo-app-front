@@ -33,8 +33,8 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          # Copier les fichiers de build vers le VPS avec l'option StrictHostKeyChecking
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 49999" dist/arcadia-zoo-app-front/ ubuntu@${{ secrets.VPS_HOST }}:/var/www/nedellec-julien.fr/html/
+          # Copier les fichiers de build vers le VPS avec l'option StrictHostKeyChecking et définir le propriétaire correct
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 49999" --chown=www-data:www-data dist/arcadia-zoo-app-front/ ubuntu@${{ secrets.VPS_HOST }}:/var/www/nedellec-julien.fr/html/
 
           # Vérifier si le fichier index.html est bien présent
           ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} "ls -l /var/www/nedellec-julien.fr/html/"
