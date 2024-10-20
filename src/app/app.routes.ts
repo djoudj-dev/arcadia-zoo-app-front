@@ -57,7 +57,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () =>
-      import('./features/admin/dashboard/dashboard.component').then(
+      import('./features/dashboard/admin/admin.component').then(
         (m) => m.DashboardComponent
       ),
     title: 'Admin',
@@ -65,7 +65,9 @@ export const routes: Routes = [
   {
     path: 'vétérinaire',
     loadComponent: () =>
-      import('./features/vet/vet.component').then((m) => m.VetComponent),
+      import('./features/dashboard/vet/vet.component').then(
+        (m) => m.VetComponent
+      ),
     title: 'Vétérinaire',
     canActivate: [authGuard],
   },
