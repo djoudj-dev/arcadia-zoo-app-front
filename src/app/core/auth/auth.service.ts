@@ -21,11 +21,14 @@ export class AuthService {
   login(username: string, password: string): boolean {
     const users: User[] = JSON.parse(localStorage.getItem('users') || '[]');
     const user = users.find(
-      (u) => u.username === username && u.password === password
+      (u) =>
+        u.username.toLowerCase() === username.toLowerCase() &&
+        u.password === password
     );
     if (user) {
       this.currentUser = user;
       localStorage.setItem('user', JSON.stringify(user));
+      console.log('Utilisateur connecté:', this.currentUser); // Ajoutez cette ligne pour vérifier
       return true;
     }
     return false;
@@ -45,18 +48,20 @@ export class AuthService {
 
   // Vérifier si l'utilisateur a un rôle spécifique
   hasRole(roleName: string): boolean {
-    if (this.currentUser && this.currentUser.role) {
-      if (Array.isArray(this.currentUser.role)) {
-        const hasRole = this.currentUser.role.some(
-          (role: Role) => role.name === roleName
-        );
-        console.log(`Utilisateur a-t-il le rôle '${roleName}' ?`, hasRole);
-        return hasRole;
-      }
-      const isRole = (this.currentUser.role as Role).name === roleName;
-      console.log(`Utilisateur a-t-il le rôle '${roleName}' ?`, isRole);
-      return isRole;
+    if (!this.currentUser) {
+      console.log('Aucun utilisateur connecté.');
+      return false;
     }
+
+    const userRoles = this.currentUser.role;
+
+    // Si le rôle est un tableau d'objets
+    if (Array.isArray(userRoles)) {
+      return userRoles.some(
+        (role: Role) => role.name.toLowerCase() === roleName.toLowerCase()
+      );
+    }
+
     return false;
   }
 }

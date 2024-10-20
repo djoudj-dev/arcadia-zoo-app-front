@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -5,21 +6,20 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { VetNote } from '../../core/models/vetnote.model';
-import { Vet } from '../../core/models/vet.model';
-import { MOCK_VET_NOTES } from '../../core/mocks/vet-note-mock.component';
-import { MOCK_VETS } from '../../core/mocks/vet-mock.component';
-import { Animal } from '../../core/models/animal.model';
-import { ANIMALS } from '../../core/mocks/animals-mock.component';
-import { BorderCardAnimalDirective } from '../../shared/directives/border-card-animal/border-card-animal.directive';
-import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ModalComponent } from './modal.component';
+import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { NoteHabitatComponent } from './note-habitat/note-habitat.component';
-import { HABITATS } from '../../core/mocks/habitats-mock.component';
-import { Habitat } from '../../core/models/habitat.model';
+import { VetNote } from '../../../core/models/vetnote.model';
+import { Vet } from '../../../core/models/vet.model';
+import { MOCK_VETS } from '../../../core/mocks/vet-mock.component';
+import { Animal } from '../../../core/models/animal.model';
+import { ANIMALS } from '../../../core/mocks/animals-mock.component';
+import { Habitat } from '../../../core/models/habitat.model';
+import { HABITATS } from '../../../core/mocks/habitats-mock.component';
 import { HabitatNoteService } from './note-habitat.service';
-import { HabitatNote } from '../../core/models/habitat-note.model';
+import { MOCK_VET_NOTES } from '../../../core/mocks/vet-note-mock.component';
+import { HabitatNote } from '../../../core/models/habitat-note.model';
 
 @Component({
   standalone: true,
@@ -80,7 +80,7 @@ export class VetComponent implements OnInit {
    */
   handleSubmitHabitat(formData: { habitatId: number; message: string }): void {
     const habitat = this.habitats.find((h) => h.id === formData.habitatId);
-  
+
     if (habitat) {
       // Construction de l'objet HabitatNote avec les propriétés requises
       const habitatNote: HabitatNote = {
@@ -90,9 +90,9 @@ export class VetComponent implements OnInit {
         message: formData.message,
         createdAt: new Date().toISOString(), // Ajout de la date de création
       };
-  
+
       console.log(`Avis pour l'habitat ${habitat.name}:`, formData.message);
-  
+
       // Soumission de l'avis via le service
       this.habitatNoteService.submitHabitatNote(habitatNote).subscribe(
         (response) => {
@@ -106,7 +106,6 @@ export class VetComponent implements OnInit {
       console.error('Habitat non trouvé pour ID:', formData.habitatId);
     }
   }
-  
 
   /**
    * Charge plus de notes vétérinaires
