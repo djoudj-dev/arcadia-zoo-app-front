@@ -63,7 +63,7 @@ export const routes: Routes = [
     title: 'Admin',
   },
   {
-    path: 'vétérinaire',
+    path: 'veterinaire',
     loadComponent: () =>
       import('./features/dashboard/vet/vet.component').then(
         (m) => m.VetComponent

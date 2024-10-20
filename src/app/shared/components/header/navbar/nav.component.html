@@ -67,11 +67,20 @@
         </a>
       </li>
 
-      <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
-      @if (hasRole('vétérinaire')) {
+      <!-- Vérification des rôles pour l'affichage du lien Admin ou Vétérinaire -->
+      @if (isAdmin) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          [routerLink]="['/vétérinaire']"
+          [routerLink]="['/admin']"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+        >
+          Admin
+        </a>
+      </li>
+      } @else if (isVeterinaire) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          [routerLink]="['/veterinaire']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
         >
           Vétérinaire
@@ -80,7 +89,7 @@
       }
 
       <!-- Lien Déconnexion si l'utilisateur est authentifié -->
-      @if (isAuthenticated()) {
+      @if (userAuthenticated$ | async) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           (click)="logout()"
@@ -92,7 +101,7 @@
       }
 
       <!-- Lien Connexion si l'utilisateur n'est pas authentifié -->
-      @if (!isAuthenticated()) {
+      @if (!(userAuthenticated$ | async)) {
       <li class="block py-3 md:inline md:py-0">
         <a
           [routerLink]="['/login']"
@@ -144,11 +153,20 @@
       </a>
     </li>
 
-    <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
-    @if (hasRole('vétérinaire')) {
+    <!-- Vérification des rôles pour l'affichage du lien Admin ou Vétérinaire sur mobile -->
+    @if (isAdmin) {
     <li class="block py-3 md:mr-6">
       <a
-        [routerLink]="['/vétérinaire']"
+        [routerLink]="['/admin']"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+      >
+        Admin
+      </a>
+    </li>
+    } @else if (isVeterinaire) {
+    <li class="block py-3 md:mr-6">
+      <a
+        [routerLink]="['/veterinaire']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
@@ -157,7 +175,7 @@
     }
 
     <!-- Lien Déconnexion sur mobile si l'utilisateur est authentifié -->
-    @if (isAuthenticated()) {
+    @if (userAuthenticated$ | async) {
     <li class="block py-3 md:mr-6">
       <a
         (click)="logout()"
@@ -169,7 +187,7 @@
     }
 
     <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié -->
-    @if (!isAuthenticated()) {
+    @if (!(userAuthenticated$ | async)) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/login']"
