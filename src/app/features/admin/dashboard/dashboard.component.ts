@@ -23,30 +23,33 @@ export class DashboardComponent implements OnInit {
     this.loadRoles();
   }
 
+  // Charge les utilisateurs et met en cache
   loadUsers() {
-    this.users = this.adminService.getAllUsers(); // Récupère les utilisateurs directement
+    this.users = this.adminService.getAllUsers();
   }
 
+  // Charge les rôles depuis le service admin
   loadRoles() {
     this.adminService.getRoles().subscribe((roles: Role[]) => {
       this.roles = roles;
     });
   }
 
-  // Méthode pour créer un compte
+  // Crée un compte utilisateur
   createAccount() {
-    if (this.newUser.username && this.newUser.password && this.newUser.role) {
+    const { username, password, role } = this.newUser;
+    if (username && password && role) {
       this.adminService.createUser(this.newUser as User);
-      this.loadUsers(); // Recharge les utilisateurs après création
+      this.users.push(this.newUser as User); // Met à jour localement
       this.newUser = {}; // Réinitialise le formulaire
     } else {
       console.log('Veuillez remplir tous les champs');
     }
   }
 
-  // Méthode pour supprimer un compte
+  // Supprime un compte utilisateur
   deleteAccount(userId: number) {
     this.adminService.deleteUser(userId);
-    this.loadUsers(); // Recharge les utilisateurs après suppression
+    this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale
   }
 }
