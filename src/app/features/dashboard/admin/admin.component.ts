@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { User } from '../../../core/models/user.model';
-import { AdminService } from '../service/admin.service';
 import { Role } from '../../../core/models/role.model';
-import { FormsModule } from '@angular/forms';
+import { AdminService } from './service/admin.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [ButtonComponent, FormsModule],
-  templateUrl: './dashboard.component.html',
+  templateUrl: './admin.component.html',
 })
 export class DashboardComponent implements OnInit {
   users: User[] = [];
