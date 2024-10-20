@@ -7,24 +7,26 @@ import { Role } from '../../../core/models/role.model';
   providedIn: 'root',
 })
 export class AdminService {
-  // private http = inject(HttpClient);
-  // private apiUrl = environment.apiUrl;
-
-  // users = signal<User[]>([]);
-
   private localStorageKey = 'users';
+  private usersCache: User[] = [];
 
-  // Récupère tous les utilisateurs à partir du localStorage
-  getAllUsers(): User[] {
-    return JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
+  constructor() {
+    // Charger les utilisateurs au démarrage pour réduire les lectures répétées de localStorage
+    this.usersCache = this.getAllUsers();
   }
 
-  // Crée un nouvel utilisateur et l'ajoute dans localStorage
+  // Récupère tous les utilisateurs depuis le cache, initialement rempli depuis localStorage
+  getAllUsers(): User[] {
+    return this.usersCache;
+  }
+
+  // Crée un nouvel utilisateur et le stocke dans localStorage
   createUser(user: User): void {
-    const users = this.getAllUsers();
-    user.id = users.length ? users[users.length - 1].id + 1 : 1; // Génère un id unique
-    users.push(user);
-    localStorage.setItem(this.localStorageKey, JSON.stringify(users));
+    user.id = this.usersCache.length
+      ? this.usersCache[this.usersCache.length - 1].id + 1
+      : 1;
+    this.usersCache.push(user);
+    localStorage.setItem(this.localStorageKey, JSON.stringify(this.usersCache));
   }
 
   // Récupère les rôles (simples pour le moment)
@@ -37,9 +39,8 @@ export class AdminService {
   }
 
   // Supprime un utilisateur par id
-  deleteUser(id: number) {
-    let users = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
-    users = users.filter((user: User) => user.id !== id);
-    localStorage.setItem(this.localStorageKey, JSON.stringify(users));
+  deleteUser(id: number): void {
+    this.usersCache = this.usersCache.filter((user) => user.id !== id);
+    localStorage.setItem(this.localStorageKey, JSON.stringify(this.usersCache));
   }
 }
