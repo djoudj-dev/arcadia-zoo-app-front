@@ -1,14 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Role } from '../../../core/models/role.model';
+import { User } from '../../../core/models/user.model';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { User } from '../../../../core/models/user.model';
-import { Role } from '../../../../core/models/role.model';
+import { environment } from '../../../../environments/environment.development';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:3000/admin'; // URL de votre API NestJS
+  private apiUrl = environment.apiUrl + '/admin';
 
   constructor(private http: HttpClient) {}
 
@@ -27,13 +28,8 @@ export class AdminService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Récupère les rôles
+  // Récupère les rôles via le backend
   getRoles(): Observable<Role[]> {
-    // Vous pouvez également créer un endpoint backend pour récupérer les rôles
-    const roles = [
-      { id: 1, name: 'Employé' },
-      { id: 2, name: 'Vétérinaire' },
-    ];
-    return of(roles);
+    return this.http.get<Role[]>(`${this.apiUrl}/roles`); // Route correcte pour récupérer les rôles
   }
 }

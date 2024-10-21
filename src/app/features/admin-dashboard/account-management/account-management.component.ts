@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
-import { AdminService } from './service/admin.service';
+import { AdminService } from '../service/admin.service';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-account-management',
   standalone: true,
-  imports: [ButtonComponent, FormsModule],
-  templateUrl: './admin.component.html',
+  imports: [ButtonComponent, ReactiveFormsModule, FormsModule],
+  templateUrl: './account-management.component.html',
+  styleUrl: './account-management.component.css',
 })
-export class DashboardComponent implements OnInit {
+export class AccountManagementComponent implements OnInit {
   users: User[] = [];
   roles: Role[] = [];
   newUser: Partial<User> = {}; // Stocke les données du nouveau compte
@@ -33,20 +34,30 @@ export class DashboardComponent implements OnInit {
 
   // Charge les rôles depuis le service admin
   loadRoles() {
-    this.adminService.getRoles().subscribe((roles: Role[]) => {
-      this.roles = roles;
+    this.adminService.getRoles().subscribe({
+      next: (roles: Role[]) => {
+        console.log('Rôles récupérés :', roles); // Vérifie si les rôles sont bien récupérés
+        this.roles = roles;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des rôles:', err);
+      },
     });
   }
 
   // Crée un compte utilisateur via le backend
   createAccount() {
     const { username, password, role } = this.newUser;
-    if (username && password && role) {
+
+    if (username && password && role && role.id) {
       this.adminService
-        .createUser(this.newUser as User)
+        .createUser({
+          ...this.newUser,
+          roleId: role.id, // Extraire roleId du rôle sélectionné
+        } as User)
         .subscribe((createdUser) => {
-          this.users.push(createdUser); // Met à jour la liste localement après la création
-          this.newUser = {}; // Réinitialise le formulaire
+          this.users.push(createdUser);
+          this.newUser = {}; // Réinitialiser le formulaire
         });
     } else {
       console.log('Veuillez remplir tous les champs');
