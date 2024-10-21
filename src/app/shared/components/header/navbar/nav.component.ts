@@ -14,30 +14,22 @@ import { map, Observable } from 'rxjs';
 export class NavComponent implements OnInit {
   isMenuOpen = false;
   userAuthenticated$!: Observable<boolean>;
-  userRoles$!: Observable<{ [key: string]: boolean }>;
+  userRoles$!: Observable<{ admin: boolean; veterinaire: boolean }>;
 
   constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     // Utilisation de l'observable pour suivre l'état d'authentification
     this.userAuthenticated$ = this.authService.currentUser$.pipe(
-      map((user) => user !== null)
+      map((user) => !!user) // Transforme l'utilisateur en booléen
     );
 
     // Utilisation de l'observable pour vérifier dynamiquement les rôles
     this.userRoles$ = this.authService.currentUser$.pipe(
-      map((user) => {
-        const roles: { [key: string]: boolean } = {
-          admin: false,
-          vétérinaire: false,
-        };
-
-        if (user && user.role && user.role.name) {
-          roles[user.role.name.toLowerCase()] = true; // Assurez-vous que role.name existe avant d'appeler toLowerCase()
-        }
-
-        return roles;
-      })
+      map((user) => ({
+        admin: !!(user && user.role && user.role.name === 'admin'),
+        veterinaire: !!(user && user.role && user.role.name === 'vétérinaire'),
+      }))
     );
   }
 
