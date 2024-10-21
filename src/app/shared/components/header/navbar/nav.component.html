@@ -68,7 +68,7 @@
       </li>
 
       <!-- Vérification des rôles pour l'affichage du lien Admin ou Vétérinaire -->
-      @if (isAdmin) {
+      @if (userRoles$ | async) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/admin']"
@@ -77,7 +77,7 @@
           Admin
         </a>
       </li>
-      } @else if (isVeterinaire) {
+      } @else if (userRoles$ | async) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/veterinaire']"
@@ -154,7 +154,7 @@
     </li>
 
     <!-- Vérification des rôles pour l'affichage du lien Admin ou Vétérinaire sur mobile -->
-    @if (isAdmin) {
+    @if (userRoles$ | async) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/admin']"
@@ -163,7 +163,7 @@
         Admin
       </a>
     </li>
-    } @else if (isVeterinaire) {
+    } @else if (userRoles$ | async) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/veterinaire']"

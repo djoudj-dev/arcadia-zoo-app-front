@@ -77,6 +77,7 @@
             <tr
               class="bg-gray-200 text-left text-sm font-semibold text-gray-700"
             >
+              <th class="border p-3">Nom</th>
               <th class="border p-3">Email</th>
               <th class="border p-3">Rôle</th>
               <th class="border p-3">Actions</th>
@@ -86,6 +87,7 @@
             @for (user of users; track user.id) {
             <tr class="border-b last:border-0">
               <td class="border p-3">{{ user.username }}</td>
+              <td class="border p-3">{{ user.email }}</td>
               <td class="border p-3">{{ user.role }}</td>
 
               <td class="border p-3">

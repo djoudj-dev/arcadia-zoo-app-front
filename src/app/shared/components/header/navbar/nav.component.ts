@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { map, Observable } from 'rxjs';
-import { Role } from '../../../../core/models/role.model';
 
 @Component({
   selector: 'app-nav',
@@ -15,9 +14,7 @@ import { Role } from '../../../../core/models/role.model';
 export class NavComponent implements OnInit {
   isMenuOpen = false;
   userAuthenticated$!: Observable<boolean>;
-  userHasRoles$!: Observable<{ [key: string]: boolean }>;
-  isAdmin = false;
-  isVeterinaire = false;
+  userRoles$!: Observable<{ [key: string]: boolean }>;
 
   constructor(public authService: AuthService, private router: Router) {}
 
@@ -28,23 +25,20 @@ export class NavComponent implements OnInit {
     );
 
     // Utilisation de l'observable pour vérifier dynamiquement les rôles
-    this.authService.currentUser$
-      .pipe(
-        map((user) => {
-          const roles: { [key: string]: boolean } = {
-            admin: false,
-            vétérinaire: false,
-          };
-          if (user) {
-            user.role.forEach((role: Role) => {
-              roles[role.name.toLowerCase()] = true;
-            });
-          }
-          this.isAdmin = roles['admin'];
-          this.isVeterinaire = roles['vétérinaire'];
-        })
-      )
-      .subscribe(); // Utilisez .subscribe() pour alimenter les propriétés `isAdmin` et `isVeterinaire`
+    this.userRoles$ = this.authService.currentUser$.pipe(
+      map((user) => {
+        const roles: { [key: string]: boolean } = {
+          admin: false,
+          vétérinaire: false,
+        };
+
+        if (user && user.role && user.role.name) {
+          roles[user.role.name.toLowerCase()] = true; // Assurez-vous que role.name existe avant d'appeler toLowerCase()
+        }
+
+        return roles;
+      })
+    );
   }
 
   // Gérer l'ouverture et la fermeture du menu

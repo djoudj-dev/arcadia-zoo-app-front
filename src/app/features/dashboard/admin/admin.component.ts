@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   // Charge les utilisateurs depuis le backend
   loadUsers() {
     this.adminService.getAllUsers().subscribe((users: User[]) => {
+      console.log(users);
       this.users = users;
     });
   }
