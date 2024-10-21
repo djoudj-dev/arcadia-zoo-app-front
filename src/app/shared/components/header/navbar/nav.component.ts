@@ -43,4 +43,24 @@ export class NavComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  // Vérifier si l'utilisateur est authentifié
+  isAuthenticated(): boolean {
+    let isAuthenticated = false;
+    this.userAuthenticated$.subscribe((auth) => (isAuthenticated = auth));
+    return isAuthenticated;
+  }
+
+  // Vérifier si l'utilisateur a un rôle spécifique
+  hasRole(role: string): boolean {
+    let hasRole = false;
+    this.userRoles$.subscribe((roles) => {
+      if (role === 'admin') {
+        hasRole = roles.admin;
+      } else if (role === 'vétérinaire') {
+        hasRole = roles.veterinaire;
+      }
+    });
+    return hasRole;
+  }
 }

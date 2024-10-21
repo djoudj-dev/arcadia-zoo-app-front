@@ -19,9 +19,12 @@
       id="menu-toggler"
       class="cursor-pointer w-7 md:hidden"
     >
+      <!-- Icône du menu hamburger (fermé) -->
       @if (!isMenuOpen) {
       <img width="28" height="28" src="images/menu.svg" alt="Ouvrir le menu" />
-      } @if (isMenuOpen) {
+      }
+      <!-- Icône du menu ouvert (croix) -->
+      @if (isMenuOpen) {
       <img width="28" height="28" src="images/cross.svg" alt="Fermer le menu" />
       }
     </button>
@@ -64,27 +67,20 @@
         </a>
       </li>
 
-      <!-- Affichage des rôles -->
-      @if (userAuthenticated$ | async) { @if (userRoles$ | async)?.admin {
+      <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
+      @if (hasRole('vétérinaire')) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          [routerLink]="['/admin']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
-        >
-          Admin
-        </a>
-      </li>
-      } @if (userRoles$ | async)?.veterinaire {
-      <li class="block py-3 md:inline md:py-0 md:mr-6">
-        <a
-          [routerLink]="['/veterinaire']"
+          [routerLink]="['/vétérinaire']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
         >
           Vétérinaire
         </a>
       </li>
       }
+
       <!-- Lien Déconnexion si l'utilisateur est authentifié -->
+      @if (isAuthenticated()) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           (click)="logout()"
@@ -93,8 +89,10 @@
           Déconnexion
         </a>
       </li>
-      } @if (!(userAuthenticated$ | async)) {
+      }
+
       <!-- Lien Connexion si l'utilisateur n'est pas authentifié -->
+      @if (!isAuthenticated()) {
       <li class="block py-3 md:inline md:py-0">
         <a
           [routerLink]="['/login']"
@@ -146,26 +144,20 @@
       </a>
     </li>
 
-    <!-- Vérification des rôles pour l'affichage du lien Admin ou Vétérinaire sur mobile -->
-    @if (userAuthenticated$ | async) { @if (userRoles$ | async)?.admin {
+    <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
+    @if (hasRole('vétérinaire')) {
     <li class="block py-3 md:mr-6">
       <a
-        [routerLink]="['/admin']"
-        class="text-sm uppercase font-semibold hover:text-quaternary"
-      >
-        Admin
-      </a>
-    </li>
-    } @if (userRoles$ | async)?.veterinaire {
-    <li class="block py-3 md:mr-6">
-      <a
-        [routerLink]="['/veterinaire']"
+        [routerLink]="['/vétérinaire']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
       </a>
     </li>
     }
+
+    <!-- Lien Déconnexion sur mobile si l'utilisateur est authentifié -->
+    @if (isAuthenticated()) {
     <li class="block py-3 md:mr-6">
       <a
         (click)="logout()"
@@ -174,7 +166,10 @@
         Déconnexion
       </a>
     </li>
-    } @if (!(userAuthenticated$ | async)) {
+    }
+
+    <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié -->
+    @if (!isAuthenticated()) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/login']"
