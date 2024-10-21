@@ -6,13 +6,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { CommonModule } from '@angular/common';
+
 import { Habitat } from '../../../../core/models/habitat.model';
 
 @Component({
   selector: 'app-note-habitat',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, CommonModule],
+  imports: [ButtonComponent, ReactiveFormsModule],
   templateUrl: './note-habitat.component.html',
 })
 export class NoteHabitatComponent {
