@@ -1,0 +1,90 @@
+<!-- Section de gestion des animaux -->
+<section
+  class="animals-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
+>
+  <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des animaux</h2>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Formulaire de gestion des animaux -->
+    <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
+      <h3 class="text-xl font-semibold mb-4">Ajouter/Mettre à jour Animal</h3>
+      <form class="space-y-4">
+        <div>
+          <label for="animal-name" class="block text-lg font-medium mb-2"
+            >Prénom de l'animal:</label
+          >
+          <input
+            type="text"
+            id="animal-name"
+            name="animal-name"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        <div>
+          <label for="animal-race" class="block text-lg font-medium mb-2"
+            >Race:</label
+          >
+          <input
+            type="text"
+            id="animal-race"
+            name="animal-race"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        <div>
+          <label for="animal-images" class="block text-lg font-medium mb-2"
+            >Images:</label
+          >
+          <input
+            type="file"
+            id="animal-images"
+            name="animal-images"
+            multiple
+            class="w-full"
+          />
+        </div>
+        <div>
+          <label for="animal-habitat" class="block text-lg font-medium mb-2"
+            >Habitat:</label
+          >
+          <select
+            id="animal-habitat"
+            name="animal-habitat"
+            class="w-full p-2 border border-gray-300 rounded-md"
+          >
+            <!-- Les options dynamiques seront insérées ici -->
+          </select>
+        </div>
+        <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
+          <app-button
+            [text]="'Ajouter/Mettre à jour Animal'"
+            [type]="'button'"
+            [color]="'tertiary'"
+            [rounded]="true"
+          ></app-button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Liste des animaux -->
+    <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
+      <h3 class="text-xl font-semibold mb-4">Liste des animaux</h3>
+      <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Prénom</th>
+            <th class="border p-4 text-left">Race</th>
+            <th class="border p-4 text-left">Images</th>
+            <th class="border p-4 text-left">Habitat</th>
+            <th class="border p-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Les lignes dynamiques seront insérées ici -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

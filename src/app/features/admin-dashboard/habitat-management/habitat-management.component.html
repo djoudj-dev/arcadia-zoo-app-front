@@ -1,0 +1,82 @@
+<!-- Section de gestion des habitats -->
+<section
+class="habitats-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
+>
+<h2 class="text-2xl font-semibold mb-8 text-center">
+  Gestion des habitats
+</h2>
+
+<div class="flex flex-col lg:flex-row gap-8">
+  <!-- Formulaire de gestion des habitats -->
+  <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
+    <h3 class="text-xl font-semibold mb-4">
+      Ajouter/Mettre à jour Habitat
+    </h3>
+    <form class="space-y-4">
+      <div>
+        <label for="habitat-name" class="block text-lg font-medium mb-2"
+          >Nom de l'habitat:</label
+        >
+        <input
+          type="text"
+          id="habitat-name"
+          name="habitat-name"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+      <div>
+        <label
+          for="habitat-description"
+          class="block text-lg font-medium mb-2"
+          >Description:</label
+        >
+        <textarea
+          id="habitat-description"
+          name="habitat-description"
+          required
+          class="w-full p-2 border border-gray-300 rounded-md"
+        ></textarea>
+      </div>
+      <div>
+        <label for="habitat-images" class="block text-lg font-medium mb-2"
+          >Images:</label
+        >
+        <input
+          type="file"
+          id="habitat-images"
+          name="habitat-images"
+          multiple
+          class="w-full"
+        />
+      </div>
+      <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
+        <app-button
+          [text]="'Ajouter/Mettre à jour Habitat'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+        ></app-button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Liste des habitats -->
+  <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
+    <h3 class="text-xl font-semibold mb-4">Liste des habitats</h3>
+    <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border p-4 text-left">Nom de l'habitat</th>
+          <th class="border p-4 text-left">Description</th>
+          <th class="border p-4 text-left">Images</th>
+          <th class="border p-4 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Les lignes dynamiques seront insérées ici -->
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>

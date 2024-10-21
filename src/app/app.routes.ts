@@ -57,7 +57,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () =>
-      import('./features/dashboard/admin/admin.component').then(
+      import('./features/admin-dashboard/admin-dashboard.component').then(
         (m) => m.DashboardComponent
       ),
     title: 'Admin',
@@ -65,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'veterinaire',
     loadComponent: () =>
-      import('./features/dashboard/vet/vet.component').then(
+      import('./features/veterinaire-dashboard/vet/vet.component').then(
         (m) => m.VetComponent
       ),
     title: 'Vétérinaire',
