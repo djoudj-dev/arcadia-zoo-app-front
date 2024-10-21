@@ -23,9 +23,11 @@ export class DashboardComponent implements OnInit {
     this.loadRoles();
   }
 
-  // Charge les utilisateurs et met en cache
+  // Charge les utilisateurs depuis le backend
   loadUsers() {
-    this.users = this.adminService.getAllUsers();
+    this.adminService.getAllUsers().subscribe((users: User[]) => {
+      this.users = users;
+    });
   }
 
   // Charge les rôles depuis le service admin
@@ -35,21 +37,25 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // Crée un compte utilisateur
+  // Crée un compte utilisateur via le backend
   createAccount() {
     const { username, password, role } = this.newUser;
     if (username && password && role) {
-      this.adminService.createUser(this.newUser as User);
-      this.users.push(this.newUser as User); // Met à jour localement
-      this.newUser = {}; // Réinitialise le formulaire
+      this.adminService
+        .createUser(this.newUser as User)
+        .subscribe((createdUser) => {
+          this.users.push(createdUser); // Met à jour la liste localement après la création
+          this.newUser = {}; // Réinitialise le formulaire
+        });
     } else {
       console.log('Veuillez remplir tous les champs');
     }
   }
 
-  // Supprime un compte utilisateur
+  // Supprime un compte utilisateur via le backend
   deleteAccount(userId: number) {
-    this.adminService.deleteUser(userId);
-    this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale
+    this.adminService.deleteUser(userId).subscribe(() => {
+      this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale
+    });
   }
 }
