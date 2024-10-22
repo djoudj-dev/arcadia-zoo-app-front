@@ -23,6 +23,11 @@ export class AdminService {
     return this.http.post<User>(this.apiUrl, user);
   }
 
+  // Met à jour un utilisateur par ID dans le backend
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user);
+  }
+
   // Supprime un utilisateur par ID dans le backend
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
