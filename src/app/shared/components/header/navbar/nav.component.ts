@@ -37,7 +37,6 @@ export class NavComponent implements OnInit {
             user.role.name === 'Vétérinaire'
           ), // Accès à user.role.name
         };
-        console.log('Rôles détectés dans NavComponent:', roles); // Journalisation des rôles
         return roles;
       }),
       catchError(() => of({ admin: false, veterinaire: false }))
