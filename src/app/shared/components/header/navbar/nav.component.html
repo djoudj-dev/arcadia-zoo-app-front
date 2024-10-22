@@ -67,7 +67,7 @@
         </a>
       </li>
 
-      <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
+      <!-- Lien pour le vétérinaire -->
       @if (hasRole('vétérinaire')) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
@@ -75,6 +75,18 @@
           class="text-sm uppercase font-semibold hover:text-quaternary"
         >
           Vétérinaire
+        </a>
+      </li>
+      }
+
+      <!-- Lien pour l'admin -->
+      @if (hasRole('admin')) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          [routerLink]="['/admin']"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+        >
+          Admin
         </a>
       </li>
       }
@@ -144,14 +156,26 @@
       </a>
     </li>
 
-    <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
+    <!-- Lien pour le vétérinaire -->
     @if (hasRole('vétérinaire')) {
-    <li class="block py-3 md:mr-6">
+    <li class="block py-3 md:inline md:py-0 md:mr-6">
       <a
         [routerLink]="['/vétérinaire']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
+      </a>
+    </li>
+    }
+
+    <!-- Lien pour l'admin -->
+    @if (hasRole('admin')) {
+    <li class="block py-3 md:inline md:py-0 md:mr-6">
+      <a
+        [routerLink]="['/admin']"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+      >
+        Admin
       </a>
     </li>
     }
