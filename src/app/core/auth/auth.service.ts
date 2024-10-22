@@ -13,7 +13,8 @@ export class AuthService {
   currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
 
-  private apiUrl = `${environment}/auth`; // URL du backend avec /auth
+  private apiUrl = `${environment.apiUrl}/auth`;
+  // URL du backend
 
   constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem('user');
