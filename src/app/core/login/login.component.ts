@@ -22,7 +22,7 @@ export class LoginComponent {
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
@@ -30,16 +30,20 @@ export class LoginComponent {
   // Soumission du formulaire de connexion
   onSubmit(): void {
     if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+      const { email, password } = this.loginForm.value;
 
-      // Vérification des identifiants via AuthService
-      if (this.authService.login(username, password)) {
-        console.log('Formulaire soumis avec succès:', this.loginForm.value);
-        this.errorMessage = ''; // Réinitialiser le message d'erreur
-        this.router.navigate(['/dashboard']); // Rediriger après la connexion réussie
-      } else {
-        this.errorMessage = 'Identifiants incorrects, veuillez réessayer.';
-      }
+      this.authService.login(email, password).subscribe({
+        next: (response) => {
+          console.log('Formulaire soumis avec succès:', this.loginForm.value);
+          console.log("Rôle de l'utilisateur:", response); // Afficher le rôle de l'utilisateur
+          this.errorMessage = ''; // Réinitialiser le message d'erreur
+          this.router.navigate(['/dashboard']); // Rediriger après la connexion réussie
+        },
+        error: (error) => {
+          this.errorMessage = 'Identifiants incorrects, veuillez réessayer.';
+          console.error('Erreur lors de la connexion:', error);
+        },
+      });
     } else {
       this.errorMessage = 'Veuillez vérifier les informations fournies.';
     }

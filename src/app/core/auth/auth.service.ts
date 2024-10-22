@@ -22,17 +22,21 @@ export class AuthService {
   }
 
   // Connexion avec token
-  login(username: string, password: string): Observable<User> {
+  // Connexion avec token
+  login(email: string, password: string): Observable<{ user: User }> {
     return this.http
-      .post<User>(`${this.apiUrl}/login`, { username, password })
+      .post<{ user: User }>(`${this.apiUrl}/login`, { email, password }) // Type de retour spécifié comme { user: User }
       .pipe(
-        tap((response: User) => {
-          // Mettre à jour l'utilisateur et stocker le token
-          this.currentUserSubject.next(response);
-          localStorage.setItem('user', JSON.stringify(response));
-          localStorage.setItem('token', response.token); // Stocker le token dans localStorage
+        tap((response: { user: User }) => {
+          const user = response.user; // Accès à l'objet utilisateur
 
-          console.log('Utilisateur connecté:', response.username);
+          // Vérifie si le rôle est bien présent dans l'utilisateur
+          console.log('Utilisateur connecté avec rôle:', user.role); // Afficher le rôle dans la console
+
+          // Mettre à jour l'utilisateur et stocker le token
+          this.currentUserSubject.next(user);
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('token', user.token || ''); // Stocker le token dans localStorage
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);

@@ -8,20 +8,20 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <!-- Champ d'email -->
-      @if (loginForm.get('username')) {
+      @if (loginForm.get('email')) {
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700"
           >Email</label
         >
         <input
           id="email"
-          formControlName="username"
+          formControlName="email"
           type="email"
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
           placeholder="Entrez votre email"
         />
-        @if (loginForm.get('username')?.invalid &&
-        loginForm.get('username')?.touched) {
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched)
+        {
         <div class="text-red-500 text-xs mt-2">Un email valide est requis.</div>
         }
       </div>
