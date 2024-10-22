@@ -17,26 +17,31 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      this.currentUserSubject.next(JSON.parse(storedUser));
+      const user = JSON.parse(storedUser);
+      console.log(
+        'Utilisateur chargé depuis le stockage local après redémarrage:',
+        user
+      ); // Log ajouté pour vérifier l'utilisateur
+      if (user && user.role) {
+        this.currentUserSubject.next(user); // Recharger l'utilisateur si le rôle est présent
+      } else {
+        console.warn("Rôle manquant dans les données de l'utilisateur");
+      }
     }
   }
 
   // Connexion avec token
-  // Connexion avec token
   login(email: string, password: string): Observable<{ user: User }> {
     return this.http
-      .post<{ user: User }>(`${this.apiUrl}/login`, { email, password }) // Type de retour spécifié comme { user: User }
+      .post<{ user: User }>(`${this.apiUrl}/login`, { email, password })
       .pipe(
         tap((response: { user: User }) => {
-          const user = response.user; // Accès à l'objet utilisateur
-
-          // Vérifie si le rôle est bien présent dans l'utilisateur
-          console.log('Utilisateur connecté avec rôle:', user.role); // Afficher le rôle dans la console
-
-          // Mettre à jour l'utilisateur et stocker le token
+          console.log('Réponse de connexion complète:', response); // Log toute la réponse
+          console.log('Rôle dans la réponse:', response.user?.role); // Vérifie si le rôle est bien défini
+          const user = response.user;
           this.currentUserSubject.next(user);
-          localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('token', user.token || ''); // Stocker le token dans localStorage
+          localStorage.setItem('user', JSON.stringify(user)); // Stocker l'utilisateur dans localStorage
+          localStorage.setItem('token', user.token || ''); // Stocker le token
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);
@@ -56,6 +61,12 @@ export class AuthService {
   // Vérifier si l'utilisateur est authentifié
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
+  }
+
+  // Vérifier si l'utilisateur possède un des rôles requis
+  hasRole(requiredRoles: string[]): boolean {
+    const user = this.currentUserSubject.value;
+    return user ? requiredRoles.includes(user.role.name) : false; // Accéder à user.role.name
   }
 
   // Récupérer le token pour l'intercepteur ou autres requêtes

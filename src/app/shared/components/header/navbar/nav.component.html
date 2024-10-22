@@ -67,11 +67,11 @@
         </a>
       </li>
 
-      <!-- Lien pour le vétérinaire -->
-      @if (hasRole('vétérinaire')) {
+      <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
+      @if ((userRoles$ | async)?.veterinaire) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          [routerLink]="['/vétérinaire']"
+          [routerLink]="['/veterinaire']"
           class="text-sm uppercase font-semibold hover:text-quaternary"
         >
           Vétérinaire
@@ -79,8 +79,8 @@
       </li>
       }
 
-      <!-- Lien pour l'admin -->
-      @if (hasRole('admin')) {
+      <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
+      @if ((userRoles$ | async)?.admin) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/admin']"
@@ -92,7 +92,8 @@
       }
 
       <!-- Lien Déconnexion si l'utilisateur est authentifié -->
-      @if (isAuthenticated()) {
+      @if (userAuthenticated$ | async) {
+
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           (click)="logout()"
@@ -104,7 +105,7 @@
       }
 
       <!-- Lien Connexion si l'utilisateur n'est pas authentifié -->
-      @if (!isAuthenticated()) {
+      @if (!(userAuthenticated$ | async)) {
       <li class="block py-3 md:inline md:py-0">
         <a
           [routerLink]="['/login']"
@@ -156,11 +157,11 @@
       </a>
     </li>
 
-    <!-- Lien pour le vétérinaire -->
-    @if (hasRole('vétérinaire')) {
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
+    @if ((userRoles$ | async)?.veterinaire) {
+    <li class="block py-3 md:mr-6">
       <a
-        [routerLink]="['/vétérinaire']"
+        [routerLink]="['/veterinaire']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
@@ -168,9 +169,9 @@
     </li>
     }
 
-    <!-- Lien pour l'admin -->
-    @if (hasRole('admin')) {
-    <li class="block py-3 md:inline md:py-0 md:mr-6">
+    <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
+    @if ((userRoles$ | async)?.admin) {
+    <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/admin']"
         class="text-sm uppercase font-semibold hover:text-quaternary"
@@ -181,7 +182,7 @@
     }
 
     <!-- Lien Déconnexion sur mobile si l'utilisateur est authentifié -->
-    @if (isAuthenticated()) {
+    @if (userAuthenticated$ | async) {
     <li class="block py-3 md:mr-6">
       <a
         (click)="logout()"
@@ -193,7 +194,7 @@
     }
 
     <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié -->
-    @if (!isAuthenticated()) {
+    @if (!(userAuthenticated$ | async)) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/login']"
@@ -205,5 +206,4 @@
     }
   </ul>
 </nav>
-
 <app-banner />
