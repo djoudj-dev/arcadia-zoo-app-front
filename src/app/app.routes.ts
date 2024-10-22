@@ -61,6 +61,8 @@ export const routes: Routes = [
         (m) => m.DashboardComponent
       ),
     title: 'Admin',
+    canActivate: [authGuard],
+    data: { roles: ['Admin'] }, // Ajout du rôle requis
     children: [
       {
         path: 'account-management',
@@ -120,6 +122,7 @@ export const routes: Routes = [
       ),
     title: 'Vétérinaire',
     canActivate: [authGuard],
+    data: { roles: ['Vétérinaire'] }, // Ajout du rôle requis
   },
   { path: '**', redirectTo: '' },
 ];
