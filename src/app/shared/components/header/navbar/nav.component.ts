@@ -15,7 +15,11 @@ import { catchError } from 'rxjs/operators';
 export class NavComponent implements OnInit {
   isMenuOpen = false;
   userAuthenticated$!: Observable<boolean>;
-  userRoles$!: Observable<{ admin: boolean; veterinaire: boolean }>;
+  userRoles$!: Observable<{
+    admin: boolean;
+    veterinaire: boolean;
+    employe: boolean;
+  }>;
 
   constructor(public authService: AuthService, private router: Router) {}
 
@@ -36,10 +40,11 @@ export class NavComponent implements OnInit {
             user.role &&
             user.role.name === 'Vétérinaire'
           ), // Accès à user.role.name
+          employe: !!(user && user.role && user.role.name === 'Employé'), // Accès à user.role.name
         };
         return roles;
       }),
-      catchError(() => of({ admin: false, veterinaire: false }))
+      catchError(() => of({ admin: false, veterinaire: false, employe: false }))
     );
 
     // Ajouter un subscribe pour vérifier si l'Observable change bien
