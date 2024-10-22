@@ -2,25 +2,73 @@
   <h1 class="text-3xl font-bold mb-8 text-center">Admin Dashboard</h1>
 
   <nav>
-    <ul class="flex space-x-4 justify-center">
-      <li><a routerLink="account-management">Gestion des comptes</a></li>
-      <li><a routerLink="service-management">Modification des services</a></li>
-      <li><a routerLink="habitat-management">Gestion des habitats</a></li>
-      <li><a routerLink="animal-management">Gestion des animaux</a></li>
-      <li><a routerLink="vet-reports">Comptes rendus des vétérinaires</a></li>
-      <li><a routerLink="habitats-dashboard">Consultation des habitats</a></li>
+    <ul class="flex flex-wrap space-x-4 justify-center">
+      <li>
+        <app-button
+          [text]="'Gestion des comptes'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/account-management')"
+        ></app-button>
+      </li>
+      <li>
+        <app-button
+          [text]="'Modification des services'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/service-management')"
+        ></app-button>
+      </li>
+      <li>
+        <app-button
+          [text]="'Gestion des habitats'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/habitat-management')"
+        ></app-button>
+      </li>
+      <li>
+        <app-button
+          [text]="'Gestion des animaux'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/animal-management')"
+        ></app-button>
+      </li>
+      <li>
+        <app-button
+          [text]="'Comptes rendus des vétérinaires'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/vet-reports')"
+        ></app-button>
+      </li>
+      <li>
+        <app-button
+          [text]="'Consultation des habitats'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold"
+          (click)="navigateTo('admin/habitats-dashboard')"
+        ></app-button>
+      </li>
     </ul>
   </nav>
 
   <!-- Section du dashboard de consultation des habitats -->
-  <section class="habitats-dashboard p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-semibold mb-4 flex justify-center">
-      Compteur de consultation des habitats
-    </h2>
-    <div class="statistics">
-      <!-- Les statistiques dynamiques seront insérées ici -->
-    </div>
-  </section>
+  <app-habitats-dashboard />
 
-  <router-outlet />
+  <!-- Le router-outlet pour afficher les routes correspondantes -->
+  <router-outlet></router-outlet>
 </div>

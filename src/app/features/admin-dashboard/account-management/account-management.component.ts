@@ -4,11 +4,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
 import { AdminService } from '../service/admin.service';
+import { DashboardComponent } from '../admin-dashboard.component';
 
 @Component({
   selector: 'app-account-management',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, FormsModule],
+  imports: [
+    ButtonComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    DashboardComponent,
+  ],
   templateUrl: './account-management.component.html',
   styleUrl: './account-management.component.css',
 })

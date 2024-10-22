@@ -27,7 +27,7 @@ export const routes: Routes = [
       import('./features/habitats/habitats.component').then(
         (m) => m.HabitatsComponent
       ),
-    title: 'Habitat',
+    title: 'Habitats',
   },
   {
     path: 'services',
@@ -61,6 +61,56 @@ export const routes: Routes = [
         (m) => m.DashboardComponent
       ),
     title: 'Admin',
+    children: [
+      {
+        path: 'account-management',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/account-management/account-management.component'
+          ).then((m) => m.AccountManagementComponent),
+        title: 'Gestion des comptes',
+      },
+      {
+        path: 'service-management',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/service-management/service-management.component'
+          ).then((m) => m.ServiceManagementComponent),
+        title: 'Modification des services',
+      },
+      {
+        path: 'habitat-management',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/habitat-management/habitat-management.component'
+          ).then((m) => m.HabitatManagementComponent),
+        title: 'Gestion des habitats',
+      },
+      {
+        path: 'animal-management',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/animal-management/animal-management.component'
+          ).then((m) => m.AnimalManagementComponent),
+        title: 'Gestion des animaux',
+      },
+      {
+        path: 'vet-reports',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/reports-veterinaire-dashboard/reports-veterinaire-dashboard.component'
+          ).then((m) => m.ReportsVeterinaireDashboardComponent),
+        title: 'Comptes rendus des vétérinaires',
+      },
+      {
+        path: 'habitats-dashboard',
+        loadComponent: () =>
+          import(
+            './features/admin-dashboard/habitats-dashboard/habitats-dashboard.component'
+          ).then((m) => m.HabitatsDashboardComponent),
+        title: 'Consultation des habitats',
+      },
+    ],
   },
   {
     path: 'veterinaire',
