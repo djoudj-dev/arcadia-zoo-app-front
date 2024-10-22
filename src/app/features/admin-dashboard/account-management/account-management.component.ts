@@ -70,6 +70,32 @@ export class AccountManagementComponent implements OnInit {
     }
   }
 
+  // Met à jour un compte utilisateur via le backend
+  updateAccount() {
+    const { username, role } = this.newUser;
+
+    // Pas besoin de mot de passe pour la mise à jour si non modifié
+    if (username && role && role.id) {
+      this.adminService
+        .updateUser({
+          ...this.newUser,
+          roleId: role.id, // Extraire roleId du rôle sélectionné
+        } as User)
+        .subscribe(() => {
+          console.log('Compte utilisateur mis à jour');
+          this.newUser = {}; // Réinitialiser le formulaire
+          this.loadUsers(); // Recharger la liste des utilisateurs mis à jour
+        });
+    } else {
+      console.log('Veuillez remplir tous les champs');
+    }
+  }
+
+  // Méthode pour pré-remplir le formulaire avec les infos de l'utilisateur à modifier
+  editUser(user: User) {
+    this.newUser = { ...user, password: '' }; // Copie les infos de l'utilisateur sans le mot de passe
+  }
+
   // Supprime un compte utilisateur via le backend
   deleteAccount(userId: number) {
     this.adminService.deleteUser(userId).subscribe(() => {
