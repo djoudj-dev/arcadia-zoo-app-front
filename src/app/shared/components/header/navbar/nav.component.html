@@ -79,6 +79,18 @@
       </li>
       }
 
+      <!-- Employe visible si l'utilisateur a le role 'employe'-->
+      @if ((userRoles$ | async)?.employe) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          [routerLink]="['/employe']"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+        >
+          Employe
+        </a>
+      </li>
+      }
+
       <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
       @if ((userRoles$ | async)?.admin) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
@@ -165,6 +177,18 @@
         class="text-sm uppercase font-semibold hover:text-quaternary"
       >
         Vétérinaire
+      </a>
+    </li>
+    }
+
+    <!-- Employe visible si l'utilisateur a le role 'employe'-->
+    @if ((userRoles$ | async)?.employe) {
+    <li class="block py-3 md:inline md:py-0 md:mr-6">
+      <a
+        [routerLink]="['/employe']"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+      >
+        Employe
       </a>
     </li>
     }
