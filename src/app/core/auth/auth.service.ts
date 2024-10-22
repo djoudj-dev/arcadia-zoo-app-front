@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class AuthService {
   currentUser$: Observable<User | null> =
     this.currentUserSubject.asObservable();
 
-  private apiUrl = 'http://localhost:3000/auth'; // URL du backend
+  private apiUrl = `${environment}/auth`; // URL du backend avec /auth
 
   constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem('user');

@@ -125,4 +125,14 @@ export const routes: Routes = [
     data: { roles: ['Vétérinaire'] }, // Ajout du rôle requis
   },
   { path: '**', redirectTo: '' },
+  {
+    path: 'employe',
+    loadComponent: () =>
+      import('./features/employe-dashboard/employe/employe.component').then(
+        (m) => m.EmployeComponent
+      ),
+    title: 'employe',
+    canActivate: [authGuard],
+    data: { roles: ['Employé'] }, // Ajout du rôle requis
+  },
 ];
