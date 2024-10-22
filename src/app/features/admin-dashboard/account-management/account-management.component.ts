@@ -102,4 +102,9 @@ export class AccountManagementComponent implements OnInit {
       this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale
     });
   }
+
+  // Méthode pour annuler
+  cancel() {
+    this.newUser = {}; // Réinitialiser le formulaire
+  }
 }
