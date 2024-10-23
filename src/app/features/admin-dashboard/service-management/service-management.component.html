@@ -2,9 +2,7 @@
 <section
   class="services-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
 >
-  <h2 class="text-2xl font-semibold mb-8 text-center">
-    Modification des services
-  </h2>
+  <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des services</h2>
 
   <div class="flex flex-col lg:flex-row gap-8">
     <!-- Formulaire de modification des services -->
@@ -19,6 +17,18 @@
             type="text"
             id="service-name"
             name="service-name"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        <div>
+          <label for="service-image" class="block text-lg font-medium mb-2"
+            >Image du service:</label
+          >
+          <input
+            type="file"
+            id="service-image"
+            name="service-image"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
           />
@@ -40,12 +50,60 @@
       <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
         <thead>
           <tr class="bg-gray-200">
+            <th class="border p-4 text-left">Image</th>
             <th class="border p-4 text-left">Nom du service</th>
+            <th class="border p-4 text-left">Déscription du service</th>
             <th class="border p-4 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Les lignes dynamiques seront insérées ici -->
+          @for (service of displayedServiceList; track service.id) {
+          <tr class="border-b last:border-0">
+            <td class="p-3">
+              <img [src]="service.image" alt="Service image" />
+            </td>
+            <td class="p-3">{{ service.name }}</td>
+            <td class="p-3">
+              <!-- Affichage de la description -->
+              @if (!service.showFullDescription) {
+              <span> {{ service.description | slice : 0 : 20 }}... </span>
+              } @else {
+              <span>
+                {{ service.description }}
+              </span>
+              }
+
+              <!-- Bouton pour afficher le reste ou réduire -->
+              <button
+                (click)="toggleDescription(service.id)"
+                class="text-blue-500 hover:underline"
+              >
+                @if (!service.showFullDescription) { Lire la suite } @else {
+                Voir moins }
+              </button>
+            </td>
+            <td class="border p-3">
+              <div class="flex space-x-2">
+                <app-button
+                  [text]="'Modifier'"
+                  [type]="'button'"
+                  [color]="'secondary'"
+                  [rounded]="true"
+                  [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
+                  (click)="editService()"
+                ></app-button>
+                <app-button
+                  [text]="'Supprimer'"
+                  [type]="'button'"
+                  [color]="'red'"
+                  [rounded]="true"
+                  [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
+                  (click)="deleteService()"
+                ></app-button>
+              </div>
+            </td>
+          </tr>
+          }
         </tbody>
       </table>
     </div>
