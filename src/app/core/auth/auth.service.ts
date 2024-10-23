@@ -38,12 +38,11 @@ export class AuthService {
       .post<{ user: User }>(`${this.apiUrl}/login`, { email, password })
       .pipe(
         tap((response: { user: User }) => {
-          console.log('Réponse de connexion complète:', response); // Log toute la réponse
-          console.log('Rôle dans la réponse:', response.user?.role); // Vérifie si le rôle est bien défini
           const user = response.user;
           this.currentUserSubject.next(user);
-          localStorage.setItem('user', JSON.stringify(user)); // Stocker l'utilisateur dans localStorage
+          localStorage.setItem('user', JSON.stringify(user)); // Stocker l'utilisateur
           localStorage.setItem('token', user.token || ''); // Stocker le token
+          console.log('Token stocké dans localStorage:', user.token); // Vérifiez ici
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);

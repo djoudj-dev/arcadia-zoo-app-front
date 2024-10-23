@@ -4,7 +4,8 @@ import { LoginComponent } from './core/login/login.component';
 import { authGuard } from './core/auth/guard/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: HomeComponent, title: 'Accueil' },
+
   {
     path: 'animal/:id',
     loadComponent: () =>
@@ -13,6 +14,7 @@ export const routes: Routes = [
       ),
     title: 'Animal',
   },
+
   {
     path: 'habitat/:id',
     loadComponent: () =>
@@ -21,6 +23,7 @@ export const routes: Routes = [
       ),
     title: 'Habitat',
   },
+
   {
     path: 'habitats',
     loadComponent: () =>
@@ -29,6 +32,7 @@ export const routes: Routes = [
       ),
     title: 'Habitats',
   },
+
   {
     path: 'services',
     loadComponent: () =>
@@ -37,6 +41,7 @@ export const routes: Routes = [
       ),
     title: 'Services',
   },
+
   {
     path: 'service/:id',
     loadComponent: () =>
@@ -45,6 +50,7 @@ export const routes: Routes = [
       ),
     title: 'Service',
   },
+
   {
     path: 'contact',
     loadComponent: () =>
@@ -53,7 +59,9 @@ export const routes: Routes = [
       ),
     title: 'Contact',
   },
+
   { path: 'login', component: LoginComponent, title: 'Connexion' },
+
   {
     path: 'admin',
     loadComponent: () =>
@@ -62,7 +70,7 @@ export const routes: Routes = [
       ),
     title: 'Admin',
     canActivate: [authGuard],
-    data: { roles: ['Admin'] }, // Ajout du rôle requis
+    data: { roles: ['Admin'] },
     children: [
       {
         path: 'account-management',
@@ -114,6 +122,7 @@ export const routes: Routes = [
       },
     ],
   },
+
   {
     path: 'veterinaire',
     loadComponent: () =>
@@ -122,17 +131,19 @@ export const routes: Routes = [
       ),
     title: 'Vétérinaire',
     canActivate: [authGuard],
-    data: { roles: ['Vétérinaire'] }, // Ajout du rôle requis
+    data: { roles: ['Vétérinaire'] },
   },
-  { path: '**', redirectTo: '' },
+
   {
     path: 'employe',
     loadComponent: () =>
       import('./features/employe-dashboard/employe/employe.component').then(
         (m) => m.EmployeComponent
       ),
-    title: 'employe',
+    title: 'Employé',
     canActivate: [authGuard],
-    data: { roles: ['Employé'] }, // Ajout du rôle requis
+    data: { roles: ['Employé'] },
   },
+
+  { path: '**', redirectTo: '' }, // Redirection pour les chemins non définis
 ];
