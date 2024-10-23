@@ -1,57 +1,70 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Role } from '../../../core/models/role.model';
 import { User } from '../../../core/models/user.model';
 import { environment } from '../../../../environments/environment.development';
-import { TokenService } from '../../../core/token/token.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountManagementService {
-  private apiUrl = environment.apiUrl + '/account-management';
+  private apiUrl = environment.apiUrl + '/admin/account-management';
 
-  constructor(private http: HttpClient, private tokenService: TokenService) {}
+  constructor(private http: HttpClient) {}
 
-  // Ajouter un token JWT dans les en-têtes
-  private getAuthHeaders(): HttpHeaders {
-    const token = this.tokenService.getToken(); // Utilisation du TokenService
-    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
-  }
-
-  // Récupère tous les utilisateurs depuis le backend
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<User[]>(this.apiUrl).pipe(
+      catchError((err) => {
+        console.error('Erreur lors de la récupération des utilisateurs:', err);
+        return throwError(
+          () => new Error('Erreur lors de la récupération des utilisateurs.')
+        );
+      })
+    );
   }
 
-  // Crée un nouvel utilisateur dans le backend
   createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.post<User>(this.apiUrl, user).pipe(
+      catchError((err) => {
+        console.error('Erreur lors de la création de l’utilisateur:', err);
+        return throwError(
+          () => new Error('Erreur lors de la création de l’utilisateur.')
+        );
+      })
+    );
   }
 
-  // Met à jour un utilisateur par ID dans le backend
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.put<User>(`${this.apiUrl}/${user.id}`, user).pipe(
+      catchError((err) => {
+        console.error('Erreur lors de la mise à jour de l’utilisateur:', err);
+        return throwError(
+          () => new Error('Erreur lors de la mise à jour de l’utilisateur.')
+        );
+      })
+    );
   }
 
-  // Supprime un utilisateur par ID dans le backend
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError((err) => {
+        console.error('Erreur lors de la suppression de l’utilisateur:', err);
+        return throwError(
+          () => new Error('Erreur lors de la suppression de l’utilisateur.')
+        );
+      })
+    );
   }
 
-  // Récupère les rôles via le backend
   getRoles(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${this.apiUrl}/roles`, {
-      headers: this.getAuthHeaders(),
-    });
+    return this.http.get<Role[]>(`${this.apiUrl}/roles`).pipe(
+      catchError((err) => {
+        console.error('Erreur lors de la récupération des rôles:', err);
+        return throwError(
+          () => new Error('Erreur lors de la récupération des rôles.')
+        );
+      })
+    );
   }
 }

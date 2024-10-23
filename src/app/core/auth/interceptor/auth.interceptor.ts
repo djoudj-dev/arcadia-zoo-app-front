@@ -3,12 +3,11 @@ import { inject } from '@angular/core';
 import { AuthService } from '../auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService); // Injecter le service d'authentification
-
-  // Récupérer le token depuis le service d'authentification
+  const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // Cloner la requête pour y ajouter le header Authorization avec le token
+  console.log("Token dans l'intercepteur:", token); // Vérifie le token ici
+
   const authReq = token
     ? req.clone({
         setHeaders: {
@@ -17,6 +16,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       })
     : req;
 
-  // Passer la requête modifiée (ou non modifiée si aucun token)
+  console.log(
+    'Requête modifiée avec en-tête:',
+    authReq.headers.get('Authorization')
+  );
+
   return next(authReq);
 };
