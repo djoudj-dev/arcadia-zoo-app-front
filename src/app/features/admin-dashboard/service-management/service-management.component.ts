@@ -1,40 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { SERVICES } from '../../../core/mocks/services-mock.component';
 import { SlicePipe } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Service } from '../../../core/models/service.model';
+import { ServiceManagementService } from '../service/service.management.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [ButtonComponent, SlicePipe, ReactiveFormsModule],
+  imports: [ButtonComponent, SlicePipe, ReactiveFormsModule, FormsModule],
   templateUrl: './service-management.component.html',
   styleUrls: ['./service-management.component.css'], // "styleUrls" pour le CSS
 })
 export class ServiceManagementComponent implements OnInit {
-  serviceList = SERVICES; // Utilisé pour afficher les services
-  serviceForm!: FormGroup; // Utilisé pour ajouter un service
-  fileInvalid = false; // Utilisé pour afficher un message d'erreur si le fichier est invalide
+  serviceList: Service[] = [];
+  newService: Partial<Service> = {}; // Stocke les données du nouveau service
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private serviceManagement: ServiceManagementService) {}
 
   ngOnInit() {
-    this.serviceForm = this.fb.group({
-      name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(50),
-        ],
-      ],
-      description: ['', [Validators.required, Validators.minLength(10)]],
-      image: [null, Validators.required],
+    this.loadServices();
+  }
+
+  loadServices() {
+    this.serviceManagement.getAllServices().subscribe((services: Service[]) => {
+      console.log(services);
+      this.serviceList = services;
+      this.displayedServiceList = this.serviceList.map((service) => ({
+        ...service,
+        showFullDescription: false, // Ajout de showFullDescription pour chaque service
+      }));
     });
   }
 
@@ -44,37 +39,56 @@ export class ServiceManagementComponent implements OnInit {
   }));
 
   onFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const allowedTypes = [
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        'image/svg',
-        'image/webp',
-      ];
-      if (allowedTypes.includes(file.type)) {
-        this.fileInvalid = false;
-        this.serviceForm.patchValue({ image: file });
-      } else {
-        this.fileInvalid = true;
-      }
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.newService.image = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onSubmit() {
-    if (this.serviceForm.valid && !this.fileInvalid) {
-      // Logique pour soumettre le formulaire (appel API, etc.)
-      console.log('Formulaire valide:', this.serviceForm.value);
+  createService() {
+    console.log('Données du nouveau service:', this.newService);
+
+    const { name, description, image } = this.newService;
+    if (name && description && image) {
+      this.serviceManagement
+        .createService({
+          ...this.newService,
+          image: image,
+        } as Service)
+        .subscribe(
+          (createdService) => {
+            this.serviceList.push(createdService);
+            this.newService = {};
+          },
+          (error) => {
+            console.error('Erreur lors de la création du service:', error);
+          }
+        );
     } else {
-      console.log('Formulaire invalide');
+      console.log('Veuillez remplir tous les champs');
     }
   }
 
-  editService() {
-    // Logique pour modifier le service
+  updateService() {
+    const { name, description, image } = this.newService;
+
+    if (name && description && image) {
+      this.serviceManagement
+        .updateService({
+          ...this.newService,
+          image: image,
+        } as Service)
+        .subscribe(() => {
+          console.log('Service mis à jour');
+          this.newService = {};
+        });
+    } else {
+      console.log('Veuillez remplir tous les champs');
+    }
   }
 
   deleteService() {
@@ -87,5 +101,9 @@ export class ServiceManagementComponent implements OnInit {
     if (service) {
       service.showFullDescription = !service.showFullDescription;
     }
+  }
+
+  cancel() {
+    this.newService = {};
   }
 }
