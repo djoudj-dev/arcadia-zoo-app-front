@@ -3,8 +3,8 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
-import { AdminService } from '../service/admin.service';
 import { DashboardComponent } from '../admin-dashboard.component';
+import { AccountManagementService } from '../service/account-management.service';
 
 @Component({
   selector: 'app-account-management',
@@ -23,7 +23,7 @@ export class AccountManagementComponent implements OnInit {
   roles: Role[] = [];
   newUser: Partial<User> = {}; // Stocke les données du nouveau compte
 
-  constructor(private adminService: AdminService) {}
+  constructor(private accountManagement: AccountManagementService) {}
 
   ngOnInit() {
     this.loadUsers();
@@ -32,7 +32,7 @@ export class AccountManagementComponent implements OnInit {
 
   // Charge les utilisateurs depuis le backend
   loadUsers() {
-    this.adminService.getAllUsers().subscribe((users: User[]) => {
+    this.accountManagement.getAllUsers().subscribe((users: User[]) => {
       console.log(users);
       this.users = users;
     });
@@ -40,7 +40,7 @@ export class AccountManagementComponent implements OnInit {
 
   // Charge les rôles depuis le service admin
   loadRoles() {
-    this.adminService.getRoles().subscribe({
+    this.accountManagement.getRoles().subscribe({
       next: (roles: Role[]) => {
         console.log('Rôles récupérés :', roles); // Vérifie si les rôles sont bien récupérés
         this.roles = roles;
@@ -56,7 +56,7 @@ export class AccountManagementComponent implements OnInit {
     const { username, password, role } = this.newUser;
 
     if (username && password && role && role.id) {
-      this.adminService
+      this.accountManagement
         .createUser({
           ...this.newUser,
           roleId: role.id, // Extraire roleId du rôle sélectionné
@@ -76,7 +76,7 @@ export class AccountManagementComponent implements OnInit {
 
     // Pas besoin de mot de passe pour la mise à jour si non modifié
     if (username && role && role.id) {
-      this.adminService
+      this.accountManagement
         .updateUser({
           ...this.newUser,
           roleId: role.id, // Extraire roleId du rôle sélectionné
@@ -98,7 +98,7 @@ export class AccountManagementComponent implements OnInit {
 
   // Supprime un compte utilisateur via le backend
   deleteAccount(userId: number) {
-    this.adminService.deleteUser(userId).subscribe(() => {
+    this.accountManagement.deleteUser(userId).subscribe(() => {
       this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale
     });
   }
