@@ -1,61 +1,43 @@
-<!-- Section de modification des services -->
+<!-- Section de gestion des services -->
 <section
-  class="services-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
+  class="service-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
 >
   <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des services</h2>
 
   <div class="flex flex-col lg:flex-row gap-8">
-    <!-- Formulaire de modification des services -->
+    <!-- Formulaire de création/mise à jour de service -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
-      <h3 class="text-xl font-semibold mb-4">Ajouter/Mettre à jour Service</h3>
-      <form [formGroup]="serviceForm" class="space-y-4" (ngSubmit)="onSubmit()">
-        <!-- Section ajout nom -->
+      <h3 class="text-xl font-semibold mb-4">
+        {{ newService.id ? "Modifier le service" : "Créer un service" }}
+      </h3>
+      <form class="space-y-4" (ngSubmit)="createService()">
         <div>
           <label for="service-name" class="block text-lg font-medium mb-2"
             >Nom du service:</label
           >
           <input
             type="text"
-            id="service-name"
-            formControlName="name"
-            name="service-name"
+            id="name"
+            [(ngModel)]="newService.name"
+            name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Nom du service"
           />
-          <!-- Afficher un message d'erreur si la validation échoue -->
-          @if (serviceForm.get('name')?.invalid &&
-          serviceForm.get('name')?.touched) {
-          <small class="text-red-500"
-            >Nom du service requis et doit être entre 3 et 50 caractères.</small
-          >
-          }
         </div>
-
-        <!-- Section ajout description -->
         <div>
-          <label
-            for="service-description"
-            class="block text-lg font-medium mb-2"
-            >Description du service:</label
+          <label for="description" class="block text-lg font-medium mb-2"
+            >Description:</label
           >
           <textarea
-            id="service-description"
-            formControlName="description"
-            name="service-description"
+            id="description"
+            [(ngModel)]="newService.description"
+            name="description"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Description du service"
           ></textarea>
-          @if (serviceForm.get('description')?.invalid &&
-          serviceForm.get('description')?.touched) {
-          <small class="text-red-500"
-            >Description requise, au moins 10 caractères.</small
-          >
-          }
         </div>
-
-        <!-- Section ajout image -->
         <div>
           <label for="service-image" class="block text-lg font-medium mb-2"
             >Image du service:</label
@@ -64,61 +46,50 @@
             type="file"
             id="service-image"
             (change)="onFileChange($event)"
-            name="service-image"
             class="w-full p-2 border border-gray-300 rounded-md"
           />
-          @if (fileInvalid) {
-          <small class="text-red-500"
-            >Veuillez sélectionner une image valide (PNG, JPG, JPEG).</small
-          >
-          }
         </div>
-
-        <!-- Bouton de soumission -->
-        <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
+        <div class="flex space-x-2">
           <app-button
-            [text]="'Ajouter/Mettre à jour Service'"
+            [text]="newService.id ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
+            class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold px-4"
+          ></app-button>
+          <app-button
+            [text]="'Annuler'"
+            [type]="'button'"
+            [color]="'secondary'"
+            [rounded]="true"
+            class="w-1/2 sm:w-1/3 lg:w-1/4 font-bold px-2"
+            (click)="cancel()"
           ></app-button>
         </div>
       </form>
     </div>
 
-    <!-- Liste des services avec boucle @for -->
+    <!-- Liste des services -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">Liste des services</h3>
       <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
         <thead>
-          <tr class="bg-gray-200">
-            <th class="border p-4 text-left">Image</th>
-            <th class="border p-4 text-left">Nom du service</th>
-            <th class="border p-4 text-left">Description</th>
-            <th class="border p-4 text-left">Actions</th>
+          <tr class="bg-gray-200 text-left text-sm font-semibold text-gray-700">
+            <th class="border p-3">Nom</th>
+            <th class="border p-3">Description</th>
+            <th class="border p-3">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Boucle pour afficher les services -->
           @for (service of displayedServiceList; track service.id) {
           <tr class="border-b last:border-0">
-            <td class="p-3">
-              <img
-                [src]="service.image"
-                alt="Image du service"
-                class="w-16 h-16 object-cover"
-              />
-            </td>
-            <td class="p-3">{{ service.name }}</td>
-            <td class="p-3">
-              <!-- Afficher la description complète ou tronquée avec @if -->
+            <td class="border p-3">{{ service.name }}</td>
+            <td class="border p-3">
               @if (!service.showFullDescription) {
-              <span>{{ service.description | slice : 0 : 100 }}... </span>
+              <span>{{ service.description | slice : 0 : 100 }}...</span>
               } @else {
               <span>{{ service.description }}</span>
               }
-
-              <!-- Bouton pour alterner l'affichage de la description -->
               <button
                 class="text-blue-500 hover:underline mt-2"
                 (click)="toggleDescription(service.id)"
@@ -127,7 +98,7 @@
                 Voir moins }
               </button>
             </td>
-            <td class="p-3">
+            <td class="border p-3">
               <div class="flex space-x-2">
                 <app-button
                   [text]="'Modifier'"
@@ -135,7 +106,7 @@
                   [color]="'secondary'"
                   [rounded]="true"
                   [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
-                  (click)="editService()"
+                  (click)="updateService()"
                 ></app-button>
                 <app-button
                   [text]="'Supprimer'"

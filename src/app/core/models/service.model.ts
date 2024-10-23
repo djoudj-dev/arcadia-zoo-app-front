@@ -1,3 +1,5 @@
+import { Feature } from './feature.model';
+
 export interface Service {
   id: number;
   name: string; // Nom du service (ex : 'Restauration', 'Visite guidée')
@@ -5,5 +7,5 @@ export interface Service {
   image: string; // URL de l'image du service
   location: string; // Emplacement du service dans le zoo
   hours: string; // Horaires d'ouverture (ex : '9h-18h')
-  features: string[]; // Caractéristiques (ex : ['Accès handicapé', 'Wi-Fi gratuit'])
+  features: Feature[]; // Caractéristiques (ex : ['Accès handicapé', 'Wi-Fi gratuit'])
 }
