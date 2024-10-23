@@ -39,6 +39,51 @@
           ></textarea>
         </div>
         <div>
+          <label for="location" class="block text-lg font-medium mb-2"
+            >Emplacement:</label
+          >
+          <input
+            type="text"
+            id="location"
+            [(ngModel)]="newService.location"
+            name="location"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Emplacement du service"
+          />
+        </div>
+        <div>
+          <label for="hours" class="block text-lg font-medium mb-2"
+            >Horaires d'ouverture:</label
+          >
+          <input
+            type="text"
+            id="hours"
+            [(ngModel)]="newService.hours"
+            name="hours"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Horaires d'ouverture"
+          />
+        </div>
+        <div>
+          <label for="features" class="block text-lg font-medium mb-2"
+            >Caractéristiques:</label
+          >
+          <select
+            id="features"
+            [(ngModel)]="newService.features"
+            name="features"
+            multiple
+            class="w-full p-2 border border-gray-300 rounded-md"
+          >
+            <option value="">- Choisir une option -</option>
+            @for (feature of features; track feature.id) {
+            <option [ngValue]="feature.id">{{ feature.name }}</option>
+            }
+          </select>
+        </div>
+        <div>
           <label for="service-image" class="block text-lg font-medium mb-2"
             >Image du service:</label
           >
@@ -75,6 +120,7 @@
       <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
         <thead>
           <tr class="bg-gray-200 text-left text-sm font-semibold text-gray-700">
+            <th class="border p-3">Image</th>
             <th class="border p-3">Nom</th>
             <th class="border p-3">Description</th>
             <th class="border p-3">Actions</th>
@@ -82,7 +128,15 @@
         </thead>
         <tbody>
           @for (service of displayedServiceList; track service.id) {
+
           <tr class="border-b last:border-0">
+            <td class="border p-3">
+              <img
+                [src]="service.image"
+                alt="Image du service"
+                class="w-16 h-16 object-cover rounded-md"
+              />
+            </td>
             <td class="border p-3">{{ service.name }}</td>
             <td class="border p-3">
               @if (!service.showFullDescription) {
@@ -114,7 +168,7 @@
                   [color]="'red'"
                   [rounded]="true"
                   [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
-                  (click)="deleteService()"
+                  (click)="deleteService(service.id)"
                 ></app-button>
               </div>
             </td>
