@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { fromEvent, merge, timer } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+import { AlertService } from '../alert/service/alert.service'; // Import du AlertService
 
 @Injectable({
   providedIn: 'root',
@@ -14,10 +15,9 @@ export class InactivityService {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private ngZone: NgZone
-  ) {
-    this.startMonitoring();
-  }
+    private ngZone: NgZone,
+    private alertService: AlertService // Inject AlertService
+  ) {}
 
   /**
    * Démarre la surveillance de l'inactivité de l'utilisateur.
@@ -41,7 +41,9 @@ export class InactivityService {
         this.ngZone.run(() => {
           console.log("Inactivité détectée, déconnexion de l'utilisateur");
           this.authService.logout();
-          alert("Vous avez été déconnecté en raison de l'inactivité.");
+          this.alertService.showAlert(
+            "Vous avez été déconnecté en raison de l'inactivité."
+          ); // Utiliser AlertService
           this.router.navigate(['/login']);
         });
       });
