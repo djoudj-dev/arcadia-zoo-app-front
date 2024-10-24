@@ -1,9 +1,10 @@
-import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment.development';
+import { TokenService } from '../token/token.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,25 +15,23 @@ export class AuthService {
     this.currentUserSubject.asObservable();
 
   private apiUrl = `${environment.apiUrl}/auth`;
-  // URL du backend
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private tokenService: TokenService // Injecter le TokenService
+  ) {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      console.log(
-        'Utilisateur chargé depuis le stockage local après redémarrage:',
-        user
-      ); // Log ajouté pour vérifier l'utilisateur
       if (user && user.role) {
-        this.currentUserSubject.next(user); // Recharger l'utilisateur si le rôle est présent
+        this.currentUserSubject.next(user);
       } else {
         console.warn("Rôle manquant dans les données de l'utilisateur");
       }
     }
   }
 
-  // Connexion avec token
   login(email: string, password: string): Observable<{ user: User }> {
     return this.http
       .post<{ user: User }>(`${this.apiUrl}/login`, { email, password })
@@ -40,9 +39,8 @@ export class AuthService {
         tap((response: { user: User }) => {
           const user = response.user;
           this.currentUserSubject.next(user);
-          localStorage.setItem('user', JSON.stringify(user)); // Stocker l'utilisateur
-          localStorage.setItem('token', user.token || ''); // Stocker le token
-          console.log('Token stocké dans localStorage:', user.token); // Vérifiez ici
+          localStorage.setItem('user', JSON.stringify(user));
+          this.tokenService.setToken(user.token || ''); // Utiliser le TokenService pour stocker le token
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);
@@ -51,27 +49,19 @@ export class AuthService {
       );
   }
 
-  // Déconnexion
   logout(): void {
     this.currentUserSubject.next(null);
     localStorage.removeItem('user');
-    localStorage.removeItem('token'); // Supprimer aussi le token
+    this.tokenService.removeToken(); // Supprimer le token via le TokenService
     this.router.navigate(['/login']);
   }
 
-  // Vérifier si l'utilisateur est authentifié
   isAuthenticated(): boolean {
     return this.currentUserSubject.value !== null;
   }
 
-  // Vérifier si l'utilisateur possède un des rôles requis
   hasRole(requiredRoles: string[]): boolean {
     const user = this.currentUserSubject.value;
-    return user ? requiredRoles.includes(user.role.name) : false; // Accéder à user.role.name
-  }
-
-  // Récupérer le token pour l'intercepteur ou autres requêtes
-  getToken(): string | null {
-    return localStorage.getItem('token'); // Récupérer le token depuis le localStorage
+    return user ? requiredRoles.includes(user.role.name) : false;
   }
 }

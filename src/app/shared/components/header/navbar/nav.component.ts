@@ -30,7 +30,6 @@ export class NavComponent implements OnInit {
     );
 
     // Observable pour vérifier les rôles de l'utilisateur
-    // Observable pour vérifier les rôles de l'utilisateur
     this.userRoles$ = this.authService.currentUser$.pipe(
       map((user) => {
         const roles = {

@@ -120,6 +120,7 @@
             [color]="'tertiary'"
             [rounded]="true"
             class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
+            (click)="newService.id ? updateService() : createService()"
           ></app-button>
           <app-button
             [text]="'Annuler'"
@@ -178,7 +179,7 @@
               [color]="'secondary'"
               [rounded]="true"
               [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="updateService()"
+              (click)="editService(service.id)"
             ></app-button>
             <app-button
               [text]="'Supprimer'"
