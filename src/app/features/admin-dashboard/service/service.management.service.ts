@@ -55,8 +55,13 @@ export class ServiceManagementService {
       );
   }
 
-  createService(service: Service): Observable<Service> {
-    return this.http.post<Service>(this.apiUrl, service).pipe(
+  createService(formData: FormData): Observable<Service> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post<Service>(this.apiUrl, formData, { headers }).pipe(
       catchError((error) => {
         console.error('Erreur lors de la création du service:', error);
         return throwError(() => new Error(error)); // Utilisation de la factory function
@@ -64,20 +69,33 @@ export class ServiceManagementService {
     );
   }
 
-  updateService(service: Service): Observable<Service> {
-    return this.http.put<Service>(`${this.apiUrl}/${service.id}`, service).pipe(
-      catchError((error) => {
-        console.error('Erreur lors de la mise à jour du service:', error);
-        return throwError(() => new Error(error)); // Utilisation de la factory function
-      })
-    );
+  updateService(serviceId: number, formData: FormData): Observable<Service> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http
+      .put<Service>(`${this.apiUrl}/${serviceId}`, formData, { headers })
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur lors de la mise à jour du service:', error);
+          return throwError(() => new Error(error));
+        })
+      );
   }
 
+  // Supprimer un service
   deleteService(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers }).pipe(
       catchError((error) => {
         console.error('Erreur lors de la suppression du service:', error);
-        return throwError(() => new Error(error)); // Utilisation de la factory function
+        return throwError(() => new Error(error));
       })
     );
   }

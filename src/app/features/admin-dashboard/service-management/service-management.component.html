@@ -10,7 +10,11 @@
       <h3 class="text-xl font-semibold mb-4">
         {{ newService.id ? "Modifier le service" : "Créer un service" }}
       </h3>
-      <form class="space-y-4" (ngSubmit)="createService()">
+      <form
+        class="space-y-4"
+        (ngSubmit)="createService()"
+        enctype="multipart/form-data"
+      >
         <div>
           <label for="service-name" class="block text-lg font-medium mb-2"
             >Nom du service:</label
@@ -25,6 +29,7 @@
             placeholder="Nom du service"
           />
         </div>
+
         <div>
           <label for="description" class="block text-lg font-medium mb-2"
             >Description:</label
@@ -38,6 +43,7 @@
             placeholder="Description du service"
           ></textarea>
         </div>
+
         <div>
           <label for="location" class="block text-lg font-medium mb-2"
             >Emplacement:</label
@@ -52,6 +58,7 @@
             placeholder="Emplacement du service"
           />
         </div>
+
         <div>
           <label for="hours" class="block text-lg font-medium mb-2"
             >Horaires d'ouverture:</label
@@ -66,23 +73,23 @@
             placeholder="Horaires d'ouverture"
           />
         </div>
-        <div>
-          <label for="features" class="block text-lg font-medium mb-2"
-            >Caractéristiques:</label
-          >
-          <select
-            id="features"
-            [(ngModel)]="newService.features"
-            name="features"
-            multiple
-            class="w-full p-2 border border-gray-300 rounded-md"
-          >
-            <option value="">- Choisir une option -</option>
-            @for (feature of features; track feature.id) {
-            <option [ngValue]="feature.id">{{ feature.name }}</option>
-            }
-          </select>
+
+        <div class="grid grid-cols-3 gap-2">
+          @for (feature of features; track feature.id) {
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="feature-{{ feature.id }}"
+              [value]="feature.id"
+              (change)="onFeatureChange(feature, $event)"
+              [checked]="isFeatureSelected(feature)"
+              class="mr-2"
+            />
+            <label for="feature-{{ feature.id }}">{{ feature.name }}</label>
+          </div>
+          }
         </div>
+
         <div>
           <label for="service-image" class="block text-lg font-medium mb-2"
             >Image du service:</label
@@ -94,6 +101,7 @@
             class="w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
+
         <div class="flex space-x-2">
           <app-button
             [text]="newService.id ? 'Modifier' : 'Créer'"
@@ -111,6 +119,12 @@
             (click)="cancel()"
           ></app-button>
         </div>
+
+        @if (!features.length) {
+        <p class="text-red-500">
+          Aucune caractéristique disponible pour le moment.
+        </p>
+        }
       </form>
     </div>
 
@@ -134,14 +148,14 @@
               <img
                 [src]="service.image"
                 alt="Image du service"
-                class="w-16 h-16 object-cover rounded-md"
+                class="w-40 h-40 object-cover rounded-md"
               />
             </td>
             <td class="border p-3">{{ service.name }}</td>
             <td class="border p-3">
               @if (!service.showFullDescription) {
-              <span>{{ service.description | slice : 0 : 100 }}...</span>
-              } @else {
+              <span>{{ service.description | slice : 0 : 20 }}...</span>
+              } @else {0
               <span>{{ service.description }}</span>
               }
               <button
