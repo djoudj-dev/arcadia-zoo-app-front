@@ -182,6 +182,13 @@ export class ServiceManagementComponent implements OnInit {
     }
   }
 
+  // Remplir le formulaire de mise à jour avec les données du service sélectionné
+  editService(serviceId: number) {
+    const service = this.serviceList.find((s) => s.id === serviceId);
+    if (service) {
+      this.newService = { ...service };
+    }
+  }
   // Suppression d'un service
   deleteService(serviceId: number) {
     this.serviceManagement.deleteService(serviceId).subscribe(

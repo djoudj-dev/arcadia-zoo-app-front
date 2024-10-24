@@ -1,12 +1,19 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { TokenService } from '../../token/token.service';
+import { AuthService } from '../../auth/auth.service';
+import { Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { AlertService } from '../../alert/service/alert.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const tokenService = inject(TokenService);
   const authService = inject(AuthService);
-  const token = authService.getToken();
+  const router = inject(Router);
+  const alertService = inject(AlertService); // Utiliser le nouvel AlertService
 
-  console.log("Token dans l'intercepteur:", token); // Vérifie le token ici
+  const token = tokenService.getToken();
 
   const authReq = token
     ? req.clone({
@@ -16,10 +23,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       })
     : req;
 
-  console.log(
-    'Requête modifiée avec en-tête:',
-    authReq.headers.get('Authorization')
+  return next(authReq).pipe(
+    catchError((error) => {
+      if (error.status === 401 || error.status === 403) {
+        // Gérer la déconnexion et afficher le message d'alerte
+        authService.logout();
+        alertService.showAlert(
+          'Votre session a expiré. Vous avez été déconnecté.'
+        );
+        router.navigate(['/login']); // Redirige vers la page de connexion
+      }
+      return throwError(error);
+    })
   );
-
-  return next(authReq);
 };

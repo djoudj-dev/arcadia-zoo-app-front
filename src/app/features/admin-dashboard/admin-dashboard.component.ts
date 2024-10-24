@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HabitatsDashboardComponent } from './habitats-dashboard/habitats-dashboard.component';
-import { AuthService } from '../../core/auth/auth.service';
+import { TokenService } from '../../core/token/token.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,10 +18,10 @@ import { AuthService } from '../../core/auth/auth.service';
   templateUrl: './admin-dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private tokenService: TokenService) {}
 
   ngOnInit(): void {
-    const token = this.authService.getToken();
+    const token = this.tokenService.getToken();
     console.log('Token récupéré pour Dashboard:', token); // Vérifiez si le token est disponible
   }
 
