@@ -28,4 +28,8 @@ export class DashboardComponent implements OnInit {
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
+
+  goBack(): void {
+    this.router.navigate(['/']);
+  }
 }
