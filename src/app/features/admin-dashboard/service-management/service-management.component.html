@@ -13,7 +13,7 @@
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="createService()"
+        (ngSubmit)="newService.id ? updateService() : createService()"
         enctype="multipart/form-data"
       >
         <div>
@@ -120,7 +120,6 @@
             [color]="'tertiary'"
             [rounded]="true"
             class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
-            (click)="newService.id ? updateService() : createService()"
           ></app-button>
           <app-button
             [text]="'Annuler'"

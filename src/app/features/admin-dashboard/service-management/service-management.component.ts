@@ -12,7 +12,6 @@ import { environment } from '../../../../environments/environment.development';
   standalone: true,
   imports: [ButtonComponent, SlicePipe, ReactiveFormsModule, FormsModule],
   templateUrl: './service-management.component.html',
-  styleUrls: ['./service-management.component.css'],
 })
 export class ServiceManagementComponent implements OnInit {
   serviceList: Service[] = [];
@@ -187,8 +186,11 @@ export class ServiceManagementComponent implements OnInit {
     const service = this.serviceList.find((s) => s.id === serviceId);
     if (service) {
       this.newService = { ...service };
+      // Assure-toi que les caractéristiques du service sont bien assignées
+      this.newService.features = service.features || [];
     }
   }
+
   // Suppression d'un service
   deleteService(serviceId: number) {
     this.serviceManagement.deleteService(serviceId).subscribe(
