@@ -91,52 +91,49 @@
       </form>
     </div>
 
-    <!-- Liste des comptes -->
+    <!-- Liste des comptes sous forme de cartes -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">Liste des comptes</h3>
-      <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
-        <thead>
-          <tr class="bg-gray-200 text-left text-sm font-semibold text-gray-700">
-            <th class="border p-3">Nom</th>
-            <th class="border p-3">Email</th>
-            <th class="border p-3">Rôle</th>
-            <th class="border p-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of users; track user.id) {
-          <tr class="border-b last:border-0">
-            <td class="border p-3">{{ user.username }}</td>
-            <td class="border p-3">{{ user.email }}</td>
-            <td class="border p-3">
-              {{ user.role.name || "Rôle non défini" }}
-            </td>
 
-            <td class="border p-3">
-              <!-- Actions avec flexbox pour aligner les boutons et des tailles réduites -->
-              <div class="flex space-x-2">
-                <app-button
-                  [text]="'Modifier'"
-                  [type]="'button'"
-                  [color]="'secondary'"
-                  [rounded]="true"
-                  [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
-                  (click)="editUser(user)"
-                ></app-button>
-                <app-button
-                  [text]="'Supprimer'"
-                  [type]="'button'"
-                  [color]="'red'"
-                  [rounded]="true"
-                  [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
-                  (click)="deleteAccount(user.id)"
-                ></app-button>
-              </div>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
+      <!-- Utilisation de flexbox ou grid pour gérer l'affichage en grille -->
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Boucle sur les utilisateurs et affichage de chaque carte -->
+        @for (user of users; track user.id) {
+        <div class="bg-white p-4 rounded-lg shadow-md border">
+          <!-- Titre du nom d'utilisateur -->
+          <h4 class="text-lg font-bold text-gray-800 mb-2">
+            {{ user.username }}
+          </h4>
+          <p class="text-sm text-gray-600 mb-1">
+            <span class="font-semibold">Email :</span> {{ user.email }}
+          </p>
+          <p class="text-sm text-gray-600 mb-1">
+            <span class="font-semibold">Rôle :</span>
+            {{ user.role.name || "Rôle non défini" }}
+          </p>
+
+          <!-- Actions pour modifier et supprimer l'utilisateur -->
+          <div class="flex space-x-2 mt-4">
+            <app-button
+              [text]="'Modifier'"
+              [type]="'button'"
+              [color]="'secondary'"
+              [rounded]="true"
+              [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
+              (click)="editUser(user)"
+            ></app-button>
+            <app-button
+              [text]="'Supprimer'"
+              [type]="'button'"
+              [color]="'red'"
+              [rounded]="true"
+              [customClass]="'text-xs px-2 py-1 w-auto font-bold'"
+              (click)="deleteAccount(user.id)"
+            ></app-button>
+          </div>
+        </div>
+        }
+      </div>
     </div>
   </div>
 </section>
