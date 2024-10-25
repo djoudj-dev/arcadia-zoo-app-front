@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { InactivityService } from '../../core/services/inactivity.service'; // Ajouter InactivityService
 import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
@@ -19,6 +20,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = ''; // Variable pour afficher les erreurs
   private router = inject(Router); // Utilisation de inject() pour le Router
+  private inactivityService = inject(InactivityService); // Injecter le service d'inactivité
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
@@ -37,6 +39,7 @@ export class LoginComponent {
           console.log('Formulaire soumis avec succès:', this.loginForm.value);
           console.log("Rôle de l'utilisateur:", response); // Afficher le rôle de l'utilisateur
           this.errorMessage = ''; // Réinitialiser le message d'erreur
+          this.inactivityService.startMonitoring(); // Démarrer la surveillance d'inactivité après la connexion réussie
           this.router.navigate(['/dashboard']); // Rediriger après la connexion réussie
         },
         error: (error) => {
