@@ -24,12 +24,15 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Vérifier si le token est expiré et déconnecter l'utilisateur si nécessaire
-    if (this.tokenService.isTokenExpired()) {
-      this.authService.logout(); // Déconnecter l'utilisateur
-      this.alertService.showAlert(
-        'Votre session a expiré, vous avez été déconnecté.'
-      );
+    const token = this.tokenService.getToken(); // Récupérer le token
+    if (token) {
+      // Vérifier si le token existe avant de vérifier son expiration
+      if (this.tokenService.isTokenExpired()) {
+        this.authService.logout(); // Déconnecter l'utilisateur
+        this.alertService.showAlert(
+          'Votre session a expiré, vous avez été déconnecté.'
+        );
+      }
     }
 
     // Démarrer la surveillance de l'inactivité de l'utilisateur
