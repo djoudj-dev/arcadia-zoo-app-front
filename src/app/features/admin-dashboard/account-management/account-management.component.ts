@@ -10,7 +10,6 @@ import { AccountManagementService } from '../service/account-management.service'
   standalone: true,
   imports: [ButtonComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './account-management.component.html',
-  styleUrls: ['./account-management.component.css'], // Correction de "styleUrl" en "styleUrls"
 })
 export class AccountManagementComponent implements OnInit {
   users: User[] = []; // Liste des utilisateurs chargés depuis le backend

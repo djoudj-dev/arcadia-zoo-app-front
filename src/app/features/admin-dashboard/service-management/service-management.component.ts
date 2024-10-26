@@ -21,6 +21,9 @@ export class ServiceManagementComponent implements OnInit {
     name: string;
     description: string;
     image: string;
+    location: string;
+    hours: string;
+    features: Feature[];
     showFullDescription: boolean;
   }[] = [];
   newService: Partial<Service> = { features: [] }; // Stocke les données du nouveau service
