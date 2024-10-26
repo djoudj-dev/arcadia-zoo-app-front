@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
   const router = inject(Router);
-  const alertService = inject(AlertService); // Utiliser le nouvel AlertService
+  const alertService = inject(AlertService);
 
   const token = tokenService.getToken();
 
@@ -26,12 +26,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error) => {
       if (error.status === 401 || error.status === 403) {
-        // Gérer la déconnexion et afficher le message d'alerte
         authService.logout();
         alertService.showAlert(
           'Votre session a expiré. Vous avez été déconnecté.'
         );
-        router.navigate(['/login']); // Redirige vers la page de connexion
+        router.navigate(['/login']);
       }
       return throwError(error);
     })
