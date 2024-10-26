@@ -24,7 +24,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
       'Accès refusé. Rôles requis:',
       requiredRoles,
       ", Rôles de l'utilisateur:",
-      authService.currentUser$
+      authService.currentUserSignal()?.role.name
     );
     router.navigate(['/unauthorized']); // Redirige si l'utilisateur n'a pas les rôles requis
     return false;

@@ -68,7 +68,7 @@
       </li>
 
       <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
-      @if ((userRoles$ | async)?.veterinaire) {
+      @if (userRoles().veterinaire) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/veterinaire']"
@@ -80,7 +80,7 @@
       }
 
       <!-- Employe visible si l'utilisateur a le role 'employe'-->
-      @if ((userRoles$ | async)?.employe) {
+      @if (userRoles().employe) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/employe']"
@@ -92,7 +92,7 @@
       }
 
       <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
-      @if ((userRoles$ | async)?.admin) {
+      @if (userRoles().admin) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
           [routerLink]="['/admin']"
@@ -104,7 +104,7 @@
       }
 
       <!-- Lien Déconnexion si l'utilisateur est authentifié -->
-      @if (userAuthenticated$ | async) {
+      @if (userAuthenticated()) {
 
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
@@ -170,7 +170,7 @@
     </li>
 
     <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
-    @if ((userRoles$ | async)?.veterinaire) {
+    @if (userRoles().veterinaire) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/veterinaire']"
@@ -182,7 +182,7 @@
     }
 
     <!-- Employe visible si l'utilisateur a le role 'employe'-->
-    @if ((userRoles$ | async)?.employe) {
+    @if (userRoles().employe) {
     <li class="block py-3 md:inline md:py-0 md:mr-6">
       <a
         [routerLink]="['/employe']"
@@ -194,7 +194,7 @@
     }
 
     <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
-    @if ((userRoles$ | async)?.admin) {
+    @if (userRoles().admin) {
     <li class="block py-3 md:mr-6">
       <a
         [routerLink]="['/admin']"
@@ -206,7 +206,7 @@
     }
 
     <!-- Lien Déconnexion sur mobile si l'utilisateur est authentifié -->
-    @if (userAuthenticated$ | async) {
+    @if (userAuthenticated()) {
     <li class="block py-3 md:mr-6">
       <a
         (click)="logout()"
