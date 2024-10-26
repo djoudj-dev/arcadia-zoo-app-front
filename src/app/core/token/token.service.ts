@@ -8,33 +8,31 @@ export class TokenService {
   private tokenKey = 'token';
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.getCookie(this.tokenKey);
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+    this.setCookie(this.tokenKey, token, 1); // 1 day expiration
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.tokenKey);
+    this.deleteCookie(this.tokenKey);
   }
 
   isTokenExpired(): boolean {
     const token = this.getToken();
-    if (!token) return true; // Si pas de token, considéré comme expiré
+    if (!token) return true;
 
-    // Décoder le token JWT pour vérifier la date d'expiration
     const tokenPayload = this.decodeToken(token);
-    const expiry = tokenPayload ? tokenPayload.exp * 1000 : null; // L'expiration est en secondes, donc on convertit en millisecondes
+    const expiry = tokenPayload ? tokenPayload.exp * 1000 : null;
 
     if (expiry && expiry > Date.now()) {
-      return false; // Le token n'est pas expiré
+      return false;
     }
 
-    return true; // Le token est expiré
+    return true;
   }
 
-  // Fonction pour décoder le token JWT
   private decodeToken(token: string): Token | null {
     try {
       return JSON.parse(atob(token.split('.')[1]));
@@ -42,5 +40,27 @@ export class TokenService {
       console.error('Erreur lors du décodage du token', error);
       return null;
     }
+  }
+
+  private setCookie(name: string, value: string, days: number): void {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie =
+      name +
+      '=' +
+      encodeURIComponent(value) +
+      '; expires=' +
+      expires +
+      '; path=/; Secure; HttpOnly';
+  }
+
+  private getCookie(name: string): string | null {
+    return document.cookie.split('; ').reduce((r, v) => {
+      const parts = v.split('=');
+      return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+    }, '');
+  }
+
+  private deleteCookie(name: string): void {
+    this.setCookie(name, '', -1);
   }
 }
