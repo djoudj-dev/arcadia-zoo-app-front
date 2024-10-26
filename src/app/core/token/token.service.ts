@@ -8,7 +8,9 @@ export class TokenService {
   private tokenKey = 'token';
 
   getToken(): string | null {
-    return this.getCookie(this.tokenKey);
+    const token = this.getCookie(this.tokenKey);
+    console.log('Token récupéré:', token);
+    return token;
   }
 
   setToken(token: string): void {
@@ -25,6 +27,8 @@ export class TokenService {
 
     const tokenPayload = this.decodeToken(token);
     const expiry = tokenPayload ? tokenPayload.exp * 1000 : null;
+
+    console.log('Expiration du token:', expiry, 'Heure actuelle:', Date.now());
 
     if (expiry && expiry > Date.now()) {
       return false;
@@ -50,7 +54,7 @@ export class TokenService {
       encodeURIComponent(value) +
       '; expires=' +
       expires +
-      '; path=/; Secure; HttpOnly';
+      '; path=/';
   }
 
   private getCookie(name: string): string | null {

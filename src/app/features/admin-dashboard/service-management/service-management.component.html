@@ -157,6 +157,15 @@
           <div class="flex-1">
             <h4 class="text-lg font-semibold">{{ service.name }}</h4>
             <p class="text-sm sm:text-base">
+              <span class="font-semibold">Emplacement:</span>
+              {{ service.location }}
+            </p>
+            <p class="text-sm sm:text-base">
+              <span class="font-semibold">Horaires:</span> {{ service.hours }}
+            </p>
+
+            <p class="text-sm sm:text-base">
+              <span class="font-semibold">Déscription: </span>
               @if (!service.showFullDescription) {
               <span>{{ service.description | slice : 0 : 30 }}...</span>
               } @else {
