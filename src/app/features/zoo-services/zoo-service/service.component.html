@@ -34,8 +34,8 @@
       <!-- Caractéristiques du service -->
       <p class="mt-2"><strong>Caractéristiques :</strong></p>
       <ul class="list-disc ml-4">
-        @for (feature of service.features; track feature) {
-        <li>{{ feature }}</li>
+        @for (feature of features; track feature) {
+        <li>{{ feature.name }}</li>
         }
       </ul>
     </div>
