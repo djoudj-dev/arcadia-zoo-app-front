@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
 import { AccountManagementService } from '../service/account-management.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account-management',
@@ -16,7 +17,10 @@ export class AccountManagementComponent implements OnInit {
   roles: Role[] = []; // Liste des rôles chargés depuis le backend
   newUser: Partial<User> = {}; // Formulaire de création/mise à jour d'utilisateur
 
-  constructor(private accountManagement: AccountManagementService) {}
+  constructor(
+    private router: Router,
+    private accountManagement: AccountManagementService
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers(); // Charger la liste des utilisateurs au démarrage
@@ -122,5 +126,10 @@ export class AccountManagementComponent implements OnInit {
   // Réinitialise le formulaire de création/mise à jour d'utilisateur
   cancel(): void {
     this.newUser = {}; // Réinitialisation du formulaire
+  }
+
+  // Retour a l'accueil dashboard
+  goBack() {
+    this.router.navigate(['/admin']);
   }
 }

@@ -6,6 +6,7 @@ import { ServiceManagementService } from '../service/service.management.service'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Feature } from '../../../core/models/feature.model';
 import { environment } from '../../../../environments/environment.development';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service-management',
@@ -29,7 +30,10 @@ export class ServiceManagementComponent implements OnInit {
   newService: Partial<Service> = { features: [] }; // Stocke les données du nouveau service
   selectedFile: File | null = null;
 
-  constructor(private serviceManagement: ServiceManagementService) {}
+  constructor(
+    private router: Router,
+    private serviceManagement: ServiceManagementService
+  ) {}
 
   ngOnInit() {
     this.loadServices();
@@ -151,7 +155,7 @@ export class ServiceManagementComponent implements OnInit {
     }
   }
 
-  // Mise à jour d'un service
+  // Mise à jour d'un serviceprivate router: Router, private tokenService: TokenService
   updateService() {
     const { name, description, location, hours, features, id } =
       this.newService;
@@ -222,5 +226,10 @@ export class ServiceManagementComponent implements OnInit {
   cancel() {
     this.newService = {};
     this.selectedFile = null;
+  }
+
+  // Retour a l'accueil dashboard
+  goBack() {
+    this.router.navigate(['/admin']);
   }
 }

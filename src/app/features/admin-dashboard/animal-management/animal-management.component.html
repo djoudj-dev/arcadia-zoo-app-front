@@ -2,67 +2,159 @@
 <section
   class="animals-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
 >
-  <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des animaux</h2>
+  <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-center">
+    Gestion des animaux
+  </h2>
 
   <div class="flex flex-col lg:flex-row gap-8">
     <!-- Formulaire de gestion des animaux -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
-      <h3 class="text-xl font-semibold mb-4">Ajouter/Mettre à jour Animal</h3>
-      <form class="space-y-4">
+      <h3 class="text-xl font-semibold mb-4">
+        {{ newAnimal.id ? "Modifier l'animal" : "Ajouter un animal" }}
+      </h3>
+      <form
+        class="space-y-3 sm:space-y-4"
+        (ngSubmit)="newAnimal.id ? updateAnimal() : createAnimal()"
+        enctype="multipart/form-data"
+      >
         <div>
-          <label for="animal-name" class="block text-lg font-medium mb-2"
-            >Prénom de l'animal:</label
+          <label
+            for="animal-name"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
           >
+            Nom de l'animal:
+          </label>
           <input
             type="text"
-            id="animal-name"
-            name="animal-name"
+            id="name"
+            name="name"
+            [(ngModel)]="newAnimal.name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Nom de l'animal"
           />
         </div>
         <div>
-          <label for="animal-race" class="block text-lg font-medium mb-2"
-            >Race:</label
+          <label
+            for="animal-species"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
           >
+            Espèce:
+          </label>
           <input
             type="text"
-            id="animal-race"
-            name="animal-race"
+            id="species"
+            name="species"
+            [(ngModel)]="newAnimal.species"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Espèce de l'animal"
           />
         </div>
         <div>
-          <label for="animal-images" class="block text-lg font-medium mb-2"
-            >Images:</label
+          <label
+            for="animal-image"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
           >
+            Photo de l'animal:
+          </label>
           <input
             type="file"
-            id="animal-images"
-            name="animal-images"
-            multiple
-            class="w-full"
+            id="animal-image"
+            (change)="onFileChange($event)"
+            class="w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
         <div>
-          <label for="animal-habitat" class="block text-lg font-medium mb-2"
-            >Habitat:</label
+          <label
+            for="animal-habitat"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
           >
+            Habitat:
+          </label>
           <select
             id="animal-habitat"
             name="animal-habitat"
+            [(ngModel)]="newAnimal.habitatId"
             class="w-full p-2 border border-gray-300 rounded-md"
           >
-            <!-- Les options dynamiques seront insérées ici -->
+            @for (habitat of habitats; track habitat.id) {
+            <option
+              [value]="habitat.id"
+              [selected]="habitat.id === newAnimal.habitatId"
+            >
+              {{ habitat.name }}
+            </option>
+            }
           </select>
         </div>
-        <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/4">
+        <div>
+          <label
+            for="animal-characteristics"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          >
+            Caractéristiques:
+          </label>
+          <input
+            type="text"
+            id="characteristics"
+            name="characteristics"
+            [(ngModel)]="newAnimal.characteristics"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Caractéristiques de l'animal"
+          />
+        </div>
+        <div>
+          <label
+            for="animal-weight-range"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          >
+            Fourchette de poids:
+          </label>
+          <input
+            type="text"
+            id="weight-range"
+            name="weightRange"
+            [(ngModel)]="newAnimal.weightRange"
+            required
+            class="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Ex: 150 à 300 kg"
+          />
+        </div>
+        <div>
+          <label
+            for="animal-diet"
+            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          >
+            Régime alimentaire:
+          </label>
+          <select
+            id="animal-diet"
+            name="diet"
+            [(ngModel)]="newAnimal.diet"
+            class="w-full p-2 border border-gray-300 rounded-md"
+          >
+            <option value="Herbivore">Herbivore</option>
+            <option value="Carnivore">Carnivore</option>
+            <option value="Omnivore">Omnivore</option>
+          </select>
+        </div>
+        <div class="flex space-x-2">
           <app-button
-            [text]="'Ajouter/Mettre à jour Animal'"
-            [type]="'button'"
+            [text]="newAnimal.id ? 'Modifier' : 'Créer'"
+            [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
+            class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
+          ></app-button>
+          <app-button
+            [text]="'Annuler'"
+            [type]="'button'"
+            [color]="'secondary'"
+            [rounded]="true"
+            class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
+            (click)="cancel()"
           ></app-button>
         </div>
       </form>
@@ -70,21 +162,43 @@
 
     <!-- Liste des animaux -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
-      <h3 class="text-xl font-semibold mb-4">Liste des animaux</h3>
-      <table class="w-full border-collapse bg-white rounded-lg shadow-sm">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border p-4 text-left">Prénom</th>
-            <th class="border p-4 text-left">Race</th>
-            <th class="border p-4 text-left">Images</th>
-            <th class="border p-4 text-left">Habitat</th>
-            <th class="border p-4 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Les lignes dynamiques seront insérées ici -->
-        </tbody>
-      </table>
+      <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
+        Liste des animaux
+      </h3>
+      <div class="space-y-4 sm:space-y-6">
+        @for (animal of animalList; track animal.id) {
+        <div
+          class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
+        >
+          <img
+            [src]="animal.image"
+            alt="Photo de l'animal"
+            class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-4"
+          />
+          <div class="flex flex-col">
+            <h4 class="text-lg font-semibold mb-2">{{ animal.name }}</h4>
+            <p class="text-base text-gray-600 mb-2">{{ animal.species }}</p>
+            <div class="flex space-x-2">
+              <app-button
+                [text]="'Modifier'"
+                [color]="'tertiary'"
+                [rounded]="true"
+                class="font-bold px-4"
+                (click)="editAnimal(animal.id)"
+              ></app-button>
+              <app-button
+                [text]="'Supprimer'"
+                [color]="'secondary'"
+                [rounded]="true"
+                class="font-bold px-4"
+                (click)="deleteAnimal(animal.id)"
+              ></app-button>
+            </div>
+          </div>
+        </div>
+        }
+        <!-- Fin de la boucle @for -->
+      </div>
     </div>
   </div>
 </section>
