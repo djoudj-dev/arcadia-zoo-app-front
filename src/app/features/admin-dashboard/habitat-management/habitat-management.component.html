@@ -135,4 +135,17 @@
       </div>
     </div>
   </div>
+  <!-- Bouton de retour -->
+  <div class="flex justify-center pt-4">
+    <div class="w-full sm:w-1/4 lg:w-1/5">
+      <app-button
+        [text]="'Retour'"
+        [type]="'button'"
+        [color]="'tertiary'"
+        [rounded]="true"
+        class="w-full font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
+        (click)="goBack()"
+      ></app-button>
+    </div>
+  </div>
 </section>
