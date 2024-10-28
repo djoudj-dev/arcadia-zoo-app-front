@@ -5,6 +5,7 @@ import { HabitatManagementService } from '../service/habitat-management.service'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, SlicePipe } from '@angular/common';
 import { environment } from '../../../../environments/environment.development';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-habitat-management',
@@ -24,7 +25,10 @@ export class HabitatManagementComponent implements OnInit {
   newHabitat: Partial<Habitat> = {};
   selectedFile: File | null = null;
 
-  constructor(private habitatManagement: HabitatManagementService) {}
+  constructor(
+    private router: Router,
+    private habitatManagement: HabitatManagementService
+  ) {}
 
   ngOnInit() {
     this.loadHabitats();
@@ -149,5 +153,10 @@ export class HabitatManagementComponent implements OnInit {
   cancel() {
     this.newHabitat = {};
     this.selectedFile = null;
+  }
+
+  // Retour a l'accueil dashboard
+  goBack() {
+    this.router.navigate(['/admin']);
   }
 }
