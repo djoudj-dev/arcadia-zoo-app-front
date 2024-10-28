@@ -30,12 +30,16 @@ export class HabitatComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Route param ID:', id);
-
-    // Utiliser le service pour récupérer un habitat par ID
-    this.habitatService.getHabitatById(id).subscribe((data) => {
-      this.habitat = data;
-    });
+    if (id) {
+      this.habitatService.getHabitatById(id).subscribe((data) => {
+        if (data) {
+          this.habitat = data;
+          console.log('Habitat trouvé :', this.habitat);
+        } else {
+          console.error('Habitat non trouvé');
+        }
+      });
+    }
   }
 
   goBack(): void {

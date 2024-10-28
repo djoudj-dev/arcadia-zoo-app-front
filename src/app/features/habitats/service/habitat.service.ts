@@ -1,45 +1,37 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { HABITATS } from '../../../core/mocks/habitats-mock.component';
+import { map, Observable } from 'rxjs';
 import { Habitat } from '../../../core/models/habitat.model';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HabitatService {
-  constructor() {}
+  private apiUrl = environment.apiUrl + '/api/habitats';
+  private uploadsUrl = environment.apiUrl + '/uploads'; // Base URL pour les images
+
+  constructor(private http: HttpClient) {}
 
   // Récupérer la liste de tous les habitats
   getHabitats(): Observable<Habitat[]> {
-    return of(HABITATS);
+    return this.http.get<Habitat[]>(this.apiUrl).pipe(
+      map((habitats) =>
+        habitats.map((habitat) => ({
+          ...habitat,
+          image: `${this.uploadsUrl}/${habitat.image}`, // Ajouter l'URL complète de l'image
+        }))
+      )
+    );
   }
 
   // Récupérer un habitat spécifique par son ID
   getHabitatById(id: number): Observable<Habitat | undefined> {
-    const habitat = HABITATS.find((habitat) => habitat.id === id);
-    return of(habitat);
-  }
-
-  // Ajouter un habitat (pour l'espace admin)
-  addHabitat(habitat: Habitat): void {
-    HABITATS.push(habitat);
-  }
-
-  // Mettre à jour un habitat (pour l'espace vétérinaire ou employé)
-  updateHabitat(updatedHabitat: Habitat): void {
-    const index = HABITATS.findIndex(
-      (habitat) => habitat.id === updatedHabitat.id
+    return this.http.get<Habitat>(`${this.apiUrl}/${id}`).pipe(
+      map((habitat) => ({
+        ...habitat,
+        image: `${this.uploadsUrl}/${habitat.image}`, // Ajouter l'URL complète de l'image
+      }))
     );
-    if (index !== -1) {
-      HABITATS[index] = updatedHabitat;
-    }
-  }
-
-  // Supprimer un habitat (pour l'espace admin)
-  deleteHabitat(id: number): void {
-    const index = HABITATS.findIndex((habitat) => habitat.id === id);
-    if (index !== -1) {
-      HABITATS.splice(index, 1);
-    }
   }
 }

@@ -1,6 +1,6 @@
 <section class="w-full bg-primary shadow py-4">
   <!-- Titre de la section -->
-  <div class="text-center">
+  <div class="text-center mb-6">
     <h1
       class="text-xl font-bold font-serif text-quinary sm:text-2xl md:text-6xl"
     >
@@ -25,14 +25,16 @@
           class="w-full h-full object-cover rounded-full"
         />
         <div
-          class="absolute inset-0 flex flex-col items-center justify-center bg-quaternary bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+          class="absolute inset-0 flex flex-col items-center justify-center bg-quaternary bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity rounded-full text-center p-4"
         >
-          <span class="text-quinary text-2xl md:text-3xl font-sans">{{
+          <span class="text-quinary text-2xl md:text-3xl font-sans font-bold">{{
             service.name
           }}</span>
-          <span class="text-primary text-center text-lg px-2 mt-2">{{
-            service.description
-          }}</span>
+          <span
+            class="text-primary text-center text-base md:text-lg mt-2 max-w-xs leading-relaxed"
+          >
+            {{ service.description }}
+          </span>
         </div>
       </a>
     </div>
