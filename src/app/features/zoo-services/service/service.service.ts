@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment.development';
   providedIn: 'root',
 })
 export class ServiceService {
-  private apiUrl = environment.apiUrl + '/services';
+  private apiUrl = environment.apiUrl + '/api/services';
   private uploadsUrl = environment.apiUrl + '/uploads'; // Base URL pour les images
 
   constructor(private http: HttpClient) {}

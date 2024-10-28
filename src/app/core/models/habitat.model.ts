@@ -6,4 +6,5 @@ export interface Habitat {
   description: string; // Description de l'habitat
   image: string; // URL de l'image de l'habitat
   animals: Animal[]; // Liste des animaux présents dans cet habitat
+  showDescription?: boolean; // Afficher la description de l'habitat
 }

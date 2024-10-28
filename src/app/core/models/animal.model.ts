@@ -1,15 +1,16 @@
-import { VetNote } from './vetnote.model';
+import { VetNote } from '../models/vetnote.model';
+import { Diet } from './diet.enum';
 
 export interface Animal {
-  id: number;
-  name: string;
-  species: string; // Espèce de l'animal
-  habitat: string; // Nom de l'habitat
-  characteristics: string; // Caractéristiques principales de l'animal
-  weightRange: string; // Fourchette de poids (par exemple, '50-100kg')
-  diet: string; // Régime alimentaire (par exemple, 'Herbivore')
+  id: number; // Identifiant de l'animal
+  name: string; // Nom de l'animal
   image: string; // URL de l'image de l'animal
-  habitats: string[]; // Liste des habitats où l'animal pourrait être trouvé
+  species: string; // Espèce de l'animal
+  habitat: string; // Description de l'habitat
+  characteristics: string; // Caractéristiques principales de l'animal
+  weightRange: string; // Fourchette de poids (ex : '150 à 300 kg')
+  diet: Diet; // Régime alimentaire (utilise l'enum Diet)
+  habitats: string[]; // Liste des habitats où l'animal peut être trouvé
   habitatId: number; // ID de l'habitat auquel l'animal est associé
   vetNote?: VetNote; // Note vétérinaire optionnelle
 }
