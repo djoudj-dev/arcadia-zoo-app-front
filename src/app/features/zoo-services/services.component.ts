@@ -11,7 +11,7 @@ import { ServiceService } from './service/service.service';
   templateUrl: './services.component.html',
 })
 export class ServicesComponent implements OnInit {
-  services: Service[] = [];
+  serviceList: Service[] = [];
 
   constructor(
     private serviceService: ServiceService, // Injection du service
@@ -21,7 +21,7 @@ export class ServicesComponent implements OnInit {
   ngOnInit(): void {
     // Utilisation du service pour récupérer la liste des services
     this.serviceService.getServices().subscribe((data) => {
-      this.services = data;
+      this.serviceList = data;
     });
   }
 
