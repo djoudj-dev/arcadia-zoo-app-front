@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
 import { Service } from '../../../core/models/service.model';
@@ -14,222 +14,159 @@ import { Router } from '@angular/router';
   imports: [ButtonComponent, SlicePipe, ReactiveFormsModule, FormsModule],
   templateUrl: './service-management.component.html',
 })
-export class ServiceManagementComponent implements OnInit {
-  serviceList: Service[] = [];
-  features: Feature[] = [];
-  displayedServiceList: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-    location: string;
-    hours: string;
-    features: Feature[];
-    showFullDescription: boolean;
-  }[] = [];
-  newService: Partial<Service> = { features: [] }; // Stocke les données du nouveau service
-  selectedFile: File | null = null;
+export class ServiceManagementComponent {
+  serviceList = signal<Service[]>([]);
+  features = signal<Feature[]>([]);
+  newService = signal<Partial<Service>>({ features: [] });
+  selectedFile = signal<File | null>(null);
 
-  constructor(
-    private router: Router,
-    private serviceManagement: ServiceManagementService
-  ) {}
+  // Chemin d'accès aux images (dérivé de l'environnement)
+  imageBaseUrl = `${environment.apiUrl}/uploads`;
 
-  ngOnInit() {
+  private router = inject(Router);
+  private serviceManagement = inject(ServiceManagementService);
+
+  constructor() {
     this.loadServices();
     this.loadFeatures();
   }
 
-  isFeatureSelected(feature: Feature): boolean {
-    return this.newService.features?.some((f) => f.id === feature.id) ?? false;
+  loadServices() {
+    this.serviceManagement.getAllServices().subscribe((services) => {
+      const updatedServices = services.map((service) => {
+        // Supprime toutes occurrences initiales de 'uploads/' pour éviter les doublons
+        const imagePath = service.image.replace(/^\/?uploads\/?/i, '');
+        return {
+          ...service,
+          image: `${this.imageBaseUrl}/${imagePath}`,
+        };
+      });
+      this.serviceList.set(updatedServices);
+    });
   }
 
-  // Méthode appelée lorsqu'une case à cocher est sélectionnée ou désélectionnée
+  loadFeatures() {
+    this.serviceManagement.getAllFeatures().subscribe((features) => {
+      this.features.set(features);
+    });
+  }
+
+  isFeatureSelected = (feature: Feature): boolean =>
+    !!this.newService().features?.some((f) => f.id === feature.id);
+
   onFeatureChange(feature: Feature, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
-
-    // Assurez-vous que features est initialisé comme un tableau
-    if (!this.newService.features) {
-      this.newService.features = [];
-    }
+    const updatedFeatures = [...(this.newService().features || [])];
 
     if (isChecked) {
-      // Ajouter la caractéristique sélectionnée (vérifier qu'elle n'existe pas déjà)
-      if (!this.newService.features.some((f) => f.id === feature.id)) {
-        this.newService.features.push(feature);
+      if (!updatedFeatures.some((f) => f.id === feature.id)) {
+        updatedFeatures.push(feature);
       }
     } else {
-      // Supprimer la caractéristique désélectionnée
-      this.newService.features = this.newService.features.filter(
+      const filteredFeatures = updatedFeatures.filter(
         (f) => f.id !== feature.id
       );
+      this.newService.set({ ...this.newService(), features: filteredFeatures });
+      return;
     }
-    console.log(this.newService.features);
+    this.newService.set({ ...this.newService(), features: updatedFeatures });
   }
 
-  // Charger les services depuis le backend
-  loadServices() {
-    this.serviceManagement.getAllServices().subscribe((services: Service[]) => {
-      this.serviceList = services;
-      this.displayedServiceList = this.serviceList.map((service) => ({
-        ...service,
-        image: `${environment.apiUrl}/uploads/${service.image}`,
-        showFullDescription: false, // Ajouter showFullDescription pour gérer l'affichage
-      }));
-    });
-  }
-
-  // Charger les caractéristiques disponibles depuis le backend
-  loadFeatures() {
-    this.serviceManagement.getAllFeatures().subscribe((features: Feature[]) => {
-      this.features = features;
-    });
-  }
-
-  // Gestion de l'image du service
   onFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.selectedFile = file; // Met à jour la variable selectedFile
+      this.selectedFile.set(file);
       const reader = new FileReader();
-      reader.onload = () => {
-        this.newService.image = reader.result as string; // Facultatif si vous affichez une prévisualisation
-      };
+      reader.onload = () =>
+        this.newService.set({
+          ...this.newService(),
+          image: reader.result as string,
+        });
       reader.readAsDataURL(file);
-    } else {
-      console.error('Aucun fichier sélectionné.');
     }
   }
 
-  // Création d'un service
   createService() {
-    console.log('Données du nouveau service:', this.newService);
-
-    // Extraire les propriétés du nouveau service
-    const { name, description, location, hours, features } = this.newService;
-
-    // Vérification des champs obligatoires
-    if (
-      name &&
-      description &&
-      location &&
-      hours &&
-      features &&
-      features.length > 0
-    ) {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('description', description);
-      formData.append('location', location);
-      formData.append('hours', hours);
-
-      // Convertir les caractéristiques en tableau d'ID avant de les ajouter
-      const featureIds = features.map((feature: Feature) => feature.id);
-      formData.append('features', JSON.stringify(featureIds)); // Envoyer uniquement les IDs des caractéristiques
-
-      // Ajouter l'image si elle est sélectionnée
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile);
-      }
-
-      // Observer pour gérer les résultats de la requête HTTP
-      const observer = {
-        next: (createdService: Service) => {
-          this.serviceList.push(createdService); // Ajouter le service à la liste locale
-          this.newService = {}; // Réinitialiser le formulaire
-          this.selectedFile = null; // Réinitialiser l'image sélectionnée
-          this.loadServices(); // Recharger la liste des services
+    const { name, description, location, hours, features } = this.newService();
+    if (name && description && location && hours && features?.length) {
+      const formData = this.buildFormData(this.newService());
+      this.serviceManagement.createService(formData).subscribe({
+        next: (createdService) => {
+          this.serviceList.set([...this.serviceList(), createdService]);
+          this.newService.set({ features: [] });
+          this.selectedFile.set(null);
         },
-        error: (error: Service) => {
-          console.error('Erreur lors de la création du service:', error);
-        },
-        complete: () => {
-          console.log('Création du service complétée.');
-        },
-      };
-
-      // Appel au service pour créer le service
-      this.serviceManagement.createService(formData).subscribe(observer);
-    } else {
-      console.log('Veuillez remplir tous les champs obligatoires.');
+        error: (error) =>
+          console.error('Erreur lors de la création du service:', error),
+        complete: () => this.loadServices(),
+      });
     }
   }
 
-  // Mise à jour d'un serviceprivate router: Router, private tokenService: TokenService
   updateService() {
     const { name, description, location, hours, features, id } =
-      this.newService;
-
+      this.newService();
     if (name && description && location && hours && features && id) {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('description', description);
-      formData.append('location', location);
-      formData.append('hours', hours);
-      formData.append('features', JSON.stringify(features)); // Convertir les features en string JSON
-
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile); // Ajouter l'image si elle a été modifiée
-      }
-
-      this.serviceManagement.updateService(id, formData).subscribe(
-        () => {
-          console.log('Service mis à jour');
-          this.newService = {};
-          this.selectedFile = null;
-          this.loadServices(); // Recharger la liste des services
+      const formData = this.buildFormData(this.newService());
+      this.serviceManagement.updateService(id, formData).subscribe({
+        next: () => {
+          this.newService.set({ features: [] });
+          this.selectedFile.set(null);
+          this.loadServices();
         },
-        (error) => {
-          console.error('Erreur lors de la mise à jour du service:', error);
-        }
-      );
-    } else {
-      console.log('Veuillez remplir tous les champs');
+        error: (error) =>
+          console.error('Erreur lors de la mise à jour du service:', error),
+      });
     }
   }
 
-  // Remplir le formulaire de mise à jour avec les données du service sélectionné
   editService(serviceId: number) {
-    const service = this.serviceList.find((s) => s.id === serviceId);
+    const service = this.serviceList().find((s) => s.id === serviceId);
     if (service) {
-      this.newService = { ...service };
-      // Assure-toi que les caractéristiques du service sont bien assignées
-      this.newService.features = service.features || [];
+      this.newService.set({ ...service });
     }
   }
 
-  // Suppression d'un service
   deleteService(serviceId: number) {
-    this.serviceManagement.deleteService(serviceId).subscribe(
-      () => {
-        console.log('Service supprimé');
-        this.serviceList = this.serviceList.filter(
-          (service) => service.id !== serviceId
-        );
-        this.loadServices(); // Recharger la liste des services
-      },
-      (error) => {
-        console.error('Erreur lors de la suppression du service:', error);
-      }
-    );
+    this.serviceManagement.deleteService(serviceId).subscribe(() => {
+      this.serviceList.set(
+        this.serviceList().filter((service) => service.id !== serviceId)
+      );
+      this.loadServices();
+    });
   }
 
-  // Gestion dynamique de l'affichage des descriptions
   toggleDescription(serviceId: number) {
-    const service = this.displayedServiceList.find((s) => s.id === serviceId);
+    const service = this.serviceList().find((s) => s.id === serviceId);
     if (service) {
       service.showFullDescription = !service.showFullDescription;
+      this.serviceList.set([...this.serviceList()]);
     }
   }
 
-  // Annuler l'édition ou la création du service
   cancel() {
-    this.newService = {};
-    this.selectedFile = null;
+    this.newService.set({ features: [] });
+    this.selectedFile.set(null);
   }
 
-  // Retour a l'accueil dashboard
   goBack() {
     this.router.navigate(['/admin']);
+  }
+
+  private buildFormData(service: Partial<Service>): FormData {
+    const formData = new FormData();
+
+    // Spécifiez le dossier cible pour multer
+    formData.append('folder', 'img-services');
+
+    if (this.selectedFile()) formData.append('image', this.selectedFile()!);
+
+    Object.entries(service).forEach(([key, value]) => {
+      if (key !== 'id' && value != null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    return formData;
   }
 }
