@@ -9,11 +9,11 @@
     <!-- Formulaire de création/mise à jour de service -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-4 sm:p-6 rounded-lg shadow-sm">
       <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-        {{ newService.id ? "Modifier le service" : "Créer un service" }}
+        {{ newService().id ? "Modifier le service" : "Créer un service" }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newService.id ? updateService() : createService()"
+        (ngSubmit)="newService().id ? updateService() : createService()"
         enctype="multipart/form-data"
       >
         <div>
@@ -25,7 +25,7 @@
           <input
             type="text"
             id="name"
-            [(ngModel)]="newService.name"
+            [(ngModel)]="newService().name"
             name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -41,7 +41,7 @@
           >
           <textarea
             id="description"
-            [(ngModel)]="newService.description"
+            [(ngModel)]="newService().description"
             name="description"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -58,7 +58,7 @@
           <input
             type="text"
             id="location"
-            [(ngModel)]="newService.location"
+            [(ngModel)]="newService().location"
             name="location"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -75,7 +75,7 @@
           <input
             type="text"
             id="hours"
-            [(ngModel)]="newService.hours"
+            [(ngModel)]="newService().hours"
             name="hours"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -84,7 +84,7 @@
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          @for (feature of features; track feature.id) {
+          @for (feature of features(); track feature.id) {
           <div class="flex items-center">
             <input
               type="checkbox"
@@ -115,7 +115,7 @@
 
         <div class="flex space-x-2">
           <app-button
-            [text]="newService.id ? 'Modifier' : 'Créer'"
+            [text]="newService().id ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -139,7 +139,7 @@
         Liste des services
       </h3>
       <div class="space-y-4 sm:space-y-6">
-        @for (service of displayedServiceList; track service.id) {
+        @for (service of serviceList(); track service.id) {
         <div
           class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
         >
