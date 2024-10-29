@@ -1,16 +1,16 @@
-@if (habitat) {
+@if (habitat()) {
 <section class="w-full bg-primary shadow py-4">
   <div class="text-center">
     <h1
       class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
     >
-      {{ habitat.name }}
+      {{ habitat()?.name }}
     </h1>
     <div class="w-full flex flex-col items-center">
       <!-- Description de l'habitat -->
       <div class="w-full lg:w-2/3">
         <h1 class="text-lg text-quinary font-sans text-center py-4">
-          {{ habitat.description }}
+          {{ habitat()?.description }}
         </h1>
       </div>
 
@@ -19,27 +19,27 @@
         class="w-full lg:w-2/3 rounded-lg overflow-hidden pb-2 flex justify-center"
       >
         <img
-          [src]="habitat.image"
-          [alt]="habitat.name"
+          [src]="habitat()?.image"
+          [alt]="habitat()?.name"
           class="w-full h-96 object-cover rounded-lg"
         />
       </div>
     </div>
   </div>
 
-  <!--Carte de l'habitat-->
+  <!-- Carte de l'habitat -->
   <div class="flex justify-center items-center w-full">
     <div
       class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
     >
-      <!--Card des animaux de l'habitat-->
+      <!-- Card des animaux de l'habitat -->
       <div class="w-full flex flex-col items-center">
         <h2 class="text-4xl text-quinary font-bold font-serif pt-2">
           Les animaux de l'habitat
         </h2>
         <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
           <!-- Boucle pour afficher les animaux de l'habitat -->
-          @for (animal of habitat.animals; track animal.id) {
+          @for (animal of habitat()?.animals; track animal.id) {
           <a
             [routerLink]="['/animal', animal.id]"
             class="w-full sm:w-1/2 lg:w-1/3 flex flex-col items-center rounded-lg shadow"

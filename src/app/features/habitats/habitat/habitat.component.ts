@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { Habitat } from '../../../core/models/habitat.model'; // Import du service
+import { Habitat } from '../../../core/models/habitat.model';
 import { HabitatService } from '../service/habitat.service';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-habitat',
@@ -20,12 +21,13 @@ import { BorderCardDirective } from '../../../shared/directives/border-card-habi
   ],
 })
 export class HabitatComponent implements OnInit {
-  habitat: Habitat | undefined;
+  habitat = signal<Habitat | undefined>(undefined);
+  imageBaseUrl = `${environment.apiUrl}/uploads/img-habitats`;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private habitatService: HabitatService // Utilisation du service
+    private habitatService: HabitatService
   ) {}
 
   ngOnInit() {
@@ -33,7 +35,12 @@ export class HabitatComponent implements OnInit {
     if (id) {
       this.habitatService.getHabitatById(id).subscribe((data) => {
         if (data) {
-          this.habitat = data;
+          // Vérifie si l'image contient déjà l'URL de base
+          data.image = data.image?.startsWith('http')
+            ? data.image
+            : `${environment.apiUrl}/uploads/img-habitats/${data.image}`;
+
+          this.habitat.set(data);
           console.log('Habitat trouvé :', this.habitat);
         } else {
           console.error('Habitat non trouvé');

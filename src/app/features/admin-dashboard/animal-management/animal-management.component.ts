@@ -72,27 +72,31 @@ export class AnimalManagementComponent implements OnInit {
   createAnimal() {
     console.log('Données du nouvel animal :', this.newAnimal);
 
-    // Vérification des champs obligatoires
     if (
-      this.newAnimal.habitatId != null && // Vérifiez que habitatId est défini
-      Object.values(this.newAnimal).every((value) => value != null) // Assurez-vous que toutes les valeurs ne sont pas nulles
+      this.newAnimal.habitatId != null &&
+      Object.values(this.newAnimal).every((value) => value != null)
     ) {
       const formData = new FormData();
+
       if (this.selectedFile) {
-        formData.append('image', this.selectedFile); // Ajouter l'image si elle est sélectionnée
+        formData.append('image', this.selectedFile);
       }
 
-      // Ajoutez les caractéristiques
+      // Vérifiez que characteristics est bien un tableau
+      if (typeof this.newAnimal.characteristics === 'string') {
+        this.newAnimal.characteristics = this.newAnimal.characteristics
+          .split(',')
+          .map((char) => char.trim());
+      }
+
       if (Array.isArray(this.newAnimal.characteristics)) {
         this.newAnimal.characteristics.forEach((characteristic) => {
           formData.append('characteristics', characteristic);
         });
       }
 
-      // Ajoutez les autres propriétés
       Object.entries(this.newAnimal).forEach(([key, value]) => {
         if (key !== 'characteristics') {
-          // Évitez de réajouter les caractéristiques
           formData.append(key, value as string);
         }
       });
