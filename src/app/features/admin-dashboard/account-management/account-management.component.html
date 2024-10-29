@@ -10,7 +10,7 @@
     <!-- Formulaire de création/mise à jour de compte -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newUser.id ? "Modifier le compte" : "Créer un compte" }}
+        {{ newUser().id ? "Modifier le compte" : "Créer un compte" }}
       </h3>
       <form class="space-y-4">
         <div>
@@ -20,7 +20,7 @@
           <input
             type="text"
             id="username"
-            [(ngModel)]="newUser.username"
+            [(ngModel)]="newUser().username"
             name="username"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -33,7 +33,7 @@
           <input
             type="email"
             id="email"
-            [(ngModel)]="newUser.email"
+            [(ngModel)]="newUser().email"
             name="email"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -46,11 +46,13 @@
           <input
             type="password"
             id="password"
-            [(ngModel)]="newUser.password"
+            [(ngModel)]="newUser().password"
             name="password"
-            [required]="!newUser.id"
+            [required]="!newUser().id"
             placeholder="{{
-              newUser.id ? 'Laissez vide si non modifié' : 'Mot de passe requis'
+              newUser().id
+                ? 'Laissez vide si non modifié'
+                : 'Mot de passe requis'
             }}"
             class="w-full p-2 border border-gray-300 rounded-md"
           />
@@ -59,25 +61,25 @@
           <label for="role" class="block text-lg font-medium mb-2">Rôle:</label>
           <select
             id="role"
-            [(ngModel)]="newUser.role"
+            [(ngModel)]="newUser().role"
             name="role"
             class="w-full p-2 border border-gray-300 rounded-md"
             required
           >
             <option value="">- Choisir un rôle -</option>
-            @for (role of roles; track role.id) {
+            @for (role of roles(); track role.id) {
             <option [ngValue]="role">{{ role.name }}</option>
             }
           </select>
         </div>
         <div class="flex space-x-2">
           <app-button
-            [text]="newUser.id ? 'Modifier' : 'Créer'"
+            [text]="newUser().id ? 'Modifier' : 'Créer'"
             [type]="'button'"
             [color]="'tertiary'"
             [rounded]="true"
             class="'w-1/2 sm:w-1/3 lg:w-1/4 font-bold px-4'"
-            (click)="newUser.id ? updateAccount() : createAccount()"
+            (click)="newUser().id ? updateAccount() : createAccount()"
           ></app-button>
           <app-button
             [text]="'Annuler'"
@@ -98,7 +100,7 @@
       <!-- Utilisation de flexbox ou grid pour gérer l'affichage en grille -->
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <!-- Boucle sur les utilisateurs et affichage de chaque carte -->
-        @for (user of users; track user.id) {
+        @for (user of users(); track user.id) {
         <div class="bg-white p-4 rounded-lg shadow-lg shadow-tertiary border">
           <!-- Titre du nom d'utilisateur -->
           <h4 class="text-lg font-bold text-gray-800 mb-2">

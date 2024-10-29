@@ -13,6 +13,7 @@ export class AccountManagementService {
 
   constructor(private http: HttpClient) {}
 
+  // Récupérer tous les utilisateurs
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl).pipe(
       catchError((err) => {
@@ -24,6 +25,7 @@ export class AccountManagementService {
     );
   }
 
+  // Créer un utilisateur
   createUser(user: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, user).pipe(
       catchError((err) => {
@@ -35,6 +37,7 @@ export class AccountManagementService {
     );
   }
 
+  // Mettre à jour un utilisateur
   updateUser(user: User): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${user.id}`, user).pipe(
       catchError((err) => {
@@ -46,6 +49,7 @@ export class AccountManagementService {
     );
   }
 
+  // Supprimer un utilisateur
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError((err) => {
@@ -57,6 +61,7 @@ export class AccountManagementService {
     );
   }
 
+  // Récupérer tous les rôles
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(`${this.apiUrl}/roles`).pipe(
       catchError((err) => {

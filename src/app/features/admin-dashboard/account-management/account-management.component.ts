@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
@@ -13,9 +13,10 @@ import { Router } from '@angular/router';
   templateUrl: './account-management.component.html',
 })
 export class AccountManagementComponent implements OnInit {
-  users: User[] = []; // Liste des utilisateurs chargés depuis le backend
-  roles: Role[] = []; // Liste des rôles chargés depuis le backend
-  newUser: Partial<User> = {}; // Formulaire de création/mise à jour d'utilisateur
+  // Signaux pour la liste des utilisateurs et des rôles
+  users = signal<User[]>([]);
+  roles = signal<Role[]>([]);
+  newUser = signal<Partial<User>>({});
 
   constructor(
     private router: Router,
@@ -23,112 +24,99 @@ export class AccountManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadUsers(); // Charger la liste des utilisateurs au démarrage
-    this.loadRoles(); // Charger la liste des rôles au démarrage
+    // Chargement initial des utilisateurs et des rôles
+    this.loadUsers();
+    this.loadRoles();
   }
 
-  // Charge les utilisateurs depuis le backend
+  // Récupérer les utilisateurs avec une gestion d'erreurs
   loadUsers(): void {
     this.accountManagement.getAllUsers().subscribe({
-      next: (users: User[]) => {
-        console.log('Utilisateurs récupérés :', users); // Debugging
-        this.users = users; // Mise à jour de la liste des utilisateurs
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des utilisateurs :', err);
-      },
+      next: (users: User[]) => this.users.set(users),
+      error: (err) =>
+        console.error('Erreur lors de la récupération des utilisateurs :', err),
     });
   }
 
-  // Charge les rôles depuis le service
+  // Récupérer les rôles avec une gestion d'erreurs
   loadRoles(): void {
     this.accountManagement.getRoles().subscribe({
-      next: (roles: Role[]) => {
-        console.log('Rôles récupérés :', roles); // Debugging
-        this.roles = roles; // Mise à jour de la liste des rôles
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des rôles :', err);
-      },
+      next: (roles: Role[]) => this.roles.set(roles),
+      error: (err) =>
+        console.error('Erreur lors de la récupération des rôles :', err),
     });
   }
 
-  // Crée un compte utilisateur via le backend
+  // Créer un utilisateur en validant les champs requis
   createAccount(): void {
-    const { username, password, role } = this.newUser;
-
+    const { username, password, role } = this.newUser();
     if (username && password && role && role.id) {
       this.accountManagement
         .createUser({
-          ...this.newUser,
-          roleId: role.id, // Utiliser roleId du rôle sélectionné
+          ...this.newUser(),
+          roleId: role.id,
         } as User)
         .subscribe({
           next: (createdUser: User) => {
-            this.users.push(createdUser); // Ajoute le nouvel utilisateur à la liste
-            this.newUser = {}; // Réinitialiser le formulaire après création
+            this.users.update((users) => [...users, createdUser]);
+            this.newUser.set({});
           },
-          error: (err) => {
-            console.error("Erreur lors de la création de l'utilisateur :", err);
-          },
+          error: (err) =>
+            console.error("Erreur lors de la création de l'utilisateur :", err),
         });
     } else {
       console.log('Veuillez remplir tous les champs');
     }
   }
 
-  // Met à jour un compte utilisateur via le backend
+  // Mettre à jour un utilisateur en validant les champs requis
   updateAccount(): void {
-    const { username, role } = this.newUser;
-
-    // Pas de mot de passe requis si non modifié
+    const { username, role } = this.newUser();
     if (username && role && role.id) {
       this.accountManagement
         .updateUser({
-          ...this.newUser,
-          roleId: role.id, // Utiliser roleId du rôle sélectionné
+          ...this.newUser(),
+          roleId: role.id,
         } as User)
         .subscribe({
           next: () => {
-            console.log('Compte utilisateur mis à jour');
-            this.newUser = {}; // Réinitialiser le formulaire après mise à jour
-            this.loadUsers(); // Recharger la liste des utilisateurs
+            this.loadUsers();
+            this.newUser.set({});
           },
-          error: (err) => {
+          error: (err) =>
             console.error(
               "Erreur lors de la mise à jour de l'utilisateur :",
               err
-            );
-          },
+            ),
         });
     } else {
       console.log('Veuillez remplir tous les champs');
     }
   }
 
-  // Remplit le formulaire avec les informations de l'utilisateur sélectionné pour modification
+  // Préparer le formulaire pour la modification d'un utilisateur
   editUser(user: User): void {
-    this.newUser = { ...user, password: '' }; // Réinitialiser le mot de passe lors de la modification
+    this.newUser.set({ ...user, password: '' });
   }
 
-  // Supprime un compte utilisateur via le backend
+  // Supprimer un utilisateur en fonction de son ID
   deleteAccount(userId: number): void {
     this.accountManagement.deleteUser(userId).subscribe({
-      next: () => {
-        this.users = this.users.filter((user) => user.id !== userId); // Mise à jour locale de la liste des utilisateurs
-      },
-      error: (err) => {
-        console.error("Erreur lors de la suppression de l'utilisateur :", err);
-      },
+      next: () =>
+        this.users.update((users) =>
+          users.filter((user) => user.id !== userId)
+        ),
+      error: (err) =>
+        console.error("Erreur lors de la suppression de l'utilisateur :", err),
     });
   }
 
-  // Réinitialise le formulaire de création/mise à jour d'utilisateur
+  // Réinitialiser le formulaire de création/mise à jour
   cancel(): void {
-    this.newUser = {}; // Réinitialisation du formulaire
+    this.newUser.set({});
   }
 
-  // Retour a l'accueil dashboard
+  // Retourner à l'accueil du tableau de bord
   goBack() {
     this.router.navigate(['/admin']);
   }
