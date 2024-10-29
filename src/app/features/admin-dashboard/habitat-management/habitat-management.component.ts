@@ -20,13 +20,15 @@ import { Router } from '@angular/router';
   templateUrl: './habitat-management.component.html',
 })
 export class HabitatManagementComponent implements OnInit {
-  // Signaux pour stocker la liste des habitats et le nouvel habitat
+  // Signaux pour stocker la liste des habitats
   habitats = signal<Habitat[]>([]);
-  newHabitat = signal<Partial<Habitat>>({});
   selectedFile = signal<File | null>(null);
 
+  // Objet intermédiaire pour le formulaire
+  newHabitatData: Partial<Habitat> = {};
+
   // Chemin d'accès aux images (dérivé de l'environnement)
-  imageBaseUrl = `${environment.apiUrl}/uploads/img-habitats`;
+  imageBaseUrl = `${environment.apiUrl}`;
 
   constructor(
     private router: Router,
@@ -45,11 +47,7 @@ export class HabitatManagementComponent implements OnInit {
           habitats.map((habitat) => ({
             ...habitat,
             showDescription: false,
-            // Utilise seulement le nom du fichier pour éviter le doublon
-            image: `${this.imageBaseUrl}/${habitat.image.replace(
-              /^.*uploads\/img-habitats\//,
-              ''
-            )}`,
+            image: `${this.imageBaseUrl}${habitat.image}`,
           }))
         );
       },
@@ -66,7 +64,7 @@ export class HabitatManagementComponent implements OnInit {
 
   // Création d'un nouvel habitat
   createHabitat() {
-    const { name, description } = this.newHabitat();
+    const { name, description } = this.newHabitatData;
     if (name && description) {
       const formData = new FormData();
       formData.append('name', name);
@@ -85,8 +83,7 @@ export class HabitatManagementComponent implements OnInit {
               image: `${this.imageBaseUrl}/${habitat.image}`,
             },
           ]);
-          this.newHabitat.set({});
-          this.selectedFile.set(null);
+          this.resetForm();
         },
         error: (error) =>
           console.error("Erreur lors de la création de l'habitat :", error),
@@ -98,7 +95,7 @@ export class HabitatManagementComponent implements OnInit {
 
   // Mettre à jour un habitat existant
   updateHabitat() {
-    const { id, name, description } = this.newHabitat();
+    const { id, name, description } = this.newHabitatData;
     if (id && name && description) {
       const formData = new FormData();
       formData.append('name', name);
@@ -120,8 +117,7 @@ export class HabitatManagementComponent implements OnInit {
                 : h
             )
           );
-          this.newHabitat.set({});
-          this.selectedFile.set(null);
+          this.resetForm();
         },
         error: (error) =>
           console.error("Erreur lors de la mise à jour de l'habitat :", error),
@@ -147,12 +143,17 @@ export class HabitatManagementComponent implements OnInit {
   // Remplir le formulaire de mise à jour avec les données de l'habitat sélectionné
   editHabitat(id: number) {
     const habitat = this.habitats().find((h) => h.id === id);
-    if (habitat) this.newHabitat.set({ ...habitat });
+    if (habitat) this.newHabitatData = { ...habitat };
   }
 
   // Annuler l'édition
   cancel() {
-    this.newHabitat.set({});
+    this.resetForm();
+  }
+
+  // Réinitialiser le formulaire
+  resetForm() {
+    this.newHabitatData = {}; // Réinitialiser les données du formulaire
     this.selectedFile.set(null);
   }
 

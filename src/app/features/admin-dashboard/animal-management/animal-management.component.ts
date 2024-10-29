@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, Output, EventEmitter } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,13 +14,19 @@ import { HabitatService } from '../../habitats/service/habitat.service';
   standalone: true,
   imports: [ButtonComponent, SlicePipe, ReactiveFormsModule, FormsModule],
   templateUrl: './animal-management.component.html',
-  styleUrl: './animal-management.component.css',
 })
 export class AnimalManagementComponent implements OnInit {
-  animalList: Animal[] = [];
-  newAnimal: Partial<Animal> = {}; // Utilisation de Partial pour indiquer que toutes les propriétés ne sont pas nécessaires
-  selectedFile: File | null = null;
-  habitats: Habitat[] = [];
+  animalList = signal<Animal[]>([]);
+  newAnimal = signal<Partial<Animal>>({});
+  selectedFile = signal<File | null>(null);
+  habitats = signal<Habitat[]>([]);
+
+  // Chemin d'accès aux images (dérivé de l'environnement)
+  imageBaseUrl = `${environment.apiUrl}/uploads`;
+
+  @Output() animalCreated = new EventEmitter<Animal>();
+  @Output() animalUpdated = new EventEmitter<Animal>();
+  @Output() animalDeleted = new EventEmitter<number>();
 
   constructor(
     private router: Router,
@@ -33,164 +39,158 @@ export class AnimalManagementComponent implements OnInit {
     this.loadHabitats();
   }
 
-  // Charger la liste des animaux
   loadAnimals() {
-    this.animalManagement.getAllAnimals().subscribe((animals: Animal[]) => {
-      this.animalList = animals.map((animal) => ({
-        ...animal,
-        image: `${environment.apiUrl}/uploads/${animal.image}`,
-      }));
+    this.animalManagement.getAllAnimals().subscribe({
+      next: (animals) => {
+        this.animalList.set(
+          animals.map((animal) => ({
+            ...animal,
+            showDescription: false,
+            // Vérifie si animal.image n'est pas null ou undefined avant de le manipuler
+            image: animal.image
+              ? `${this.imageBaseUrl}/${animal.image.replace(
+                  /^.*uploads\/img-animaux\//,
+                  ''
+                )}`
+              : null,
+          }))
+        );
+      },
+      error: (error) =>
+        console.error('Erreur lors de la récupération des animaux :', error),
     });
   }
 
-  // Charger la liste des habitats
   loadHabitats() {
-    this.habitatService.getHabitats().subscribe((habitats: Habitat[]) => {
-      this.habitats = habitats.map((habitat) => ({
-        ...habitat,
-        id: Number(habitat.id), // Convertir l'ID en number
-      }));
+    this.habitatService.getHabitats().subscribe({
+      next: (habitats) => {
+        console.log('Habitats reçus:', habitats); // Log pour voir les données reçues
+        this.habitats.set(habitats);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des habitats :', err);
+      },
     });
   }
 
-  // Gérer le changement de fichier
   onFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.selectedFile = file; // Met à jour la variable selectedFile
+      this.selectedFile.set(file);
       const reader = new FileReader();
-      reader.onload = () => {
-        this.newAnimal.image = reader.result as string; // Prévisualisation de l'image (facultatif)
-      };
+      reader.onload = () =>
+        this.newAnimal.update((animal) => ({
+          ...animal,
+          image: reader.result as string,
+        }));
       reader.readAsDataURL(file);
-    } else {
-      console.error('Aucun fichier sélectionné.');
     }
   }
 
-  // Créer un nouvel animal
-  createAnimal() {
-    console.log('Données du nouvel animal :', this.newAnimal);
-
-    if (
-      this.newAnimal.habitatId != null &&
-      Object.values(this.newAnimal).every((value) => value != null)
-    ) {
-      const formData = new FormData();
-
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile);
-      }
-
-      // Vérifiez que characteristics est bien un tableau
-      if (typeof this.newAnimal.characteristics === 'string') {
-        this.newAnimal.characteristics = this.newAnimal.characteristics
-          .split(',')
-          .map((char) => char.trim());
-      }
-
-      if (Array.isArray(this.newAnimal.characteristics)) {
-        this.newAnimal.characteristics.forEach((characteristic) => {
-          formData.append('characteristics', characteristic);
-        });
-      }
-
-      Object.entries(this.newAnimal).forEach(([key, value]) => {
-        if (key !== 'characteristics') {
-          formData.append(key, value as string);
-        }
-      });
-
-      this.animalManagement.createAnimal(formData).subscribe(
-        (animal) => {
-          console.log('Animal créé avec succès :', animal);
-          this.loadAnimals();
-        },
-        (error) => {
-          console.error("Erreur lors de la création de l'animal :", error);
-        }
-      );
-    } else {
-      console.error('Veuillez remplir tous les champs obligatoires.');
-    }
-  }
-
-  // Mettre à jour un animal existant
-  updateAnimal() {
-    console.log("Données de l'animal à mettre à jour :", this.newAnimal);
-
-    // Vérification des champs obligatoires
-    if (
-      this.newAnimal.habitatId != null && // Vérifiez que habitatId est défini
-      Object.values(this.newAnimal).every((value) => value != null) // Assurez-vous que toutes les valeurs ne sont pas nulles
-    ) {
-      const formData = new FormData();
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile); // Ajouter l'image si elle est sélectionnée
-      }
-
-      // Ajoutez les caractéristiques
-      if (Array.isArray(this.newAnimal.characteristics)) {
-        this.newAnimal.characteristics.forEach((characteristic) => {
-          formData.append('characteristics', characteristic);
-        });
-      }
-
-      // Ajoutez l'ID de l'habitat
-      formData.append('habitatId', this.newAnimal.habitatId.toString());
-
-      Object.entries(this.newAnimal).forEach(([key, value]) => {
-        if (key !== 'habitatId' && key !== 'characteristics') {
-          // Évitez de réajouter habitatId et characteristics
-          formData.append(key, value as string);
-        }
-      });
-
-      this.animalManagement
-        .updateAnimal(this.newAnimal.id?.toString() || '', formData)
-        .subscribe(
-          (animal) => {
-            console.log('Animal mis à jour avec succès :', animal);
-            this.loadAnimals();
-          },
-          (error) => {
-            console.error("Erreur lors de la mise à jour de l'animal :", error);
-          }
-        );
-    } else {
-      console.error('Veuillez remplir tous les champs obligatoires.');
-    }
-  }
-
-  // Remplir le formulaire avec les données de l'animal sélectionné
-  editAnimal(animalId: number) {
-    const animal = this.animalList.find((a) => a.id === animalId);
-    if (animal) {
-      this.newAnimal = { ...animal }; // Copie de l'animal sélectionné
-      this.newAnimal.habitatId = animal.habitatId; // Assurez-vous de copier l'ID de l'habitat
-      this.newAnimal.habitat = animal.habitatId.toString(); // Convertir l'ID en string si nécessaire
-    }
-  }
-
-  // Supprimer un animal existant
-  deleteAnimal(animalId: number) {
-    this.animalManagement.deleteAnimal(animalId.toString()).subscribe(
-      () => {
-        console.log('Animal supprimé');
-        this.animalList = this.animalList.filter(
-          (animal) => animal.id !== animalId
-        );
-        this.loadAnimals(); // Recharger la liste des animaux
-      },
-      (error) => {
-        console.error("Erreur lors de la suppression de l'animal:", error);
-      }
+  validateAnimalData(animal: Partial<Animal>): boolean {
+    return (
+      typeof animal.name === 'string' &&
+      animal.name.trim() !== '' &&
+      typeof animal.species === 'string' &&
+      animal.species.trim() !== '' &&
+      typeof animal.habitatId === 'number'
     );
   }
 
-  // Annuler l'édition ou la création de l'animal
+  createAnimal() {
+    const animalData = {
+      ...this.newAnimal(),
+      habitatId: Number(this.newAnimal().habitatId),
+    };
+    console.log("Données de l'animal avant validation :", animalData);
+
+    if (this.validateAnimalData(animalData)) {
+      const formData = this.buildFormData(animalData);
+      this.animalManagement.createAnimal(formData).subscribe({
+        next: (animal) => {
+          this.animalCreated.emit(animal);
+          this.loadAnimals();
+          this.resetForm();
+        },
+        error: (err) =>
+          console.error("Erreur lors de la création de l'animal :", err),
+      });
+    } else {
+      console.error('Veuillez remplir tous les champs obligatoires.');
+    }
+  }
+
+  updateAnimal() {
+    const animalData = {
+      ...this.newAnimal(),
+      habitatId: Number(this.newAnimal().habitatId),
+    };
+
+    if (this.validateAnimalData(animalData)) {
+      const formData = this.buildFormData(animalData);
+      this.animalManagement
+        .updateAnimal(this.newAnimal().id?.toString() || '', formData)
+        .subscribe({
+          next: (animal) => {
+            this.animalUpdated.emit(animal);
+            this.loadAnimals();
+            this.resetForm();
+          },
+          error: (err) =>
+            console.error("Erreur lors de la mise à jour de l'animal :", err),
+        });
+    } else {
+      console.error('Veuillez remplir tous les champs obligatoires.');
+    }
+  }
+
+  editAnimal(animalId: number) {
+    const animal = this.animalList().find((a) => a.id === animalId);
+    if (animal) {
+      this.newAnimal.set({ ...animal });
+    }
+  }
+
+  deleteAnimal(animalId: number) {
+    this.animalManagement.deleteAnimal(animalId.toString()).subscribe({
+      next: () => {
+        console.log('Animal supprimé avec succès');
+        this.animalDeleted.emit(animalId); // Optionnel, si écouté par un composant parent
+        this.animalList.update((list) => list.filter((a) => a.id !== animalId));
+        this.loadAnimals();
+      },
+      error: (err) =>
+        console.error("Erreur lors de la suppression de l'animal :", err),
+    });
+  }
+
+  resetForm() {
+    this.newAnimal.set({});
+    this.selectedFile.set(null);
+  }
+
   cancel() {
-    this.newAnimal = {}; // Réinitialiser le formulaire
-    this.selectedFile = null; // Réinitialiser l'image sélectionnée
+    this.resetForm();
+  }
+
+  private buildFormData(animal: Partial<Animal>): FormData {
+    const formData = new FormData();
+
+    // Indiquer le dossier cible pour multer
+    formData.append('folder', 'img-animaux'); // Définit le dossier cible pour l'animal
+
+    if (this.selectedFile()) formData.append('image', this.selectedFile()!);
+
+    Object.entries(animal).forEach(([key, value]) => {
+      if (key !== 'id' && value != null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    formData.forEach((value, key) => {
+      console.log(`FormData key: ${key}, value: ${value}`);
+    });
+
+    return formData;
   }
 }
