@@ -1,18 +1,16 @@
-<!-- Section de gestion des habitats -->
 <section
   class="habitats-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
 >
   <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des habitats</h2>
 
   <div class="flex flex-col lg:flex-row gap-8">
-    <!-- Formulaire de gestion des habitats -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newHabitat().id ? "Modifier l'habitat" : "Créer un habitat" }}
+        {{ newHabitatData.id ? "Modifier l'habitat" : "Créer un habitat" }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newHabitat().id ? updateHabitat() : createHabitat()"
+        (ngSubmit)="newHabitatData.id ? updateHabitat() : createHabitat()"
         enctype="multipart/form-data"
       >
         <div>
@@ -24,7 +22,7 @@
           <input
             type="text"
             id="name"
-            [(ngModel)]="newHabitat.name"
+            [(ngModel)]="newHabitatData.name"
             name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -39,7 +37,7 @@
           >
           <textarea
             id="description"
-            [(ngModel)]="newHabitat().description"
+            [(ngModel)]="newHabitatData.description"
             name="description"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -61,7 +59,7 @@
         </div>
         <div class="flex space-x-2">
           <app-button
-            [text]="newHabitat().id ? 'Modifier' : 'Créer'"
+            [text]="newHabitatData.id ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -79,7 +77,6 @@
       </form>
     </div>
 
-    <!-- Liste des habitats dans des cards avec @for et @if-->
     <div class="w-full lg:w-1/2 bg-gray-100 p-4 sm:p-6 rounded-lg shadow-sm">
       <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
         Liste des habitats
@@ -133,19 +130,6 @@
         </div>
         }
       </div>
-    </div>
-  </div>
-  <!-- Bouton de retour -->
-  <div class="flex justify-center pt-4">
-    <div class="w-full sm:w-1/4 lg:w-1/5">
-      <app-button
-        [text]="'Retour'"
-        [type]="'button'"
-        [color]="'tertiary'"
-        [rounded]="true"
-        class="w-full font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-        (click)="goBack()"
-      ></app-button>
     </div>
   </div>
 </section>

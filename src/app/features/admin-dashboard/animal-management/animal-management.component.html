@@ -10,16 +10,16 @@
     <!-- Formulaire de gestion des animaux -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newAnimal.id ? "Modifier l'animal" : "Ajouter un animal" }}
+        {{ newAnimal().id ? "Modifier l'animal" : "Ajouter un animal" }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newAnimal.id ? updateAnimal() : createAnimal()"
+        (ngSubmit)="newAnimal().id ? updateAnimal() : createAnimal()"
         enctype="multipart/form-data"
       >
         <div>
           <label
-            for="animal-name"
+            for="name"
             class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
           >
             Nom de l'animal:
@@ -28,12 +28,13 @@
             type="text"
             id="name"
             name="name"
-            [(ngModel)]="newAnimal.name"
+            [(ngModel)]="newAnimal().name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Nom de l'animal"
           />
         </div>
+
         <div>
           <label
             for="animal-species"
@@ -45,7 +46,7 @@
             type="text"
             id="species"
             name="species"
-            [(ngModel)]="newAnimal.species"
+            [(ngModel)]="newAnimal().species"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Espèce de l'animal"
@@ -75,13 +76,14 @@
           <select
             id="animal-habitat"
             name="animal-habitat"
-            [(ngModel)]="newAnimal.habitatId"
+            [(ngModel)]="newAnimal().habitatId"
+            required
             class="w-full p-2 border border-gray-300 rounded-md"
           >
-            @for (habitat of habitats; track habitat.id) {
+            @for (habitat of habitats(); track habitat.id) {
             <option
               [value]="habitat.id"
-              [selected]="habitat.id === newAnimal.habitatId"
+              [selected]="habitat.id === newAnimal().habitatId"
             >
               {{ habitat.name }}
             </option>
@@ -98,7 +100,7 @@
           <textarea
             id="characteristics"
             name="characteristics"
-            [(ngModel)]="newAnimal.characteristics"
+            [(ngModel)]="newAnimal().characteristics"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Ex: sociable, actif, joueur"
@@ -115,7 +117,7 @@
             type="text"
             id="weight-range"
             name="weightRange"
-            [(ngModel)]="newAnimal.weightRange"
+            [(ngModel)]="newAnimal().weightRange"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Ex: 150 à 300 kg"
@@ -131,7 +133,7 @@
           <select
             id="animal-diet"
             name="diet"
-            [(ngModel)]="newAnimal.diet"
+            [(ngModel)]="newAnimal().diet"
             class="w-full p-2 border border-gray-300 rounded-md"
           >
             <option value="Herbivore">Herbivore</option>
@@ -141,7 +143,7 @@
         </div>
         <div class="flex space-x-2">
           <app-button
-            [text]="newAnimal.id ? 'Modifier' : 'Créer'"
+            [text]="newAnimal().id ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -165,7 +167,7 @@
         Liste des animaux
       </h3>
       <div class="space-y-4 sm:space-y-6">
-        @for (animal of animalList; track animal.id) {
+        @for (animal of animalList(); track animal.id) {
         <div
           class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
         >

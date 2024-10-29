@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Animal } from '../../core/models/animal.model';
 import { Habitat } from '../../core/models/habitat.model';
@@ -31,9 +31,10 @@ import { AnimalService } from './service/animal.service';
   ],
 })
 export class AnimalComponent implements OnInit {
-  animal: Animal | undefined;
-  habitat: Habitat | undefined;
-  vetNote: VetNote | undefined;
+  // Utilisation de signaux pour l’animal, l’habitat et la note du vétérinaire
+  animal = signal<Animal | undefined>(undefined);
+  habitat = signal<Habitat | undefined>(undefined);
+  vetNote = signal<VetNote | undefined>(undefined);
 
   constructor(
     private route: ActivatedRoute,
@@ -45,17 +46,32 @@ export class AnimalComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID depuis l'URL
     console.log('Route param ID:', id);
 
-    // Utilisation du service pour récupérer l'animal
-    this.animalService.getAnimalById(id).subscribe((animal) => {
-      this.animal = animal;
+    // Chargement de l'animal par ID
+    this.loadAnimal(id);
+  }
 
-      // Si l'animal existe, récupérer l'habitat associé
-      if (this.animal) {
-        this.habitat = HABITATS.find(
-          (habitat) => habitat.id === this.animal?.habitatId
-        );
-      }
+  // Charger l’animal par son ID
+  private loadAnimal(id: number) {
+    this.animalService.getAnimalById(id).subscribe({
+      next: (animal) => {
+        this.animal.set(animal);
+
+        // Si l'animal existe, trouver l'habitat associé
+        if (animal) {
+          this.loadHabitat(animal.habitatId);
+        }
+      },
+      error: (error) =>
+        console.error("Erreur lors de la récupération de l'animal :", error),
     });
+  }
+
+  // Charger l’habitat associé à l’animal
+  private loadHabitat(habitatId: number | undefined) {
+    if (habitatId != null) {
+      const habitat = HABITATS.find((hab) => hab.id === habitatId);
+      this.habitat.set(habitat);
+    }
   }
 
   // Retour à la page d'accueil
@@ -65,8 +81,9 @@ export class AnimalComponent implements OnInit {
 
   // Redirection vers la page de l'habitat
   goHabitat() {
-    if (this.habitat) {
-      this.router.navigate(['/habitat', this.habitat.id]);
+    const habitatId = this.habitat()?.id;
+    if (habitatId) {
+      this.router.navigate(['/habitat', habitatId]);
     }
   }
 }
