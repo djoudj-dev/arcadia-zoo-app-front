@@ -18,7 +18,6 @@ import { Router } from '@angular/router';
     DatePipe,
   ],
   templateUrl: './habitat-management.component.html',
-  styleUrls: ['./habitat-management.component.css'],
 })
 export class HabitatManagementComponent implements OnInit {
   // Signaux pour stocker la liste des habitats et le nouvel habitat
