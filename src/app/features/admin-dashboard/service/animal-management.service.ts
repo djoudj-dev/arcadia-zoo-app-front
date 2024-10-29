@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Animal } from '../../../core/models/animal.model';
 import { catchError, Observable, throwError } from 'rxjs';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -12,76 +12,42 @@ export class AnimalManagementService {
 
   constructor(private http: HttpClient) {}
 
+  // Récupérer tous les animaux
   getAllAnimals(): Observable<Animal[]> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.get<Animal[]>(this.apiUrl, { headers }).pipe(
+    return this.http.get<Animal[]>(this.apiUrl).pipe(
       catchError((error) => {
-        if (error.status === 403) {
-          console.error('Accès interdit :', error);
-        } else {
-          console.error('Erreur lors de la récupération des animaux :', error);
-        }
-        return throwError(() => new Error(error));
+        console.error('Erreur lors de la récupération des animaux :', error);
+        return throwError(() => new Error('Erreur de récupération.'));
       })
     );
   }
 
+  // Créer un nouvel animal
   createAnimal(formData: FormData): Observable<Animal> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.post<Animal>(this.apiUrl, formData, { headers }).pipe(
+    return this.http.post<Animal>(this.apiUrl, formData).pipe(
       catchError((error) => {
-        if (error.status === 403) {
-          console.error('Accès interdit :', error);
-        } else {
-          console.error("Erreur lors de la création de l'animal :", error);
-        }
-        return throwError(() => new Error(error));
+        console.error("Erreur lors de la création de l'animal :", error);
+        return throwError(() => new Error('Erreur de création.'));
       })
     );
   }
 
+  // Mettre à jour un animal existant
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http
-      .put<Animal>(`${this.apiUrl}/${id}`, formData, { headers })
-      .pipe(
-        catchError((error) => {
-          if (error.status === 403) {
-            console.error('Accès interdit :', error);
-          } else {
-            console.error("Erreur lors de la mise à jour de l'animal :", error);
-          }
-          return throwError(() => new Error(error));
-        })
-      );
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
+      catchError((error) => {
+        console.error("Erreur lors de la mise à jour de l'animal :", error);
+        return throwError(() => new Error('Erreur de mise à jour.'));
+      })
+    );
   }
 
-  deleteAnimal(id: string): Observable<Animal> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.delete<Animal>(`${this.apiUrl}/${id}`, { headers }).pipe(
+  // Supprimer un animal
+  deleteAnimal(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError((error) => {
-        if (error.status === 403) {
-          console.error('Accès interdit :', error);
-        } else {
-          console.error("Erreur lors de la suppression de l'animal :", error);
-        }
-        return throwError(() => new Error(error));
+        console.error("Erreur lors de la suppression de l'animal :", error);
+        return throwError(() => new Error('Erreur de suppression.'));
       })
     );
   }
