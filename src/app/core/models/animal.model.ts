@@ -13,4 +13,5 @@ export interface Animal {
   diet: Diet; // Régime alimentaire (utilise l'enum Diet)
   habitats?: string[]; // Liste des habitats où l'animal peut être trouvé (optionnel)
   vetNote?: VetNote; // Note vétérinaire optionnelle
+  showCharacteristics?: boolean; // Afficher les caractéristiques de l'animal
 }

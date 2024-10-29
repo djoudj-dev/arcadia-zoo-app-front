@@ -20,6 +20,8 @@ export class AnimalManagementComponent implements OnInit {
   newAnimal = signal<Partial<Animal>>({});
   selectedFile = signal<File | null>(null);
   habitats = signal<Habitat[]>([]);
+  groupedAnimals = signal<Record<number, Animal[]>>({});
+  visibleAnimals = signal<Record<number, boolean>>({});
 
   // Chemin d'accès aux images (dérivé de l'environnement)
   imageBaseUrl = `${environment.apiUrl}/uploads`;
@@ -35,8 +37,32 @@ export class AnimalManagementComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadAnimals();
     this.loadHabitats();
+    this.loadAnimals();
+  }
+
+  initializeVisibility() {
+    const visibility: Record<number, boolean> = {};
+    Object.keys(this.groupedAnimals()).forEach((habitatId) => {
+      visibility[Number(habitatId)] = false;
+    });
+    this.visibleAnimals.set(visibility);
+  }
+
+  toggleVisibility(habitatId: number) {
+    this.visibleAnimals.update((visibility) => ({
+      ...visibility,
+      [habitatId]: !visibility[habitatId],
+    }));
+  }
+
+  groupAnimals() {
+    const grouped = this.animalList().reduce((acc, animal) => {
+      (acc[animal.habitatId] = acc[animal.habitatId] || []).push(animal);
+      return acc;
+    }, {} as { [key: number]: Animal[] });
+    this.groupedAnimals.set(grouped);
+    this.initializeVisibility(); // Initialise la visibilité après regroupement
   }
 
   loadAnimals() {
@@ -45,8 +71,7 @@ export class AnimalManagementComponent implements OnInit {
         this.animalList.set(
           animals.map((animal) => ({
             ...animal,
-            showDescription: false,
-            // Vérifie si animal.image n'est pas null ou undefined avant de le manipuler
+            showCharacteristics: false, // Initialiser showCharacteristics
             image: animal.image
               ? `${this.imageBaseUrl}/${animal.image.replace(
                   /^.*uploads\/img-animaux\//,
@@ -55,6 +80,7 @@ export class AnimalManagementComponent implements OnInit {
               : null,
           }))
         );
+        this.groupAnimals(); // Regroupe les animaux après le chargement
       },
       error: (error) =>
         console.error('Erreur lors de la récupération des animaux :', error),
@@ -64,7 +90,6 @@ export class AnimalManagementComponent implements OnInit {
   loadHabitats() {
     this.habitatService.getHabitats().subscribe({
       next: (habitats) => {
-        console.log('Habitats reçus:', habitats); // Log pour voir les données reçues
         this.habitats.set(habitats);
       },
       error: (err) => {
@@ -171,6 +196,19 @@ export class AnimalManagementComponent implements OnInit {
 
   cancel() {
     this.resetForm();
+  }
+
+  toggleCharacteristics(animalId: number) {
+    this.groupedAnimals.update((grouped) => {
+      for (const habitatId in grouped) {
+        grouped[habitatId] = grouped[habitatId].map((animal) =>
+          animal.id === animalId
+            ? { ...animal, showCharacteristics: !animal.showCharacteristics }
+            : animal
+        );
+      }
+      return grouped;
+    });
   }
 
   private buildFormData(animal: Partial<Animal>): FormData {
