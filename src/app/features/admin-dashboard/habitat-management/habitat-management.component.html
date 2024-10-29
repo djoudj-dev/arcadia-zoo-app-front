@@ -8,11 +8,11 @@
     <!-- Formulaire de gestion des habitats -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newHabitat.id ? "Modifier l'habitat" : "Créer un habitat" }}
+        {{ newHabitat().id ? "Modifier l'habitat" : "Créer un habitat" }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newHabitat.id ? updateHabitat() : createHabitat()"
+        (ngSubmit)="newHabitat().id ? updateHabitat() : createHabitat()"
         enctype="multipart/form-data"
       >
         <div>
@@ -39,7 +39,7 @@
           >
           <textarea
             id="description"
-            [(ngModel)]="newHabitat.description"
+            [(ngModel)]="newHabitat().description"
             name="description"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -61,7 +61,7 @@
         </div>
         <div class="flex space-x-2">
           <app-button
-            [text]="newHabitat.id ? 'Modifier' : 'Créer'"
+            [text]="newHabitat().id ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -85,7 +85,7 @@
         Liste des habitats
       </h3>
       <div class="space-y-4 sm:space-y-6">
-        @for (habitat of habitatList; track habitat.id) {
+        @for (habitat of habitats(); track habitat.id) {
         <div
           class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
         >

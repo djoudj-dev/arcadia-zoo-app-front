@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { Component, OnInit, signal } from '@angular/core';
 import { Habitat } from '../../../core/models/habitat.model';
 import { HabitatManagementService } from '../service/habitat-management.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DatePipe, SlicePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../../environments/environment.development';
 import { Router } from '@angular/router';
 
@@ -18,12 +18,16 @@ import { Router } from '@angular/router';
     DatePipe,
   ],
   templateUrl: './habitat-management.component.html',
-  styleUrl: './habitat-management.component.css',
+  styleUrls: ['./habitat-management.component.css'],
 })
 export class HabitatManagementComponent implements OnInit {
-  habitatList: Habitat[] = [];
-  newHabitat: Partial<Habitat> = {};
-  selectedFile: File | null = null;
+  // Signaux pour stocker la liste des habitats et le nouvel habitat
+  habitats = signal<Habitat[]>([]);
+  newHabitat = signal<Partial<Habitat>>({});
+  selectedFile = signal<File | null>(null);
+
+  // Chemin d'accès aux images (dérivé de l'environnement)
+  imageBaseUrl = `${environment.apiUrl}/uploads/img-habitats`;
 
   constructor(
     private router: Router,
@@ -36,126 +40,135 @@ export class HabitatManagementComponent implements OnInit {
 
   // Charger la liste des habitats
   loadHabitats() {
-    this.habitatManagement.getAllHabitats().subscribe((habitats: Habitat[]) => {
-      this.habitatList = habitats.map((habitat) => ({
-        ...habitat, // Utilisez des parenthèses pour encapsuler l'objet
-        image: `${environment.apiUrl}/uploads/${habitat.image}`,
-      }));
+    this.habitatManagement.getAllHabitats().subscribe({
+      next: (habitats) => {
+        this.habitats.set(
+          habitats.map((habitat) => ({
+            ...habitat,
+            showDescription: false,
+            // Utilise seulement le nom du fichier pour éviter le doublon
+            image: `${this.imageBaseUrl}/${habitat.image.replace(
+              /^.*uploads\/img-habitats\//,
+              ''
+            )}`,
+          }))
+        );
+      },
+      error: (error) =>
+        console.error('Erreur lors de la récupération des habitats:', error),
     });
   }
 
+  // Gestion du changement de fichier
   onFileChange(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.newHabitat.image = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.selectedFile = null;
-      this.newHabitat.image = '';
-    }
+    const file = (event.target as HTMLInputElement).files?.[0] || null;
+    this.selectedFile.set(file);
   }
 
-  // Création d'un habitat
+  // Création d'un nouvel habitat
   createHabitat() {
-    const { name, description, image } = this.newHabitat;
-
-    if (name && description && image) {
+    const { name, description } = this.newHabitat();
+    if (name && description) {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('description', description);
-      formData.append('image', image);
 
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile);
-      }
+      const file = this.selectedFile();
+      if (file) formData.append('image', file);
 
-      this.habitatManagement.createHabitat(formData).subscribe(
-        (habitat) => {
-          this.habitatList.push(habitat);
-          this.newHabitat = {};
-          this.selectedFile = null;
+      this.habitatManagement.createHabitat(formData).subscribe({
+        next: (habitat) => {
+          this.habitats.update((habitats) => [
+            ...habitats,
+            {
+              ...habitat,
+              showDescription: false,
+              image: `${this.imageBaseUrl}/${habitat.image}`,
+            },
+          ]);
+          this.newHabitat.set({});
+          this.selectedFile.set(null);
         },
-        (error) => {
-          console.error("Erreur lors de la création de l'habitat :", error);
-        }
-      );
+        error: (error) =>
+          console.error("Erreur lors de la création de l'habitat :", error),
+      });
     } else {
       console.error('Veuillez remplir tous les champs');
     }
   }
 
-  // Mise à jour de la liste des habitats
+  // Mettre à jour un habitat existant
   updateHabitat() {
-    const { name, description, image } = this.newHabitat;
-
-    if (name && description && image) {
+    const { id, name, description } = this.newHabitat();
+    if (id && name && description) {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('description', description);
-      formData.append('image', image);
 
-      if (this.selectedFile) {
-        formData.append('image', this.selectedFile);
-      }
+      const file = this.selectedFile();
+      if (file) formData.append('image', file);
 
-      this.habitatManagement.createHabitat(formData).subscribe(
-        (habitat) => {
-          this.habitatList.push(habitat);
-          this.newHabitat = {};
-          this.selectedFile = null;
+      this.habitatManagement.updateHabitat(id.toString(), formData).subscribe({
+        next: (updatedHabitat) => {
+          this.habitats.update((habitats) =>
+            habitats.map((h) =>
+              h.id === updatedHabitat.id
+                ? {
+                    ...updatedHabitat,
+                    showDescription: h.showDescription,
+                    image: `${this.imageBaseUrl}/${updatedHabitat.image}`,
+                  }
+                : h
+            )
+          );
+          this.newHabitat.set({});
+          this.selectedFile.set(null);
         },
-        (error) => {
-          console.error("Erreur lors de la création de l'habitat :", error);
-        }
-      );
+        error: (error) =>
+          console.error("Erreur lors de la mise à jour de l'habitat :", error),
+      });
     } else {
       console.error('Veuillez remplir tous les champs');
     }
+  }
+
+  deleteHabitat(id: number) {
+    this.habitatManagement.deleteHabitat(id.toString()).subscribe({
+      next: () => {
+        console.log('Habitat supprimé');
+        this.habitats.update((habitats) =>
+          habitats.filter((habitat) => habitat.id !== id)
+        );
+      },
+      error: (error) =>
+        console.error("Erreur lors de la suppression de l'habitat:", error),
+    });
   }
 
   // Remplir le formulaire de mise à jour avec les données de l'habitat sélectionné
-  editHabitat(habitatId: number) {
-    const habitat = this.habitatList.find((h) => h.id === habitatId);
-    if (habitat) {
-      this.newHabitat = { ...habitat };
-    }
+  editHabitat(id: number) {
+    const habitat = this.habitats().find((h) => h.id === id);
+    if (habitat) this.newHabitat.set({ ...habitat });
   }
 
-  // Supprimer un habitat
-  deleteHabitat(habitatId: number) {
-    this.habitatManagement.deleteHabitat(habitatId.toString()).subscribe(
-      () => {
-        console.log('Habitat supprimé');
-        this.habitatList = this.habitatList.filter(
-          (habitat) => habitat.id !== habitatId
-        );
-        this.loadHabitats(); // Recharger la liste des habitats
-      },
-      (error) => {
-        console.error("Erreur lors de la suppression de l'habitat:", error);
-      }
+  // Annuler l'édition
+  cancel() {
+    this.newHabitat.set({});
+    this.selectedFile.set(null);
+  }
+
+  // Afficher ou masquer la description de l'habitat
+  toggleDescription(id: number) {
+    this.habitats.update((habitats) =>
+      habitats.map((habitat) =>
+        habitat.id === id
+          ? { ...habitat, showDescription: !habitat.showDescription }
+          : habitat
+      )
     );
   }
 
-  // Gestion dynamique de l'affichage des descriptions
-  toggleDescription(habitatId: number) {
-    const habitat = this.habitatList.find((h) => h.id === habitatId);
-    if (habitat) {
-      habitat.showDescription = !habitat.showDescription;
-    }
-  }
-
-  // Annuler la mise à jour de l'habitat
-  cancel() {
-    this.newHabitat = {};
-    this.selectedFile = null;
-  }
-
-  // Retour a l'accueil dashboard
+  // Retour à l'accueil du tableau de bord
   goBack() {
     this.router.navigate(['/admin']);
   }
