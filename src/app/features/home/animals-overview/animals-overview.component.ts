@@ -14,7 +14,6 @@ import { RandomAnimalsDirective } from '../../../shared/directives/random-animal
 export class AnimalsOverviewComponent implements OnInit {
   animals = signal<Animal[]>([]); // Utilisation de signal pour les animaux
   displayedAnimals = signal<Animal[]>([]); // Utilisation de signal pour les animaux affichés
-  isLoading = signal<boolean>(true); // Utilisation de signal pour le chargement
 
   constructor(private animalService: AnimalService) {}
 
@@ -23,11 +22,9 @@ export class AnimalsOverviewComponent implements OnInit {
     this.animalService.getAnimals().subscribe({
       next: (data) => {
         this.animals.set(data);
-        this.isLoading.set(false); // Désactiver le chargement une fois les données récupérées
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des animaux :', err);
-        this.isLoading.set(false); // En cas d'erreur, désactiver le chargement
       },
     });
   }
