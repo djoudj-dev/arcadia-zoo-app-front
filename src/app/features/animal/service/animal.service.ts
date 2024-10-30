@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { Animal } from '../../../core/models/animal.model';
+import { Habitat } from '../../../core/models/habitat.model'; // Importer le modèle Habitat
 import { Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 
@@ -10,6 +11,7 @@ import { map, shareReplay, tap } from 'rxjs/operators';
 })
 export class AnimalService {
   private apiUrl = `${environment.apiUrl}/api/animals`;
+  private habitatUrl = `${environment.apiUrl}/api/habitats`; // URL de base pour les habitats
   private uploadsUrl = `${environment.apiUrl}/uploads`; // URL de base pour les images
   private animalsCache$ = new ReplaySubject<Animal[]>(1); // Cache pour optimiser les requêtes
   private cacheLoaded = false; // Drapeau pour indiquer si le cache est chargé
@@ -51,6 +53,15 @@ export class AnimalService {
     return this.getAnimals().pipe(
       map((animals) => animals.find((animal) => animal.id === id))
     );
+  }
+
+  /**
+   * Récupère un habitat spécifique par son ID depuis le backend.
+   * @param habitatId - Identifiant de l'habitat
+   * @returns Observable<Habitat> - Flux de l'habitat récupéré
+   */
+  getHabitatById(habitatId: number): Observable<Habitat> {
+    return this.http.get<Habitat>(`${this.habitatUrl}/${habitatId}`);
   }
 
   /**
