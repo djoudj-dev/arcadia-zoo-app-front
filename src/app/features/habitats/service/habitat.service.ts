@@ -4,6 +4,7 @@ import { environment } from '../../../../environments/environment.development';
 import { Habitat } from '../../../core/models/habitat.model';
 import { map, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Animal } from '../../../core/models/animal.model';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,14 @@ export class HabitatService {
     return this.getHabitats().pipe(
       map((habitats) => habitats.find((habitat) => habitat.id === id))
     );
+  }
+
+  /**
+   * Récupère la liste des animaux liés à un habitat spécifique.
+   * @param habitatId L'identifiant de l'habitat pour lequel récupérer les animaux.
+   */
+  getAnimalsByHabitatId(habitatId: number): Observable<Animal[]> {
+    return this.http.get<Animal[]>(`${this.apiUrl}/${habitatId}/animals`);
   }
 
   /**
