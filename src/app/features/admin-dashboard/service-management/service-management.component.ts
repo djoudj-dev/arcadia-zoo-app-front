@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Feature } from '../../../core/models/feature.model';
 import { environment } from '../../../../environments/environment.development';
 import { Router } from '@angular/router';
+import { StatsService } from '../stats/services/stats.service';
 
 @Component({
   selector: 'app-service-management',
@@ -30,6 +31,7 @@ export class ServiceManagementComponent {
 
   private router = inject(Router);
   private serviceManagement = inject(ServiceManagementService);
+  private statsService = inject(StatsService);
 
   constructor() {
     this.loadServices();
@@ -146,6 +148,7 @@ export class ServiceManagementComponent {
           this.serviceCreated.emit(service);
           this.loadServices();
           this.resetNewService();
+          this.statsService.incrementTotalServices();
         },
         error: (err) =>
           console.error('Erreur lors de la création du service :', err),
@@ -184,6 +187,7 @@ export class ServiceManagementComponent {
     this.serviceManagement.deleteService(serviceId).subscribe({
       next: () => {
         this.serviceDeleted.emit(serviceId);
+        this.statsService.decrementTotalServices();
         this.serviceList.update((list) =>
           list.filter((service) => service.id !== serviceId)
         );
