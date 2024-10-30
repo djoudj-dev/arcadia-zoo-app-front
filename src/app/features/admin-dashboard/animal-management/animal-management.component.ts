@@ -8,6 +8,7 @@ import { AnimalManagementService } from '../service/animal-management.service';
 import { environment } from '../../../../environments/environment.development';
 import { Habitat } from '../../../core/models/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
+import { StatsService } from '../stats/services/stats.service';
 
 @Component({
   selector: 'app-animal-management',
@@ -33,7 +34,8 @@ export class AnimalManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private animalManagement: AnimalManagementService,
-    private habitatService: HabitatService
+    private habitatService: HabitatService,
+    private statsService: StatsService
   ) {}
 
   ngOnInit() {
@@ -134,6 +136,7 @@ export class AnimalManagementComponent implements OnInit {
       this.animalManagement.createAnimal(formData).subscribe({
         next: (animal) => {
           this.animalCreated.emit(animal);
+          this.statsService.incrementTotalAnimals();
           this.loadAnimals();
           this.resetForm();
         },
@@ -179,8 +182,9 @@ export class AnimalManagementComponent implements OnInit {
   deleteAnimal(animalId: number) {
     this.animalManagement.deleteAnimal(animalId.toString()).subscribe({
       next: () => {
+        this.statsService.decrementTotalAnimals();
         console.log('Animal supprimé avec succès');
-        this.animalDeleted.emit(animalId); // Optionnel, si écouté par un composant parent
+        this.animalDeleted.emit(animalId);
         this.animalList.update((list) => list.filter((a) => a.id !== animalId));
         this.loadAnimals();
       },
