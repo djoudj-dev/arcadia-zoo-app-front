@@ -1,76 +1,62 @@
+/* alert.component.css */
 .alert-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
 .alert-card {
   background-color: white;
-  width: 300px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  padding: 20px;
 }
 
 .alert-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .alert-title {
-  font-size: 18px;
+  font-size: 1.5em;
   font-weight: bold;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #ff0000;
-}
-
-.alert-body {
-  padding: 15px;
-  font-size: 16px;
   color: #333;
 }
 
+.close-btn,
+.close-alert-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.alert-body {
+  margin: 15px 0;
+  font-size: 1.1em;
+  color: #555;
+}
+
 .alert-footer {
-  padding: 15px;
   text-align: right;
 }
 
 .close-alert-btn {
-  background-color: #f44336;
+  background-color: #4caf50; /* couleur de succès */
   color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.close-alert-btn:hover {
-  background-color: #d32f2f;
-}
-
-/* Animation de fondu pour l'affichage de la carte */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: bold;
 }

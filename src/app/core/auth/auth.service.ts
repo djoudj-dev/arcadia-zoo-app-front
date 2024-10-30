@@ -11,6 +11,9 @@ import { TokenService } from '../token/token.service';
   providedIn: 'root',
 })
 export class AuthService {
+  /**
+   * Signal pour stocker l'utilisateur actuellement connecté.
+   */
   currentUserSignal = signal<User | null>(null);
 
   private apiUrl = `${environment.apiUrl}/auth`;
@@ -20,6 +23,7 @@ export class AuthService {
     private router: Router,
     private tokenService: TokenService
   ) {
+    // Charger l'utilisateur stocké dans localStorage au démarrage de l'application
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
@@ -31,6 +35,13 @@ export class AuthService {
     }
   }
 
+  /**
+   * Authentifie l'utilisateur avec l'email et le mot de passe fournis.
+   * Stocke les informations de l'utilisateur et le token en cas de succès.
+   * @param email - L'email de l'utilisateur
+   * @param password - Le mot de passe de l'utilisateur
+   * @returns Un Observable contenant les données de l'utilisateur
+   */
   login(email: string, password: string): Observable<{ user: User }> {
     return this.http
       .post<{ user: User }>(`${this.apiUrl}/login`, { email, password })
@@ -48,6 +59,9 @@ export class AuthService {
       );
   }
 
+  /**
+   * Déconnecte l'utilisateur, vide les informations d'utilisateur et redirige vers la page de connexion.
+   */
   logout(): void {
     this.currentUserSignal.set(null);
     localStorage.removeItem('user');
@@ -55,10 +69,19 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Vérifie si un utilisateur est authentifié.
+   * @returns True si un utilisateur est connecté, false sinon.
+   */
   isAuthenticated(): boolean {
     return this.currentUserSignal() !== null;
   }
 
+  /**
+   * Vérifie si l'utilisateur connecté possède l'un des rôles requis.
+   * @param requiredRoles - Un tableau de rôles requis pour accéder à une ressource
+   * @returns True si l'utilisateur a l'un des rôles requis, false sinon.
+   */
   hasRole(requiredRoles: string[]): boolean {
     const user = this.currentUserSignal();
     return user ? requiredRoles.includes(user.role.name) : false;
