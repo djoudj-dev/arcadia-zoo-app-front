@@ -114,7 +114,7 @@
           </p>
           <p class="text-sm text-gray-600 mb-1">
             <span class="font-semibold">Rôle :</span>
-            {{ user.role.name || "Rôle non défini" }}
+            {{ user.role?.name || "Rôle non défini" }}
           </p>
 
           <!-- Actions pour modifier et supprimer l'utilisateur -->
