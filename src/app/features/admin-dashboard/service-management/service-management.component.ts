@@ -1,4 +1,4 @@
-import { Component, signal, inject, Output, EventEmitter } from '@angular/core';
+import { Component, signal, Output, EventEmitter } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
 import { Service } from '../../../core/models/service.model';
@@ -29,11 +29,11 @@ export class ServiceManagementComponent {
   @Output() serviceUpdated = new EventEmitter<Service>();
   @Output() serviceDeleted = new EventEmitter<number>();
 
-  private router = inject(Router);
-  private serviceManagement = inject(ServiceManagementService);
-  private statsService = inject(StatsService);
-
-  constructor() {
+  constructor(
+    private router: Router,
+    private serviceManagement: ServiceManagementService,
+    private statsService: StatsService
+  ) {
     this.loadServices();
     this.loadFeatures();
   }
