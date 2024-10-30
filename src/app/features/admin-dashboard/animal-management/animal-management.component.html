@@ -165,6 +165,7 @@
       </form>
     </div>
 
+    <!-- Gestion des animaux par habitat -->
     <section
       class="animals-management mb-12 p-6 bg-primary rounded-lg shadow-xl shadow-tertiary"
     >
@@ -231,7 +232,7 @@
             } }
 
             <!-- Bouton "Voir plus" si plus d'un animal -->
-            @if (groupedAnimals()[habitat.id].length > 1) {
+            @if ((groupedAnimals()[habitat.id] || []).length > 1) {
             <div class="text-center mt-4">
               <app-button
                 [text]="
