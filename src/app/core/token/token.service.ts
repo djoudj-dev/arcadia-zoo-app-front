@@ -9,7 +9,6 @@ export class TokenService {
 
   getToken(): string | null {
     const token = this.getCookie(this.tokenKey);
-    console.log('Token récupéré:', token);
     return token;
   }
 

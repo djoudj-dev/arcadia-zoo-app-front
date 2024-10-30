@@ -33,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (token) {
       if (this.tokenService.isTokenExpired()) {
         this.authService.logout(); // Déconnecter l'utilisateur si le token est expiré
-        this.alertService.showAlert(
+        this.alertService.setAlert(
           'Votre session a expiré, vous avez été déconnecté.'
         );
       } else {

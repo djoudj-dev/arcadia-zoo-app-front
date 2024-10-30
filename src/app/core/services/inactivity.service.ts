@@ -9,43 +9,45 @@ import { AlertService } from '../alert/service/alert.service'; // Import du Aler
   providedIn: 'root',
 })
 export class InactivityService {
-  // Durée d'inactivité avant déconnexion (5 minutes = 300000 ms)
+  // Durée maximale d'inactivité avant la déconnexion automatique (5 minutes)
   private readonly timeoutDuration = 300000;
-  private inactivitySubscription!: Subscription; // Sauvegarde de la souscription
+  private inactivitySubscription!: Subscription; // Stocke la souscription active pour la gestion de l'inactivité
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private ngZone: NgZone,
-    private alertService: AlertService // Inject AlertService
+    private alertService: AlertService // Injection de AlertService pour afficher des alertes
   ) {}
 
   /**
-   * Démarre la surveillance de l'inactivité de l'utilisateur.
+   * Démarre la surveillance de l'inactivité utilisateur.
    */
   public startMonitoring(): void {
-    // Sauvegarder la souscription pour pouvoir la stopper si nécessaire
+    // Sauvegarde de la souscription pour permettre l'arrêt de la surveillance
     this.inactivitySubscription = this.ngZone.runOutsideAngular(() => {
-      // Écouter les événements d'activité utilisateur (mouvement de souris, clavier)
+      // Détection des événements d'activité utilisateur (souris, clavier)
       const userActivity$ = merge(
         fromEvent(window, 'mousemove'),
         fromEvent(window, 'keydown')
       );
 
-      // Repartir un timer à chaque activité détectée
+      // Redémarrage du timer à chaque activité utilisateur détectée
       const inactivityTimer$ = userActivity$.pipe(
         tap(() => console.log('Activité détectée, réinitialisation du timer')),
         switchMap(() => timer(this.timeoutDuration))
       );
 
-      // Lorsque le timer atteint la durée limite, déconnecter l'utilisateur
+      // Déclenchement de la déconnexion lorsque la durée d'inactivité est atteinte
       return inactivityTimer$.subscribe(() => {
         this.ngZone.run(() => {
           console.log("Inactivité détectée, déconnexion de l'utilisateur");
+
+          // Déconnexion et redirection vers la page de connexion
           this.authService.logout();
-          this.alertService.showAlert(
+          this.alertService.setAlert(
             "Vous avez été déconnecté en raison de l'inactivité."
-          ); // Utiliser AlertService
+          ); // Affichage de l'alerte via AlertService
           this.router.navigate(['/login']);
         });
       });
@@ -53,7 +55,7 @@ export class InactivityService {
   }
 
   /**
-   * Arrête la surveillance de l'inactivité de l'utilisateur.
+   * Arrête la surveillance de l'inactivité utilisateur.
    */
   public stopMonitoring(): void {
     if (this.inactivitySubscription) {

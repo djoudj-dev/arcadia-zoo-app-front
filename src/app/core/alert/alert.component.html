@@ -1,8 +1,16 @@
-@if (alertMessage()) {
+<!-- src/app/shared/components/alert/alert.component.html -->
+@if (alertMessage() && alertType()) {
 <div class="alert-overlay">
-  <div class="alert-card">
+  <div
+    [ngClass]="{
+      'alert-card': true,
+      'alert-success': alertType() === 'success',
+      'alert-error': alertType() === 'error',
+      'alert-info': alertType() === 'info'
+    }"
+  >
     <div class="alert-header">
-      <span class="alert-title">Alerte</span>
+      <span class="alert-title">{{ alertType() | titlecase }}</span>
       <button class="close-btn" (click)="clearAlert()">&times;</button>
     </div>
     <div class="alert-body">
