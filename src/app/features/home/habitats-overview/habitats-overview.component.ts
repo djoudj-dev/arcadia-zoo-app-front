@@ -12,14 +12,15 @@ import { environment } from '../../../../environments/environment.development';
   templateUrl: './habitats-overview.component.html',
 })
 export class HabitatsOverviewComponent implements OnInit {
-  // Définir habitats comme un signal
+  // Déclare habitats comme un signal pour gérer et réagir aux changements de données
   habitats = signal<Habitat[]>([]);
 
   constructor(private habitatService: HabitatService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    // Récupérer les habitats depuis le service et mettre à jour le signal habitats
     this.habitatService.getHabitats().subscribe((data) => {
-      // Mettre à jour le signal habitats et formater les URLs d'images
+      // Formate l'URL de l'image de chaque habitat et met à jour le signal
       this.habitats.set(
         data.map((habitat) => ({
           ...habitat,

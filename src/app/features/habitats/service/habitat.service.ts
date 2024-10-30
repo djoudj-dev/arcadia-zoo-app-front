@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { Habitat } from '../../../core/models/habitat.model';
-import { Observable, ReplaySubject } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -11,42 +11,41 @@ import { map, shareReplay, tap } from 'rxjs/operators';
 export class HabitatService {
   private apiUrl = `${environment.apiUrl}/api/habitats`;
   private uploadsUrl = `${environment.apiUrl}/uploads`; // Base URL pour les images
-  private habitatsCache$ = new ReplaySubject<Habitat[]>(1); // Cache pour optimiser les requêtes répétées
-  private cacheLoaded = false; // Drapeau pour indiquer si le cache est chargé
+
+  // Utilisation d'un signal pour gérer le cache des habitats
+  private habitatsCache = signal<Habitat[]>([]); // Initialise le signal avec un tableau vide
 
   constructor(private http: HttpClient) {}
 
   /**
    * Récupère la liste de tous les habitats.
-   * Utilise un cache pour éviter les appels réseau répétitifs.
+   * Si le cache est vide, effectue une requête HTTP, sinon renvoie les données du cache.
+   *
+   * @returns Observable<Habitat[]> Observable de la liste des habitats.
    */
   getHabitats(): Observable<Habitat[]> {
-    // Vérifie si le cache est déjà chargé
-    if (!this.cacheLoaded) {
-      this.http
-        .get<Habitat[]>(this.apiUrl)
-        .pipe(
-          // Ajoute l'URL complète de l'image pour chaque habitat
-          map((habitats) =>
-            habitats.map((habitat) => ({
-              ...habitat,
-              image: `${this.uploadsUrl}/${habitat.image}`,
-            }))
-          ),
-          shareReplay(1), // Partage les données entre tous les abonnés pour une seule requête
-          tap((habitats) => {
-            this.habitatsCache$.next(habitats); // Stocke dans le cache
-            this.cacheLoaded = true; // Met à jour le drapeau pour indiquer que le cache est chargé
-          })
-        )
-        .subscribe();
+    if (this.habitatsCache().length > 0) {
+      // Renvoie les données du cache en tant qu'observable
+      return of(this.habitatsCache());
+    } else {
+      // Charge les données depuis l'API et met à jour le cache
+      return this.http.get<Habitat[]>(this.apiUrl).pipe(
+        map((habitats) =>
+          habitats.map((habitat) => ({
+            ...habitat,
+            image: `${this.uploadsUrl}/${habitat.image}`, // Ajoute l'URL complète de l'image
+          }))
+        ),
+        tap((habitats) => this.habitatsCache.set(habitats)) // Met à jour le cache avec les données de l'API
+      );
     }
-    return this.habitatsCache$;
   }
 
   /**
-   * Récupère un habitat spécifique par son ID, en utilisant le cache si possible.
+   * Récupère un habitat spécifique par son ID, utilise le cache si possible.
+   *
    * @param id L'identifiant de l'habitat à récupérer.
+   * @returns Observable<Habitat | undefined> Observable de l'habitat ou undefined s'il n'est pas trouvé.
    */
   getHabitatById(id: number): Observable<Habitat | undefined> {
     return this.getHabitats().pipe(
@@ -59,7 +58,6 @@ export class HabitatService {
    * Appelé après la création, modification ou suppression d'un habitat.
    */
   clearCache(): void {
-    this.habitatsCache$.next([]);
-    this.cacheLoaded = false; // Réinitialise le drapeau pour indiquer que le cache doit être rechargé
+    this.habitatsCache.set([]); // Réinitialise le cache
   }
 }

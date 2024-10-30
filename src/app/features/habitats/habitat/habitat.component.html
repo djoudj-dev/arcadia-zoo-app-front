@@ -1,11 +1,13 @@
 @if (habitat()) {
 <section class="w-full bg-primary shadow py-4">
   <div class="text-center">
+    <!-- Titre de l'habitat -->
     <h1
       class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
     >
       {{ habitat()?.name }}
     </h1>
+
     <div class="w-full flex flex-col items-center">
       <!-- Description de l'habitat -->
       <div class="w-full lg:w-2/3">
@@ -27,12 +29,11 @@
     </div>
   </div>
 
-  <!-- Carte de l'habitat -->
+  <!-- Carte des animaux de l'habitat -->
   <div class="flex justify-center items-center w-full">
     <div
       class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
     >
-      <!-- Card des animaux de l'habitat -->
       <div class="w-full flex flex-col items-center">
         <h2 class="text-4xl text-quinary font-bold font-serif pt-2">
           Les animaux de l'habitat
@@ -64,6 +65,7 @@
           }
         </div>
       </div>
+
       <!-- Bouton de retour -->
       <div class="w-full flex justify-center pt-8">
         <app-button
