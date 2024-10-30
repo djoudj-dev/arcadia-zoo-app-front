@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, Output, EventEmitter } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
 import { Service } from '../../../core/models/service.model';
@@ -19,9 +19,14 @@ export class ServiceManagementComponent {
   features = signal<Feature[]>([]);
   newService = signal<Partial<Service>>({ features: [] });
   selectedFile = signal<File | null>(null);
+  visibleServices = signal<Record<number, boolean>>({});
 
   // Chemin d'accès aux images (dérivé de l'environnement)
   imageBaseUrl = `${environment.apiUrl}/uploads`;
+
+  @Output() serviceCreated = new EventEmitter<Service>();
+  @Output() serviceUpdated = new EventEmitter<Service>();
+  @Output() serviceDeleted = new EventEmitter<number>();
 
   private router = inject(Router);
   private serviceManagement = inject(ServiceManagementService);
@@ -32,41 +37,71 @@ export class ServiceManagementComponent {
   }
 
   loadServices() {
-    this.serviceManagement.getAllServices().subscribe((services) => {
-      const updatedServices = services.map((service) => {
-        // Supprime toutes occurrences initiales de 'uploads/' pour éviter les doublons
-        const imagePath = service.image.replace(/^\/?uploads\/?/i, '');
-        return {
+    this.serviceManagement.getAllServices().subscribe({
+      next: (services) => {
+        const updatedServices = services.map((service) => ({
           ...service,
-          image: `${this.imageBaseUrl}/${imagePath}`,
-        };
-      });
-      this.serviceList.set(updatedServices);
+          image: `${this.imageBaseUrl}/${service.image.replace(
+            /^\/?uploads\/?/i,
+            ''
+          )}`,
+          showFullDescription: false, // Initialise showFullDescription pour chaque service
+        }));
+        this.serviceList.set(updatedServices);
+        this.initializeVisibility(); // Initialise la visibilité après le chargement
+      },
+      error: () => alert('Erreur lors du chargement des services.'),
     });
+  }
+
+  initializeVisibility() {
+    const visibility: Record<number, boolean> = {};
+    this.serviceList().forEach((service) => {
+      visibility[service.id] = false;
+    });
+    this.visibleServices.set(visibility);
+  }
+
+  toggleVisibility(serviceId: number) {
+    this.visibleServices.update((visibility) => ({
+      ...visibility,
+      [serviceId]: !visibility[serviceId],
+    }));
+  }
+
+  toggleDescription(serviceId: number) {
+    const service = this.serviceList().find((s) => s.id === serviceId);
+    if (service) {
+      service.showFullDescription = !service.showFullDescription;
+      this.serviceList.set([...this.serviceList()]);
+    }
   }
 
   loadFeatures() {
-    this.serviceManagement.getAllFeatures().subscribe((features) => {
-      this.features.set(features);
+    this.serviceManagement.getAllFeatures().subscribe({
+      next: (features) => {
+        console.log('Caractéristiques chargées :', features); // Pour le débogage
+        this.features.set(features);
+      },
+      error: () => alert('Erreur lors du chargement des caractéristiques.'),
     });
   }
 
-  isFeatureSelected = (feature: Feature): boolean =>
-    !!this.newService().features?.some((f) => f.id === feature.id);
+  isFeatureSelected(feature: Feature): boolean {
+    return !!this.newService().features?.some((f) => f.id === feature.id);
+  }
 
   onFeatureChange(feature: Feature, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     const updatedFeatures = [...(this.newService().features || [])];
 
-    if (isChecked) {
-      if (!updatedFeatures.some((f) => f.id === feature.id)) {
-        updatedFeatures.push(feature);
-      }
+    if (isChecked && !updatedFeatures.some((f) => f.id === feature.id)) {
+      updatedFeatures.push(feature);
     } else {
-      const filteredFeatures = updatedFeatures.filter(
-        (f) => f.id !== feature.id
-      );
-      this.newService.set({ ...this.newService(), features: filteredFeatures });
+      this.newService.set({
+        ...this.newService(),
+        features: updatedFeatures.filter((f) => f.id !== feature.id),
+      });
       return;
     }
     this.newService.set({ ...this.newService(), features: updatedFeatures });
@@ -74,7 +109,7 @@ export class ServiceManagementComponent {
 
   onFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
+    if (file && file.type.startsWith('image/')) {
       this.selectedFile.set(file);
       const reader = new FileReader();
       reader.onload = () =>
@@ -83,40 +118,58 @@ export class ServiceManagementComponent {
           image: reader.result as string,
         });
       reader.readAsDataURL(file);
+    } else {
+      alert('Veuillez sélectionner un fichier image valide.');
     }
   }
 
+  validateServiceData(service: Partial<Service>): boolean {
+    return (
+      typeof service.name === 'string' &&
+      service.name.trim() !== '' &&
+      typeof service.description === 'string' &&
+      service.description.trim() !== '' &&
+      typeof service.location === 'string' &&
+      service.location.trim() !== '' &&
+      typeof service.hours === 'string' &&
+      service.hours.trim() !== ''
+    );
+  }
+
   createService() {
-    const { name, description, location, hours, features } = this.newService();
-    if (name && description && location && hours && features?.length) {
-      const formData = this.buildFormData(this.newService());
+    const serviceData = { ...this.newService() };
+    if (this.validateServiceData(serviceData)) {
+      const formData = this.buildFormData(serviceData);
+      console.log('Données envoyées :', serviceData); // Log pour déboguer les données
       this.serviceManagement.createService(formData).subscribe({
-        next: (createdService) => {
-          this.serviceList.set([...this.serviceList(), createdService]);
-          this.newService.set({ features: [] });
-          this.selectedFile.set(null);
+        next: (service) => {
+          this.serviceCreated.emit(service);
+          this.loadServices();
+          this.resetNewService();
         },
-        error: (error) =>
-          console.error('Erreur lors de la création du service:', error),
-        complete: () => this.loadServices(),
+        error: (err) =>
+          console.error('Erreur lors de la création du service :', err),
       });
+    } else {
+      console.error('Veuillez remplir tous les champs obligatoires.');
     }
   }
 
   updateService() {
-    const { name, description, location, hours, features, id } =
-      this.newService();
-    if (name && description && location && hours && features && id) {
-      const formData = this.buildFormData(this.newService());
-      this.serviceManagement.updateService(id, formData).subscribe({
-        next: () => {
-          this.newService.set({ features: [] });
-          this.selectedFile.set(null);
+    const serviceData = { ...this.newService() };
+    if (this.validateServiceData(serviceData) && serviceData.id) {
+      const formData = this.buildFormData(serviceData);
+      this.serviceManagement.updateService(serviceData.id, formData).subscribe({
+        next: (service) => {
+          this.serviceUpdated.emit(service);
           this.loadServices();
+          this.resetNewService();
         },
-        error: (error) =>
-          console.error('Erreur lors de la mise à jour du service:', error),
+        error: (err) =>
+          console.error('Erreur lors de la mise à jour du service :', err),
       });
+    } else {
+      console.error('Veuillez remplir tous les champs obligatoires.');
     }
   }
 
@@ -128,25 +181,26 @@ export class ServiceManagementComponent {
   }
 
   deleteService(serviceId: number) {
-    this.serviceManagement.deleteService(serviceId).subscribe(() => {
-      this.serviceList.set(
-        this.serviceList().filter((service) => service.id !== serviceId)
-      );
-      this.loadServices();
+    this.serviceManagement.deleteService(serviceId).subscribe({
+      next: () => {
+        this.serviceDeleted.emit(serviceId);
+        this.serviceList.update((list) =>
+          list.filter((service) => service.id !== serviceId)
+        );
+        this.loadServices();
+      },
+      error: (err) =>
+        console.error('Erreur lors de la suppression du service :', err),
     });
   }
 
-  toggleDescription(serviceId: number) {
-    const service = this.serviceList().find((s) => s.id === serviceId);
-    if (service) {
-      service.showFullDescription = !service.showFullDescription;
-      this.serviceList.set([...this.serviceList()]);
-    }
+  resetNewService() {
+    this.newService.set({ features: [] });
+    this.selectedFile.set(null);
   }
 
   cancel() {
-    this.newService.set({ features: [] });
-    this.selectedFile.set(null);
+    this.resetNewService();
   }
 
   goBack() {
@@ -155,17 +209,22 @@ export class ServiceManagementComponent {
 
   private buildFormData(service: Partial<Service>): FormData {
     const formData = new FormData();
-
-    // Spécifiez le dossier cible pour multer
     formData.append('folder', 'img-services');
 
-    if (this.selectedFile()) formData.append('image', this.selectedFile()!);
+    if (this.selectedFile()) {
+      formData.append('image', this.selectedFile()!);
+    }
 
-    Object.entries(service).forEach(([key, value]) => {
-      if (key !== 'id' && value != null) {
-        formData.append(key, String(value));
+    formData.append(
+      'features',
+      JSON.stringify(service.features?.map((feature) => feature.id) || [])
+    );
+
+    (['name', 'description', 'location', 'hours'] as (keyof Service)[]).forEach(
+      (key) => {
+        if (service[key]) formData.append(key, String(service[key]));
       }
-    });
+    );
 
     return formData;
   }
