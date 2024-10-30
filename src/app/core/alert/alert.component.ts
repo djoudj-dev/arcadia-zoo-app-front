@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+// src/app/shared/components/alert/alert.component.ts
+import { Component, computed } from '@angular/core';
 import { AlertService } from './service/alert.service';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-alert',
   standalone: true,
-  imports: [AsyncPipe],
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.css'],
 })
 export class AlertComponent {
-  alertMessage$: Observable<string | null>;
+  // Signal pour obtenir le message d'alerte actuel depuis le service
+  alertMessage = computed(() => this.alertService.alertMessage());
 
-  constructor(private alertService: AlertService) {
-    this.alertMessage$ = this.alertService.alertMessage$;
-  }
+  constructor(private alertService: AlertService) {}
 
+  /**
+   * Efface le message d'alerte en appelant le service
+   */
   clearAlert(): void {
     this.alertService.clearAlert();
   }

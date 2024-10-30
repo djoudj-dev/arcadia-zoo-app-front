@@ -38,9 +38,6 @@ export class AppComponent implements OnInit, OnDestroy {
         );
       } else {
         // Démarrer la surveillance de l'inactivité SEULEMENT pour les utilisateurs connectés
-        console.log(
-          "Utilisateur connecté, démarrage de la surveillance d'inactivité"
-        );
         this.inactivityService.startMonitoring(); // Démarrer la surveillance
       }
     } else {
