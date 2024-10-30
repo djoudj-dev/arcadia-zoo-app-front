@@ -7,7 +7,6 @@ import { DatePipe } from '@angular/common';
 import { NavComponent } from '../../shared/components/header/navbar/nav.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { HABITATS } from '../../core/mocks/habitats-mock.component';
 import { AnimalService } from './service/animal.service';
 
 @Component({
@@ -31,32 +30,37 @@ import { AnimalService } from './service/animal.service';
   ],
 })
 export class AnimalComponent implements OnInit {
-  // Utilisation de signaux pour l’animal, l’habitat et la note du vétérinaire
+  /** Signal pour stocker les informations de l'animal */
   animal = signal<Animal | undefined>(undefined);
+  /** Signal pour stocker les informations de l'habitat associé */
   habitat = signal<Habitat | undefined>(undefined);
+  /** Signal pour stocker les notes du vétérinaire associées */
   vetNote = signal<VetNote | undefined>(undefined);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private animalService: AnimalService // Injection du service
+    private animalService: AnimalService // Service pour gérer les opérations liées à Animal
   ) {}
 
+  /** Initialisation du composant pour charger les données de l'animal */
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID depuis l'URL
+    const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID de l'animal depuis les paramètres de la route
     console.log('Route param ID:', id);
 
-    // Chargement de l'animal par ID
-    this.loadAnimal(id);
+    this.loadAnimal(id); // Chargement des données de l'animal par ID
   }
 
-  // Charger l’animal par son ID
+  /**
+   * Charge les informations de l'animal en fonction de l'ID.
+   * @param id - Identifiant de l'animal à charger
+   */
   private loadAnimal(id: number) {
     this.animalService.getAnimalById(id).subscribe({
       next: (animal) => {
         this.animal.set(animal);
 
-        // Si l'animal existe, trouver l'habitat associé
+        // Si l'animal a été trouvé, charger son habitat associé
         if (animal) {
           this.loadHabitat(animal.habitatId);
         }
@@ -66,20 +70,31 @@ export class AnimalComponent implements OnInit {
     });
   }
 
-  // Charger l’habitat associé à l’animal
+  /**
+   * Charge les informations de l'habitat associé à l'animal depuis le backend.
+   * @param habitatId - Identifiant de l'habitat associé
+   */
   private loadHabitat(habitatId: number | undefined) {
     if (habitatId != null) {
-      const habitat = HABITATS.find((hab) => hab.id === habitatId);
-      this.habitat.set(habitat);
+      this.animalService.getHabitatById(habitatId).subscribe({
+        next: (habitat) => {
+          this.habitat.set(habitat); // Mise à jour du signal de l'habitat
+        },
+        error: (error) =>
+          console.error("Erreur lors de la récupération de l'habitat :", error),
+      });
     }
   }
 
-  // Retour à la page d'accueil
+  /** Retour à la page d'accueil */
   goBack() {
     this.router.navigate(['/']);
   }
 
-  // Redirection vers la page de l'habitat
+  /**
+   * Redirection vers la page de l'habitat associé.
+   * Vérifie si l'ID de l'habitat est valide avant de naviguer.
+   */
   goHabitat() {
     const habitatId = this.habitat()?.id;
     if (habitatId) {
