@@ -110,7 +110,7 @@ export class HabitatComponent implements OnInit {
           ...animal,
           image: animal.image?.startsWith('http')
             ? animal.image
-            : `${environment.apiUrl}/uploads/img-animaux/${animal.image}`,
+            : `${environment.apiUrl}/uploads/${animal.image}`,
         }));
         this.animals.set(updatedAnimals);
       },
