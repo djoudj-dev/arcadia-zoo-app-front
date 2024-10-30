@@ -6,6 +6,7 @@ import { DatePipe, SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../../environments/environment.development';
 import { Router } from '@angular/router';
+import { StatsService } from '../stats/services/stats.service';
 
 @Component({
   selector: 'app-habitat-management',
@@ -32,7 +33,8 @@ export class HabitatManagementComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private habitatManagement: HabitatManagementService
+    private habitatManagement: HabitatManagementService,
+    private statsService: StatsService
   ) {}
 
   ngOnInit() {
@@ -84,6 +86,7 @@ export class HabitatManagementComponent implements OnInit {
             },
           ]);
           this.resetForm();
+          this.statsService.incrementTotalHabitats();
         },
         error: (error) =>
           console.error("Erreur lors de la création de l'habitat :", error),
@@ -134,6 +137,7 @@ export class HabitatManagementComponent implements OnInit {
         this.habitats.update((habitats) =>
           habitats.filter((habitat) => habitat.id !== id)
         );
+        this.statsService.decrementTotalHabitats();
       },
       error: (error) =>
         console.error("Erreur lors de la suppression de l'habitat:", error),
