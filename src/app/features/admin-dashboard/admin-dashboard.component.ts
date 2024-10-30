@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { HabitatsDashboardComponent } from './habitats-dashboard/habitats-dashboard.component';
 import { TokenService } from '../../core/token/token.service';
+import { StatsComponent } from './stats/stats.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,16 +15,12 @@ import { TokenService } from '../../core/token/token.service';
     RouterOutlet,
     RouterLink,
     HabitatsDashboardComponent,
+    StatsComponent,
   ],
   templateUrl: './admin-dashboard.component.html',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   constructor(private router: Router, private tokenService: TokenService) {}
-
-  ngOnInit(): void {
-    const token = this.tokenService.getToken();
-    console.log('Token récupéré pour Dashboard:', token); // Vérifiez si le token est disponible
-  }
 
   navigateTo(route: string): void {
     this.router.navigate([route]);

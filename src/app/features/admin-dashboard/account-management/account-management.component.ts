@@ -5,6 +5,7 @@ import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
 import { AccountManagementService } from '../service/account-management.service';
 import { Router } from '@angular/router';
+import { StatsService } from '../stats/services/stats.service';
 
 @Component({
   selector: 'app-account-management',
@@ -20,7 +21,8 @@ export class AccountManagementComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private accountManagement: AccountManagementService
+    private accountManagement: AccountManagementService,
+    private statsService: StatsService
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +34,7 @@ export class AccountManagementComponent implements OnInit {
   // Récupérer les utilisateurs avec une gestion d'erreurs
   loadUsers(): void {
     this.accountManagement.getAllUsers().subscribe({
-      next: (users: User[]) => this.users.set(users),
+      next: (users: User[]) => this.users.set(users || []), // Assure un tableau même si users est undefined
       error: (err) =>
         console.error('Erreur lors de la récupération des utilisateurs :', err),
     });
@@ -41,7 +43,7 @@ export class AccountManagementComponent implements OnInit {
   // Récupérer les rôles avec une gestion d'erreurs
   loadRoles(): void {
     this.accountManagement.getRoles().subscribe({
-      next: (roles: Role[]) => this.roles.set(roles),
+      next: (roles: Role[]) => this.roles.set(roles || []), // Assure un tableau même si roles est undefined
       error: (err) =>
         console.error('Erreur lors de la récupération des rôles :', err),
     });
@@ -60,6 +62,7 @@ export class AccountManagementComponent implements OnInit {
           next: (createdUser: User) => {
             this.users.update((users) => [...users, createdUser]);
             this.newUser.set({});
+            this.statsService.incrementTotalEmploye();
           },
           error: (err) =>
             console.error("Erreur lors de la création de l'utilisateur :", err),
@@ -102,10 +105,15 @@ export class AccountManagementComponent implements OnInit {
   // Supprimer un utilisateur en fonction de son ID
   deleteAccount(userId: number): void {
     this.accountManagement.deleteUser(userId).subscribe({
-      next: () =>
+      next: () => {
+        // Met à jour la liste des utilisateurs
         this.users.update((users) =>
           users.filter((user) => user.id !== userId)
-        ),
+        );
+
+        // Décrémente le compteur employé après la suppression réussie
+        this.statsService.decrementTotalEmploye();
+      },
       error: (err) =>
         console.error("Erreur lors de la suppression de l'utilisateur :", err),
     });
