@@ -35,9 +35,7 @@ export class LoginComponent {
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe({
-        next: (response) => {
-          console.log('Formulaire soumis avec succès:', this.loginForm.value);
-          console.log("Rôle de l'utilisateur:", response); // Afficher le rôle de l'utilisateur
+        next: () => {
           this.errorMessage = ''; // Réinitialiser le message d'erreur
           this.inactivityService.startMonitoring(); // Démarrer la surveillance d'inactivité après la connexion réussie
           this.router.navigate(['/dashboard']); // Rediriger après la connexion réussie
