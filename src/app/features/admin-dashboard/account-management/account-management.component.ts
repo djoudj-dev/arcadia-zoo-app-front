@@ -51,8 +51,8 @@ export class AccountManagementComponent implements OnInit {
 
   // Créer un utilisateur en validant les champs requis
   createAccount(): void {
-    const { username, password, role } = this.newUser();
-    if (username && password && role && role.id) {
+    const { name, password, role } = this.newUser();
+    if (name && password && role && role.id) {
       this.accountManagement
         .createUser({
           ...this.newUser(),
@@ -74,26 +74,30 @@ export class AccountManagementComponent implements OnInit {
 
   // Mettre à jour un utilisateur en validant les champs requis
   updateAccount(): void {
-    const { username, role } = this.newUser();
-    if (username && role && role.id) {
-      this.accountManagement
-        .updateUser({
-          ...this.newUser(),
-          roleId: role.id,
-        } as User)
-        .subscribe({
-          next: () => {
-            this.loadUsers();
-            this.newUser.set({});
-          },
-          error: (err) =>
-            console.error(
-              "Erreur lors de la mise à jour de l'utilisateur :",
-              err
-            ),
-        });
+    const { name, role } = this.newUser();
+
+    // Vérifier s'il y a au moins un champ à mettre à jour
+    if (name || (role && role.id)) {
+      const updatedData: Partial<User & { roleId?: number }> = {
+        ...this.newUser(),
+      };
+      if (role) {
+        updatedData.roleId = role.id;
+      }
+
+      this.accountManagement.updateUser(updatedData as User).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.newUser.set({});
+        },
+        error: (err) =>
+          console.error(
+            "Erreur lors de la mise à jour de l'utilisateur :",
+            err
+          ),
+      });
     } else {
-      console.log('Veuillez remplir tous les champs');
+      console.log('Veuillez remplir au moins un champ pour mettre à jour.');
     }
   }
 
