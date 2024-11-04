@@ -14,14 +14,14 @@
       </h3>
       <form class="space-y-4">
         <div>
-          <label for="username" class="block text-lg font-medium mb-2"
+          <label for="name" class="block text-lg font-medium mb-2"
             >Nom d'utilisateur:</label
           >
           <input
             type="text"
-            id="username"
-            [(ngModel)]="newUser().username"
-            name="username"
+            id="name"
+            [(ngModel)]="newUser().name"
+            name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
           />
@@ -107,14 +107,14 @@
           class="bg-white p-4 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 border border-gray-300"
         >
           <h4 class="text-lg font-bold text-gray-800 mb-2">
-            {{ user.username }}
+            {{ user.name }}
           </h4>
           <p class="text-sm text-gray-600 mb-1">
             <span class="font-semibold">Email :</span> {{ user.email }}
           </p>
           <p class="text-sm text-gray-600 mb-1">
             <span class="font-semibold">Rôle :</span>
-            {{ user.role?.name || "Rôle non défini" }}
+            {{ user.role ? user.role.name : "Rôle non défini" }}
           </p>
 
           <!-- Actions pour modifier et supprimer l'utilisateur -->
