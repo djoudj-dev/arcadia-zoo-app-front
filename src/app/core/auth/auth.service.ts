@@ -1,4 +1,3 @@
-// src/app/core/auth/auth.service.ts
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -30,19 +29,33 @@ export class AuthService {
    */
   private initializeCurrentUser(): void {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const token = this.tokenService.getToken();
+
+    console.log('Utilisateur stocké récupéré:', storedUser);
+
+    if (storedUser && token) {
       try {
         const user = JSON.parse(storedUser);
+        console.log('Utilisateur après parsing:', user);
+
         if (user && user.role) {
-          this.currentUserSignal.set(user); // Met à jour le signal avec l'utilisateur
+          this.currentUserSignal.set(user);
+          console.log(
+            'Utilisateur initialisé dans currentUserSignal:',
+            this.currentUserSignal()
+          );
         } else {
-          console.warn("Rôle manquant dans les données de l'utilisateur");
+          console.warn(
+            "Rôle manquant dans les données de l'utilisateur au démarrage"
+          );
         }
       } catch (error) {
         console.error(
           'Erreur lors du parsing des données utilisateur :',
           error
         );
+        localStorage.removeItem('user'); // Supprime les données utilisateur invalides du stockage local
+        this.tokenService.removeToken(); // Supprime le token
       }
     }
   }
@@ -59,20 +72,31 @@ export class AuthService {
       .pipe(
         tap((response: { user: User }) => {
           const user = response.user;
-          this.currentUserSignal.set(user); // Met à jour le signal avec l'utilisateur connecté
-          localStorage.setItem('user', JSON.stringify(user)); // Stocke l'utilisateur dans le stockage local
-          this.tokenService.setToken(user.token || ''); // Définit le token
-          this.alertService.setAlert(
-            'Connexion réussie. Bienvenue!',
-            'success'
-          ); // Affiche un message de succès
+          console.log('Utilisateur reçu après connexion:', user);
+          if (user.role && user.token) {
+            this.currentUserSignal.set(user); // Met à jour le signal avec l'utilisateur connecté
+            localStorage.setItem('user', JSON.stringify(user)); // Stocke l'utilisateur dans le stockage local
+            this.tokenService.setToken(user.token); // Stocke le token
+            this.alertService.setAlert(
+              'Connexion réussie. Bienvenue!',
+              'success'
+            );
+            console.log(
+              'Utilisateur mis à jour dans AuthService:',
+              this.currentUserSignal()
+            );
+          } else {
+            console.error(
+              "Rôle ou token manquant dans les données de l'utilisateur"
+            );
+          }
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);
           this.alertService.setAlert(
             'Erreur de connexion. Vérifiez vos identifiants.',
             'error'
-          ); // Affiche un message d'erreur
+          );
           return throwError(() => new Error('Identifiants incorrects'));
         })
       );
@@ -94,7 +118,8 @@ export class AuthService {
    * @returns Vrai si l'utilisateur est authentifié, faux sinon.
    */
   isAuthenticated(): boolean {
-    return this.currentUserSignal() !== null; // Vérifie si le signal de l'utilisateur est non nul
+    const token = this.tokenService.getToken();
+    return !!token; // Vérifie si le token existe
   }
 
   /**
@@ -104,6 +129,13 @@ export class AuthService {
    */
   hasRole(requiredRoles: string[]): boolean {
     const user = this.currentUserSignal();
-    return user ? requiredRoles.includes(user.role.name) : false; // Vérifie si l'utilisateur a l'un des rôles requis
+    const userRole = user?.role?.name?.toLowerCase();
+    console.log(
+      "Rôle de l'utilisateur:",
+      userRole,
+      'Rôles requis:',
+      requiredRoles.map((role) => role.toLowerCase())
+    );
+    return requiredRoles.some((role) => role.toLowerCase() === userRole);
   }
 }
