@@ -9,11 +9,12 @@ export class TokenService {
 
   getToken(): string | null {
     const token = this.getCookie(this.tokenKey);
-    return token;
+    return token || null; // Retourne null si le cookie n'existe pas
   }
 
   setToken(token: string): void {
-    this.setCookie(this.tokenKey, token, 1); // 1 day expiration
+    console.log('Token reçu et stocké:', token);
+    this.setCookie(this.tokenKey, token, 1); // Expiration dans 1 jour
   }
 
   removeToken(): void {
@@ -29,16 +30,13 @@ export class TokenService {
 
     console.log('Expiration du token:', expiry, 'Heure actuelle:', Date.now());
 
-    if (expiry && expiry > Date.now()) {
-      return false;
-    }
-
-    return true;
+    return !expiry || expiry <= Date.now();
   }
 
   private decodeToken(token: string): Token | null {
     try {
-      return JSON.parse(atob(token.split('.')[1]));
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload));
     } catch (error) {
       console.error('Erreur lors du décodage du token', error);
       return null;
@@ -47,20 +45,16 @@ export class TokenService {
 
   private setCookie(name: string, value: string, days: number): void {
     const expires = new Date(Date.now() + days * 864e5).toUTCString();
-    document.cookie =
-      name +
-      '=' +
-      encodeURIComponent(value) +
-      '; expires=' +
-      expires +
-      '; path=/';
+    document.cookie = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expires}; path=/`;
   }
 
   private getCookie(name: string): string | null {
-    return document.cookie.split('; ').reduce((r, v) => {
-      const parts = v.split('=');
-      return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-    }, '');
+    const match = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
   }
 
   private deleteCookie(name: string): void {
