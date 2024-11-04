@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.model';
 import { AccountManagementService } from '../service/account-management.service';
 import { Router } from '@angular/router';
 import { StatsService } from '../stats/services/stats.service';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-account-management',
@@ -14,46 +14,52 @@ import { StatsService } from '../stats/services/stats.service';
   templateUrl: './account-management.component.html',
 })
 export class AccountManagementComponent implements OnInit {
-  // Signaux pour la liste des utilisateurs et des rôles
+  // Utilisation de signaux pour la réactivité du composant
   users = signal<User[]>([]);
   roles = signal<Role[]>([]);
   newUser = signal<Partial<User>>({});
 
   constructor(
     private router: Router,
-    private accountManagement: AccountManagementService,
+    private accountService: AccountManagementService,
     private statsService: StatsService
   ) {}
 
   ngOnInit(): void {
-    // Chargement initial des utilisateurs et des rôles
+    // Initialisation des données à l'ouverture du composant
     this.loadUsers();
     this.loadRoles();
   }
 
-  // Récupérer les utilisateurs avec une gestion d'erreurs
+  /**
+   * Charge tous les utilisateurs avec gestion des erreurs
+   */
   loadUsers(): void {
-    this.accountManagement.getAllUsers().subscribe({
-      next: (users: User[]) => this.users.set(users || []), // Assure un tableau même si users est undefined
+    this.accountService.getAllUsers().subscribe({
+      next: (users: User[]) => this.users.set(users || []),
       error: (err) =>
         console.error('Erreur lors de la récupération des utilisateurs :', err),
     });
   }
 
-  // Récupérer les rôles avec une gestion d'erreurs
+  /**
+   * Charge tous les rôles avec gestion des erreurs
+   */
   loadRoles(): void {
-    this.accountManagement.getRoles().subscribe({
-      next: (roles: Role[]) => this.roles.set(roles || []), // Assure un tableau même si roles est undefined
+    this.accountService.getRoles().subscribe({
+      next: (roles: Role[]) => this.roles.set(roles || []),
       error: (err) =>
         console.error('Erreur lors de la récupération des rôles :', err),
     });
   }
 
-  // Créer un utilisateur en validant les champs requis
+  /**
+   * Crée un nouvel utilisateur si les champs requis sont remplis
+   */
   createAccount(): void {
     const { name, password, role } = this.newUser();
     if (name && password && role && role.id) {
-      this.accountManagement
+      this.accountService
         .createUser({
           ...this.newUser(),
           roleId: role.id,
@@ -72,11 +78,12 @@ export class AccountManagementComponent implements OnInit {
     }
   }
 
-  // Mettre à jour un utilisateur en validant les champs requis
+  /**
+   * Met à jour un utilisateur existant, valide les champs non vides
+   */
   updateAccount(): void {
     const { name, role } = this.newUser();
 
-    // Vérifier s'il y a au moins un champ à mettre à jour
     if (name || (role && role.id)) {
       const updatedData: Partial<User & { roleId?: number }> = {
         ...this.newUser(),
@@ -85,7 +92,7 @@ export class AccountManagementComponent implements OnInit {
         updatedData.roleId = role.id;
       }
 
-      this.accountManagement.updateUser(updatedData as User).subscribe({
+      this.accountService.updateUser(updatedData as User).subscribe({
         next: () => {
           this.loadUsers();
           this.newUser.set({});
@@ -101,21 +108,24 @@ export class AccountManagementComponent implements OnInit {
     }
   }
 
-  // Préparer le formulaire pour la modification d'un utilisateur
+  /**
+   * Prépare le formulaire pour la modification d'un utilisateur
+   * @param user Utilisateur à modifier
+   */
   editUser(user: User): void {
-    this.newUser.set({ ...user, password: '' });
+    this.newUser.set({ ...user, password: '' }); // Reset password input
   }
 
-  // Supprimer un utilisateur en fonction de son ID
+  /**
+   * Supprime un utilisateur et décrémente le compteur des employés
+   * @param userId Identifiant de l'utilisateur à supprimer
+   */
   deleteAccount(userId: number): void {
-    this.accountManagement.deleteUser(userId).subscribe({
+    this.accountService.deleteUser(userId).subscribe({
       next: () => {
-        // Met à jour la liste des utilisateurs
         this.users.update((users) =>
           users.filter((user) => user.id !== userId)
         );
-
-        // Décrémente le compteur employé après la suppression réussie
         this.statsService.decrementTotalEmploye();
       },
       error: (err) =>
@@ -123,13 +133,17 @@ export class AccountManagementComponent implements OnInit {
     });
   }
 
-  // Réinitialiser le formulaire de création/mise à jour
+  /**
+   * Réinitialise le formulaire de création/mise à jour
+   */
   cancel(): void {
     this.newUser.set({});
   }
 
-  // Retourner à l'accueil du tableau de bord
-  goBack() {
+  /**
+   * Retourne à l'accueil du tableau de bord
+   */
+  goBack(): void {
     this.router.navigate(['/admin']);
   }
 }
