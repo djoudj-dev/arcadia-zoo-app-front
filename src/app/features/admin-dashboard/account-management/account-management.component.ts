@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { User } from '../../../core/models/user.model';
-import { Role } from '../../../core/models/role.model';
-import { AccountManagementService } from '../service/account-management.service';
+import { Role } from './model/role.model';
+import { AccountManagementService } from './service/account-management.service';
 import { Router } from '@angular/router';
 import { StatsService } from '../stats/services/stats.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { User } from './model/user.model';
 
 @Component({
   selector: 'app-account-management',
@@ -14,9 +14,11 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   templateUrl: './account-management.component.html',
 })
 export class AccountManagementComponent implements OnInit {
-  // Utilisation de signaux pour la réactivité du composant
+  /** Signaux pour la liste des utilisateurs et des rôles **/
   users = signal<User[]>([]);
   roles = signal<Role[]>([]);
+
+  /** Signal pour le formulaire utilisateur **/
   newUser = signal<Partial<User>>({});
 
   constructor(
@@ -26,44 +28,34 @@ export class AccountManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Initialisation des données à l'ouverture du composant
+    /** Initialisation des utilisateurs et rôles **/
     this.loadUsers();
     this.loadRoles();
   }
 
-  /**
-   * Charge tous les utilisateurs avec gestion des erreurs
-   */
+  /** Charge tous les utilisateurs et gère les erreurs éventuelles **/
   loadUsers(): void {
     this.accountService.getAllUsers().subscribe({
       next: (users: User[]) => this.users.set(users || []),
       error: (err) =>
-        console.error('Erreur lors de la récupération des utilisateurs :', err),
+        console.error('Erreur de chargement des utilisateurs :', err),
     });
   }
 
-  /**
-   * Charge tous les rôles avec gestion des erreurs
-   */
+  /** Charge tous les rôles et gère les erreurs éventuelles **/
   loadRoles(): void {
     this.accountService.getRoles().subscribe({
       next: (roles: Role[]) => this.roles.set(roles || []),
-      error: (err) =>
-        console.error('Erreur lors de la récupération des rôles :', err),
+      error: (err) => console.error('Erreur de chargement des rôles :', err),
     });
   }
 
-  /**
-   * Crée un nouvel utilisateur si les champs requis sont remplis
-   */
+  /** Crée un nouvel utilisateur si les champs sont remplis **/
   createAccount(): void {
     const { name, password, role } = this.newUser();
     if (name && password && role && role.id) {
       this.accountService
-        .createUser({
-          ...this.newUser(),
-          roleId: role.id,
-        } as User)
+        .createUser({ ...this.newUser(), roleId: role.id } as User)
         .subscribe({
           next: (createdUser: User) => {
             this.users.update((users) => [...users, createdUser]);
@@ -71,16 +63,14 @@ export class AccountManagementComponent implements OnInit {
             this.statsService.incrementTotalEmploye();
           },
           error: (err) =>
-            console.error("Erreur lors de la création de l'utilisateur :", err),
+            console.error("Erreur de création d'utilisateur :", err),
         });
     } else {
-      console.log('Veuillez remplir tous les champs');
+      console.log('Champs requis manquants');
     }
   }
 
-  /**
-   * Met à jour un utilisateur existant, valide les champs non vides
-   */
+  /** Met à jour un utilisateur si les champs sont valides **/
   updateAccount(): void {
     const { name, role } = this.newUser();
 
@@ -88,9 +78,7 @@ export class AccountManagementComponent implements OnInit {
       const updatedData: Partial<User & { roleId?: number }> = {
         ...this.newUser(),
       };
-      if (role) {
-        updatedData.roleId = role.id;
-      }
+      if (role) updatedData.roleId = role.id;
 
       this.accountService.updateUser(updatedData as User).subscribe({
         next: () => {
@@ -98,28 +86,19 @@ export class AccountManagementComponent implements OnInit {
           this.newUser.set({});
         },
         error: (err) =>
-          console.error(
-            "Erreur lors de la mise à jour de l'utilisateur :",
-            err
-          ),
+          console.error("Erreur de mise à jour d'utilisateur :", err),
       });
     } else {
-      console.log('Veuillez remplir au moins un champ pour mettre à jour.');
+      console.log('Champs requis manquants pour la mise à jour');
     }
   }
 
-  /**
-   * Prépare le formulaire pour la modification d'un utilisateur
-   * @param user Utilisateur à modifier
-   */
+  /** Prépare le formulaire de modification pour un utilisateur existant **/
   editUser(user: User): void {
-    this.newUser.set({ ...user, password: '' }); // Reset password input
+    this.newUser.set({ ...user, password: '' }); // Remise à zéro du mot de passe
   }
 
-  /**
-   * Supprime un utilisateur et décrémente le compteur des employés
-   * @param userId Identifiant de l'utilisateur à supprimer
-   */
+  /** Supprime un utilisateur et met à jour le compteur des employés **/
   deleteAccount(userId: number): void {
     this.accountService.deleteUser(userId).subscribe({
       next: () => {
@@ -129,20 +108,16 @@ export class AccountManagementComponent implements OnInit {
         this.statsService.decrementTotalEmploye();
       },
       error: (err) =>
-        console.error("Erreur lors de la suppression de l'utilisateur :", err),
+        console.error("Erreur de suppression d'utilisateur :", err),
     });
   }
 
-  /**
-   * Réinitialise le formulaire de création/mise à jour
-   */
+  /** Réinitialise le formulaire utilisateur **/
   cancel(): void {
     this.newUser.set({});
   }
 
-  /**
-   * Retourne à l'accueil du tableau de bord
-   */
+  /** Retour à l'accueil du tableau de bord **/
   goBack(): void {
     this.router.navigate(['/admin']);
   }

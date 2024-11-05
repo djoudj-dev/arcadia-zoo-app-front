@@ -30,11 +30,9 @@ import { AnimalService } from './service/animal.service';
   ],
 })
 export class AnimalComponent implements OnInit {
-  /** Signal pour stocker les informations de l'animal */
+  /** Signal pour stocker les informations */
   animal = signal<Animal | undefined>(undefined);
-  /** Signal pour stocker les informations de l'habitat associé */
   habitat = signal<Habitat | undefined>(undefined);
-  /** Signal pour stocker les notes du vétérinaire associées */
   vetNote = signal<VetNote | undefined>(undefined);
 
   constructor(
