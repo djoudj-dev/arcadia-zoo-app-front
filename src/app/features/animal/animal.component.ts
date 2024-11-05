@@ -62,7 +62,7 @@ export class AnimalComponent implements OnInit {
 
         // Si l'animal a été trouvé, charger son habitat associé
         if (animal) {
-          this.loadHabitat(animal.habitatId);
+          this.loadHabitat(animal.habitat_id);
         }
       },
       error: (error) =>
@@ -72,11 +72,11 @@ export class AnimalComponent implements OnInit {
 
   /**
    * Charge les informations de l'habitat associé à l'animal depuis le backend.
-   * @param habitatId - Identifiant de l'habitat associé
+   * @param habitat_id - Identifiant de l'habitat associé
    */
-  private loadHabitat(habitatId: number | undefined) {
-    if (habitatId != null) {
-      this.animalService.getHabitatById(habitatId).subscribe({
+  private loadHabitat(habitat_id: number | undefined) {
+    if (habitat_id != null) {
+      this.animalService.getHabitatById(habitat_id).subscribe({
         next: (habitat) => {
           this.habitat.set(habitat); // Mise à jour du signal de l'habitat
         },
@@ -96,9 +96,9 @@ export class AnimalComponent implements OnInit {
    * Vérifie si l'ID de l'habitat est valide avant de naviguer.
    */
   goHabitat() {
-    const habitatId = this.habitat()?.id_habitat;
-    if (habitatId) {
-      this.router.navigate(['/habitat', habitatId]);
+    const habitat_id = this.habitat()?.id_habitat;
+    if (habitat_id) {
+      this.router.navigate(['/habitat', habitat_id]);
     }
   }
 }

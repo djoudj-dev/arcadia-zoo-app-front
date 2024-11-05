@@ -31,7 +31,7 @@ export class AnimalService {
           map((animals) =>
             animals.map((animal) => ({
               ...animal,
-              image: `${this.uploadsUrl}/${animal.image}`,
+              image: `${this.uploadsUrl}/${animal.images}`,
             }))
           ),
           shareReplay(1), // Partage les données entre tous les abonnés pour une seule requête
@@ -51,17 +51,17 @@ export class AnimalService {
    */
   getAnimalById(id: number): Observable<Animal | undefined> {
     return this.getAnimals().pipe(
-      map((animals) => animals.find((animal) => animal.id === id))
+      map((animals) => animals.find((animal) => animal.id_animal === id))
     );
   }
 
   /**
    * Récupère un habitat spécifique par son ID depuis le backend.
-   * @param habitatId - Identifiant de l'habitat
+   * @param habitat_id - Identifiant de l'habitat
    * @returns Observable<Habitat> - Flux de l'habitat récupéré
    */
-  getHabitatById(habitatId: number): Observable<Habitat> {
-    return this.http.get<Habitat>(`${this.habitatUrl}/${habitatId}`);
+  getHabitatById(habitat_id: number): Observable<Habitat> {
+    return this.http.get<Habitat>(`${this.habitatUrl}/${habitat_id}`);
   }
 
   /**
@@ -82,7 +82,7 @@ export class AnimalService {
    */
   updateAnimal(updatedAnimal: Animal): Observable<Animal> {
     return this.http
-      .put<Animal>(`${this.apiUrl}/${updatedAnimal.id}`, updatedAnimal)
+      .put<Animal>(`${this.apiUrl}/${updatedAnimal.id_animal}`, updatedAnimal)
       .pipe(
         tap(() => this.clearCache()) // Efface le cache après mise à jour
       );

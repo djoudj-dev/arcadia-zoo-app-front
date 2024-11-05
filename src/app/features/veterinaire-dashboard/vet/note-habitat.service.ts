@@ -22,7 +22,7 @@ export class HabitatNoteService {
   }
 
   // Récupérer les avis d'un habitat spécifique
-  getHabitatNotesByHabitatId(habitatId: number): Observable<HabitatNote[]> {
-    return this.http.get<HabitatNote[]>(`${this.apiUrl}/habitat/${habitatId}`);
+  getHabitatNotesByhabitat_id(habitat_id: number): Observable<HabitatNote[]> {
+    return this.http.get<HabitatNote[]>(`${this.apiUrl}/habitat/${habitat_id}`);
   }
 }

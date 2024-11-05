@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Input } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Habitat } from '../../../core/models/habitat.model';
@@ -32,7 +32,7 @@ export class HabitatComponent implements OnInit {
    * Signal pour l'objet `Habitat`, utilisé comme entrée (@Input) pour recevoir les données
    * de l'habitat depuis un composant parent ou service.
    */
-  @Input() habitat = signal<Habitat | undefined>(undefined);
+  habitat = signal<Habitat | undefined>(undefined);
 
   /**
    * Signal pour stocker et surveiller la liste des animaux associés à l'habitat actuel.
@@ -42,7 +42,7 @@ export class HabitatComponent implements OnInit {
   /**
    * URL de base pour les images des habitats, tirée de l'environnement de développement.
    */
-  private readonly imageBaseUrl = `${environment.apiUrl}/uploads/img-habitats`;
+  private readonly imageBaseUrl = `${environment.apiUrl}`;
 
   /**
    * Constructor - Initialise les services requis pour la navigation, l'accès aux paramètres de route,
@@ -65,9 +65,9 @@ export class HabitatComponent implements OnInit {
    * informations de l'habitat ainsi que les animaux associés via HabitatService.
    */
   ngOnInit(): void {
-    const habitatId = Number(this.route.snapshot.paramMap.get('id'));
-    if (habitatId) {
-      this.loadHabitat(habitatId);
+    const habitat_id = Number(this.route.snapshot.paramMap.get('id'));
+    if (habitat_id) {
+      this.loadHabitat(habitat_id);
     }
   }
 
@@ -75,10 +75,10 @@ export class HabitatComponent implements OnInit {
    * Charge les informations de l'habitat à partir de l'ID fourni et met à jour le signal `habitat`.
    * Si l'image de l'habitat n'est pas un URL absolu, elle est concaténée avec `imageBaseUrl`.
    *
-   * @param habitatId - L'identifiant unique de l'habitat à charger.
+   * @param habitat_id - L'identifiant unique de l'habitat à charger.
    */
-  private loadHabitat(habitatId: number): void {
-    this.habitatService.getHabitatById(habitatId).subscribe({
+  private loadHabitat(habitat_id: number): void {
+    this.habitatService.getHabitatById(habitat_id).subscribe({
       next: (data) => {
         if (data) {
           // Concatène l'image si elle n'est pas déjà un lien complet
@@ -86,7 +86,7 @@ export class HabitatComponent implements OnInit {
             ? data.images
             : `${this.imageBaseUrl}/${data.images}`;
           this.habitat.set(data);
-          this.loadAnimalsForHabitat(habitatId);
+          this.loadAnimalsForHabitat(habitat_id);
         } else {
           console.error('Habitat non trouvé');
         }
@@ -100,17 +100,17 @@ export class HabitatComponent implements OnInit {
    * Récupère les animaux associés à l'habitat donné par l'ID et met à jour le signal `animals`.
    * Ajoute le chemin complet à chaque image d'animal si elle n'est pas un URL absolu.
    *
-   * @param habitatId - L'identifiant de l'habitat pour lequel récupérer les animaux.
+   * @param habitat_id - L'identifiant de l'habitat pour lequel récupérer les animaux.
    */
-  private loadAnimalsForHabitat(habitatId: number): void {
-    this.habitatService.getAnimalsByHabitatId(habitatId).subscribe({
+  loadAnimalsForHabitat(habitat_id: number): void {
+    this.habitatService.getAnimalsByhabitat_id(habitat_id).subscribe({
       next: (animals) => {
         // Ajoute le chemin de base aux images des animaux si nécessaire
         const updatedAnimals = animals.map((animal) => ({
           ...animal,
-          image: animal.image?.startsWith('http')
-            ? animal.image
-            : `${environment.apiUrl}/uploads/${animal.image}`,
+          image: animal.images?.startsWith('http')
+            ? animal.images
+            : `${environment.apiUrl}/uploads/${animal.images}`,
         }));
         this.animals.set(updatedAnimals);
       },

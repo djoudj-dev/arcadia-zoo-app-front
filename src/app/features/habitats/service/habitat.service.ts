@@ -56,10 +56,10 @@ export class HabitatService {
 
   /**
    * Récupère la liste des animaux liés à un habitat spécifique.
-   * @param habitatId L'identifiant de l'habitat pour lequel récupérer les animaux.
+   * @param habitat_id L'identifiant de l'habitat pour lequel récupérer les animaux.
    */
-  getAnimalsByHabitatId(habitatId: number): Observable<Animal[]> {
-    return this.http.get<Animal[]>(`${this.apiUrl}/${habitatId}/animals`);
+  getAnimalsByhabitat_id(habitat_id: number): Observable<Animal[]> {
+    return this.http.get<Animal[]>(`${this.apiUrl}/${habitat_id}/animals`);
   }
 
   /**
