@@ -66,7 +66,7 @@ export class HabitatComponent implements OnInit {
         if (data) {
           data.images = this.formatImageUrl(data.images);
           this.habitat.set(data);
-          this.loadAnimalsForHabitat(habitatId);
+          this.loadAnimalsForHabitat(habitat_id);
         } else {
           console.error('Habitat non trouvé');
         }
