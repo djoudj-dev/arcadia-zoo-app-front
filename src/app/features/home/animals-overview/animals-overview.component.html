@@ -20,13 +20,13 @@
     class="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-4 mb-4 px-4"
   >
     <!-- Boucle @for pour afficher les cartes d'animaux -->
-    @for (animal of displayedAnimals(); track animal.id) {
+    @for (animal of displayedAnimals(); track animal.id_animal) {
     <div
       class="flex justify-center pt-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/4"
     >
       <a
-        (click)="logAnimalId(animal.id)"
-        [routerLink]="['/animal', animal.id]"
+        (click)="logAnimalId(animal.id_animal)"
+        [routerLink]="['/animal', animal.id_animal]"
         class="w-full"
       >
         <div
@@ -43,7 +43,7 @@
             class="w-full h-full overflow-hidden rounded-lg flex justify-center items-center"
           >
             <img
-              [src]="animal.image"
+              [src]="animal.images"
               [alt]="animal.name"
               loading="lazy"
               class="w-96 h-96 object-cover rounded-lg"
