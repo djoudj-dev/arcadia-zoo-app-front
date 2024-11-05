@@ -10,11 +10,13 @@
     <!-- Formulaire de gestion des animaux -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newAnimal().id ? "Modifier l'animal" : "Ajouter un animal" }}
+        {{
+          newAnimalData().id_animal ? "Modifier l'animal" : "Ajouter un animal"
+        }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newAnimal().id ? updateAnimal() : createAnimal()"
+        (ngSubmit)="newAnimalData().id_animal ? updateAnimal() : createAnimal()"
         enctype="multipart/form-data"
       >
         <div>
@@ -27,7 +29,7 @@
           <input
             type="text"
             id="name"
-            [(ngModel)]="newAnimal().name"
+            [(ngModel)]="newAnimalData().name"
             name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -45,7 +47,7 @@
           <input
             type="text"
             id="species"
-            [(ngModel)]="newAnimal().species"
+            [(ngModel)]="newAnimalData().species"
             name="species"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -77,8 +79,8 @@
           </label>
           <select
             id="animal-habitat"
-            [(ngModel)]="newAnimal().habitatId"
-            name="habitatId"
+            [(ngModel)]="newAnimalData().habitat_id"
+            name="habitat_id"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
           >
@@ -99,7 +101,7 @@
           </label>
           <textarea
             id="characteristics"
-            [(ngModel)]="newAnimal().characteristics"
+            [(ngModel)]="newAnimalData().characteristics"
             name="characteristics"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -117,7 +119,7 @@
           <input
             type="text"
             id="weight-range"
-            [(ngModel)]="newAnimal().weightRange"
+            [(ngModel)]="newAnimalData().weightRange"
             name="weightRange"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -134,7 +136,7 @@
           </label>
           <select
             id="diet"
-            [(ngModel)]="newAnimal().diet"
+            [(ngModel)]="newAnimalData().diet"
             name="diet"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -147,7 +149,7 @@
 
         <div class="flex space-x-2">
           <app-button
-            [text]="newAnimal().id ? 'Modifier' : 'Créer'"
+            [text]="newAnimalData().id_animal ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -173,90 +175,93 @@
         Gestion des animaux par habitat
       </h2>
 
-      <div class="space-y-8">
-        @for (habitat of habitats(); track habitat.id_habitat) {
-        <div class="bg-secondary p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-4 text-center">
-            {{ habitat.name }}
-          </h3>
-          <div class="space-y-4">
-            @for (animal of groupedAnimals()[habitat.id_habitat] || []; track animal.id)
-            { @if (visibleAnimals()[habitat.id_habitat] ||
-            groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
-            <div
-              class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
-            >
-              <img
-                [src]="animal.image"
-                alt="Photo de l'animal"
-                class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-4"
-              />
-              <div class="flex-1">
-                <h4 class="text-lg font-semibold">{{ animal.name }}</h4>
-                <p class="text-sm sm:text-base">{{ animal.species }}</p>
-                <p class="text-sm sm:text-base">
-                  <span class="font-semibold">Description:</span>
-                  @if (!animal.showCharacteristics) {
-                  <span>{{ animal.characteristics | slice : 0 : 30 }}...</span>
-                  } @else {
-                  <span>{{ animal.characteristics }}</span>
-                  }
-                  <button
-                    class="text-blue-500 hover:underline mt-2"
-                    (click)="toggleCharacteristics(animal.id)"
-                  >
-                    @if (!animal.showCharacteristics) { Lire la suite } @else {
-                    Voir moins }
-                  </button>
-                </p>
-              </div>
-              <div class="flex space-x-2 mt-4 sm:mt-0 sm:ml-4">
-                <app-button
-                  [text]="'Modifier'"
-                  [type]="'button'"
-                  [color]="'tertiary'"
-                  [rounded]="true"
-                  [customClass]="'text-xs px-2 py-1 font-bold'"
-                  (click)="editAnimal(animal.id)"
-                ></app-button>
-                <app-button
-                  [text]="'Supprimer'"
-                  [type]="'button'"
-                  [color]="'red'"
-                  [rounded]="true"
-                  [customClass]="'text-xs px-2 py-1 font-bold'"
-                  (click)="deleteAnimal(animal.id)"
-                ></app-button>
-              </div>
-            </div>
-            } }
+      <!-- Boucle sur chaque habitat -->
+      @for (habitat of habitats(); track habitat.id_habitat) {
+      <div class="bg-secondary p-6 rounded-lg shadow-lg mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-center">
+          {{ habitat.name }}
+        </h3>
 
-            <!-- Bouton "Voir plus" si plus d'un animal -->
-            @if ((groupedAnimals()[habitat.id_habitat] || []).length > 1) {
-            <div class="text-center mt-4">
+        <!-- Boucle sur les animaux de chaque habitat -->
+        <div class="space-y-4">
+          @for (animal of groupedAnimals()[habitat.id_habitat] || []; track
+          animal.id_animal) {
+          <!-- Vérifie si l'animal est visible ou si c'est le premier animal -->
+          @if (visibleAnimals()[habitat.id_habitat] ||
+          groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
+          <div
+            class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
+          >
+            <img
+              [src]="animal.images"
+              alt="Photo de l'animal"
+              class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-4"
+            />
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold">{{ animal.name }}</h4>
+              <p class="text-sm sm:text-base">{{ animal.species }}</p>
+              <p class="text-sm sm:text-base">
+                <span class="font-semibold">Description:</span>
+                <span>
+                  @if (!animal.showTime) {
+                  {{ animal.characteristics | slice : 0 : 30 }}... } @else {
+                  {{ animal.characteristics }}
+                  }
+                </span>
+                <button
+                  class="text-blue-500 hover:underline mt-2"
+                  (click)="toggleAnimal(animal.id_animal)"
+                >
+                  @if (!animal.showTime) { Lire la suite } @else { Voir moins }
+                </button>
+              </p>
+            </div>
+            <div class="flex space-x-2 mt-4 sm:mt-0 sm:ml-4">
               <app-button
-                [text]="
-                  visibleAnimals()[habitat.id_habitat] ? 'Voir moins' : 'Voir plus'
-                "
+                [text]="'Modifier'"
                 [type]="'button'"
                 [color]="'tertiary'"
                 [rounded]="true"
-                (click)="toggleVisibility(habitat.id_habitat)"
-                [customClass]="'px-4 py-2 font-bold'"
+                [customClass]="'text-xs px-2 py-1 font-bold'"
+                (click)="editAnimal(animal.id_animal)"
+              ></app-button>
+              <app-button
+                [text]="'Supprimer'"
+                [type]="'button'"
+                [color]="'red'"
+                [rounded]="true"
+                [customClass]="'text-xs px-2 py-1 font-bold'"
+                (click)="deleteAnimal(animal.id_animal)"
               ></app-button>
             </div>
-            }
-
-            <!-- Message si aucun animal dans cet habitat -->
-            @if (!(groupedAnimals()[habitat.id_habitat] || []).length) {
-            <p class="text-gray-500 text-center">
-              Aucun animal dans cet habitat
-            </p>
-            }
           </div>
+          } }
+
+          <!-- Bouton "Voir plus" si plus d'un animal -->
+          @if ((groupedAnimals()[habitat.id_habitat] || []).length > 1) {
+          <div class="text-center mt-4">
+            <app-button
+              [text]="
+                visibleAnimals()[habitat.id_habitat]
+                  ? 'Voir moins'
+                  : 'Voir plus'
+              "
+              [type]="'button'"
+              [color]="'tertiary'"
+              [rounded]="true"
+              (click)="toggleVisibility(habitat.id_habitat)"
+              [customClass]="'px-4 py-2 font-bold'"
+            ></app-button>
+          </div>
+          }
+
+          <!-- Message si aucun animal dans cet habitat -->
+          @if (!(groupedAnimals()[habitat.id_habitat] || []).length) {
+          <p class="text-gray-500 text-center">Aucun animal dans cet habitat</p>
+          }
         </div>
-        }
       </div>
+      }
     </section>
   </div>
 </section>

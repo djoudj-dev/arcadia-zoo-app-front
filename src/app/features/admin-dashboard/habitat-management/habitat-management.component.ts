@@ -139,6 +139,12 @@ export class HabitatManagementComponent implements OnInit {
     }
   }
 
+  // Remplir le formulaire de mise à jour avec les données de l'habitat sélectionné
+  editHabitat(id_habitat: number) {
+    const habitat = this.habitats().find((h) => h.id_habitat === id_habitat);
+    if (habitat) this.newHabitatData = { ...habitat };
+  }
+
   deleteHabitat(id_habitat: number | undefined) {
     if (id_habitat === undefined || id_habitat === null) {
       console.error('ID invalide pour la suppression :', id_habitat);
@@ -159,12 +165,6 @@ export class HabitatManagementComponent implements OnInit {
       error: (error) =>
         console.error("Erreur lors de la suppression de l'habitat:", error),
     });
-  }
-
-  // Remplir le formulaire de mise à jour avec les données de l'habitat sélectionné
-  editHabitat(id_habitat: number) {
-    const habitat = this.habitats().find((h) => h.id_habitat === id_habitat);
-    if (habitat) this.newHabitatData = { ...habitat };
   }
 
   // Annuler l'édition
