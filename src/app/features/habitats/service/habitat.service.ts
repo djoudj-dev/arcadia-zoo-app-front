@@ -34,7 +34,7 @@ export class HabitatService {
         map((habitats) =>
           habitats.map((habitat) => ({
             ...habitat,
-            image: `${this.uploadsUrl}/${habitat.image}`, // Ajoute l'URL complète de l'image
+            image: `${this.uploadsUrl}/${habitat.images}`, // Ajoute l'URL complète de l'image
           }))
         ),
         tap((habitats) => this.habitatsCache.set(habitats)) // Met à jour le cache avec les données de l'API
@@ -50,7 +50,7 @@ export class HabitatService {
    */
   getHabitatById(id: number): Observable<Habitat | undefined> {
     return this.getHabitats().pipe(
-      map((habitats) => habitats.find((habitat) => habitat.id === id))
+      map((habitats) => habitats.find((habitat) => habitat.id_habitat === id))
     );
   }
 

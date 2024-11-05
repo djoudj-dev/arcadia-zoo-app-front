@@ -15,9 +15,9 @@
   <div
     class="flex flex-col sm:flex-row sm:flex-nowrap justify-center gap-6 px-6 sm:px-12 pb-4"
   >
-    @for (habitat of habitats(); track habitat.id) {
+    @for (habitat of habitats(); track habitat.id_habitat) {
     <a
-      [routerLink]="['/habitat', habitat.id]"
+      [routerLink]="['/habitat', habitat.id_habitat]"
       class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
       appBorderCard
     >
@@ -31,7 +31,7 @@
 
       <div class="relative group w-full h-64">
         <img
-          [src]="habitat.image"
+          [src]="habitat.images"
           [alt]="'Habitat de ' + habitat.name"
           class="w-full h-full object-cover rounded-b-lg"
         />

@@ -82,9 +82,9 @@ export class HabitatComponent implements OnInit {
       next: (data) => {
         if (data) {
           // Concatène l'image si elle n'est pas déjà un lien complet
-          data.image = data.image?.startsWith('http')
-            ? data.image
-            : `${this.imageBaseUrl}/${data.image}`;
+          data.images = data.images?.startsWith('http')
+            ? data.images
+            : `${this.imageBaseUrl}/${data.images}`;
           this.habitat.set(data);
           this.loadAnimalsForHabitat(habitatId);
         } else {

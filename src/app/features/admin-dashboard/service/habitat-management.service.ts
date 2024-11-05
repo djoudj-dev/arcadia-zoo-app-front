@@ -37,7 +37,7 @@ export class HabitatManagementService {
    */
   createHabitat(formData: FormData): Observable<Habitat> {
     return this.http.post<Habitat>(this.apiUrl, formData).pipe(
-      tap(() => this.habitatService.clearCache()), // Vide le cache des habitats
+      tap(() => this.habitatService.clearCache()),
       catchError((error) => {
         console.error("Erreur lors de la création de l'habitat :", error);
         return throwError(
