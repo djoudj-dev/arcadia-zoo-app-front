@@ -1,4 +1,4 @@
-import { Animal } from './animal.model';
+import { Animal } from '../../animal-management/model/animal.model';
 
 export interface Habitat {
   id_habitat: number; // Aligner avec le modèle backend

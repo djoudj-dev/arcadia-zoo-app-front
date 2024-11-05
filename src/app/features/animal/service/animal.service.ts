@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
-import { Animal } from '../../../core/models/animal.model';
-import { Habitat } from '../../../core/models/habitat.model'; // Importer le modèle Habitat
+import { environment } from '../../../../environments/environment.development'; // Importer le modèle Habitat
 import { Observable, ReplaySubject } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
+import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
 
 @Injectable({
   providedIn: 'root',

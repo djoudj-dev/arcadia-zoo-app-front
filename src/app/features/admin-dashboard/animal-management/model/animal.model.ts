@@ -1,3 +1,5 @@
+import { VetNote } from '../../../../core/models/vetnote.model';
+
 export enum Diet {
   Herbivore = 'Herbivore',
   Carnivore = 'Carnivore',

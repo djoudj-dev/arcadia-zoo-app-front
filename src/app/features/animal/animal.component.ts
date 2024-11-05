@@ -1,13 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Animal } from '../../core/models/animal.model';
-import { Habitat } from '../../core/models/habitat.model';
 import { VetNote } from '../../core/models/vetnote.model';
 import { DatePipe } from '@angular/common';
 import { NavComponent } from '../../shared/components/header/navbar/nav.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AnimalService } from './service/animal.service';
+import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
 
 @Component({
   selector: 'app-animal',

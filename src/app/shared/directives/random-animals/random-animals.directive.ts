@@ -6,8 +6,8 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { Animal } from '../../../core/models/animal.model';
 import { Subscription, interval } from 'rxjs';
+import { Animal } from '../../../features/admin-dashboard/animal-management/model/animal.model';
 
 @Directive({
   selector: '[appRandomAnimals]',

@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment.development';
 import { TokenService } from '../token/token.service';
 import { AlertService } from '../alert/service/alert.service';
+import { User } from '../../features/admin-dashboard/account-management/model/user.model';
 
 @Injectable({
   providedIn: 'root',

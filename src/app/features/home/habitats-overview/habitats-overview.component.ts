@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Habitat } from '../../../core/models/habitat.model';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 import { RouterLink } from '@angular/router';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { environment } from '../../../../environments/environment.development';
+import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
 
 @Component({
   selector: 'app-habitats-overview',

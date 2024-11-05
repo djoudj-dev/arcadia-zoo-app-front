@@ -1,10 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Animal } from '../../../core/models/animal.model';
 import { AnimalService } from '../../animal/service/animal.service';
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
 import { environment } from '../../../../environments/environment.development';
+import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 
 @Component({
   selector: 'app-animals-overview',

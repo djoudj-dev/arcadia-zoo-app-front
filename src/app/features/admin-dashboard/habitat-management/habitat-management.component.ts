@@ -1,12 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Habitat } from '../../../core/models/habitat.model';
-import { HabitatManagementService } from '../service/habitat-management.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { DatePipe, SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../../environments/environment.development';
 import { Router } from '@angular/router';
 import { StatsService } from '../stats/services/stats.service';
+import { HabitatManagementService } from './service/habitat-management.service';
+import { Habitat } from './model/habitat.model';
 
 @Component({
   selector: 'app-habitat-management',

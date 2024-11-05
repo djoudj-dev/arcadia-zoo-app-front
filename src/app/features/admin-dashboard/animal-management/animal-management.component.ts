@@ -4,10 +4,10 @@ import { SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AnimalManagementService } from './service/animal-management.service';
 import { environment } from '../../../../environments/environment.development';
-import { Habitat } from '../../../core/models/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { StatsService } from '../stats/services/stats.service';
 import { Animal } from './model/animal.model';
+import { Habitat } from '../habitat-management/model/habitat.model';
 
 @Component({
   selector: 'app-animal-management',
@@ -154,6 +154,20 @@ export class AnimalManagementComponent implements OnInit {
   resetForm() {
     this.newAnimalData.set({});
     this.selectedFile.set(null);
+  }
+
+  /** Cancel */
+  cancel() {
+    this.resetForm();
+  }
+
+  /** Affiche ou masque la description de l'animal **/
+  toggleAnimal(animalId: number) {
+    this.animals.update((animals) =>
+      animals.map((a) =>
+        a.id_animal === animalId ? { ...a, showTime: !a.showTime } : a
+      )
+    );
   }
 
   /** Affiche ou masque un groupe d'animaux pour un habitat donné **/

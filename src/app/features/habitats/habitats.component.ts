@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Habitat } from '../../core/models/habitat.model';
 import { HabitatService } from './service/habitat.service';
 import { environment } from '../../../environments/environment.development';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
 
 @Component({
   selector: 'app-habitats',
