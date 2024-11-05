@@ -18,6 +18,9 @@ export class HabitatsComponent implements OnInit {
    */
   habitats = signal<Habitat[]>([]);
 
+  // Chemin d'accès aux images (dérivé de l'environnement)
+  imageBaseUrl = `${environment.apiUrl}`;
+
   /**
    * Constructeur injectant les services nécessaires.
    * @param habitatService Service pour gérer les opérations liées aux habitats
@@ -30,21 +33,28 @@ export class HabitatsComponent implements OnInit {
    * Récupère la liste des habitats depuis le backend et met à jour le signal `habitats`.
    * Ajoute l'URL de base à chaque image d'habitat si l'URL n'est pas déjà complète.
    */
-  ngOnInit(): void {
+  ngOnInit() {
+    this.loadHabitats();
+  }
+
+  /**
+   * Charge la liste des habitats depuis le backend.
+   * Met à jour le signal `habitats` avec les données récupérées.
+   */
+  loadHabitats() {
     this.habitatService.getHabitats().subscribe({
-      next: (data) => {
+      next: (habitats) => {
         this.habitats.set(
-          data.map((habitat) => ({
+          habitats.map((habitat) => ({
             ...habitat,
-            image: habitat.image.startsWith('http')
-              ? habitat.image
-              : `${environment.apiUrl}/uploads/img-habitats/${habitat.image}`,
+            images: habitat.images.startsWith('http')
+              ? habitat.images
+              : `${this.imageBaseUrl}/${habitat.images}`,
           }))
         );
       },
-      error: (error) => {
-        console.error('Erreur lors de la récupération des habitats :', error);
-      },
+      error: (error) =>
+        console.error('Erreur lors de la récupération des habitats:', error),
     });
   }
 
