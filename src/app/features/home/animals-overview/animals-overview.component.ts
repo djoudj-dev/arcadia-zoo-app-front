@@ -2,8 +2,9 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Animal } from '../../../core/models/animal.model';
 import { AnimalService } from '../../animal/service/animal.service';
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-animals-overview',
@@ -12,30 +13,29 @@ import { RandomAnimalsDirective } from '../../../shared/directives/random-animal
   templateUrl: './animals-overview.component.html',
 })
 export class AnimalsOverviewComponent implements OnInit {
-  animals = signal<Animal[]>([]); // Utilisation de signal pour les animaux
-  displayedAnimals = signal<Animal[]>([]); // Utilisation de signal pour les animaux affichés
+  animal = signal<Animal | undefined>(undefined);
+  animals = signal<Animal[]>([]);
+  displayedAnimals = signal<Animal[]>([]);
 
-  constructor(private animalService: AnimalService) {}
+  imageBaseUrl = `${environment.apiUrl}`;
 
-  ngOnInit() {
-    // Récupérer les animaux via le service
-    this.animalService.getAnimals().subscribe({
-      next: (data) => {
-        this.animals.set(data);
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des animaux :', err);
-      },
+  constructor(
+    private animalService: AnimalService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    this.animalService.getAnimals().subscribe((data) => {
+      this.animals.set(data);
+      this.displayedAnimals.set(this.getRandomAnimals(this.animals(), 3));
     });
   }
 
-  // Méthode pour mettre à jour la liste d'animaux affichés
-  onUpdateDisplayedAnimals(updatedAnimals: Animal[]) {
-    this.displayedAnimals.set(updatedAnimals); // Utilisation de signal pour mise à jour réactive
+  getRandomAnimals(animals: Animal[], count: number): Animal[] {
+    return animals.sort(() => 0.5 - Math.random()).slice(0, count);
   }
 
-  // Log l'ID de l'animal cliqué
-  logAnimalId(id: number) {
-    console.log('Clicked animal ID:', id);
+  onUpdateDisplayedAnimals(event: Animal[]): void {
+    this.displayedAnimals.set(event);
   }
 }
