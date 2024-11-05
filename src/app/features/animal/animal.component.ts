@@ -96,7 +96,7 @@ export class AnimalComponent implements OnInit {
    * Vérifie si l'ID de l'habitat est valide avant de naviguer.
    */
   goHabitat() {
-    const habitatId = this.habitat()?.id;
+    const habitatId = this.habitat()?.id_habitat;
     if (habitatId) {
       this.router.navigate(['/habitat', habitatId]);
     }

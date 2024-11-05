@@ -24,9 +24,9 @@ export class HabitatsOverviewComponent implements OnInit {
       this.habitats.set(
         data.map((habitat) => ({
           ...habitat,
-          image: habitat.image.startsWith('http')
-            ? habitat.image
-            : `${environment.apiUrl}/uploads/img-habitats/${habitat.image}`,
+          image: habitat.images.startsWith('http')
+            ? habitat.images
+            : `${environment.apiUrl}/uploads/img-habitats/${habitat.images}`,
         }))
       );
     });

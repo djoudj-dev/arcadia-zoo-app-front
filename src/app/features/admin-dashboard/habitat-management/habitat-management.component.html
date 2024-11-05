@@ -6,11 +6,15 @@
   <div class="flex flex-col lg:flex-row gap-8">
     <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
       <h3 class="text-xl font-semibold mb-4">
-        {{ newHabitatData.id ? "Modifier l'habitat" : "Créer un habitat" }}
+        {{
+          newHabitatData.id_habitat ? "Modifier l'habitat" : "Créer un habitat"
+        }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newHabitatData.id ? updateHabitat() : createHabitat()"
+        (ngSubmit)="
+          newHabitatData.id_habitat ? updateHabitat() : createHabitat()
+        "
         enctype="multipart/form-data"
       >
         <div>
@@ -52,14 +56,15 @@
           >
           <input
             type="file"
-            id="habitat-images"
+            id="images"
+            name="images"
             (change)="onFileChange($event)"
             class="w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
         <div class="flex space-x-2">
           <app-button
-            [text]="newHabitatData.id ? 'Modifier' : 'Créer'"
+            [text]="newHabitatData.id_habitat ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -82,12 +87,12 @@
         Liste des habitats
       </h3>
       <div class="space-y-4 sm:space-y-6">
-        @for (habitat of habitats(); track habitat.id) {
+        @for (habitat of habitats(); track habitat.id_habitat) {
         <div
           class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
         >
           <img
-            [src]="habitat.image"
+            [src]="habitat.images"
             alt="Image de l'habitat"
             class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-4"
           />
@@ -102,7 +107,7 @@
               }
               <button
                 class="text-blue-500 hover:underline mt-2"
-                (click)="toggleDescription(habitat.id)"
+                (click)="toggleDescription(habitat.id_habitat)"
               >
                 @if (!habitat.showDescription) { Lire la suite } @else { Voir
                 moins }
@@ -116,7 +121,7 @@
               [color]="'tertiary'"
               [rounded]="true"
               [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="editHabitat(habitat.id)"
+              (click)="editHabitat(habitat.id_habitat)"
             ></app-button>
             <app-button
               [text]="'Supprimer'"
@@ -124,7 +129,7 @@
               [color]="'red'"
               [rounded]="true"
               [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="deleteHabitat(habitat.id)"
+              (click)="deleteHabitat(habitat.id_habitat)"
             ></app-button>
           </div>
         </div>

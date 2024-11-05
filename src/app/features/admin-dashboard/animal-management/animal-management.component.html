@@ -82,8 +82,8 @@
             required
             class="w-full p-2 border border-gray-300 rounded-md"
           >
-            @for (habitat of habitats(); track habitat.id) {
-            <option [value]="habitat.id">
+            @for (habitat of habitats(); track habitat.id_habitat) {
+            <option [value]="habitat.id_habitat">
               {{ habitat.name }}
             </option>
             }
@@ -174,15 +174,15 @@
       </h2>
 
       <div class="space-y-8">
-        @for (habitat of habitats(); track habitat.id) {
+        @for (habitat of habitats(); track habitat.id_habitat) {
         <div class="bg-secondary p-6 rounded-lg shadow-lg">
           <h3 class="text-xl font-semibold mb-4 text-center">
             {{ habitat.name }}
           </h3>
           <div class="space-y-4">
-            @for (animal of groupedAnimals()[habitat.id] || []; track animal.id)
-            { @if (visibleAnimals()[habitat.id] ||
-            groupedAnimals()[habitat.id].indexOf(animal) === 0) {
+            @for (animal of groupedAnimals()[habitat.id_habitat] || []; track animal.id)
+            { @if (visibleAnimals()[habitat.id_habitat] ||
+            groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
             <div
               class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
             >
@@ -232,23 +232,23 @@
             } }
 
             <!-- Bouton "Voir plus" si plus d'un animal -->
-            @if ((groupedAnimals()[habitat.id] || []).length > 1) {
+            @if ((groupedAnimals()[habitat.id_habitat] || []).length > 1) {
             <div class="text-center mt-4">
               <app-button
                 [text]="
-                  visibleAnimals()[habitat.id] ? 'Voir moins' : 'Voir plus'
+                  visibleAnimals()[habitat.id_habitat] ? 'Voir moins' : 'Voir plus'
                 "
                 [type]="'button'"
                 [color]="'tertiary'"
                 [rounded]="true"
-                (click)="toggleVisibility(habitat.id)"
+                (click)="toggleVisibility(habitat.id_habitat)"
                 [customClass]="'px-4 py-2 font-bold'"
               ></app-button>
             </div>
             }
 
             <!-- Message si aucun animal dans cet habitat -->
-            @if (!(groupedAnimals()[habitat.id] || []).length) {
+            @if (!(groupedAnimals()[habitat.id_habitat] || []).length) {
             <p class="text-gray-500 text-center">
               Aucun animal dans cet habitat
             </p>

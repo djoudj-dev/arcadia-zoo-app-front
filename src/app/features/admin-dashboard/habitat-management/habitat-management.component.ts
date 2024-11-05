@@ -49,7 +49,7 @@ export class HabitatManagementComponent implements OnInit {
           habitats.map((habitat) => ({
             ...habitat,
             showDescription: false,
-            image: `${this.imageBaseUrl}${habitat.image}`,
+            images: `${this.imageBaseUrl}/${habitat.images}`,
           }))
         );
       },
@@ -60,36 +60,40 @@ export class HabitatManagementComponent implements OnInit {
 
   // Gestion du changement de fichier
   onFileChange(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0] || null;
-    this.selectedFile.set(file);
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile.set(input.files[0]);
+      console.log('Fichier sélectionné :', input.files[0]);
+    }
   }
 
   // Création d'un nouvel habitat
   createHabitat() {
-    const { name, description } = this.newHabitatData;
-    if (name && description) {
+    if (
+      this.newHabitatData.name &&
+      this.newHabitatData.description &&
+      this.selectedFile()
+    ) {
       const formData = new FormData();
-      formData.append('name', name);
-      formData.append('description', description);
-
+      formData.append('name', this.newHabitatData.name);
+      formData.append('description', this.newHabitatData.description);
       const file = this.selectedFile();
-      if (file) formData.append('image', file);
+      if (file) {
+        formData.append('images', file);
+      }
+
+      console.log('Fichier sélectionné :', file);
 
       this.habitatManagement.createHabitat(formData).subscribe({
-        next: (habitat) => {
-          this.habitats.update((habitats) => [
-            ...habitats,
-            {
-              ...habitat,
-              showDescription: false,
-              image: `${this.imageBaseUrl}/${habitat.image}`,
-            },
-          ]);
+        next: (response) => {
+          console.log('Habitat créé avec succès:', response);
           this.resetForm();
+          this.loadHabitats();
           this.statsService.incrementTotalHabitats();
         },
-        error: (error) =>
-          console.error("Erreur lors de la création de l'habitat :", error),
+        error: (error) => {
+          console.error("Erreur lors de la création de l'habitat :", error);
+        },
       });
     } else {
       console.error('Veuillez remplir tous les champs');
@@ -98,44 +102,57 @@ export class HabitatManagementComponent implements OnInit {
 
   // Mettre à jour un habitat existant
   updateHabitat() {
-    const { id, name, description } = this.newHabitatData;
-    if (id && name && description) {
+    const { id_habitat, name, description } = this.newHabitatData;
+    if (id_habitat && name && description) {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('description', description);
 
       const file = this.selectedFile();
-      if (file) formData.append('image', file);
+      if (file) formData.append('images', file);
 
-      this.habitatManagement.updateHabitat(id.toString(), formData).subscribe({
-        next: (updatedHabitat) => {
-          this.habitats.update((habitats) =>
-            habitats.map((h) =>
-              h.id === updatedHabitat.id
-                ? {
-                    ...updatedHabitat,
-                    showDescription: h.showDescription,
-                    image: `${this.imageBaseUrl}/${updatedHabitat.image}`,
-                  }
-                : h
-            )
-          );
-          this.resetForm();
-        },
-        error: (error) =>
-          console.error("Erreur lors de la mise à jour de l'habitat :", error),
-      });
+      this.habitatManagement
+        .updateHabitat(id_habitat.toString(), formData)
+        .subscribe({
+          next: (updatedHabitat) => {
+            this.habitats.update((habitats) =>
+              habitats.map((h) =>
+                h.id_habitat === updatedHabitat.id_habitat
+                  ? {
+                      ...updatedHabitat,
+                      showDescription: h.showDescription,
+                      images: `${this.imageBaseUrl}/${updatedHabitat.images}`,
+                    }
+                  : h
+              )
+            );
+            this.resetForm();
+          },
+          error: (error) =>
+            console.error(
+              "Erreur lors de la mise à jour de l'habitat :",
+              error
+            ),
+        });
     } else {
       console.error('Veuillez remplir tous les champs');
     }
   }
 
-  deleteHabitat(id: number) {
-    this.habitatManagement.deleteHabitat(id.toString()).subscribe({
+  deleteHabitat(id_habitat: number | undefined) {
+    if (id_habitat === undefined || id_habitat === null) {
+      console.error('ID invalide pour la suppression :', id_habitat);
+      return;
+    }
+    console.log(
+      "Tentative de suppression de l'habitat avec l'ID :",
+      id_habitat
+    );
+    this.habitatManagement.deleteHabitat(id_habitat.toString()).subscribe({
       next: () => {
         console.log('Habitat supprimé');
         this.habitats.update((habitats) =>
-          habitats.filter((habitat) => habitat.id !== id)
+          habitats.filter((habitat) => habitat.id_habitat !== id_habitat)
         );
         this.statsService.decrementTotalHabitats();
       },
@@ -145,8 +162,8 @@ export class HabitatManagementComponent implements OnInit {
   }
 
   // Remplir le formulaire de mise à jour avec les données de l'habitat sélectionné
-  editHabitat(id: number) {
-    const habitat = this.habitats().find((h) => h.id === id);
+  editHabitat(id_habitat: number) {
+    const habitat = this.habitats().find((h) => h.id_habitat === id_habitat);
     if (habitat) this.newHabitatData = { ...habitat };
   }
 
@@ -162,10 +179,10 @@ export class HabitatManagementComponent implements OnInit {
   }
 
   // Afficher ou masquer la description de l'habitat
-  toggleDescription(id: number) {
+  toggleDescription(id_habitat: number) {
     this.habitats.update((habitats) =>
       habitats.map((habitat) =>
-        habitat.id === id
+        habitat.id_habitat === id_habitat
           ? { ...habitat, showDescription: !habitat.showDescription }
           : habitat
       )
