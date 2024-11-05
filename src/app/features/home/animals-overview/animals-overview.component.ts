@@ -1,10 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { AnimalService } from '../../animal/service/animal.service';
+import { AnimalOverviewService } from './service/animal-overview.service';
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
-import { environment } from '../../../../environments/environment.development';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
+import { environment } from '../../../../environments/environment.development'; // Corrigez le chemin ici
 
 @Component({
   selector: 'app-animals-overview',
@@ -20,12 +20,12 @@ export class AnimalsOverviewComponent implements OnInit {
   imageBaseUrl = `${environment.apiUrl}`;
 
   constructor(
-    private animalService: AnimalService,
+    private animalOverviewService: AnimalOverviewService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.animalService.getAnimals().subscribe((data) => {
+    this.animalOverviewService.getAnimals().subscribe((data) => {
       this.animals.set(data);
       this.displayedAnimals.set(this.getRandomAnimals(this.animals(), 3));
     });
