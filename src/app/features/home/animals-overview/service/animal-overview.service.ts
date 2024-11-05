@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Animal } from '../../../admin-dashboard/animal-management/model/animal.model';
-import { environment } from '../../../../environments/environment.development'; // Corrigez le chemin ici
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from 'environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnimalOverviewService {
   private apiUrl = `${environment.apiUrl}/api/animals`;
-  private uploadsUrl = `${environment.apiUrl}/uploads`; // Base URL pour les images
+  private uploadsUrl = `${environment.apiUrl}`; // Base URL pour les images
 
   constructor(private http: HttpClient) {}
 
