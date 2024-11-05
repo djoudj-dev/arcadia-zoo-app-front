@@ -29,20 +29,16 @@ import { environment } from '../../../../environments/environment.development';
 })
 export class HabitatComponent implements OnInit {
   /**
-   * Signal pour l'objet `Habitat`, utilisé comme entrée (@Input) pour recevoir les données
-   * de l'habitat depuis un composant parent ou service.
+   * Signal pour les objets `Habitat` & ``Animal.
+   * Ces signaux sont utilisés pour mettre à jour les données de l'habitat et des animaux
    */
   habitat = signal<Habitat | undefined>(undefined);
-
-  /**
-   * Signal pour stocker et surveiller la liste des animaux associés à l'habitat actuel.
-   */
   animals = signal<Animal[]>([]);
 
   /**
    * URL de base pour les images des habitats, tirée de l'environnement de développement.
    */
-  private readonly imageBaseUrl = `${environment.apiUrl}`;
+  private imageBaseUrl = `${environment.apiUrl}`;
 
   /**
    * Constructor - Initialise les services requis pour la navigation, l'accès aux paramètres de route,
@@ -53,9 +49,9 @@ export class HabitatComponent implements OnInit {
    * @param habitatService - Service dédié à la gestion des données de l'habitat.
    */
   constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-    private readonly habitatService: HabitatService
+    private route: ActivatedRoute,
+    private router: Router,
+    private habitatService: HabitatService
   ) {}
 
   /**
@@ -77,7 +73,7 @@ export class HabitatComponent implements OnInit {
    *
    * @param habitat_id - L'identifiant unique de l'habitat à charger.
    */
-  private loadHabitat(habitat_id: number): void {
+  loadHabitat(habitat_id: number) {
     this.habitatService.getHabitatById(habitat_id).subscribe({
       next: (data) => {
         if (data) {
@@ -105,13 +101,17 @@ export class HabitatComponent implements OnInit {
   loadAnimalsForHabitat(habitat_id: number): void {
     this.habitatService.getAnimalsByhabitat_id(habitat_id).subscribe({
       next: (animals) => {
-        // Ajoute le chemin de base aux images des animaux si nécessaire
+        console.log('Données des animaux avant modification:', animals);
         const updatedAnimals = animals.map((animal) => ({
           ...animal,
-          image: animal.images?.startsWith('http')
+          images: animal.images?.startsWith('http')
             ? animal.images
-            : `${environment.apiUrl}/uploads/${animal.images}`,
+            : `${environment.apiUrl}/${animal.images}`,
         }));
+        console.log(
+          'Animaux après ajout du chemin complet des images :',
+          updatedAnimals
+        );
         this.animals.set(updatedAnimals);
       },
       error: (err) =>
@@ -122,7 +122,7 @@ export class HabitatComponent implements OnInit {
   /**
    * Permet de revenir à la page précédente (page d'accueil ou liste des habitats) via la navigation Angular Router.
    */
-  goBack(): void {
+  goBack() {
     this.router.navigate(['/']);
   }
 }
