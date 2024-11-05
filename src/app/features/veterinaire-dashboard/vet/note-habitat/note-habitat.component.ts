@@ -18,7 +18,7 @@ import { Habitat } from '../../../../core/models/habitat.model';
 export class NoteHabitatComponent {
   @Input() habitats: Habitat[] = [];
   @Output() submitNote = new EventEmitter<{
-    habitatId: number;
+    habitat_id: number;
     message: string;
   }>();
 
@@ -27,7 +27,7 @@ export class NoteHabitatComponent {
   constructor(private fb: FormBuilder) {
     // Initialisation du formulaire avec des validations pour chaque champ
     this.habitatNoteForm = this.fb.group({
-      habitatId: ['', Validators.required], // Champ obligatoire pour la sélection d'un habitat
+      habitat_id: ['', Validators.required], // Champ obligatoire pour la sélection d'un habitat
       message: ['', [Validators.required, Validators.minLength(10)]], // Message obligatoire avec une longueur minimale
     });
   }

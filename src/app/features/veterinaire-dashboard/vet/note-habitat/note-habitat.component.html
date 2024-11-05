@@ -8,17 +8,17 @@
   </h3>
 
   <div>
-    <label for="habitatId" class="block text-sm font-bold text-quinary"
+    <label for="habitat_id" class="block text-sm font-bold text-quinary"
       >Habitat</label
     >
     <select
-      id="habitatId"
-      formControlName="habitatId"
+      id="habitat_id"
+      formControlName="habitat_id"
       class="mt-1 block w-full px-3 py-2 border border-quaternary rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
     >
       <option value="" disabled selected>Choisissez un habitat</option>
-      @for (habitat of habitats; track habitat.id) {
-      <option [value]="habitat.id">{{ habitat.name }}</option>
+      @for (habitat of habitats; track habitat.id_habitat) {
+      <option [value]="habitat.id_habitat">{{ habitat.name }}</option>
       }
     </select>
   </div>

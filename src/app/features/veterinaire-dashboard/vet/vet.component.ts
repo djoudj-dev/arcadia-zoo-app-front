@@ -78,14 +78,14 @@
 //   /**
 //    * Gère la soumission de l'avis d'habitat
 //    */
-//   handleSubmitHabitat(formData: { habitatId: number; message: string }): void {
-//     const habitat = this.habitats.find((h) => h.id === formData.habitatId);
+//   handleSubmitHabitat(formData: { habitat_id: number; message: string }): void {
+//     const habitat = this.habitats.find((h) => h.id === formData.habitat_id);
 
 //     if (habitat) {
 //       // Construction de l'objet HabitatNote avec les propriétés requises
 //       const habitatNote: HabitatNote = {
 //         id: Date.now(), // Utilisation de Date.now() pour générer un ID unique (ou une autre méthode de génération d'ID)
-//         habitatId: formData.habitatId,
+//         habitat_id: formData.habitat_id,
 //         vetId: this.selectedVet?.id || 0, // Utilisez le vetId si disponible ou un autre identifiant
 //         message: formData.message,
 //         createdAt: new Date().toISOString(), // Ajout de la date de création
@@ -103,7 +103,7 @@
 //         }
 //       );
 //     } else {
-//       console.error('Habitat non trouvé pour ID:', formData.habitatId);
+//       console.error('Habitat non trouvé pour ID:', formData.habitat_id);
 //     }
 //   }
 
