@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Habitat } from '../../../core/models/habitat.model';
-import { Animal } from '../../../core/models/animal.model';
 import { HabitatService } from '../service/habitat.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 import { environment } from '../../../../environments/environment.development';
+import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 
 @Component({
   selector: 'app-habitat',

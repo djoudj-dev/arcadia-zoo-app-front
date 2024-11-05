@@ -2,12 +2,12 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Animal } from '../../../core/models/animal.model';
-import { AnimalManagementService } from '../service/animal-management.service';
+import { AnimalManagementService } from './service/animal-management.service';
 import { environment } from '../../../../environments/environment.development';
 import { Habitat } from '../../../core/models/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { StatsService } from '../stats/services/stats.service';
+import { Animal } from './model/animal.model';
 
 @Component({
   selector: 'app-animal-management',
@@ -16,18 +16,20 @@ import { StatsService } from '../stats/services/stats.service';
   templateUrl: './animal-management.component.html',
 })
 export class AnimalManagementComponent implements OnInit {
-  // Signaux pour stocker la liste des animaux
+  /** Signaux pour stocker les listes d'animaux et d'habitats **/
   animals = signal<Animal[]>([]);
   habitats = signal<Habitat[]>([]);
+
+  /** Fichier sélectionné pour l'image de l'animal **/
   selectedFile = signal<File | null>(null);
+
+  /** Groupes d'animaux par habitat pour l'affichage **/
   groupedAnimals = signal<Record<number, Animal[]>>({});
   visibleAnimals = signal<Record<number, boolean>>({});
 
-  // Objet intermédiaire pour le formulaire
+  /** Données temporaires pour le formulaire d'ajout ou de modification d'un animal **/
   newAnimalData = signal<Partial<Animal>>({});
-
-  // Chemin d'accès aux images (dérivé de l'environnement)
-  imageBaseUrl = `${environment.apiUrl}`;
+  imageBaseUrl = `${environment.apiUrl}`; // URL des images
 
   constructor(
     private animalManagement: AnimalManagementService,
@@ -40,17 +42,15 @@ export class AnimalManagementComponent implements OnInit {
     this.loadAnimals();
   }
 
+  /** Charge tous les habitats **/
   loadHabitats() {
     this.habitatService.getHabitats().subscribe({
-      next: (habitats) => {
-        this.habitats.set(habitats);
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des habitats :', err);
-      },
+      next: (habitats) => this.habitats.set(habitats),
+      error: (err) => console.error('Erreur de chargement des habitats :', err),
     });
   }
 
+  /** Charge tous les animaux **/
   loadAnimals() {
     this.animalManagement.getAllAnimals().subscribe({
       next: (animals) => {
@@ -64,11 +64,11 @@ export class AnimalManagementComponent implements OnInit {
         this.groupAnimals();
       },
       error: (error) =>
-        console.error('Erreur lors de la récupération des animaux :', error),
+        console.error('Erreur de chargement des animaux :', error),
     });
   }
 
-  // Gestion du changement de fichier
+  /** Gère le changement de fichier pour l'image **/
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -77,37 +77,10 @@ export class AnimalManagementComponent implements OnInit {
     }
   }
 
+  /** Crée un nouvel animal si les champs sont valides **/
   createAnimal() {
-    if (
-      this.newAnimalData().name &&
-      this.newAnimalData().species &&
-      this.newAnimalData().habitat_id &&
-      this.newAnimalData().characteristics &&
-      this.newAnimalData().weightRange &&
-      this.newAnimalData().diet
-    ) {
-      const formData = new FormData();
-      formData.append('name', this.newAnimalData().name || '');
-      formData.append('species', this.newAnimalData().species || '');
-      formData.append(
-        'habitat_id',
-        this.newAnimalData().habitat_id?.toString() ?? ''
-      );
-      formData.append(
-        'characteristics',
-        this.newAnimalData().characteristics || ''
-      );
-      formData.append('weightRange', this.newAnimalData().weightRange || '');
-      formData.append('diet', this.newAnimalData().diet || '');
-
-      const file = this.selectedFile();
-      if (file) {
-        formData.append('images', file);
-      } else {
-        console.error('Aucune image sélectionnée.');
-        return;
-      }
-
+    if (this.validateAnimalData()) {
+      const formData = this.buildFormData();
       this.animalManagement.createAnimal(formData).subscribe({
         next: (response) => {
           console.log('Animal créé avec succès:', response);
@@ -115,55 +88,20 @@ export class AnimalManagementComponent implements OnInit {
           this.loadAnimals();
           this.statsService.incrementTotalAnimals();
         },
-        error: (error) => {
-          console.error("Erreur lors de la création de l'animal :", error);
-        },
+        error: (error) =>
+          console.error("Erreur de création de l'animal :", error),
       });
     } else {
-      console.error('Veuillez remplir tous les champs');
+      console.error('Champs requis manquants');
     }
   }
 
+  /** Met à jour un animal existant **/
   updateAnimal() {
-    const {
-      id_animal,
-      name,
-      species,
-      habitat_id,
-      characteristics,
-      weightRange,
-      diet,
-    } = this.newAnimalData();
-
-    if (
-      id_animal &&
-      name &&
-      species &&
-      habitat_id &&
-      characteristics &&
-      weightRange &&
-      diet
-    ) {
-      const formData = new FormData();
-
-      // Ajout des champs au formData avec vérification des valeurs
-      formData.append('name', name || '');
-      formData.append('species', species || '');
-      formData.append('habitat_id', habitat_id.toString() || '');
-      formData.append('characteristics', characteristics || '');
-      formData.append('weightRange', weightRange || '');
-      formData.append('diet', diet || '');
-
-      const file = this.selectedFile();
-      if (file) formData.append('images', file);
-
-      // Vérifiez chaque entrée dans formData
-      formData.forEach((value, key) => {
-        console.log(`${key}: ${value}`);
-      }); // Ajoutez cette parenthèse fermante ici
-
+    if (this.validateAnimalData(true)) {
+      const formData = this.buildFormData();
       this.animalManagement
-        .updateAnimal(id_animal.toString(), formData)
+        .updateAnimal(this.newAnimalData().id_animal!.toString(), formData)
         .subscribe({
           next: (updatedAnimal) => {
             console.log('Animal mis à jour avec succès :', updatedAnimal);
@@ -181,83 +119,84 @@ export class AnimalManagementComponent implements OnInit {
             this.resetForm();
           },
           error: (error) =>
-            console.error("Erreur lors de la mise à jour de l'animal :", error),
+            console.error("Erreur de mise à jour de l'animal :", error),
         });
     } else {
-      console.error('Veuillez remplir tous les champs');
+      console.error('Champs requis manquants pour la mise à jour');
     }
   }
 
-  editAnimal(animal_id: number) {
-    const animal = this.animals().find((a) => a.id_animal === animal_id);
+  /** Prépare le formulaire pour la modification de l'animal sélectionné **/
+  editAnimal(animalId: number) {
+    const animal = this.animals().find((a) => a.id_animal === animalId);
     if (animal) {
       this.newAnimalData.set({ ...animal });
-      console.log(
-        "Formulaire pré-rempli avec les données de l'animal :",
-        animal
-      );
+      console.log("Formulaire pré-rempli pour l'animal :", animal);
     }
   }
 
-  deleteAnimal(animal_id: number | undefined) {
-    if (animal_id === undefined || animal_id === null) {
-      console.error("ID de l'animal invalide :", animal_id);
-      return;
-    }
-
-    this.animalManagement.deleteAnimal(animal_id.toString()).subscribe({
+  /** Supprime un animal et met à jour le compteur **/
+  deleteAnimal(animalId: number) {
+    this.animalManagement.deleteAnimal(animalId.toString()).subscribe({
       next: () => {
         this.animals.update((animals) =>
-          animals.filter((a) => a.id_animal !== animal_id)
+          animals.filter((a) => a.id_animal !== animalId)
         );
         this.statsService.decrementTotalAnimals();
         this.resetForm();
       },
       error: (error) =>
-        console.error("Erreur lors de la suppression de l'animal :", error),
+        console.error("Erreur de suppression de l'animal :", error),
     });
   }
 
+  /** Réinitialise le formulaire et sélection de fichier **/
   resetForm() {
     this.newAnimalData.set({});
     this.selectedFile.set(null);
   }
 
-  cancel() {
-    this.resetForm();
-  }
-
-  toggleAnimal(animalId: number) {
-    this.animals.update((animals) =>
-      animals.map((animal) =>
-        animal.id_animal === animalId
-          ? { ...animal, showTime: !animal.showTime }
-          : animal
-      )
-    );
-  }
-
-  groupAnimals() {
-    const grouped = this.animals().reduce((acc, animal) => {
-      (acc[animal.habitat_id] = acc[animal.habitat_id] || []).push(animal);
-      return acc;
-    }, {} as { [key: number]: Animal[] });
-    this.groupedAnimals.set(grouped);
-    this.initializeVisibility();
-  }
-
-  initializeVisibility() {
-    const visibility: Record<number, boolean> = {};
-    Object.keys(this.groupedAnimals()).forEach((habitatId) => {
-      visibility[Number(habitatId)] = false;
-    });
-    this.visibleAnimals.set(visibility);
-  }
-
+  /** Affiche ou masque un groupe d'animaux pour un habitat donné **/
   toggleVisibility(habitatId: number) {
     this.visibleAnimals.update((visibility) => ({
       ...visibility,
       [habitatId]: !visibility[habitatId],
     }));
+  }
+
+  /** Valide les données de l'animal avant création/mise à jour **/
+  private validateAnimalData(isUpdate = false): boolean {
+    const requiredFields = [
+      this.newAnimalData().name,
+      this.newAnimalData().species,
+      this.newAnimalData().habitat_id,
+      this.newAnimalData().characteristics,
+      this.newAnimalData().weightRange,
+      this.newAnimalData().diet,
+    ];
+    if (isUpdate) requiredFields.push(this.newAnimalData().id_animal);
+    return requiredFields.every(
+      (field) => field !== undefined && field !== null
+    );
+  }
+
+  /** Construit FormData pour la requête HTTP **/
+  private buildFormData(): FormData {
+    const formData = new FormData();
+    Object.entries(this.newAnimalData()).forEach(([key, value]) => {
+      formData.append(key, value?.toString() || '');
+    });
+    const file = this.selectedFile();
+    if (file) formData.append('images', file);
+    return formData;
+  }
+
+  /** Regroupe les animaux par habitat **/
+  private groupAnimals() {
+    const grouped = this.animals().reduce((acc, animal) => {
+      (acc[animal.habitat_id] = acc[animal.habitat_id] || []).push(animal);
+      return acc;
+    }, {} as Record<number, Animal[]>);
+    this.groupedAnimals.set(grouped);
   }
 }

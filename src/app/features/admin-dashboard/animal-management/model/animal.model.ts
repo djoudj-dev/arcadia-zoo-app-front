@@ -1,6 +1,8 @@
-// animal.model.ts
-import { VetNote } from '../models/vetnote.model';
-import { Diet } from './diet.enum';
+export enum Diet {
+  Herbivore = 'Herbivore',
+  Carnivore = 'Carnivore',
+  Omnivore = 'Omnivore',
+}
 
 export interface Animal {
   id_animal: number; // Identifiant de l'animal
