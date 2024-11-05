@@ -10,43 +10,56 @@ import { Animal } from '../../../core/models/animal.model';
   providedIn: 'root',
 })
 export class HabitatService {
+  /**
+   * URL de base de l'API pour les habitats.
+   * Utilisée pour toutes les requêtes liées aux habitats dans le backend.
+   */
   private apiUrl = `${environment.apiUrl}/api/habitats`;
-  private uploadsUrl = `${environment.apiUrl}/uploads`; // Base URL pour les images
 
-  // Utilisation d'un signal pour gérer le cache des habitats
-  private habitatsCache = signal<Habitat[]>([]); // Initialise le signal avec un tableau vide
+  /**
+   * Cache pour stocker la liste des habitats localement.
+   * Permet de limiter les requêtes HTTP répétées en stockant les résultats de la première requête.
+   */
+  private habitatsCache = signal<Habitat[]>([]);
 
+  /**
+   * Constructeur de la classe HabitatService.
+   * @param http - Service Angular HttpClient pour effectuer des requêtes HTTP.
+   */
   constructor(private http: HttpClient) {}
 
   /**
    * Récupère la liste de tous les habitats.
-   * Si le cache est vide, effectue une requête HTTP, sinon renvoie les données du cache.
+   * Si le cache contient déjà des données, il renvoie celles-ci. Sinon, il fait une requête HTTP.
+   * Les URLs d'images sont formatées pour être complètes.
    *
-   * @returns Observable<Habitat[]> Observable de la liste des habitats.
+   * @returns Observable<Habitat[]> Observable contenant la liste des habitats.
    */
   getHabitats(): Observable<Habitat[]> {
-    if (this.habitatsCache().length > 0) {
-      // Renvoie les données du cache en tant qu'observable
-      return of(this.habitatsCache());
+    const cachedHabitats = this.habitatsCache();
+    if (cachedHabitats.length > 0) {
+      // Retourne les habitats depuis le cache
+      return of(cachedHabitats);
     } else {
-      // Charge les données depuis l'API et met à jour le cache
+      // Fait une requête HTTP pour obtenir les habitats depuis le serveur
       return this.http.get<Habitat[]>(this.apiUrl).pipe(
         map((habitats) =>
           habitats.map((habitat) => ({
             ...habitat,
-            image: `${this.uploadsUrl}/${habitat.images}`, // Ajoute l'URL complète de l'image
+            images: this.formatImageUrl(habitat.images),
           }))
         ),
-        tap((habitats) => this.habitatsCache.set(habitats)) // Met à jour le cache avec les données de l'API
+        tap((habitats) => this.habitatsCache.set(habitats)) // Met à jour le cache après la requête
       );
     }
   }
 
   /**
-   * Récupère un habitat spécifique par son ID, utilise le cache si possible.
+   * Récupère un habitat spécifique en fonction de son ID.
+   * Cherche l'habitat dans le cache si disponible, ou fait une requête HTTP si nécessaire.
    *
-   * @param id L'identifiant de l'habitat à récupérer.
-   * @returns Observable<Habitat | undefined> Observable de l'habitat ou undefined s'il n'est pas trouvé.
+   * @param id - L'identifiant unique de l'habitat à récupérer.
+   * @returns Observable<Habitat | undefined> Observable de l'habitat, ou undefined s'il n'est pas trouvé.
    */
   getHabitatById(id: number): Observable<Habitat | undefined> {
     return this.getHabitats().pipe(
@@ -55,18 +68,34 @@ export class HabitatService {
   }
 
   /**
-   * Récupère la liste des animaux liés à un habitat spécifique.
-   * @param habitat_id L'identifiant de l'habitat pour lequel récupérer les animaux.
+   * Récupère la liste des animaux associés à un habitat spécifique.
+   * Fait une requête HTTP pour obtenir les animaux d'un habitat donné par son ID.
+   *
+   * @param habitatId - L'identifiant de l'habitat pour lequel récupérer les animaux.
+   * @returns Observable<Animal[]> Observable contenant la liste des animaux.
    */
-  getAnimalsByhabitat_id(habitat_id: number): Observable<Animal[]> {
-    return this.http.get<Animal[]>(`${this.apiUrl}/${habitat_id}/animals`);
+  getAnimalsByHabitatId(habitatId: number): Observable<Animal[]> {
+    return this.http.get<Animal[]>(`${this.apiUrl}/${habitatId}/animals`);
   }
 
   /**
    * Vide le cache des habitats pour forcer un rechargement depuis l'API.
-   * Appelé après la création, modification ou suppression d'un habitat.
+   * Utilisé après des opérations de création, modification ou suppression d'un habitat.
    */
   clearCache(): void {
-    this.habitatsCache.set([]); // Réinitialise le cache
+    this.habitatsCache.set([]);
+  }
+
+  /**
+   * Formate l'URL de l'image en ajoutant l'URL de base si l'URL n'est pas absolue.
+   * Vérifie si l'URL commence par 'http', sinon préfixe avec `environment.apiUrl`.
+   *
+   * @param imagePath - Le chemin de l'image à formater.
+   * @returns string L'URL complète de l'image.
+   */
+  private formatImageUrl(imagePath: string): string {
+    return imagePath.startsWith('http')
+      ? imagePath
+      : `${environment.apiUrl}/${imagePath}`;
   }
 }
