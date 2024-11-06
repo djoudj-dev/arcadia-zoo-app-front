@@ -1,11 +1,10 @@
-import { Component, Input } from '@angular/core';
-import { Review } from '../../core/models/review.model';
-import { RateComponent } from '../../shared/components/rate/rate.component';
-import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { ModalService } from '../services/modal.service';
+import { Component, Input, signal } from '@angular/core';
+import { Review } from '../../core/models/review.model';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { RateComponent } from '../../shared/components/rate/rate.component';
 import { AddReviewComponent } from '../add-review/add-review.component';
-import { Observable } from 'rxjs';
+import { ModalService } from '../services/modal.service';
 import { ReviewService } from '../services/review.service';
 
 @Component({
@@ -39,9 +38,9 @@ export class ReviewComponent {
   }
 
   // Observable contenant les avis des utilisateurs
-  reviews$: Observable<Review[]>;
+  reviews = signal<Review[]>([]);
   // Index de l'avis actuellement affiché
-  currentReviewIndex = 0;
+  currentReviewIndex = signal<number>(0);
 
   // Propriétés privées pour les étoiles et la note, initialisées avec des valeurs par défaut
   private _stars: number[] = [1, 2, 3, 4, 5]; // Valeur par défaut de 5 étoiles
@@ -52,26 +51,23 @@ export class ReviewComponent {
     private modalService: ModalService, // Service pour la gestion de la modal
     private reviewService: ReviewService // Service pour récupérer les avis
   ) {
-    // Initialisation de l'Observable reviews$ après l'injection du service
-    this.reviews$ = this.reviewService.getReviews();
+    // S'abonner à l'Observable et mettre à jour le signal
+    this.reviewService.getReviews().subscribe((reviews) => {
+      this.reviews.set(reviews);
+    });
   }
 
   // Méthode pour naviguer entre les avis. 'direction' peut être 'previous' ou 'next'
   changeReview(direction: 'previous' | 'next'): void {
-    // On s'abonne à l'Observable reviews$
-    this.reviews$.subscribe((reviews) => {
-      // Si la direction est 'previous', on décrémente l'index de l'avis si ce n'est pas le premier
-      if (direction === 'previous' && this.currentReviewIndex > 0) {
-        this.currentReviewIndex--;
-      }
-      // Si la direction est 'next', on incrémente l'index de l'avis si ce n'est pas le dernier
-      else if (
-        direction === 'next' &&
-        this.currentReviewIndex < reviews.length - 1
-      ) {
-        this.currentReviewIndex++;
-      }
-    });
+    const reviews = this.reviews();
+    if (direction === 'previous' && this.currentReviewIndex() > 0) {
+      this.currentReviewIndex.set(this.currentReviewIndex() - 1);
+    } else if (
+      direction === 'next' &&
+      this.currentReviewIndex() < reviews.length - 1
+    ) {
+      this.currentReviewIndex.set(this.currentReviewIndex() + 1);
+    }
   }
 
   // Méthode pour ouvrir une modal via le ModalService

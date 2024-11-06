@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Service } from '../../../core/models/service.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
+import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class ServiceService {
       map((services) =>
         services.map((service) => ({
           ...service,
-          image: `${this.uploadsUrl}/${service.image}`, // Ajouter l'URL complète de l'image
+          image: `${this.uploadsUrl}/${service.images}`, // Ajouter l'URL complète de l'image
         }))
       )
     );
@@ -31,7 +31,7 @@ export class ServiceService {
     return this.http.get<Service>(`${this.apiUrl}/${id}`).pipe(
       map((service) => ({
         ...service,
-        image: `${this.uploadsUrl}/${service.image}`, // Ajouter l'URL complète de l'image
+        image: `${this.uploadsUrl}/${service.images}`, // Ajouter l'URL complète de l'image
       }))
     );
   }

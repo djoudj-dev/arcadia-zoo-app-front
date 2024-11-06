@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Service } from '../../core/models/service.model'; // Import du service
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Router, RouterLink } from '@angular/router';
 import { ServiceService } from './service/service.service';
+import { Service } from '../admin-dashboard/service-management/model/service.model';
 
 @Component({
   selector: 'app-services',

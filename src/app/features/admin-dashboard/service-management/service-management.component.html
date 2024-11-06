@@ -1,7 +1,12 @@
 <section
   class="service-management mb-8 sm:mb-12 px-4 sm:px-6 py-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
+  role="main"
+  aria-labelledby="serviceManagementTitle"
 >
-  <h2 class="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center">
+  <h2
+    id="serviceManagementTitle"
+    class="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center"
+  >
     Gestion des services
   </h2>
 
@@ -9,23 +14,25 @@
     <!-- Formulaire de création/mise à jour de service -->
     <div class="w-full lg:w-1/2 bg-gray-100 p-4 sm:p-6 rounded-lg shadow-sm">
       <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-        {{ newService().id ? "Modifier le service" : "Créer un service" }}
+        {{
+          newServiceData.id_service ? "Modifier le service" : "Créer un service"
+        }}
       </h3>
       <form
         class="space-y-3 sm:space-y-4"
-        (ngSubmit)="newService().id ? updateService() : createService()"
+        (ngSubmit)="
+          newServiceData.id_service ? updateService() : createService()
+        "
         enctype="multipart/form-data"
       >
+        <!-- Champs de formulaire pour les attributs du service -->
         <div>
-          <label
-            for="service-name"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          <label class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
             >Nom du service:</label
           >
           <input
             type="text"
-            id="name"
-            [(ngModel)]="newService().name"
+            [(ngModel)]="newServiceData.name"
             name="name"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -34,14 +41,11 @@
         </div>
 
         <div>
-          <label
-            for="description"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          <label class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
             >Description:</label
           >
           <textarea
-            id="description"
-            [(ngModel)]="newService().description"
+            [(ngModel)]="newServiceData.description"
             name="description"
             required
             class="w-full p-2 border border-gray-300 rounded-md"
@@ -49,73 +53,41 @@
           ></textarea>
         </div>
 
-        <div>
-          <label
-            for="location"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
-            >Emplacement:</label
-          >
-          <input
-            type="text"
-            id="location"
-            [(ngModel)]="newService().location"
-            name="location"
-            required
-            class="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Emplacement du service"
-          />
-        </div>
-
-        <div>
-          <label
-            for="hours"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
-            >Horaires d'ouverture:</label
-          >
-          <input
-            type="text"
-            id="hours"
-            [(ngModel)]="newService().hours"
-            name="hours"
-            required
-            class="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Horaires d'ouverture"
-          />
-        </div>
-
+        <!-- Sélection des caractéristiques spécifiques au type de service -->
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          @for (feature of features(); track feature.id) {
+          @for (feature of allFeatures(); track feature.id_feature) {
           <div class="flex items-center">
             <input
               type="checkbox"
-              id="feature-{{ feature.id }}"
-              [value]="feature.id"
+              [value]="feature.id_feature"
               (change)="onFeatureChange(feature, $event)"
               [checked]="isFeatureSelected(feature)"
               class="mr-2"
             />
-            <label for="feature-{{ feature.id }}">{{ feature.name }}</label>
+            <label>{{ feature.name }}</label>
           </div>
           }
         </div>
 
         <div>
-          <label
-            for="service-image"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+          <label class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
             >Image du service:</label
           >
           <input
             type="file"
-            id="service-image"
+            accept="image/*"
             (change)="onFileChange($event)"
             class="w-full p-2 border border-gray-300 rounded-md"
+            aria-describedby="imageHelp"
           />
+          <small id="imageHelp" class="text-gray-500"
+            >Formats acceptés : JPG, PNG. Taille max : 5MB</small
+          >
         </div>
 
         <div class="flex space-x-2">
           <app-button
-            [text]="newService().id ? 'Modifier' : 'Créer'"
+            [text]="newServiceData.id_service ? 'Modifier' : 'Créer'"
             [type]="'submit'"
             [color]="'tertiary'"
             [rounded]="true"
@@ -139,23 +111,23 @@
         Liste des services
       </h3>
       <div class="space-y-4 sm:space-y-6">
-        @for (service of serviceList(); track service.id) {
+        @for (service of services(); track service.id_service) {
         <div
           class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
         >
           <img
-            [src]="service.image"
-            alt="Image du service"
+            [src]="
+              service.images || '/public/images/img_services/restaurant.webp'
+            "
+            [alt]="'Image du service ' + service.name"
             class="w-full sm:w-24 lg:w-32 h-32 object-cover rounded-md mb-4 sm:mb-0 sm:mr-4"
           />
           <div class="flex-1">
             <h4 class="text-lg font-semibold">{{ service.name }}</h4>
+
             <p class="text-sm sm:text-base">
-              <span class="font-semibold">Emplacement:</span>
-              {{ service.location }}
-            </p>
-            <p class="text-sm sm:text-base">
-              <span class="font-semibold">Horaires:</span> {{ service.hours }}
+              <span class="font-semibold">Type:</span>
+              {{ service.features?.[0]?.type }}
             </p>
 
             <p class="text-sm sm:text-base">
@@ -167,12 +139,23 @@
               }
               <button
                 class="text-blue-500 hover:underline mt-2"
-                (click)="toggleDescription(service.id)"
+                (click)="toggleDescription(service.id_service)"
               >
                 @if (!service.showFullDescription) { Lire la suite } @else {
                 Voir moins }
               </button>
             </p>
+
+            <!-- Caractéristiques spécifiques en fonction du type de service -->
+            <h5 class="text-sm font-semibold mt-4">
+              Caractéristiques spécifiques :
+            </h5>
+            <ul class="list-disc list-inside text-sm">
+              @for (feature of service.features || []; track feature.id_feature)
+              {
+              <li>{{ feature.name }} : {{ feature.value }}</li>
+              }
+            </ul>
           </div>
           <div class="flex space-x-2 mt-4 sm:mt-0 sm:ml-4">
             <app-button
@@ -181,7 +164,7 @@
               [color]="'secondary'"
               [rounded]="true"
               [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="editService(service.id)"
+              (click)="editService(service.id_service)"
             ></app-button>
             <app-button
               [text]="'Supprimer'"
@@ -189,7 +172,7 @@
               [color]="'red'"
               [rounded]="true"
               [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="deleteService(service.id)"
+              (click)="deleteService(service.id_service)"
             ></app-button>
           </div>
         </div>
@@ -197,6 +180,7 @@
       </div>
     </div>
   </div>
+
   <!-- Bouton de retour -->
   <div class="flex justify-center pt-4">
     <div class="w-full sm:w-1/4 lg:w-1/5">
@@ -207,6 +191,7 @@
         [rounded]="true"
         class="w-full font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
         (click)="goBack()"
+        aria-label="Retourner à la page précédente"
       ></app-button>
     </div>
   </div>

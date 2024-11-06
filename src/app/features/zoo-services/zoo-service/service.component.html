@@ -14,7 +14,7 @@
     <!-- Div contenant l'image -->
     <div class="w-2/3 sm:w-1/2 md:w-1/3 lg:w-1/5 mx-auto md:ml-auto">
       <img
-        [src]="service.image"
+        [src]="service.images"
         [alt]="service.name"
         class="w-full h-full object-cover rounded-full"
       />
@@ -28,13 +28,11 @@
       <p class="mt-2">{{ service.description }}</p>
 
       <!-- Informations complémentaires -->
-      <p class="mt-2"><strong>Emplacement :</strong> {{ service.location }}</p>
-      <p class="mt-2"><strong>Horaires :</strong> {{ service.hours }}</p>
 
       <!-- Caractéristiques du service -->
       <p class="mt-2"><strong>Caractéristiques :</strong></p>
       <ul class="list-disc ml-4">
-        @for (feature of features; track feature) {
+        @for (feature of feature; track feature) {
         <li>{{ feature.name }}</li>
         }
       </ul>
