@@ -126,11 +126,6 @@
             <h4 class="text-lg font-semibold">{{ service.name }}</h4>
 
             <p class="text-sm sm:text-base">
-              <span class="font-semibold">Type:</span>
-              {{ service.features?.[0]?.type }}
-            </p>
-
-            <p class="text-sm sm:text-base">
               <span class="font-semibold">Déscription: </span>
               @if (!service.showFullDescription) {
               <span>{{ service.description | slice : 0 : 30 }}...</span>
@@ -145,17 +140,6 @@
                 Voir moins }
               </button>
             </p>
-
-            <!-- Caractéristiques spécifiques en fonction du type de service -->
-            <h5 class="text-sm font-semibold mt-4">
-              Caractéristiques spécifiques :
-            </h5>
-            <ul class="list-disc list-inside text-sm">
-              @for (feature of service.features || []; track feature.id_feature)
-              {
-              <li>{{ feature.name }} : {{ feature.value }}</li>
-              }
-            </ul>
           </div>
           <div class="flex space-x-2 mt-4 sm:mt-0 sm:ml-4">
             <app-button
