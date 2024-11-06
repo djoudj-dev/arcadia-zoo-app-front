@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Feature } from 'app/features/admin-dashboard/service-management/model/feature.model';
+import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { Service } from '../../../core/models/service.model';
-import { Feature } from '../../../core/models/feature.model';
 import { ServiceService } from '../service/service.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { ServiceService } from '../service/service.service';
 })
 export class ServiceComponent implements OnInit {
   service: Service | null = null;
-  features: Feature[] = [];
+  feature: Feature[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -29,13 +29,13 @@ export class ServiceComponent implements OnInit {
           this.service = data;
 
           // Utilisation d'un type de garde pour vérifier et extraire les caractéristiques
-          this.features = data.features.map(
-            (item: Feature | { feature: Feature }) =>
-              'feature' in item ? item.feature : item
-          );
+          // this.feature = data.feature.map(
+          //   (item: Feature | { feature: Feature }) =>
+          //     'feature' in item ? item.feature : item
+          // );
 
           console.log('Service trouvé :', this.service);
-          console.log('Caractéristiques du service :', this.features);
+          console.log('Caractéristiques du service :', this.feature);
         } else {
           console.error('Service non trouvé');
         }

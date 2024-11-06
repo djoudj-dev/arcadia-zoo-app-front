@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
-import { Service } from '../../../core/models/service.model';
-import { Feature } from '../../../core/models/feature.model';
 import { catchError, Observable, tap, throwError } from 'rxjs';
+import { Service } from '../service-management/model/service.model';
+import { Feature } from '../service-management/model/feature.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServiceManagementService {
   private apiUrl = `${environment.apiUrl}/admin/service-management`;
-  private featuresUrl = `${environment.apiUrl}/admin/service-management/features`;
 
   constructor(private http: HttpClient) {}
 
@@ -20,30 +19,19 @@ export class ServiceManagementService {
    */
   getAllServices(): Observable<Service[]> {
     return this.http.get<Service[]>(this.apiUrl).pipe(
-      catchError((error) => {
-        console.error('Erreur lors de la récupération des services :', error);
-        return throwError(
-          () => new Error('Erreur lors de la récupération des services')
-        );
-      })
+      tap(() => console.log('Récupération des services réussie')),
+      catchError(this.handleError('récupération des services'))
     );
   }
 
   /**
-   * Récupère la liste complète des caractéristiques.
-   * @returns {Observable<Feature[]>} - Observable contenant la liste des caractéristiques.
+   * Récupère les features de tous les services.
+   * @returns {Observable<Feature[]>} - Observable contenant les features.
    */
   getAllFeatures(): Observable<Feature[]> {
-    return this.http.get<Feature[]>(this.featuresUrl).pipe(
-      catchError((error) => {
-        console.error(
-          'Erreur lors de la récupération des caractéristiques :',
-          error
-        );
-        return throwError(
-          () => new Error('Erreur lors de la récupération des caractéristiques')
-        );
-      })
+    return this.http.get<Feature[]>(`${this.apiUrl}/features`).pipe(
+      tap(() => console.log('Récupération des features réussie')),
+      catchError(this.handleError('récupération des features'))
     );
   }
 
@@ -57,12 +45,7 @@ export class ServiceManagementService {
       tap((newService) =>
         console.log('Service créé avec succès :', newService)
       ),
-      catchError((error) => {
-        console.error('Erreur lors de la création du service :', error);
-        return throwError(
-          () => new Error('Erreur lors de la création du service')
-        );
-      })
+      catchError(this.handleError('création du service'))
     );
   }
 
@@ -77,12 +60,7 @@ export class ServiceManagementService {
       tap((updatedService) =>
         console.log('Service mis à jour avec succès :', updatedService)
       ),
-      catchError((error) => {
-        console.error('Erreur lors de la mise à jour du service :', error);
-        return throwError(
-          () => new Error('Erreur lors de la mise à jour du service')
-        );
-      })
+      catchError(this.handleError('mise à jour du service'))
     );
   }
 
@@ -94,12 +72,19 @@ export class ServiceManagementService {
   deleteService(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => console.log(`Service avec l'id ${id} supprimé avec succès`)),
-      catchError((error) => {
-        console.error('Erreur lors de la suppression du service :', error);
-        return throwError(
-          () => new Error('Erreur lors de la suppression du service')
-        );
-      })
+      catchError(this.handleError('suppression du service'))
     );
+  }
+
+  /**
+   * Gestion des erreurs pour toutes les requêtes HTTP.
+   * @param operation {string} - Opération où l'erreur est survenue.
+   * @returns {Function} - Fonction catchError pour la gestion d'erreur.
+   */
+  private handleError(operation: string) {
+    return (error: HttpErrorResponse): Observable<never> => {
+      console.error(`Erreur lors de la ${operation} :`, error);
+      return throwError(() => new Error(`Erreur lors de la ${operation}`));
+    };
   }
 }

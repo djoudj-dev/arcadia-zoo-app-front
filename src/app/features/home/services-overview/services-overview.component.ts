@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { Service } from '../../../core/models/service.model';
 import { RouterLink } from '@angular/router';
 import { ServiceService } from '../../zoo-services/service/service.service';
+import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
 
 @Component({
   selector: 'app-services-overview',

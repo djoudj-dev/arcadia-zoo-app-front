@@ -1,13 +1,13 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { SlicePipe } from '@angular/common';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AnimalManagementService } from './service/animal-management.service';
 import { environment } from '../../../../environments/environment.development';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { HabitatService } from '../../habitats/service/habitat.service';
+import { Habitat } from '../habitat-management/model/habitat.model';
 import { StatsService } from '../stats/services/stats.service';
 import { Animal } from './model/animal.model';
-import { Habitat } from '../habitat-management/model/habitat.model';
+import { AnimalManagementService } from './service/animal-management.service';
 
 @Component({
   selector: 'app-animal-management',
@@ -19,6 +19,7 @@ export class AnimalManagementComponent implements OnInit {
   /** Signaux pour stocker les listes d'animaux et d'habitats **/
   animals = signal<Animal[]>([]);
   habitats = signal<Habitat[]>([]);
+  selectedHabitat = signal<number | null>(null);
 
   /** Fichier sélectionné pour l'image de l'animal **/
   selectedFile = signal<File | null>(null);
@@ -30,6 +31,12 @@ export class AnimalManagementComponent implements OnInit {
   /** Données temporaires pour le formulaire d'ajout ou de modification d'un animal **/
   newAnimalData = signal<Partial<Animal>>({});
   imageBaseUrl = `${environment.apiUrl}`; // URL des images
+
+  filteredAnimals = computed(() =>
+    this.animals().filter(
+      (animal) => animal.habitat_id === this.selectedHabitat()
+    )
+  );
 
   constructor(
     private animalManagement: AnimalManagementService,

@@ -4,6 +4,7 @@ import {
   forwardRef,
   Input,
   Output,
+  signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -12,12 +13,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   standalone: true,
   template: `
     <div class="star-rating">
-      @for (star of stars; track star) {
+      @for (star of stars(); track star) {
       <span
-        [class.read-only]="isReadOnly"
-        (click)="!isReadOnly && changeRate(star)"
+        [class.read-only]="isReadOnly()"
+        (click)="!isReadOnly() && changeRate(star)"
       >
-        <i class="star" [class.filled]="star <= rating">★</i>
+        <i class="star" [class.filled]="star <= rating()">★</i>
       </span>
       }
     </div>
@@ -46,9 +47,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 export class RateComponent implements ControlValueAccessor {
-  @Input() rating: number = 0;
-  @Input() stars: number[] = [1, 2, 3, 4, 5];
-  @Input() isReadOnly: boolean = false; // Nouvelle propriété
+  @Input() rating = signal<number>(0);
+  @Input() stars = signal<readonly number[]>([1, 2, 3, 4, 5]);
+  @Input() isReadOnly = signal<boolean>(false);
   @Output() ratingChange: EventEmitter<number> = new EventEmitter<number>();
 
   onChange: (rating: number) => void = () => {};
@@ -56,7 +57,7 @@ export class RateComponent implements ControlValueAccessor {
 
   writeValue(value: number): void {
     if (value !== undefined) {
-      this.rating = value;
+      this.rating.set(value);
     }
   }
 
@@ -69,11 +70,11 @@ export class RateComponent implements ControlValueAccessor {
   }
 
   changeRate(newRate: number): void {
-    if (!this.isReadOnly) {
+    if (!this.isReadOnly()) {
       // Vérifie si le composant est modifiable
-      this.rating = newRate;
-      this.onChange(this.rating);
-      this.ratingChange.emit(this.rating);
+      this.rating.set(newRate);
+      this.onChange(this.rating());
+      this.ratingChange.emit(this.rating());
       this.onTouched();
     }
   }
