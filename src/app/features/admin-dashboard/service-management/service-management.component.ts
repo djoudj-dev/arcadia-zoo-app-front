@@ -1,12 +1,13 @@
 import { DatePipe, SlicePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { environment } from 'environments/environment.development';
-import { ServiceManagementService } from '../service/service.management.service';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
+import { ServiceManagementService } from './service/service.management.service';
 
 @Component({
   selector: 'app-service-management',
@@ -89,25 +90,37 @@ export class ServiceManagementComponent implements OnInit {
 
   // Création d'un nouveau service
   createService() {
-    if (!this.newServiceData.name || !this.newServiceData.description) {
+    const { name, description, features } = this.newServiceData;
+    if (!name || !description || !features) {
       console.error('Veuillez remplir tous les champs');
       return;
     }
 
     const formData = new FormData();
-    formData.append('name', this.newServiceData.name);
-    formData.append('description', this.newServiceData.description);
-    const file = this.selectedFile();
-    if (file) formData.append('image', file, file.name);
+    formData.append('name', name);
+    formData.append('description', description);
 
-    console.log('Données envoyées dans formData:', formData);
+    // Convertir le tableau d'objets `features` en chaîne JSON
+    formData.append('features', JSON.stringify(features));
+
+    const file = this.selectedFile();
+    if (file) {
+      formData.append('image', file, file.name);
+    } else {
+      console.warn('Aucun fichier sélectionné pour l’image');
+    }
+
+    // Log pour vérifier le contenu de formData
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
 
     this.serviceManagement.createService(formData).subscribe({
       next: () => {
         this.loadServices();
         this.resetForm();
       },
-      error: (error) =>
+      error: (error: HttpErrorResponse) =>
         console.error('Erreur lors de la création du service:', error),
     });
   }

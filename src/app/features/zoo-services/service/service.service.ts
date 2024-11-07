@@ -1,15 +1,15 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
 import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServiceService {
-  private apiUrl = environment.apiUrl + '/api/services';
+  private apiUrl = `${environment.apiUrl}/admin/service-management`;
   private uploadsUrl = environment.apiUrl + '/uploads'; // Base URL pour les images
 
   constructor(private http: HttpClient) {}
@@ -22,7 +22,8 @@ export class ServiceService {
           ...service,
           image: `${this.uploadsUrl}/${service.images}`, // Ajouter l'URL complète de l'image
         }))
-      )
+      ),
+      catchError(this.handleError)
     );
   }
 
@@ -32,7 +33,16 @@ export class ServiceService {
       map((service) => ({
         ...service,
         image: `${this.uploadsUrl}/${service.images}`, // Ajouter l'URL complète de l'image
-      }))
+      })),
+      catchError(this.handleError)
+    );
+  }
+
+  // Méthode de gestion des erreurs
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error);
+    return throwError(
+      () => new Error('Something bad happened; please try again later.')
     );
   }
 }
