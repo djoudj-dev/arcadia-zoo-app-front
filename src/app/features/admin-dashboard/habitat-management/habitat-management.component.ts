@@ -150,10 +150,6 @@ export class HabitatManagementComponent implements OnInit {
       console.error('ID invalide pour la suppression :', id_habitat);
       return;
     }
-    console.log(
-      "Tentative de suppression de l'habitat avec l'ID :",
-      id_habitat
-    );
     this.habitatManagement.deleteHabitat(id_habitat.toString()).subscribe({
       next: () => {
         console.log('Habitat supprimé');

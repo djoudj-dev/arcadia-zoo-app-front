@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
-import { catchError, Observable, tap, throwError } from 'rxjs';
-import { Service } from '../service-management/model/service.model';
-import { Feature } from '../service-management/model/feature.model';
+import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment.development';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Feature } from '../model/feature.model';
+import { Service } from '../model/service.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,23 +16,26 @@ export class ServiceManagementService {
 
   /**
    * Récupère la liste complète des services.
-   * @returns {Observable<Service[]>} - Observable contenant la liste des services.
    */
   getAllServices(): Observable<Service[]> {
-    return this.http.get<Service[]>(this.apiUrl).pipe(
-      tap(() => console.log('Récupération des services réussie')),
-      catchError(this.handleError('récupération des services'))
-    );
+    return this.http
+      .get<Service[]>(this.apiUrl)
+      .pipe(catchError(this.handleError('récupération des services')));
   }
-
   /**
-   * Récupère les features de tous les services.
-   * @returns {Observable<Feature[]>} - Observable contenant les features.
+   * Récupère la liste complète des services.
    */
   getAllFeatures(): Observable<Feature[]> {
     return this.http.get<Feature[]>(`${this.apiUrl}/features`).pipe(
-      tap(() => console.log('Récupération des features réussie')),
-      catchError(this.handleError('récupération des features'))
+      catchError((error) => {
+        console.error(
+          'Erreur lors de la récupération des caractéristiques:',
+          error
+        );
+        return throwError(
+          () => new Error('Erreur lors de la récupération des caractéristiques')
+        );
+      })
     );
   }
 
@@ -42,10 +46,22 @@ export class ServiceManagementService {
    */
   createService(formData: FormData): Observable<Service> {
     return this.http.post<Service>(this.apiUrl, formData).pipe(
-      tap((newService) =>
-        console.log('Service créé avec succès :', newService)
-      ),
+      tap(() => this.clearCache()), // Invalider le cache local
       catchError(this.handleError('création du service'))
+    );
+  }
+
+  /**
+   * Crée une nouvelle feature et renvoie la feature créée.
+   * @param feature {Feature} - La feature à créer.
+   * @returns {Observable<Feature>} - Observable contenant la feature créée.
+   */
+  createFeature(feature: Feature): Observable<Feature> {
+    return this.http.post<Feature>(`${this.apiUrl}/features`, feature).pipe(
+      tap((newFeature) =>
+        console.log('Caractéristique créée avec succès :', newFeature)
+      ),
+      catchError(this.handleError('création de la caractéristique'))
     );
   }
 
@@ -71,9 +87,17 @@ export class ServiceManagementService {
    */
   deleteService(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => console.log(`Service avec l'id ${id} supprimé avec succès`)),
+      tap(() => this.clearCache()), // Invalider le cache local après suppression
       catchError(this.handleError('suppression du service'))
     );
+  }
+
+  /**
+   * Efface le cache local des services.
+   */
+  clearCache(): void {
+    // Implémentez la logique de cache ici, si nécessaire
+    console.log('Cache des services effacé');
   }
 
   /**
