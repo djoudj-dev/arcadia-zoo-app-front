@@ -1,4 +1,4 @@
-import { DatePipe, SlicePipe } from '@angular/common';
+import { SlicePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -12,13 +12,7 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [
-    ButtonComponent,
-    ReactiveFormsModule,
-    FormsModule,
-    SlicePipe,
-    DatePipe,
-  ],
+  imports: [ButtonComponent, ReactiveFormsModule, FormsModule, SlicePipe],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -83,8 +77,9 @@ export class ServiceManagementComponent implements OnInit {
       this.selectedFile.set(file);
       const reader = new FileReader();
       reader.onload = () =>
-        (this.newServiceData.images = reader.result as string);
+        (this.newServiceData.images = reader.result as string); // Remplace l'image affichée par l'aperçu du fichier sélectionné
       reader.readAsDataURL(file);
+      console.log('Fichier sélectionné pour la mise à jour :', file);
     }
   }
 
@@ -125,45 +120,73 @@ export class ServiceManagementComponent implements OnInit {
     });
   }
 
-  // Mise à jour d'un service existant
+  // Ajout de vérifications supplémentaires pour la mise à jour du service
   updateService() {
-    const { id_service, name, description, type } = this.newServiceData;
-    if (!id_service || !name || !description || !type) {
-      console.error('Veuillez remplir tous les champs');
+    console.log(
+      'Contenu de newServiceData avant la mise à jour :',
+      this.newServiceData
+    );
+
+    const { id_service, name, description, features } = this.newServiceData;
+
+    // Validation des champs requis
+    if (!id_service || !name || !description || !Array.isArray(features)) {
+      console.error('Champs manquants ou incorrects');
       return;
     }
 
+    // Création de FormData pour envoyer les données au backend
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
-    formData.append('type', type);
-    const file = this.selectedFile();
-    if (file) formData.append('image', file);
 
+    const featuresJson = JSON.stringify(
+      features.map((feature) => ({
+        name: feature.name || '',
+        type: feature.type || '',
+        value: feature.value || '',
+      }))
+    );
+    formData.append('features', featuresJson);
+
+    if (this.selectedFile()) {
+      formData.append(
+        'image',
+        this.selectedFile() as File,
+        (this.selectedFile() as File).name
+      );
+    }
+
+    // Envoyer les données au backend
     this.serviceManagement.updateService(id_service, formData).subscribe({
       next: (updatedService) => {
-        this.services.update((services) =>
-          services.map((s) =>
-            s.id_service === updatedService.id_service
-              ? {
-                  ...updatedService,
-                  showFullDescription: s.showFullDescription,
-                  images: `${this.imageBaseUrl}/${updatedService.images}`,
-                }
-              : s
-          )
-        );
+        console.log('Service mis à jour avec succès:', updatedService);
+
+        // Rafraîchir la liste des services
+        this.loadServices();
+
+        // Réinitialiser le formulaire et le fichier sélectionné
         this.resetForm();
       },
-      error: (error) =>
-        console.error('Erreur lors de la mise à jour du service:', error),
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour du service:', error);
+      },
     });
   }
 
   // Pré-remplissage du formulaire pour la mise à jour
   editService(id_service: number) {
     const service = this.services().find((s) => s.id_service === id_service);
-    if (service) this.newServiceData = { ...service };
+    if (service) {
+      this.newServiceData = {
+        ...service,
+        features: service.features || [], // Charger les caractéristiques existantes
+        images: service.images, // Charger l'image existante
+      };
+      this.selectedFile.set(null); // Réinitialiser le fichier sélectionné
+    } else {
+      console.warn(`Service avec l'ID ${id_service} introuvable`);
+    }
   }
 
   // Suppression d'un service
@@ -186,8 +209,8 @@ export class ServiceManagementComponent implements OnInit {
 
   // Réinitialisation du formulaire
   resetForm() {
-    this.newServiceData = {};
-    this.selectedFile.set(null);
+    this.newServiceData = {}; // Réinitialiser les données du formulaire
+    this.selectedFile.set(null); // Réinitialiser le fichier sélectionné
   }
 
   // Gestion de la description
