@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home.component';
-import { LoginComponent } from './core/login/login.component';
 import { authGuard } from './core/auth/guard/auth.guard';
+import { LoginComponent } from './core/login/login.component';
+import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Accueil' },
@@ -42,14 +42,14 @@ export const routes: Routes = [
     title: 'Services',
   },
 
-  {
-    path: 'service/:id',
-    loadComponent: () =>
-      import('./features/zoo-services/zoo-service/service.component').then(
-        (m) => m.ServiceComponent
-      ),
-    title: 'Service',
-  },
+  // {
+  //   path: 'service/:id',
+  //   loadComponent: () =>
+  //     import('./features/zoo-services/zoo-service/service.component').then(
+  //       (m) => m.ServiceComponent
+  //     ),
+  //   title: 'Service',
+  // },
 
   {
     path: 'contact',
