@@ -1,23 +1,17 @@
+import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { DatePipe, SlicePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { environment } from '../../../../environments/environment.development';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { StatsService } from '../stats/services/stats.service';
-import { HabitatManagementService } from './service/habitat-management.service';
 import { Habitat } from './model/habitat.model';
+import { HabitatManagementService } from './service/habitat-management.service';
 
 @Component({
   selector: 'app-habitat-management',
   standalone: true,
-  imports: [
-    ButtonComponent,
-    ReactiveFormsModule,
-    FormsModule,
-    SlicePipe,
-    DatePipe,
-  ],
+  imports: [ButtonComponent, ReactiveFormsModule, FormsModule, SlicePipe],
   templateUrl: './habitat-management.component.html',
 })
 export class HabitatManagementComponent implements OnInit {
