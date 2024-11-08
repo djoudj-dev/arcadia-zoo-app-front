@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development'; // Importer le modèle Habitat
-import { Observable, ReplaySubject } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
-import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
-import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
+import { Injectable } from '@angular/core';
+import { Animal } from 'app/features/admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from 'app/features/admin-dashboard/habitat-management/model/habitat.model';
+import { environment } from 'environments/environment.development';
+import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +30,9 @@ export class AnimalService {
           map((animals) =>
             animals.map((animal) => ({
               ...animal,
-              image: `${this.uploadsUrl}/${animal.images}`,
+              image: animal.images
+                ? `${environment.apiUrl}/uploads/animals/${animal.images}`
+                : '',
             }))
           ),
           shareReplay(1), // Partage les données entre tous les abonnés pour une seule requête
@@ -45,13 +46,20 @@ export class AnimalService {
     return this.animalsCache$;
   }
 
-  /**
-   * Récupère un animal spécifique par son ID en utilisant le cache si possible.
-   * @param id L'identifiant de l'animal à récupérer.
-   */
   getAnimalById(id: number): Observable<Animal | undefined> {
     return this.getAnimals().pipe(
-      map((animals) => animals.find((animal) => animal.id_animal === id))
+      map((animals) => {
+        const animal = animals.find((animal) => animal.id_animal === id);
+
+        // Vérifie si l'animal existe et formate l'URL de l'image si nécessaire
+        if (animal && animal.images) {
+          animal.images = animal.images.startsWith('http')
+            ? animal.images
+            : `${environment.apiUrl}/${animal.images}`;
+        }
+
+        return animal;
+      })
     );
   }
 
