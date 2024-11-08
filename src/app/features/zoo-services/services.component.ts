@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ServiceService } from './service/service.service';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Service } from '../admin-dashboard/service-management/model/service.model';
+import { ServiceService } from './service/service.service';
 
 @Component({
   selector: 'app-services',
@@ -11,17 +11,20 @@ import { Service } from '../admin-dashboard/service-management/model/service.mod
   templateUrl: './services.component.html',
 })
 export class ServicesComponent implements OnInit {
-  serviceList: Service[] = [];
+  @Input() services: Service[] = [];
 
   constructor(
     private serviceService: ServiceService, // Injection du service
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    // Utilisation du service pour récupérer la liste des services
-    this.serviceService.getServices().subscribe((data) => {
-      this.serviceList = data;
+  ngOnInit() {
+    this.loadServices();
+  }
+
+  loadServices() {
+    this.serviceService.getServices().subscribe((services) => {
+      this.services = services;
     });
   }
 
