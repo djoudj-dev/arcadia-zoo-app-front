@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 import { RouterLink } from '@angular/router';
-import { HabitatService } from '../../habitats/service/habitat.service';
 import { environment } from '../../../../environments/environment.development';
+import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
 import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
+import { HabitatService } from '../../habitats/service/habitat.service';
 
 @Component({
   selector: 'app-habitats-overview',
@@ -26,7 +26,7 @@ export class HabitatsOverviewComponent implements OnInit {
           ...habitat,
           image: habitat.images.startsWith('http')
             ? habitat.images
-            : `${environment.apiUrl}/uploads/img-habitats/${habitat.images}`,
+            : `${environment.apiUrl}/uploads/${habitat.images}`,
         }))
       );
     });
