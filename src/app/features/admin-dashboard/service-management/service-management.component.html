@@ -69,6 +69,19 @@
           }
         </div>
 
+        @if (newServiceData.images) {
+        <div>
+          <label class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
+            >Image actuelle:</label
+          >
+          <img
+            [src]="newServiceData.images"
+            [alt]="'Image du service ' + newServiceData.name"
+            class="w-full sm:w-24 lg:w-32 h-32 object-cover rounded-md mb-4 sm:mb-0 sm:mr-4"
+          />
+        </div>
+        }
+
         <div>
           <label class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
             >Image du service:</label
@@ -81,7 +94,8 @@
             aria-describedby="imageHelp"
           />
           <small id="imageHelp" class="text-gray-500"
-            >Formats acceptés : JPG, PNG. Taille max : 5MB</small
+            >Formats acceptés : JPG, JPEG, PNG, GIF, SVG, WEBP. Taille max :
+            5MB</small
           >
         </div>
 
