@@ -42,14 +42,14 @@ export const routes: Routes = [
     title: 'Services',
   },
 
-  // {
-  //   path: 'service/:id',
-  //   loadComponent: () =>
-  //     import('./features/zoo-services/zoo-service/service.component').then(
-  //       (m) => m.ServiceComponent
-  //     ),
-  //   title: 'Service',
-  // },
+  {
+    path: 'service/:id',
+    loadComponent: () =>
+      import('./features/zoo-services/zoo-service/service.component').then(
+        (m) => m.ServiceComponent
+      ),
+    title: 'Service',
+  },
 
   {
     path: 'contact',
