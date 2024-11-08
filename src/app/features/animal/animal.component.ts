@@ -1,24 +1,16 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { VetNote } from '../../core/models/vetnote.model';
 import { DatePipe } from '@angular/common';
-import { NavComponent } from '../../shared/components/header/navbar/nav.component';
-import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { Component, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { VetNote } from '../../core/models/vetnote.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { AnimalService } from './service/animal.service';
 import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
+import { AnimalService } from './service/animal.service';
 
 @Component({
   selector: 'app-animal',
   standalone: true,
-  imports: [
-    RouterLink,
-    NavComponent,
-    FooterComponent,
-    ButtonComponent,
-    DatePipe,
-  ],
+  imports: [ButtonComponent, DatePipe],
   templateUrl: './animal.component.html',
   styles: [
     `
@@ -43,17 +35,16 @@ export class AnimalComponent implements OnInit {
 
   /** Initialisation du composant pour charger les données de l'animal */
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID de l'animal depuis les paramètres de la route
-    console.log('Route param ID:', id);
-
-    this.loadAnimal(id); // Chargement des données de l'animal par ID
+    this.loadAnimal(); // Appel à la méthode de chargement
   }
 
   /**
-   * Charge les informations de l'animal en fonction de l'ID.
-   * @param id - Identifiant de l'animal à charger
+   * Charge les informations de l'animal en fonction de l'ID récupéré depuis la route.
    */
-  private loadAnimal(id: number) {
+  private loadAnimal() {
+    const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID de l'animal depuis les paramètres de la route
+    console.log('Route param ID:', id);
+
     this.animalService.getAnimalById(id).subscribe({
       next: (animal) => {
         this.animal.set(animal);
