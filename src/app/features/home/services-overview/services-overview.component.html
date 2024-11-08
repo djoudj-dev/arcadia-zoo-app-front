@@ -7,15 +7,22 @@
       Nos Services
     </h1>
     <h3
-      class="text-lg text-quinary font-sans sm:text-xl md:text-2xl lg:text-3xl"
+      class="text-base sm:text-lg md:text-xl text-quinary font-sans leading-relaxed max-w-7xl mx-auto my-4"
     >
-      Découvrez les services proposés par le Zoo
+      Découvrez nos services pour une expérience enrichissante au zoo !
+      Détendez-vous au restaurant, situé près de l'entrée, avec des options
+      végétariennes, véganes et sans gluten, ouvert de 11h à 15h. Plongez au
+      cœur de la vie animale avec une visite guidée menée par un expert, en
+      petits groupes de 10, pour explorer les habitats et les efforts de
+      conservation. Départs à 10h, 14h, et 16h depuis le pavillon d'accueil.
+      Enfin, embarquez pour une visite en petit train panoramique, idéale pour
+      les familles, avec commentaires audio, disponible de 9h à 18h.
     </h3>
   </div>
 
   <!-- Services avec une disposition flexible en mobile-first -->
   <div
-    class="flex flex-col gap-6 py-4 px-4 justify-center sm:flex-row sm:flex-wrap md:gap-12 sm:px-6 md:px-8 lg:px-10 xl:px-12"
+    class="flex flex-col gap-4 py-4 px-4 justify-center sm:flex-row sm:flex-wrap md:gap-8 sm:px-6 md:px-8 lg:px-10 xl:px-12"
   >
     <!-- Boucle @for pour afficher les services -->
     @for (service of services(); track service.id_service) {
