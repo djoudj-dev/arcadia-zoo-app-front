@@ -16,7 +16,7 @@
     class="flex flex-col gap-6 py-4 px-4 justify-center sm:flex-row sm:flex-wrap md:gap-24 sm:px-6 md:px-12"
   >
     <!-- Boucle @for pour afficher les services -->
-    @for (service of services; track service.id_service) {
+    @for (service of services(); track service.id_service) {
     <div class="relative group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 mx-auto">
       <a [routerLink]="['/service', service.id_service]">
         <img
