@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Service } from '../admin-dashboard/service-management/model/service.model';
 import { ServiceService } from './service/service.service';
+import { environment } from 'environments/environment.development';
 
 @Component({
   selector: 'app-services',
@@ -11,7 +12,7 @@ import { ServiceService } from './service/service.service';
   templateUrl: './services.component.html',
 })
 export class ServicesComponent implements OnInit {
-  @Input() services: Service[] = [];
+  services = signal<Service[]>([]);
 
   constructor(
     private serviceService: ServiceService, // Injection du service
@@ -22,9 +23,18 @@ export class ServicesComponent implements OnInit {
     this.loadServices();
   }
 
+  // Méthode pour charger les services
   loadServices() {
-    this.serviceService.getServices().subscribe((services) => {
-      this.services = services;
+    this.serviceService.getServices().subscribe((data) => {
+      // Formate l'URL de l'image de chaque service et met à jour le signal
+      this.services.set(
+        data.map((service) => ({
+          ...service,
+          images: service.images.startsWith('http')
+            ? service.images
+            : `${environment.apiUrl}/${service.images}`,
+        }))
+      );
     });
   }
 
