@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Role } from './model/role.model';
-import { AccountManagementService } from './service/account-management.service';
 import { Router } from '@angular/router';
-import { StatsService } from '../stats/services/stats.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { StatsService } from '../stats/services/stats.service';
+import { Role } from './model/role.model';
 import { User } from './model/user.model';
+import { AccountManagementService } from './service/account-management.service';
 
 @Component({
   selector: 'app-account-management',
@@ -55,7 +55,7 @@ export class AccountManagementComponent implements OnInit {
     const { name, password, role } = this.newUser();
     if (name && password && role && role.id) {
       this.accountService
-        .createUser({ ...this.newUser(), roleId: role.id } as User)
+        .createUser({ ...this.newUser(), role_id: role.id } as User)
         .subscribe({
           next: (createdUser: User) => {
             this.users.update((users) => [...users, createdUser]);
@@ -75,10 +75,10 @@ export class AccountManagementComponent implements OnInit {
     const { name, role } = this.newUser();
 
     if (name || (role && role.id)) {
-      const updatedData: Partial<User & { roleId?: number }> = {
+      const updatedData: Partial<User & { role_id?: number }> = {
         ...this.newUser(),
       };
-      if (role) updatedData.roleId = role.id;
+      if (role) updatedData.role_id = role.id;
 
       this.accountService.updateUser(updatedData as User).subscribe({
         next: () => {

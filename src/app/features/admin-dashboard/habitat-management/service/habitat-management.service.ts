@@ -9,16 +9,12 @@ import { Habitat } from '../model/habitat.model';
   providedIn: 'root',
 })
 export class HabitatManagementService {
-  private apiUrl: string;
+  private apiUrl = `${environment.apiUrl}/admin/habitat-management`;
 
   constructor(
     private http: HttpClient,
     private habitatService: HabitatService
-  ) {
-    this.apiUrl = environment.production
-      ? environment.apiUrl
-      : environment.apiUrl;
-  }
+  ) {}
 
   /**
    * Récupère la liste complète des habitats.

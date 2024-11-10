@@ -1,10 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AlertService } from '../../alert/service/alert.service';
 import { TokenService } from '../../token/token.service';
 import { AuthService } from '../auth.service';
-import { AlertService } from '../../alert/service/alert.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Injection des services nécessaires
@@ -14,6 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Récupération du token d'authentification à partir du TokenService
   const token = tokenService.getToken();
+  console.log('Jeton récupéré par l’intercepteur:', token);
 
   // Clone de la requête avec en-tête Authorization si le token existe
   const authReq = token
@@ -21,8 +22,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
+        withCredentials: true,
       })
-    : req;
+    : req.clone({ withCredentials: true });
+  console.log('Requête avec jeton:', authReq);
 
   // Gestion de la requête suivante et traitement des erreurs
   return next(authReq).pipe(
