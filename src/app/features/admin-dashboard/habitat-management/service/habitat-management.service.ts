@@ -1,20 +1,24 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../../../environments/environment.development';
-import { Habitat } from '../model/habitat.model';
+import { environment } from '../../../../../environments/environment';
 import { HabitatService } from '../../../habitats/service/habitat.service';
+import { Habitat } from '../model/habitat.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HabitatManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/habitat-management`;
+  private apiUrl: string;
 
   constructor(
     private http: HttpClient,
     private habitatService: HabitatService
-  ) {}
+  ) {
+    this.apiUrl = environment.production
+      ? environment.apiUrl
+      : environment.apiUrl;
+  }
 
   /**
    * Récupère la liste complète des habitats.

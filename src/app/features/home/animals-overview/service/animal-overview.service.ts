@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Animal } from '../../../admin-dashboard/animal-management/model/animal.model';
+import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment.development';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'environments/environment.development';
+import { Animal } from '../../../admin-dashboard/animal-management/model/animal.model';
 
 @Injectable({
   providedIn: 'root',

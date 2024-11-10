@@ -1,7 +1,7 @@
 import { SlicePipe } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { Habitat } from '../habitat-management/model/habitat.model';

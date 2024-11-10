@@ -1,10 +1,10 @@
-import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.development';
+import { Injectable, signal } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
+import { environment } from '../../../../environments/environment';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
 
 @Injectable({
   providedIn: 'root',

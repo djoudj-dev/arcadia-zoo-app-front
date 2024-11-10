@@ -2,7 +2,7 @@ import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { StatsService } from '../stats/services/stats.service';
 import { Habitat } from './model/habitat.model';
