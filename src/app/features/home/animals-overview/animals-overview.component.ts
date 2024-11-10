@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../../../environments/environment'; // Corrigez le chemin ici
+import { environment } from '../../../../environments/environment.development'; // Corrigez le chemin ici
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';

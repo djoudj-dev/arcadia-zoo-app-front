@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
 import { map, Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
