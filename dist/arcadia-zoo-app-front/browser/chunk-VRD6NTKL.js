@@ -1,0 +1,1 @@
+import{$ as o,Va as n,Wa as p,cb as a,kb as m}from"./chunk-FRW6CNJS.js";var l=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-employe"]],standalone:!0,features:[m],decls:2,vars:0,template:function(e,r){e&1&&(n(0,"p"),a(1,"employe works!"),p())}})};export{l as EmployeComponent};
