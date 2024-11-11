@@ -1,14 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Review } from '../../core/models/review.model';
-import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
+import { Review } from '../../core/models/review.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3000/api/reviews'; // URL du backend pour les avis
+  private apiUrl = 'http://localhost:3000/reviews'; // URL du backend pour les avis
 
   constructor(private http: HttpClient) {}
 

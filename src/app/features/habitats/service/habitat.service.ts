@@ -13,7 +13,7 @@ export class HabitatService {
   /** URL de base pour toutes les images **/
   private imageBaseUrl = `${environment.apiUrl}`;
 
-  private apiUrl = `${environment.apiUrl}/api/habitats`;
+  private apiUrl = `${environment.apiUrl}/habitats`;
   private habitatsCache = signal<Habitat[]>([]);
 
   constructor(private http: HttpClient) {}

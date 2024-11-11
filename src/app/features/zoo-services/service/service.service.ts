@@ -11,7 +11,7 @@ export class ServiceService {
   /** URL de base pour toutes les images **/
   private imageBaseUrl = `${environment.apiUrl}`;
 
-  private apiUrl = `${environment.apiUrl}/api/services`; // Base URL pour les services
+  private apiUrl = `${environment.apiUrl}/services`; // Base URL pour les services
   private servicesCache = signal<Service[]>([]); // Cache pour les services
 
   constructor(private http: HttpClient) {}
