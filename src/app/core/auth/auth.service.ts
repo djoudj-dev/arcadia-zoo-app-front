@@ -13,7 +13,7 @@ import { TokenService } from '../token/token.service';
 })
 export class AuthService {
   currentUserSignal = signal<User | null>(null); // Signal pour l'utilisateur actuel
-  private apiUrl = `${environment.apiUrl}/auth`; // URL de l'API d'authentification
+  private apiUrl = `${environment.apiUrl}`; // URL de l'API d'authentification
 
   constructor(
     private http: HttpClient,
