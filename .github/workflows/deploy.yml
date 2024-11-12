@@ -36,8 +36,5 @@ jobs:
           # Copier les fichiers de build vers le VPS
           rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 49999" --rsync-path="sudo rsync" dist/arcadia-zoo-app-front/ ubuntu@${{ secrets.VPS_HOST }}:/var/www/nedellec-julien.fr/html/
 
-          # Vérifier si le fichier index.html est bien présent
+          # Vérifier si le fichier index.html est bien présent sur le VPS
           ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} "ls -l /var/www/nedellec-julien.fr/html/"
-
-          # Démarrer ou redémarrer l'application avec PM2
-          ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} "cd /var/www/nedellec-julien.fr/html/ && pm2 start server.js --name 'arcadia-zoo-app' --watch || pm2 restart 'arcadia-zoo-app'"
