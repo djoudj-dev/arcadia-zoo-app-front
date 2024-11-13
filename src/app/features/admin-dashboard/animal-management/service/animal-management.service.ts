@@ -9,7 +9,7 @@ import { Animal } from '../model/animal.model';
   providedIn: 'root',
 })
 export class AnimalManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/animal-management`;
+  private apiUrl = `${environment.apiUrl}/api/admin/animal-management`;
 
   constructor(private http: HttpClient, private animalService: AnimalService) {}
 

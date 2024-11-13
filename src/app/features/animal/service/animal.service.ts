@@ -9,9 +9,9 @@ import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class AnimalService {
-  private apiUrl = `${environment.apiUrl}/animals`;
-  private habitatUrl = `${environment.apiUrl}/habitats`; // URL de base pour les habitats
-  private uploadsUrl = `${environment.apiUrl}/uploads`; // URL de base pour les images
+  private apiUrl = `${environment.apiUrl}/api/animals`;
+  private habitatUrl = `${environment.apiUrl}/api/habitats`; // URL de base pour les habitats
+  private uploadsUrl = `${environment.apiUrl}/api/uploads`; // URL de base pour les images
   private animalsCache$ = new ReplaySubject<Animal[]>(1); // Cache pour optimiser les requêtes
   private cacheLoaded = false; // Drapeau pour indiquer si le cache est chargé
 

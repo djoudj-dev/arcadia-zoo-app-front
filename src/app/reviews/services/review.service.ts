@@ -8,7 +8,7 @@ import { Review } from '../../core/models/review.model';
   providedIn: 'root',
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:3000/reviews'; // URL du backend pour les avis
+  private apiUrl = 'http://localhost:3000/api/reviews'; // URL du backend pour les avis
 
   constructor(private http: HttpClient) {}
 

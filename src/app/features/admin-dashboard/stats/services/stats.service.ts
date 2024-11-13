@@ -14,7 +14,7 @@ interface Stats {
   providedIn: 'root',
 })
 export class StatsService {
-  private apiUrl = environment.apiUrl + '/admin/stats-management/stats';
+  private apiUrl = environment.apiUrl + '/api/admin/stats-management/stats';
 
   // Signaux pour chaque statistique
   totalAnimals = signal<number>(0);
