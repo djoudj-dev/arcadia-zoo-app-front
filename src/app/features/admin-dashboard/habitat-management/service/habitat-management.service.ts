@@ -9,7 +9,7 @@ import { Habitat } from '../model/habitat.model';
   providedIn: 'root',
 })
 export class HabitatManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/habitat-management`;
+  private apiUrl = `${environment.apiUrl}/api/admin/habitat-management`;
 
   constructor(
     private http: HttpClient,

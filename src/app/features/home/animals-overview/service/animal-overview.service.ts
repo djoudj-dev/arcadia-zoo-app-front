@@ -9,8 +9,8 @@ import { Animal } from '../../../admin-dashboard/animal-management/model/animal.
   providedIn: 'root',
 })
 export class AnimalOverviewService {
-  private apiUrl = `${environment.apiUrl}/animals`;
-  private uploadsUrl = `${environment.apiUrl}`; // Base URL pour les images
+  private apiUrl = `${environment.apiUrl}/api/animals`;
+  private uploadsUrl = `${environment.apiUrl}/api`; // Base URL pour les images
 
   constructor(private http: HttpClient) {}
 
