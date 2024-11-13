@@ -54,7 +54,7 @@ export class AccountManagementService {
   /** Récupère tous les rôles **/
   getRoles(): Observable<Role[]> {
     return this.http
-      .get<Role[]>(`${this.apiUrl}/roles`)
+      .get<Role[]>(`${this.apiUrl}/api/roles`)
       .pipe(catchError((err) => this.handleError('chargement des rôles', err)));
   }
 
