@@ -3,12 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { TokenService } from '../../core/token/token.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { StatsComponent } from './stats/stats.component';
+import { CountResourceComponent } from './stats-board/counts-resource/count-resource.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ButtonComponent, FormsModule, RouterOutlet, StatsComponent],
+  imports: [ButtonComponent, FormsModule, RouterOutlet, CountResourceComponent],
   templateUrl: './admin-dashboard.component.html',
 })
 export class DashboardComponent {
