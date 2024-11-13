@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment.development';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { StatsService } from '../stats/services/stats.service';
+import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Habitat } from './model/habitat.model';
 import { HabitatManagementService } from './service/habitat-management.service';
 
@@ -28,7 +28,7 @@ export class HabitatManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private habitatManagement: HabitatManagementService,
-    private statsService: StatsService
+    private countResourceService: CountResourceService
   ) {}
 
   ngOnInit() {
@@ -83,7 +83,7 @@ export class HabitatManagementComponent implements OnInit {
           console.log('Habitat créé avec succès:', response);
           this.resetForm();
           this.loadHabitats();
-          this.statsService.incrementTotalHabitats();
+          this.countResourceService.incrementTotalHabitats();
         },
         error: (error) => {
           console.error("Erreur lors de la création de l'habitat :", error);
@@ -150,7 +150,7 @@ export class HabitatManagementComponent implements OnInit {
         this.habitats.update((habitats) =>
           habitats.filter((habitat) => habitat.id_habitat !== id_habitat)
         );
-        this.statsService.decrementTotalHabitats();
+        this.countResourceService.decrementTotalHabitats();
       },
       error: (error) =>
         console.error("Erreur lors de la suppression de l'habitat:", error),

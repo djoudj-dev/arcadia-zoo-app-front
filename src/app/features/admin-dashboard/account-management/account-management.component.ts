@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { StatsService } from '../stats/services/stats.service';
+import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Role } from './model/role.model';
 import { User } from './model/user.model';
 import { AccountManagementService } from './service/account-management.service';
@@ -24,7 +24,7 @@ export class AccountManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private accountService: AccountManagementService,
-    private statsService: StatsService
+    private countResourceService: CountResourceService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class AccountManagementComponent implements OnInit {
           next: (createdUser: User) => {
             this.users.update((users) => [...users, createdUser]);
             this.newUser.set({});
-            this.statsService.incrementTotalEmploye();
+            this.countResourceService.incrementTotalEmploye();
           },
           error: (err) =>
             console.error("Erreur de création d'utilisateur :", err),
@@ -105,7 +105,7 @@ export class AccountManagementComponent implements OnInit {
         this.users.update((users) =>
           users.filter((user) => user.id !== userId)
         );
-        this.statsService.decrementTotalEmploye();
+        this.countResourceService.decrementTotalEmploye();
       },
       error: (err) =>
         console.error("Erreur de suppression d'utilisateur :", err),

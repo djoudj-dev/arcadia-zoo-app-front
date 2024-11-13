@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment.development';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { Habitat } from '../habitat-management/model/habitat.model';
-import { StatsService } from '../stats/services/stats.service';
+import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Animal } from './model/animal.model';
 import { AnimalManagementService } from './service/animal-management.service';
 
@@ -41,7 +41,7 @@ export class AnimalManagementComponent implements OnInit {
   constructor(
     private animalManagement: AnimalManagementService,
     private habitatService: HabitatService,
-    private statsService: StatsService
+    private countResourceService: CountResourceService
   ) {}
 
   ngOnInit() {
@@ -93,7 +93,7 @@ export class AnimalManagementComponent implements OnInit {
           console.log('Animal créé avec succès:', response);
           this.resetForm();
           this.loadAnimals();
-          this.statsService.incrementTotalAnimals();
+          this.countResourceService.incrementTotalAnimals();
         },
         error: (error) =>
           console.error("Erreur de création de l'animal :", error),
@@ -149,7 +149,7 @@ export class AnimalManagementComponent implements OnInit {
         this.animals.update((animals) =>
           animals.filter((a) => a.id_animal !== animalId)
         );
-        this.statsService.decrementTotalAnimals();
+        this.countResourceService.decrementTotalAnimals();
         this.resetForm();
       },
       error: (error) =>
