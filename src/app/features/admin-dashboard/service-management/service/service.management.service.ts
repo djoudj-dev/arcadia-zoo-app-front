@@ -10,7 +10,7 @@ import { Service } from '../model/service.model';
   providedIn: 'root',
 })
 export class ServiceManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/service-management`;
+  private apiUrl = `${environment.apiUrl}/api/admin/service-management`;
 
   constructor(private http: HttpClient) {}
 

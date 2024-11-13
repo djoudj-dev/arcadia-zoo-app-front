@@ -11,9 +11,9 @@ import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.
 })
 export class HabitatService {
   /** URL de base pour toutes les images **/
-  private imageBaseUrl = `${environment.apiUrl}`;
+  private imageBaseUrl = `${environment.apiUrl}/api`;
 
-  private apiUrl = `${environment.apiUrl}/habitats`;
+  private apiUrl = `${environment.apiUrl}/api/habitats`;
   private habitatsCache = signal<Habitat[]>([]);
 
   constructor(private http: HttpClient) {}
