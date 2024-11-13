@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
@@ -7,30 +8,46 @@ import { ServiceService } from '../../zoo-services/service/service.service';
 @Component({
   selector: 'app-services-overview',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './services-overview.component.html',
 })
 export class ServicesOverviewComponent implements OnInit {
   services = signal<Service[]>([]);
+  loading = signal<boolean>(true);
+  imageStates = signal<Map<number, boolean>>(new Map());
 
-  constructor(private serviceService: ServiceService) {} // Injection du service
+  constructor(private serviceService: ServiceService) {}
 
   ngOnInit() {
     this.loadServices();
   }
 
-  // Méthode pour charger les services
   loadServices() {
-    this.serviceService.getServices().subscribe((data) => {
-      // Formate l'URL de l'image de chaque service et met à jour le signal
-      this.services.set(
-        data.map((service) => ({
-          ...service,
-          images: service.images.startsWith('http')
-            ? service.images
-            : `${environment.apiUrl}/${service.images}`,
-        }))
-      );
+    this.loading.set(true);
+    this.serviceService.getServices().subscribe({
+      next: (data) => {
+        this.services.set(data);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des services:', error);
+        this.loading.set(false);
+      },
     });
+  }
+
+  onImageLoad(serviceId: number) {
+    const currentStates = new Map(this.imageStates());
+    currentStates.set(serviceId, true);
+    this.imageStates.set(currentStates);
+  }
+
+  isImageLoaded(serviceId: number): boolean {
+    return this.imageStates()?.get(serviceId) ?? false;
+  }
+
+  getImageUrl(url: string): string {
+    if (!url) return '/assets/images/placeholder.jpg';
+    return url.startsWith('http') ? url : `${environment.apiUrl}/api/${url}`;
   }
 }

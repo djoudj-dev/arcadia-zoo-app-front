@@ -1,66 +1,58 @@
-<section class="w-full bg-secondary shadow py-4">
-  <!-- Titre de la section -->
-  <div class="text-center">
-    <h1
-      class="text-xl font-bold font-serif text-primary sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl"
-    >
-      Nos Services
-    </h1>
-    <h3
-      class="text-base sm:text-lg md:text-xl text-quinary font-sans leading-relaxed max-w-7xl mx-auto my-4"
-    >
-      Découvrez nos services pour une expérience enrichissante au zoo !
-      Détendez-vous au restaurant, situé près de l'entrée, avec des options
-      végétariennes, véganes et sans gluten, ouvert de 11h à 15h. Plongez au
-      cœur de la vie animale avec une visite guidée menée par un expert, en
-      petits groupes de 10, pour explorer les habitats et les efforts de
-      conservation. Départs à 10h, 14h, et 16h depuis le pavillon d'accueil.
-      Enfin, embarquez pour une visite en petit train panoramique, idéale pour
-      les familles, avec commentaires audio, disponible de 9h à 18h.
-    </h3>
-  </div>
-
-  <!-- Services avec une disposition flexible en mobile-first -->
-  <div
-    class="flex flex-col gap-4 py-4 px-4 justify-center sm:flex-row sm:flex-wrap md:gap-8 sm:px-6 md:px-8 lg:px-10 xl:px-12"
-  >
-    <!-- Boucle @for pour afficher les services -->
-    @for (service of services(); track service.id_service) {
-    <div
-      class="relative group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 mx-auto"
-      appTouchInteraction
-    >
-      <a [routerLink]="['/service', service.id_service]">
-        <img
-          [src]="service.images"
-          [alt]="service.name"
-          class="w-full h-full object-cover rounded-full"
-        />
-        <div
-          class="overlay absolute inset-0 flex flex-col items-center justify-center bg-quaternary bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
-        >
-          <!-- Nom du service avec texte responsive -->
-          <span
-            class="text-quinary text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-3xl 2xl:text-2xl"
-            >{{ service.name }}</span
-          >
-          <!-- Description responsive -->
-          <span
-            class="text-primary text-center text-sm sm:text-base md:text-lg lg:text-base xl:text-base 2xl:text-lg px-2 mt-2"
-            >{{ service.description }}</span
-          >
-        </div>
-        <!-- Afficher le nom du service en mode mobile-first -->
-        <div
-          class="absolute top-4 left-0 right-0 flex items-center justify-center md:hidden"
-        >
-          <span
-            class="text-primary text-lg sm:text-xl font-sans bg-quinary bg-opacity-80 px-2 py-1 rounded mt-2"
-            >{{ service.name }}</span
-          >
-        </div>
-      </a>
+<section class="w-full bg-secondary shadow py-8">
+  <!-- En-tête de section -->
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+        Nos Services
+      </h1>
+      <p class="text-base md:text-lg text-quinary font-sans max-w-4xl mx-auto">
+        Découvrez nos services pour une expérience enrichissante au zoo !
+        Profitez de nos différentes options pour rendre votre visite
+        inoubliable.
+      </p>
     </div>
-    }
+
+    <!-- Grille de services -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (service of services(); track service.id_service) {
+      <div
+        class="relative group aspect-square rounded-2xl overflow-hidden shadow-lg"
+      >
+        <a [routerLink]="['/service', service.id_service]" class="block h-full">
+          <!-- Image -->
+          <img
+            [src]="service.images"
+            [alt]="service.name"
+            class="w-full h-full object-cover"
+          />
+
+          <!-- Overlay au survol -->
+          <div
+            class="absolute inset-0 bg-tertiary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-6"
+          >
+            <h3
+              class="text-primary text-xl md:text-2xl font-serif font-semibold mb-4"
+            >
+              {{ service.name }}
+            </h3>
+            <p class="text-primary text-center text-sm md:text-base font-sans">
+              {{ service.description }}
+            </p>
+          </div>
+
+          <!-- Titre visible en permanence sur mobile -->
+          <div
+            class="absolute bottom-0 left-0 right-0 bg-tertiary bg-opacity-90 p-4 md:group-hover:opacity-0 transition-opacity"
+          >
+            <h3
+              class="text-primary text-lg font-serif font-semibold text-center"
+            >
+              {{ service.name }}
+            </h3>
+          </div>
+        </a>
+      </div>
+      }
+    </div>
   </div>
 </section>

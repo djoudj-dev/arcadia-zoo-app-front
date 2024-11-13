@@ -1,20 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from 'environments/environment.development';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 
 interface Stats {
-  totalAnimals: number;
-  totalHabitats: number;
-  totalServices: number;
-  totalEmployes: number;
-  totalVets: number;
+  animals: number;
+  habitats: number;
+  services: number;
+  employe: number;
+  vet: number;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class StatsService {
-  private apiUrl = environment.apiUrl + '/api/admin/stats-management/stats';
+export class CountResourceService {
+  private apiUrl = `${environment.apiUrl}/api/stats/count-resource`;
 
   // Signaux pour chaque statistique
   totalAnimals = signal<number>(0);
@@ -26,14 +27,26 @@ export class StatsService {
   constructor(private http: HttpClient) {}
 
   // Récupérer les statistiques de l'API au chargement initial
-  getStats() {
-    this.http.get<Stats>(this.apiUrl).subscribe((stats) => {
-      this.totalAnimals.set(stats.totalAnimals);
-      this.totalHabitats.set(stats.totalHabitats);
-      this.totalServices.set(stats.totalServices);
-      this.totalEmploye.set(stats.totalEmployes);
-      this.totalVet.set(stats.totalVets);
-    });
+  getStats(): Observable<Stats> {
+    return this.http.get<Stats>(this.apiUrl).pipe(
+      tap((stats: Stats) => {
+        console.log('Statistiques récupérées:', stats);
+        this.totalAnimals.set(stats.animals);
+        this.totalHabitats.set(stats.habitats);
+        this.totalServices.set(stats.services);
+        this.totalEmploye.set(stats.employe);
+        this.totalVet.set(stats.vet);
+      }),
+      catchError((error) => {
+        console.error(
+          'Erreur lors de la récupération des statistiques:',
+          error
+        );
+        return throwError(
+          () => new Error('Erreur lors de la récupération des statistiques')
+        );
+      })
+    );
   }
 
   // Méthodes pour incrémenter les statistiques

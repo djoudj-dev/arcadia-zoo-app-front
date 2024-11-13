@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StatsComponent } from './stats.component';
+import { StatsComponent } from './count-resource.component';
 
 describe('StatsComponent', () => {
   let component: StatsComponent;
@@ -8,9 +8,8 @@ describe('StatsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StatsComponent]
-    })
-    .compileComponents();
+      imports: [StatsComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StatsComponent);
     component = fixture.componentInstance;
