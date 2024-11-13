@@ -68,7 +68,10 @@ export class AuthService {
    */
   login(email: string, password: string): Observable<{ user: User }> {
     return this.http
-      .post<{ user: User }>(`${this.apiUrl}/login`, { email, password })
+      .post<{ user: User }>(`${this.apiUrl}/api/auth/login`, {
+        email,
+        password,
+      })
       .pipe(
         tap((response: { user: User }) => {
           const user = response.user;
