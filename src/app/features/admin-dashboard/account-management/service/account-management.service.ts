@@ -9,7 +9,7 @@ import { User } from '../model/user.model';
   providedIn: 'root',
 })
 export class AccountManagementService {
-  private apiUrl = `${environment.apiUrl}/admin/account-management`;
+  private apiUrl = `${environment.apiUrl}/api/admin/account-management`;
 
   constructor(private http: HttpClient) {}
 
@@ -54,7 +54,7 @@ export class AccountManagementService {
   /** Récupère tous les rôles **/
   getRoles(): Observable<Role[]> {
     return this.http
-      .get<Role[]>(`${this.apiUrl}/api/roles`)
+      .get<Role[]>(`${this.apiUrl}/roles`)
       .pipe(catchError((err) => this.handleError('chargement des rôles', err)));
   }
 
