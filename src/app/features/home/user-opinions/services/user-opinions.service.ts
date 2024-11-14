@@ -28,6 +28,7 @@ export class UserOpinionsService {
 
   // Ajouter un avis et l'envoyer au backend
   addUserOpinions(userOpinions: UserOpinions): Observable<UserOpinions> {
+    console.log('Opinion à envoyer:', userOpinions);
     return this.http.post<UserOpinions>(this.apiUrl, userOpinions).pipe(
       catchError((error) => {
         console.error("Erreur lors de l'envoi de l'avis au backend", error);
