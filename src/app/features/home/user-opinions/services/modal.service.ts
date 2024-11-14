@@ -1,20 +1,32 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModalService {
-  private isModalOpen = signal<boolean>(false);
+  private isOpenSubject = new BehaviorSubject<boolean>(false);
+  isOpen$ = this.isOpenSubject.asObservable();
 
-  openModal(): void {
-    this.isModalOpen.set(true);
+  constructor(private toastService: ToastService) {}
+
+  openModal() {
+    this.isOpenSubject.next(true);
   }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
+  closeModal() {
+    this.isOpenSubject.next(false);
   }
 
-  getModalState() {
-    return this.isModalOpen;
+  showSuccessMessage(message: string) {
+    this.toastService.showSuccess(message);
+    setTimeout(() => {
+      this.closeModal();
+    }, 3000);
+  }
+
+  showErrorMessage(message: string) {
+    this.toastService.showError(message);
   }
 }

@@ -1,5 +1,6 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
@@ -21,12 +22,13 @@ import { UserOpinionsService } from '../services/user-opinions.service';
     AddUserOpinionsComponent,
   ],
 })
-export class UserOpinionsComponent {
+export class UserOpinionsComponent implements OnDestroy {
   readonly isReadOnly = signal<boolean>(true);
   readonly userOpinions = signal<UserOpinions[]>([]);
   readonly currentUserOpinionsIndex = signal<number>(0);
   readonly currentRating = signal<number>(0);
   isModalOpen = signal<boolean>(false);
+  private modalSubscription: Subscription;
 
   constructor(
     private modalService: ModalService,
@@ -36,6 +38,17 @@ export class UserOpinionsComponent {
       this.userOpinions.set(userOpinions);
       this.updateCurrentRating();
     });
+
+    // Souscrire au service modal
+    this.modalSubscription = this.modalService.isOpen$.subscribe((isOpen) => {
+      this.isModalOpen.set(isOpen);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.modalSubscription) {
+      this.modalSubscription.unsubscribe();
+    }
   }
 
   private updateCurrentRating(): void {
@@ -59,10 +72,10 @@ export class UserOpinionsComponent {
   }
 
   openModal() {
-    this.isModalOpen.set(true);
+    this.modalService.openModal();
   }
 
   closeModal() {
-    this.isModalOpen.set(false);
+    this.modalService.closeModal();
   }
 }
