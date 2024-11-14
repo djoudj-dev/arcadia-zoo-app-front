@@ -132,3 +132,7 @@
     </div>
   </div>
 </section>
+
+<app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
+  <app-add-user-opinions></app-add-user-opinions>
+</app-modal>

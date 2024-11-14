@@ -1,7 +1,9 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
+import { AddUserOpinionsComponent } from '../add-user-opinions/add-user-opinions.component';
 import { UserOpinions } from '../models/user-opinions.model';
 import { ModalService } from '../services/modal.service';
 import { UserOpinionsService } from '../services/user-opinions.service';
@@ -10,13 +12,21 @@ import { UserOpinionsService } from '../services/user-opinions.service';
   selector: 'app-user-opinions',
   templateUrl: './user-opinions.component.html',
   standalone: true,
-  imports: [RateComponent, ButtonComponent, DatePipe, AsyncPipe],
+  imports: [
+    RateComponent,
+    ButtonComponent,
+    DatePipe,
+    AsyncPipe,
+    ModalComponent,
+    AddUserOpinionsComponent,
+  ],
 })
 export class UserOpinionsComponent {
   readonly isReadOnly = signal<boolean>(true);
   readonly userOpinions = signal<UserOpinions[]>([]);
   readonly currentUserOpinionsIndex = signal<number>(0);
   readonly currentRating = signal<number>(0);
+  isModalOpen = signal<boolean>(false);
 
   constructor(
     private modalService: ModalService,
@@ -49,6 +59,10 @@ export class UserOpinionsComponent {
   }
 
   openModal() {
-    this.modalService.openModal();
+    this.isModalOpen.set(true);
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false);
   }
 }
