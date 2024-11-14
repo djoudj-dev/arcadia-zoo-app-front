@@ -1,5 +1,10 @@
-<div class="max-w-2xl mx-auto p-6">
+<div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+  <h2 class="text-2xl font-serif text-quinary mb-6 text-center">
+    Partagez votre expérience
+  </h2>
+
   <form [formGroup]="opinionForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Champ Nom -->
     <div class="flex flex-col">
       <label for="name" class="mb-2 font-sans text-quinary font-medium">
         Nom
@@ -8,11 +13,25 @@
         type="text"
         id="name"
         formControlName="name"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans transition-all duration-200 ease-in-out"
+        [class.border-red-500]="nameErrors"
+        [class.focus:ring-red-500]="nameErrors"
         placeholder="Votre nom"
       />
+      @if (nameErrors) {
+      <div class="mt-1 text-sm text-red-500">
+        @if (opinionForm.get('name')?.errors?.['required']) {
+        <span>Le nom est requis</span>
+        } @if (opinionForm.get('name')?.errors?.['minlength']) {
+        <span>Le nom doit contenir au moins 2 caractères</span>
+        } @if (opinionForm.get('name')?.errors?.['pattern']) {
+        <span>Le nom contient des caractères non autorisés</span>
+        }
+      </div>
+      }
     </div>
 
+    <!-- Champ Avis -->
     <div class="flex flex-col">
       <label for="opinion" class="mb-2 font-sans text-quinary font-medium">
         Votre avis
@@ -21,35 +40,48 @@
         id="opinion"
         formControlName="opinion"
         rows="4"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans resize-none"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans resize-none transition-all duration-200 ease-in-out"
+        [class.border-red-500]="opinionErrors"
+        [class.focus:ring-red-500]="opinionErrors"
         placeholder="Partagez votre expérience..."
       ></textarea>
+      @if (opinionErrors) {
+      <div class="mt-1 text-sm text-red-500">
+        @if (opinionForm.get('opinion')?.errors?.['required']) {
+        <span>L'avis est requis</span>
+        } @if (opinionForm.get('opinion')?.errors?.['minlength']) {
+        <span>L'avis doit contenir au moins 10 caractères</span>
+        } @if (opinionForm.get('opinion')?.errors?.['maxlength']) {
+        <span>L'avis ne doit pas dépasser 500 caractères</span>
+        }
+      </div>
+      }
+      <div class="mt-1 text-xs text-gray-500">
+        {{ opinionForm.get("opinion")?.value?.length || 0 }}/500 caractères
+      </div>
     </div>
 
+    <!-- Note -->
     <div class="flex flex-col">
       <label for="rating" class="mb-2 font-sans text-quinary font-medium">
         Note
       </label>
-      <select
-        id="rating"
-        formControlName="rating"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans bg-white"
-      >
-        <option value="">Sélectionnez une note</option>
-        <option value="1">1 étoile</option>
-        <option value="2">2 étoiles</option>
-        <option value="3">3 étoiles</option>
-        <option value="4">4 étoiles</option>
-        <option value="5">5 étoiles</option>
-      </select>
+      <app-rate formControlName="rating" class="w-full p-3"></app-rate>
+      @if (opinionForm.get('rating')?.errors?.['required'] &&
+      opinionForm.get('rating')?.touched) {
+      <div class="mt-1 text-sm text-red-500">Veuillez attribuer une note</div>
+      }
     </div>
 
-    <div class="flex justify-end">
+    <!-- Bouton Submit -->
+    <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/5 pb-2 pt-2">
       <app-button
         [text]="'Envoyer'"
         [type]="'submit'"
         [disabled]="!opinionForm.valid"
-        [color]="'primary'"
+        [rounded]="true"
+        [color]="'tertiary'"
+        class="transform transition-transform duration-200 hover:scale-105"
       >
       </app-button>
     </div>
