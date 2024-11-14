@@ -1,5 +1,5 @@
-import { NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
 import { environment } from 'environments/environment.development';
@@ -8,13 +8,12 @@ import { ServiceService } from '../../zoo-services/service/service.service';
 @Component({
   selector: 'app-services-overview',
   standalone: true,
-  imports: [RouterLink, NgOptimizedImage],
+  imports: [RouterLink],
   templateUrl: './services-overview.component.html',
 })
 export class ServicesOverviewComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   services = signal<Service[]>([]);
-  loading = signal<boolean>(true);
-  imageStates = signal<Map<number, boolean>>(new Map());
 
   constructor(private serviceService: ServiceService) {}
 
@@ -22,32 +21,21 @@ export class ServicesOverviewComponent implements OnInit {
     this.loadServices();
   }
 
-  loadServices() {
-    this.loading.set(true);
-    this.serviceService.getServices().subscribe({
-      next: (data) => {
-        this.services.set(data);
-        this.loading.set(false);
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des services:', error);
-        this.loading.set(false);
-      },
-    });
+  private loadServices(): void {
+    this.serviceService
+      .getServices()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.services.set(data.map(this.formatServiceImage));
+      });
   }
 
-  onImageLoad(serviceId: number) {
-    const currentStates = new Map(this.imageStates());
-    currentStates.set(serviceId, true);
-    this.imageStates.set(currentStates);
-  }
-
-  isImageLoaded(serviceId: number): boolean {
-    return this.imageStates()?.get(serviceId) ?? false;
-  }
-
-  getImageUrl(url: string): string {
-    if (!url) return '/assets/images/placeholder.jpg';
-    return url.startsWith('http') ? url : `${environment.apiUrl}/api/${url}`;
+  private formatServiceImage(service: Service): Service {
+    return {
+      ...service,
+      images: service.images.startsWith('http')
+        ? service.images
+        : `${environment.apiUrl}/api/${service.images}`,
+    };
   }
 }

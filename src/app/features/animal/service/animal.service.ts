@@ -55,7 +55,7 @@ export class AnimalService {
         if (animal && animal.images) {
           animal.images = animal.images.startsWith('http')
             ? animal.images
-            : `${environment.apiUrl}/${animal.images}`;
+            : `${environment.apiUrl}/api/${animal.images}`;
         }
 
         return animal;
