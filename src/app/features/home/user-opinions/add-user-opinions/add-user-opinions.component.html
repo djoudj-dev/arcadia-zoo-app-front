@@ -1,13 +1,15 @@
+<!-- Container principal avec fond semi-transparent et coins arrondis -->
 <div
   class="max-w-2xl mx-auto bg-white/95 rounded-2xl shadow-xl relative overflow-hidden"
 >
-  <!-- Header -->
+  <!-- En-tête de la modal avec titre et bouton de fermeture -->
   <div
     class="bg-tertiary/10 px-8 py-6 border-b border-tertiary/20 flex justify-between items-center"
   >
     <h2 class="text-2xl font-serif text-tertiary font-bold">
       Partagez votre expérience
     </h2>
+    <!-- Bouton de fermeture avec icône -->
     <button
       (click)="closeModal()"
       class="p-2 hover:bg-tertiary/10 rounded-full transition-all duration-300"
@@ -25,12 +27,13 @@
     </button>
   </div>
 
+  <!-- Composant Toast pour les notifications -->
   <app-toast />
 
   <!-- Corps du formulaire -->
   <div class="px-8 py-6">
     <form [formGroup]="opinionForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <!-- Champ Nom -->
+      <!-- Champ Nom avec validation -->
       <div class="flex flex-col">
         <label
           for="name"
@@ -47,6 +50,7 @@
           [class.focus:ring-red-500]="nameErrors"
           placeholder="Votre nom"
         />
+        <!-- Messages d'erreur pour le champ Nom -->
         @if (nameErrors) {
         <div class="mt-1 text-sm text-red-500">
           @if (opinionForm.get('name')?.errors?.['required']) {
@@ -60,7 +64,7 @@
         }
       </div>
 
-      <!-- Champ Avis -->
+      <!-- Champ Avis avec validation -->
       <div class="flex flex-col">
         <label
           for="message"
@@ -77,6 +81,7 @@
           [class.focus:ring-red-500]="opinionErrors"
           placeholder="Partagez votre expérience..."
         ></textarea>
+        <!-- Messages d'erreur pour le champ Avis -->
         @if (opinionErrors) {
         <div class="mt-1 text-sm text-red-500">
           @if (opinionForm.get('opinion')?.errors?.['required']) {
@@ -88,12 +93,13 @@
           }
         </div>
         }
+        <!-- Compteur de caractères -->
         <div class="mt-1 text-xs text-gray-500">
           {{ opinionForm.get("opinion")?.value?.length || 0 }}/500 caractères
         </div>
       </div>
 
-      <!-- Note -->
+      <!-- Composant de notation avec étoiles -->
       <div class="flex flex-col">
         <label
           for="rating"
@@ -106,13 +112,14 @@
         >
           <app-rate formControlName="rating" class="w-full"></app-rate>
         </div>
+        <!-- Message d'erreur pour la notation -->
         @if (opinionForm.get('rating')?.errors?.['required'] &&
         opinionForm.get('rating')?.touched) {
         <div class="mt-1 text-sm text-red-500">Veuillez attribuer une note</div>
         }
       </div>
 
-      <!-- Date -->
+      <!-- Champ Date avec validation -->
       <div class="flex flex-col">
         <label
           for="date"
@@ -129,6 +136,7 @@
           [class.border-red-500]="dateErrors"
           [class.focus:ring-red-500]="dateErrors"
         />
+        <!-- Messages d'erreur pour le champ Date -->
         @if (dateErrors) {
         <div class="mt-1 text-sm text-red-500">
           @if (opinionForm.get('date')?.errors?.['required']) {
@@ -142,10 +150,11 @@
     </form>
   </div>
 
-  <!-- Footer -->
+  <!-- Pied de page avec bouton de soumission -->
   <div
     class="bg-tertiary/10 px-8 py-6 border-t border-tertiary/20 flex justify-center"
   >
+    <!-- Bouton de soumission avec animation au survol -->
     <app-button
       [text]="'Envoyer mon avis'"
       [type]="'submit'"
