@@ -65,9 +65,9 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () =>
-      import('./features/admin-dashboard/admin-dashboard.component').then(
-        (m) => m.DashboardComponent
-      ),
+      import(
+        './features/dashboard/admin-dashboard/admin-dashboard.component'
+      ).then((m) => m.DashboardComponent),
     title: 'Admin',
     canActivate: [authGuard],
     data: { roles: ['Admin'] },
@@ -76,7 +76,7 @@ export const routes: Routes = [
         path: 'account-management',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/account-management/account-management.component'
+            './features/dashboard/admin-dashboard/account-management/account-management.component'
           ).then((m) => m.AccountManagementComponent),
         title: 'Gestion des comptes',
       },
@@ -84,7 +84,7 @@ export const routes: Routes = [
         path: 'service-management',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/service-management/service-management.component'
+            './features/dashboard/admin-dashboard/service-management/service-management.component'
           ).then((m) => m.ServiceManagementComponent),
         title: 'Modification des services',
       },
@@ -92,7 +92,7 @@ export const routes: Routes = [
         path: 'habitat-management',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/habitat-management/habitat-management.component'
+            './features/dashboard/admin-dashboard/habitat-management/habitat-management.component'
           ).then((m) => m.HabitatManagementComponent),
         title: 'Gestion des habitats',
       },
@@ -100,7 +100,7 @@ export const routes: Routes = [
         path: 'animal-management',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/animal-management/animal-management.component'
+            './features/dashboard/admin-dashboard/animal-management/animal-management.component'
           ).then((m) => m.AnimalManagementComponent),
         title: 'Gestion des animaux',
       },
@@ -108,7 +108,7 @@ export const routes: Routes = [
         path: 'vet-reports',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/reports-veterinaire-dashboard/reports-veterinaire-dashboard.component'
+            './features/dashboard/admin-dashboard/reports-veterinaire-dashboard/reports-veterinaire-dashboard.component'
           ).then((m) => m.ReportsVeterinaireDashboardComponent),
         title: 'Comptes rendus des vétérinaires',
       },
@@ -116,7 +116,7 @@ export const routes: Routes = [
         path: 'habitats-dashboard',
         loadComponent: () =>
           import(
-            './features/admin-dashboard/habitats-dashboard/habitats-dashboard.component'
+            './features/dashboard/admin-dashboard/habitats-dashboard/habitats-dashboard.component'
           ).then((m) => m.HabitatsDashboardComponent),
         title: 'Consultation des habitats',
       },
@@ -137,9 +137,9 @@ export const routes: Routes = [
   {
     path: 'employe',
     loadComponent: () =>
-      import('./features/employe-dashboard/employe/employe.component').then(
-        (m) => m.EmployeComponent
-      ),
+      import(
+        './features/dashboard/employe-dashboard/employe/employe.component'
+      ).then((m) => m.EmployeComponent),
     title: 'Employé',
     canActivate: [authGuard],
     data: { roles: ['Employé'] },

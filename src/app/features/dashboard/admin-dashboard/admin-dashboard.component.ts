@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
-import { TokenService } from '../../core/token/token.service';
-import { ButtonComponent } from '../../shared/components/button/button.component';
+import { TokenService } from '../../../core/token/token.service';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { CountResourceComponent } from './stats-board/counts-resource/count-resource.component';
 
 @Component({

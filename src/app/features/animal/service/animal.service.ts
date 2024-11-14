@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Animal } from 'app/features/admin-dashboard/animal-management/model/animal.model';
-import { Habitat } from 'app/features/admin-dashboard/habitat-management/model/habitat.model';
+import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { environment } from 'environments/environment.development';
 import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
 

@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment.development'; // Corrigez le chemin ici
 import { BorderCardAnimalDirective } from '../../../shared/directives/border-card-animal/border-card-animal.directive';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
-import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
+import { Animal } from '../../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { AnimalOverviewService } from './service/animal-overview.service';
 
 @Component({
