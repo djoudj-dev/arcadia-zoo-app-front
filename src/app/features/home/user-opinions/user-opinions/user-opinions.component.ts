@@ -1,8 +1,7 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { ButtonComponent } from '../../shared/components/button/button.component';
-import { RateComponent } from '../../shared/components/rate/rate.component';
-import { AddReviewComponent } from '../add-user-opinions/add-user-opinions.component';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { RateComponent } from '../../../../shared/components/rate/rate.component';
 import { UserOpinions } from '../models/user-opinions.model';
 import { ModalService } from '../services/modal.service';
 import { UserOpinionsService } from '../services/user-opinions.service';
@@ -11,13 +10,7 @@ import { UserOpinionsService } from '../services/user-opinions.service';
   selector: 'app-user-opinions',
   templateUrl: './user-opinions.component.html',
   standalone: true,
-  imports: [
-    RateComponent,
-    ButtonComponent,
-    DatePipe,
-    AddReviewComponent,
-    AsyncPipe,
-  ],
+  imports: [RateComponent, ButtonComponent, DatePipe, AsyncPipe],
 })
 export class UserOpinionsComponent {
   readonly isReadOnly = signal<boolean>(true);
