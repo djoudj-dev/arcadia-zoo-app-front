@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { environment } from '../../../../../environments/environment.development';
-import { HabitatService } from '../../../habitats/service/habitat.service';
+import { environment } from '../../../../../../environments/environment.development';
+import { HabitatService } from '../../../../habitats/service/habitat.service';
 import { Habitat } from '../model/habitat.model';
 
 @Injectable({

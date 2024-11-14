@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment.development';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
-import { Habitat } from '../../admin-dashboard/habitat-management/model/habitat.model';
+import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
 
 @Component({

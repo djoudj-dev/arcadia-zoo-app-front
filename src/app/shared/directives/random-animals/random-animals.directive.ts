@@ -1,13 +1,13 @@
 import {
   Directive,
-  Input,
-  OnInit,
-  OnDestroy,
-  Output,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
 } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
-import { Animal } from '../../../features/admin-dashboard/animal-management/model/animal.model';
+import { Animal } from '../../../features/dashboard/admin-dashboard/animal-management/model/animal.model';
 
 @Directive({
   selector: '[appRandomAnimals]',

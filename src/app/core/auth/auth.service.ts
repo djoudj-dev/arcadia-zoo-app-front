@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
-import { User } from '../../features/admin-dashboard/account-management/model/user.model';
+import { User } from '../../features/dashboard/admin-dashboard/account-management/model/user.model';
 import { AlertService } from '../alert/service/alert.service';
 import { TokenService } from '../token/token.service';
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Feature } from 'app/features/admin-dashboard/service-management/model/feature.model';
-import { Service } from 'app/features/admin-dashboard/service-management/model/service.model';
+import { Feature } from 'app/features/dashboard/admin-dashboard/service-management/model/feature.model';
+import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ServiceService } from '../service/service.service';
 

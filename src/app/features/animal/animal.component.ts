@@ -3,8 +3,8 @@ import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VetNote } from '../../core/models/vetnote.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
-import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
+import { Animal } from '../dashboard/admin-dashboard/animal-management/model/animal.model';
+import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { AnimalService } from './service/animal.service';
 
 @Component({

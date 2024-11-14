@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonComponent } from '../../shared/components/button/button.component';
-import { Service } from '../admin-dashboard/service-management/model/service.model';
-import { ServiceService } from './service/service.service';
 import { environment } from 'environments/environment.development';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Service } from '../dashboard/admin-dashboard/service-management/model/service.model';
+import { ServiceService } from './service/service.service';
 
 @Component({
   selector: 'app-services',
