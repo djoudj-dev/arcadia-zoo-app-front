@@ -1,116 +1,160 @@
-<div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg relative">
+<div
+  class="max-w-2xl mx-auto bg-white/95 rounded-2xl shadow-xl relative overflow-hidden"
+>
+  <!-- Header -->
+  <div
+    class="bg-tertiary/10 px-8 py-6 border-b border-tertiary/20 flex justify-between items-center"
+  >
+    <h2 class="text-2xl font-serif text-tertiary font-bold">
+      Partagez votre expérience
+    </h2>
+    <button
+      (click)="closeModal()"
+      class="p-2 hover:bg-tertiary/10 rounded-full transition-all duration-300"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
   <app-toast />
 
-  <h2 class="text-2xl font-serif text-quinary mb-6 text-center">
-    Partagez votre expérience
-  </h2>
-
-  <form [formGroup]="opinionForm" (ngSubmit)="onSubmit()" class="space-y-6">
-    <!-- Champ Nom -->
-    <div class="flex flex-col">
-      <label for="name" class="mb-2 font-sans text-quinary font-medium">
-        Nom
-      </label>
-      <input
-        type="text"
-        id="name"
-        formControlName="name"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans transition-all duration-200 ease-in-out"
-        [class.border-red-500]="nameErrors"
-        [class.focus:ring-red-500]="nameErrors"
-        placeholder="Votre nom"
-      />
-      @if (nameErrors) {
-      <div class="mt-1 text-sm text-red-500">
-        @if (opinionForm.get('name')?.errors?.['required']) {
-        <span>Le nom est requis</span>
-        } @if (opinionForm.get('name')?.errors?.['minlength']) {
-        <span>Le nom doit contenir au moins 2 caractères</span>
-        } @if (opinionForm.get('name')?.errors?.['pattern']) {
-        <span>Le nom contient des caractères non autorisés</span>
+  <!-- Corps du formulaire -->
+  <div class="px-8 py-6">
+    <form [formGroup]="opinionForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Champ Nom -->
+      <div class="flex flex-col">
+        <label
+          for="name"
+          class="mb-2 font-sans text-quinary font-medium text-sm"
+        >
+          Nom
+        </label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
+          [class.border-red-500]="nameErrors"
+          [class.focus:ring-red-500]="nameErrors"
+          placeholder="Votre nom"
+        />
+        @if (nameErrors) {
+        <div class="mt-1 text-sm text-red-500">
+          @if (opinionForm.get('name')?.errors?.['required']) {
+          <span>Le nom est requis</span>
+          } @if (opinionForm.get('name')?.errors?.['minlength']) {
+          <span>Le nom doit contenir au moins 2 caractères</span>
+          } @if (opinionForm.get('name')?.errors?.['pattern']) {
+          <span>Le nom contient des caractères non autorisés</span>
+          }
+        </div>
         }
       </div>
-      }
-    </div>
 
-    <!-- Champ Avis -->
-    <div class="flex flex-col">
-      <label for="message" class="mb-2 font-sans text-quinary font-medium">
-        Votre avis
-      </label>
-      <textarea
-        id="message"
-        formControlName="message"
-        rows="4"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans resize-none transition-all duration-200 ease-in-out"
-        [class.border-red-500]="opinionErrors"
-        [class.focus:ring-red-500]="opinionErrors"
-        placeholder="Partagez votre expérience..."
-      ></textarea>
-      @if (opinionErrors) {
-      <div class="mt-1 text-sm text-red-500">
-        @if (opinionForm.get('opinion')?.errors?.['required']) {
-        <span>L'avis est requis</span>
-        } @if (opinionForm.get('opinion')?.errors?.['minlength']) {
-        <span>L'avis doit contenir au moins 10 caractères</span>
-        } @if (opinionForm.get('opinion')?.errors?.['maxlength']) {
-        <span>L'avis ne doit pas dépasser 500 caractères</span>
+      <!-- Champ Avis -->
+      <div class="flex flex-col">
+        <label
+          for="message"
+          class="mb-2 font-sans text-quinary font-medium text-sm"
+        >
+          Votre avis
+        </label>
+        <textarea
+          id="message"
+          formControlName="message"
+          rows="4"
+          class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans resize-none transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
+          [class.border-red-500]="opinionErrors"
+          [class.focus:ring-red-500]="opinionErrors"
+          placeholder="Partagez votre expérience..."
+        ></textarea>
+        @if (opinionErrors) {
+        <div class="mt-1 text-sm text-red-500">
+          @if (opinionForm.get('opinion')?.errors?.['required']) {
+          <span>L'avis est requis</span>
+          } @if (opinionForm.get('opinion')?.errors?.['minlength']) {
+          <span>L'avis doit contenir au moins 10 caractères</span>
+          } @if (opinionForm.get('opinion')?.errors?.['maxlength']) {
+          <span>L'avis ne doit pas dépasser 500 caractères</span>
+          }
+        </div>
+        }
+        <div class="mt-1 text-xs text-gray-500">
+          {{ opinionForm.get("opinion")?.value?.length || 0 }}/500 caractères
+        </div>
+      </div>
+
+      <!-- Note -->
+      <div class="flex flex-col">
+        <label
+          for="rating"
+          class="mb-2 font-sans text-quinary font-medium text-sm"
+        >
+          Note
+        </label>
+        <div
+          class="p-3.5 border-2 border-tertiary/20 rounded-xl bg-white hover:border-tertiary/50 transition-all duration-300"
+        >
+          <app-rate formControlName="rating" class="w-full"></app-rate>
+        </div>
+        @if (opinionForm.get('rating')?.errors?.['required'] &&
+        opinionForm.get('rating')?.touched) {
+        <div class="mt-1 text-sm text-red-500">Veuillez attribuer une note</div>
         }
       </div>
-      }
-      <div class="mt-1 text-xs text-gray-500">
-        {{ opinionForm.get("opinion")?.value?.length || 0 }}/500 caractères
-      </div>
-    </div>
 
-    <!-- Note -->
-    <div class="flex flex-col">
-      <label for="rating" class="mb-2 font-sans text-quinary font-medium">
-        Note
-      </label>
-      <app-rate formControlName="rating" class="w-full p-3"></app-rate>
-      @if (opinionForm.get('rating')?.errors?.['required'] &&
-      opinionForm.get('rating')?.touched) {
-      <div class="mt-1 text-sm text-red-500">Veuillez attribuer une note</div>
-      }
-    </div>
-
-    <!-- Date -->
-    <div class="flex flex-col">
-      <label for="date" class="mb-2 font-sans text-quinary font-medium">
-        Date de votre visite
-      </label>
-      <input
-        type="date"
-        id="date"
-        formControlName="date"
-        [max]="opinionForm.get('date')?.value"
-        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans transition-all duration-200 ease-in-out"
-        [class.border-red-500]="dateErrors"
-        [class.focus:ring-red-500]="dateErrors"
-      />
-      @if (dateErrors) {
-      <div class="mt-1 text-sm text-red-500">
-        @if (opinionForm.get('date')?.errors?.['required']) {
-        <span>La date est requise</span>
-        } @if (opinionForm.get('date')?.errors?.['futureDate']) {
-        <span>La date ne peut pas être dans le futur</span>
+      <!-- Date -->
+      <div class="flex flex-col">
+        <label
+          for="date"
+          class="mb-2 font-sans text-quinary font-medium text-sm"
+        >
+          Date de votre visite
+        </label>
+        <input
+          type="date"
+          id="date"
+          formControlName="date"
+          [max]="currentDate"
+          class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
+          [class.border-red-500]="dateErrors"
+          [class.focus:ring-red-500]="dateErrors"
+        />
+        @if (dateErrors) {
+        <div class="mt-1 text-sm text-red-500">
+          @if (opinionForm.get('date')?.errors?.['required']) {
+          <span>La date est requise</span>
+          } @if (opinionForm.get('date')?.errors?.['futureDate']) {
+          <span>La date ne peut pas être dans le futur</span>
+          }
+        </div>
         }
       </div>
-      }
-    </div>
+    </form>
+  </div>
 
-    <!-- Bouton Submit -->
-    <div class="w-full sm:w-2/5 md:w-1/3 lg:w-1/5 pb-2 pt-2">
-      <app-button
-        [text]="'Envoyer'"
-        [type]="'submit'"
-        [disabled]="!opinionForm.valid"
-        [rounded]="true"
-        [color]="'tertiary'"
-        class="transform transition-transform duration-200 hover:scale-105"
-      >
-      </app-button>
-    </div>
-  </form>
+  <!-- Footer -->
+  <div
+    class="bg-tertiary/10 px-8 py-6 border-t border-tertiary/20 flex justify-center"
+  >
+    <app-button
+      [text]="'Envoyer mon avis'"
+      [type]="'submit'"
+      [disabled]="!opinionForm.valid"
+      [rounded]="true"
+      [color]="'tertiary'"
+      class="transform transition-all duration-300 hover:scale-105 hover:shadow-lg w-full sm:w-1/2 md:w-1/3"
+      (click)="onSubmit()"
+    >
+    </app-button>
+  </div>
 </div>
