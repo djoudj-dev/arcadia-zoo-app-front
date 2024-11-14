@@ -1,0 +1,57 @@
+<div class="max-w-2xl mx-auto p-6">
+  <form [formGroup]="opinionForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div class="flex flex-col">
+      <label for="name" class="mb-2 font-sans text-quinary font-medium">
+        Nom
+      </label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans"
+        placeholder="Votre nom"
+      />
+    </div>
+
+    <div class="flex flex-col">
+      <label for="opinion" class="mb-2 font-sans text-quinary font-medium">
+        Votre avis
+      </label>
+      <textarea
+        id="opinion"
+        formControlName="opinion"
+        rows="4"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans resize-none"
+        placeholder="Partagez votre expérience..."
+      ></textarea>
+    </div>
+
+    <div class="flex flex-col">
+      <label for="rating" class="mb-2 font-sans text-quinary font-medium">
+        Note
+      </label>
+      <select
+        id="rating"
+        formControlName="rating"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans bg-white"
+      >
+        <option value="">Sélectionnez une note</option>
+        <option value="1">1 étoile</option>
+        <option value="2">2 étoiles</option>
+        <option value="3">3 étoiles</option>
+        <option value="4">4 étoiles</option>
+        <option value="5">5 étoiles</option>
+      </select>
+    </div>
+
+    <div class="flex justify-end">
+      <app-button
+        [text]="'Envoyer'"
+        [type]="'submit'"
+        [disabled]="!opinionForm.valid"
+        [color]="'primary'"
+      >
+      </app-button>
+    </div>
+  </form>
+</div>

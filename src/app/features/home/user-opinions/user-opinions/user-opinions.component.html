@@ -27,7 +27,7 @@
             <p class="text-sm text-gray-500">
               {{
                 userOpinions()[currentUserOpinionsIndex()].date
-                  | date : "longDate" : "fr"
+                  | date : "dd MMMM yyyy" : "fr-FR"
               }}
             </p>
           </div>
@@ -46,10 +46,13 @@
       </p>
 
       <div class="flex justify-between items-center">
-        <button
+        <app-button
+          [text]="''"
+          [customClass]="
+            'p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed w-auto'
+          "
           (click)="changeUserOpinions('previous')"
           [disabled]="currentUserOpinionsIndex() === 0"
-          class="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +68,7 @@
               d="M15 19l-7-7 7-7"
             />
           </svg>
-        </button>
+        </app-button>
 
         <div class="flex gap-2">
           @for (review of userOpinions(); track review.id) {
@@ -84,10 +87,13 @@
           }
         </div>
 
-        <button
+        <app-button
+          [text]="''"
+          [customClass]="
+            'p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed w-auto'
+          "
           (click)="changeUserOpinions('next')"
           [disabled]="currentUserOpinionsIndex() === userOpinions().length - 1"
-          class="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +109,7 @@
               d="M9 5l7 7-7 7"
             />
           </svg>
-        </button>
+        </app-button>
       </div>
     </div>
     } @else {
@@ -114,10 +120,14 @@
 
     <div class="text-center mt-8">
       <app-button
+        [text]="'Partagez votre expérience'"
+        [color]="'tertiary'"
+        [rounded]="true"
+        [customClass]="
+          'hover:bg-quaternary font-semibold py-3 px-6 transition-colors duration-300'
+        "
         (click)="openModal()"
-        class="bg-tertiary hover:bg-quaternary text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300"
       >
-        Partagez votre expérience
       </app-button>
     </div>
   </div>
