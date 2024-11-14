@@ -1,4 +1,6 @@
-<div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+<div class="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg relative">
+  <app-toast />
+
   <h2 class="text-2xl font-serif text-quinary mb-6 text-center">
     Partagez votre expérience
   </h2>
@@ -33,12 +35,12 @@
 
     <!-- Champ Avis -->
     <div class="flex flex-col">
-      <label for="opinion" class="mb-2 font-sans text-quinary font-medium">
+      <label for="message" class="mb-2 font-sans text-quinary font-medium">
         Votre avis
       </label>
       <textarea
-        id="opinion"
-        formControlName="opinion"
+        id="message"
+        formControlName="message"
         rows="4"
         class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans resize-none transition-all duration-200 ease-in-out"
         [class.border-red-500]="opinionErrors"
@@ -70,6 +72,31 @@
       @if (opinionForm.get('rating')?.errors?.['required'] &&
       opinionForm.get('rating')?.touched) {
       <div class="mt-1 text-sm text-red-500">Veuillez attribuer une note</div>
+      }
+    </div>
+
+    <!-- Date -->
+    <div class="flex flex-col">
+      <label for="date" class="mb-2 font-sans text-quinary font-medium">
+        Date de votre visite
+      </label>
+      <input
+        type="date"
+        id="date"
+        formControlName="date"
+        [max]="opinionForm.get('date')?.value"
+        class="w-full p-3 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary font-sans transition-all duration-200 ease-in-out"
+        [class.border-red-500]="dateErrors"
+        [class.focus:ring-red-500]="dateErrors"
+      />
+      @if (dateErrors) {
+      <div class="mt-1 text-sm text-red-500">
+        @if (opinionForm.get('date')?.errors?.['required']) {
+        <span>La date est requise</span>
+        } @if (opinionForm.get('date')?.errors?.['futureDate']) {
+        <span>La date ne peut pas être dans le futur</span>
+        }
+      </div>
       }
     </div>
 
