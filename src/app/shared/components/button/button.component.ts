@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
+/**
+ * Composant Button réutilisable et personnalisable
+ * Permet de créer des boutons avec différentes variantes de couleurs et styles
+ * Ce composant est autonome (standalone) et utilise CommonModule
+ */
 @Component({
   standalone: true,
   imports: [CommonModule],
@@ -16,8 +21,13 @@ import { Component, Input } from '@angular/core';
   </button>`,
 })
 export class ButtonComponent {
+  /** Texte à afficher sur le bouton */
   @Input() text: string = 'Button';
+
+  /** Type du bouton HTML */
   @Input() type: string = 'button';
+
+  /** Couleur du bouton parmi les thèmes prédéfinis */
   @Input() color:
     | 'red'
     | 'primary'
@@ -25,12 +35,24 @@ export class ButtonComponent {
     | 'tertiary'
     | 'quaternary'
     | 'quinary' = 'secondary';
+
+  /** Désactive l'arrondi des coins */
   @Input() noRounded: boolean = false;
+
+  /** Active l'arrondi complet des coins */
   @Input() rounded: boolean = false;
+
+  /** État désactivé du bouton */
   @Input() disabled: boolean = false;
+
+  /** Classes CSS personnalisées additionnelles */
   @Input() customClass: string = '';
 
-  // Méthode pour calculer et retourner les classes dynamiques
+  /**
+   * Calcule et retourne les classes CSS dynamiques du bouton
+   * Gère les couleurs, les états (hover, focus, active), les arrondis et l'état désactivé
+   * @returns Un objet contenant les classes CSS à appliquer
+   */
   getButtonClasses() {
     return {
       'bg-red-500 hover:bg-red-600 focus:bg-red-700 active:bg-red-800':
