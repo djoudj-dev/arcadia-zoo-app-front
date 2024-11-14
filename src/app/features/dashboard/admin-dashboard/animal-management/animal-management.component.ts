@@ -1,9 +1,9 @@
 import { SlicePipe } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { environment } from '../../../../environments/environment.development';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { HabitatService } from '../../habitats/service/habitat.service';
+import { environment } from '../../../../../environments/environment.development';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { HabitatService } from '../../../habitats/service/habitat.service';
 import { Habitat } from '../habitat-management/model/habitat.model';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Animal } from './model/animal.model';

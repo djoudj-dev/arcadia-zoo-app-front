@@ -1,4 +1,4 @@
-import { VetNote } from '../../../../core/models/vetnote.model';
+import { VetNote } from '../../../../../core/models/vetnote.model';
 
 export enum Diet {
   Herbivore = 'Herbivore',
