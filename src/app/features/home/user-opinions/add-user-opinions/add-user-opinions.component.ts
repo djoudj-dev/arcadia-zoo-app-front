@@ -31,17 +31,18 @@ import { UserOpinionsService } from '../services/user-opinions.service';
 export class AddUserOpinionsComponent implements OnInit, OnDestroy {
   opinionForm: FormGroup = new FormGroup({});
   private modalSubscription: Subscription | null = null;
+  currentDate: string;
 
   constructor(
     private fb: FormBuilder,
     private userOpinionsService: UserOpinionsService,
     private modalService: ModalService,
     private toastService: ToastService
-  ) {}
+  ) {
+    this.currentDate = new Date().toISOString().split('T')[0];
+  }
 
   ngOnInit() {
-    const today = new Date().toISOString().split('T')[0];
-
     this.opinionForm = this.fb.group({
       name: [
         '',
@@ -62,7 +63,18 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
         ],
       ],
       rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-      date: [today, [Validators.required, this.maxDateValidator()]],
+      date: [
+        '',
+        [
+          Validators.required,
+          (control: AbstractControl): ValidationErrors | null => {
+            const date = new Date(control.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return date > today ? { futureDate: true } : null;
+          },
+        ],
+      ],
     });
 
     // Souscrire au modal
@@ -104,14 +116,15 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
       this.userOpinionsService.addUserOpinions(userOpinions).subscribe({
         next: (response) => {
           console.log('Avis ajouté avec succès:', response);
-          this.modalService.showSuccessMessage(
+          this.toastService.showSuccess(
             'Votre avis a été envoyé avec succès ! Merci de votre contribution.'
           );
+          this.modalService.closeWithDelay();
           this.userOpinionsService.getUserOpinions().subscribe();
         },
         error: (error) => {
           console.error("Erreur lors de l'envoi de l'avis au backend", error);
-          this.modalService.showErrorMessage(
+          this.toastService.showError(
             "Une erreur est survenue lors de l'envoi de votre avis. Veuillez réessayer ou contacter l'administrateur si le problème persiste."
           );
         },
@@ -119,17 +132,7 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private maxDateValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) {
-        return null;
-      }
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const inputDate = new Date(control.value);
-      inputDate.setHours(0, 0, 0, 0);
-
-      return inputDate > today ? { futureDate: true } : null;
-    };
+  closeModal(): void {
+    this.modalService.close();
   }
 }
