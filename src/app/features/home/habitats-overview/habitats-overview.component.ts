@@ -1,4 +1,5 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment.development';
 import { BorderCardDirective } from '../../../shared/directives/border-card-habitat/border-card-habitat.directive';
@@ -12,23 +13,30 @@ import { HabitatService } from '../../habitats/service/habitat.service';
   templateUrl: './habitats-overview.component.html',
 })
 export class HabitatsOverviewComponent implements OnInit {
-  // Déclare habitats comme un signal pour gérer et réagir aux changements de données
+  private destroyRef = inject(DestroyRef);
   habitats = signal<Habitat[]>([]);
 
   constructor(private habitatService: HabitatService) {}
 
   ngOnInit() {
-    // Récupérer les habitats depuis le service et mettre à jour le signal habitats
-    this.habitatService.getHabitats().subscribe((data) => {
-      // Formate l'URL de l'image de chaque habitat et met à jour le signal
-      this.habitats.set(
-        data.map((habitat) => ({
-          ...habitat,
-          image: habitat.images.startsWith('http')
-            ? habitat.images
-            : `${environment.apiUrl}/uploads/${habitat.images}`,
-        }))
-      );
-    });
+    this.loadHabitats();
+  }
+
+  private loadHabitats(): void {
+    this.habitatService
+      .getHabitats()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.habitats.set(data.map(this.formatHabitatImage));
+      });
+  }
+
+  private formatHabitatImage(habitat: Habitat): Habitat {
+    return {
+      ...habitat,
+      images: habitat.images.startsWith('http')
+        ? habitat.images
+        : `${environment.apiUrl}/uploads/${habitat.images}`,
+    };
   }
 }

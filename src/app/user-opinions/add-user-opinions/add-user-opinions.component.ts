@@ -5,20 +5,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ModalService } from '../services/modal.service';
-import { ReviewService } from '../services/review.service';
-import { Review } from '../../core/models/review.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { RateComponent } from '../../shared/components/rate/rate.component';
+import { ModalService } from '../services/modal.service';
+import { UserOpinionsService } from '../services/user-opinions.service';
+import { UserOpinions } from '../models/user-opinions.model';
 
 @Component({
-  selector: 'app-add-review',
+  selector: 'app-add-user-opinions',
   standalone: true,
-  templateUrl: './add-review.component.html',
+  templateUrl: './add-user-opinions.component.html',
   imports: [ReactiveFormsModule, ButtonComponent, RateComponent],
 })
 export class AddReviewComponent implements OnInit {
-  addReviewForm!: FormGroup;
+  addUserOpinionsForm!: FormGroup;
   successMessage: string = '';
   errorMessage: string = '';
   isModalOpen: boolean = false;
@@ -29,12 +29,12 @@ export class AddReviewComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private modalService: ModalService,
-    private reviewService: ReviewService
+    private userOpinionsService: UserOpinionsService
   ) {}
 
   ngOnInit() {
     // Initialisation du formulaire avec des validators
-    this.addReviewForm = this.formBuilder.group({
+    this.addUserOpinionsForm = this.formBuilder.group({
       name: [
         '',
         [Validators.required, Validators.pattern('^[a-zA-ZÀ-ÿ\\s\\-]+$')], // Regex pour les lettres et espaces uniquement
@@ -64,17 +64,17 @@ export class AddReviewComponent implements OnInit {
 
   // Ajouter un nouvel avis
   addReview() {
-    if (this.addReviewForm.invalid) {
+    if (this.addUserOpinionsForm.invalid) {
       this.errorMessage = 'Veuillez remplir correctement le formulaire.';
       return;
     }
 
-    const newReview: Review = {
+    const newReview: UserOpinions = {
       id: Date.now(), // Générer un ID unique
-      ...this.addReviewForm.value, // Récupérer toutes les valeurs du formulaire
+      ...this.addUserOpinionsForm.value, // Récupérer toutes les valeurs du formulaire
     };
 
-    this.reviewService.addReview(newReview);
+    this.userOpinionsService.addUserOpinions(newReview);
 
     this.successMessage = 'Votre avis a été envoyé avec succès !';
     this.errorMessage = '';
@@ -93,7 +93,7 @@ export class AddReviewComponent implements OnInit {
 
   // Réinitialiser le formulaire
   resetForm() {
-    this.addReviewForm.reset({
+    this.addUserOpinionsForm.reset({
       rating: 0, // Réinitialisation à une note de 0 par défaut
       accepted: false, // Par défaut, la case n'est pas cochée
     });
@@ -101,6 +101,6 @@ export class AddReviewComponent implements OnInit {
 
   // Fonction pour faciliter l'accès aux contrôles du formulaire dans le template
   get f() {
-    return this.addReviewForm.controls;
+    return this.addUserOpinionsForm.controls;
   }
 }

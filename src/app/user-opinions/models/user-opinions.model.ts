@@ -1,4 +1,4 @@
-export interface Review {
+export interface UserOpinions {
   readonly id: number;
   name: string;
   date: string;
