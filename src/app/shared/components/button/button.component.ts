@@ -5,12 +5,13 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   selector: 'app-button',
-  template: `<button
+  template: ` <button
     [type]="type"
     [ngClass]="getButtonClasses()"
     class="focus:outline-none text-white text-base font-sans w-full py-2 text-center"
     [disabled]="disabled"
   >
+    <ng-content></ng-content>
     {{ text }}
   </button>`,
 })
