@@ -72,10 +72,10 @@ export class UserOpinionsComponent implements OnDestroy {
   }
 
   openModal() {
-    this.modalService.openModal();
+    this.modalService.open();
   }
 
   closeModal() {
-    this.modalService.closeModal();
+    this.modalService.close();
   }
 }
