@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.development';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Animal } from '../../../admin-dashboard/animal-management/model/animal.model';
 
@@ -18,7 +18,6 @@ export class AnimalOverviewService {
    * Récupère la liste des animaux depuis l'API.
    */
   getAnimals(): Observable<Animal[]> {
-    console.log('Fetching animals from:', this.apiUrl); // Ajoutez cette ligne pour vérifier l'URL
     return this.http.get<Animal[]>(this.apiUrl).pipe(
       map((animals) =>
         animals.map((animal) => ({
@@ -29,7 +28,7 @@ export class AnimalOverviewService {
       tap((animals) => console.log('Fetched animals:', animals)), // Ajoutez cette ligne pour vérifier les données reçues
       catchError((error) => {
         console.error('Error fetching animals:', error);
-        return throwError(error);
+        return of([]); // Retourne un Observable vide en cas d'erreur
       })
     );
   }
