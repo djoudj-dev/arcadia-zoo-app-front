@@ -1,4 +1,6 @@
+<!-- Section principale des avis utilisateurs -->
 <section class="bg-primary py-12 px-4 md:px-8">
+  <!-- En-tête de la section -->
   <div class="text-center mb-12">
     <h2 class="text-3xl font-serif text-quinary mb-4">Avis de nos visiteurs</h2>
     <p class="text-gray-600 max-w-2xl mx-auto">
@@ -6,13 +8,18 @@
     </p>
   </div>
 
+  <!-- Container des avis -->
   <div class="max-w-xl mx-auto">
+    <!-- Affichage conditionnel si des avis existent -->
     @if (userOpinions().length > 0) {
     <div
       class="bg-white rounded-lg shadow-lg p-8 mb-8 transition-all duration-300 border border-quinary/10 hover:border-quinary/20"
     >
+      <!-- En-tête de l'avis avec informations utilisateur et note -->
       <div class="flex items-center justify-between mb-6">
+        <!-- Informations utilisateur -->
         <div class="flex items-center gap-4">
+          <!-- Avatar avec première lettre du nom -->
           <div
             class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center"
           >
@@ -20,6 +27,7 @@
               {{ userOpinions()[currentUserOpinionsIndex()].name.charAt(0) }}
             </span>
           </div>
+          <!-- Nom et date -->
           <div>
             <h3 class="font-semibold text-lg text-quinary">
               {{ userOpinions()[currentUserOpinionsIndex()].name }}
@@ -33,30 +41,30 @@
           </div>
         </div>
 
-        <app-rate
-          [rating]="currentRating"
-          [isReadOnly]="isReadOnly"
-          class="scale-90"
-        >
-        </app-rate>
+        <!-- Composant d'affichage de la note -->
+        <app-rate [rating]="currentRating" [isReadOnly]="isReadOnly"></app-rate>
       </div>
 
+      <!-- Message de l'avis -->
       <p class="text-gray-700 mb-6 italic">
         "{{ userOpinions()[currentUserOpinionsIndex()].message }}"
       </p>
 
+      <!-- Navigation entre les avis -->
       <div class="flex justify-between items-center">
+        <!-- Bouton précédent -->
         <app-button
           [text]="''"
+          [color]="'secondary'"
           [customClass]="
-            'p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed w-auto'
+            '!w-10 !h-10 flex items-center justify-center rounded-full !p-0'
           "
           (click)="changeUserOpinions('previous')"
           [disabled]="currentUserOpinionsIndex() === 0"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
+            class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -70,6 +78,7 @@
           </svg>
         </app-button>
 
+        <!-- Indicateurs de pagination -->
         <div class="flex gap-2">
           @for (review of userOpinions(); track review.id) {
           <div
@@ -87,17 +96,19 @@
           }
         </div>
 
+        <!-- Bouton suivant -->
         <app-button
           [text]="''"
+          [color]="'secondary'"
           [customClass]="
-            'p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed w-auto'
+            '!w-10 !h-10 flex items-center justify-center rounded-full !p-0'
           "
           (click)="changeUserOpinions('next')"
           [disabled]="currentUserOpinionsIndex() === userOpinions().length - 1"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
+            class="h-5 w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -113,18 +124,20 @@
       </div>
     </div>
     } @else {
+    <!-- Message affiché quand aucun avis n'est disponible -->
     <p class="text-center text-gray-500">
       Aucun avis disponible pour le moment.
     </p>
     }
 
+    <!-- Bouton pour ajouter un nouvel avis -->
     <div class="text-center mt-8">
       <app-button
         [text]="'Partagez votre expérience'"
         [color]="'tertiary'"
         [rounded]="true"
         [customClass]="
-          'hover:bg-quaternary font-semibold py-3 px-6 transition-colors duration-300'
+          '!w-auto !px-6 !py-3 font-semibold text-white hover:bg-quaternary transition-colors duration-300'
         "
         (click)="openModal()"
       >
@@ -133,6 +146,7 @@
   </div>
 </section>
 
+<!-- Modal pour l'ajout d'avis -->
 <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
-  <app-add-user-opinions></app-add-user-opinions>
+  <app-add-user-opinions />
 </app-modal>
