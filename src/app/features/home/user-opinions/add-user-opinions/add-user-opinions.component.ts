@@ -134,6 +134,9 @@ export class AddUserOpinionsComponent implements OnInit {
           );
           this.opinionForm.reset();
           this.opinionAdded.emit();
+          setTimeout(() => {
+            this.closeModal.emit();
+          }, 3000);
         },
         error: (error) => {
           console.error("Erreur lors de l'envoi de l'avis au backend", error);
