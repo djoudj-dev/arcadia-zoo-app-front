@@ -34,7 +34,9 @@ export class ButtonComponent {
     | 'secondary'
     | 'tertiary'
     | 'quaternary'
-    | 'quinary' = 'secondary';
+    | 'quinary'
+    | 'success'
+    | 'danger' = 'secondary';
 
   /** Désactive l'arrondi des coins */
   @Input() noRounded: boolean = false;
@@ -55,8 +57,6 @@ export class ButtonComponent {
    */
   getButtonClasses() {
     return {
-      'bg-red-500 hover:bg-red-600 focus:bg-red-700 active:bg-red-800':
-        this.color === 'red',
       'bg-primary hover:bg-primary/80 focus:bg-primary/70 active:bg-primary/90':
         this.color === 'primary',
       'bg-secondary hover:bg-secondary/80 focus:bg-secondary/70 active:bg-secondary/90':
@@ -67,12 +67,16 @@ export class ButtonComponent {
         this.color === 'quaternary',
       'bg-quinary hover:bg-quinary/80 focus:bg-quinary/70 active:bg-quinary/90':
         this.color === 'quinary',
+      'bg-green-500 hover:bg-green-600 focus:bg-green-700 active:bg-green-800':
+        this.color === 'success',
+      'bg-red-500 hover:bg-red-600 focus:bg-red-700 active:bg-red-800':
+        this.color === 'danger' || this.color === 'red',
       'transform hover:scale-105 focus:scale-105 transition-all duration-300 ease-in-out':
         true,
       'rounded-t-lg': !this.noRounded,
       'rounded-lg': this.rounded,
       [this.customClass]: !!this.customClass,
-      'opacity-50 cursor-not-allowed': this.disabled, // Styles désactivés
+      'opacity-50 cursor-not-allowed': this.disabled,
     };
   }
 }

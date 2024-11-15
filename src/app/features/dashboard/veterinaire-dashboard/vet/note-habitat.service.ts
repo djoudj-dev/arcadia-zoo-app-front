@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HabitatNote } from 'app/core/models/habitat-note.model';
 import { Observable } from 'rxjs';
-import { HabitatNote } from '../../../core/models/habitat-note.model';
 
 @Injectable({
   providedIn: 'root',

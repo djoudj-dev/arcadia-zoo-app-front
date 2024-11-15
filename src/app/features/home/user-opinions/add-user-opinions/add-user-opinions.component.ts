@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,11 +9,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
-import { Subscription } from 'rxjs';
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
 import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
-import { ModalService } from '../services/modal.service';
 import { UserOpinionsService } from '../services/user-opinions.service';
 
 /**
@@ -32,20 +30,24 @@ import { UserOpinionsService } from '../services/user-opinions.service';
     ToastComponent,
   ],
 })
-export class AddUserOpinionsComponent implements OnInit, OnDestroy {
+export class AddUserOpinionsComponent implements OnInit {
   /** Formulaire réactif pour la saisie d'avis */
   opinionForm: FormGroup = new FormGroup({});
-
-  /** Gestion de la souscription à la modal */
-  private modalSubscription: Subscription | null = null;
 
   /** Date du jour formatée en YYYY-MM-DD */
   currentDate: string;
 
+  /** Input pour contrôler si la modal est ouverte */
+  @Input() isOpen = false;
+
+  /** Event emitter pour notifier quand un avis est ajouté */
+  @Output() opinionAdded = new EventEmitter<void>();
+
+  @Output() closeModal = new EventEmitter<void>();
+
   constructor(
     private fb: FormBuilder,
     private userOpinionsService: UserOpinionsService,
-    private modalService: ModalService,
     private toastService: ToastService
   ) {
     this.currentDate = new Date().toISOString().split('T')[0];
@@ -53,9 +55,15 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
 
   /**
    * Initialise le formulaire avec les validations
-   * et configure la souscription à la modal
    */
   ngOnInit() {
+    this.initForm();
+  }
+
+  /**
+   * Initialise le formulaire avec les validations
+   */
+  private initForm(): void {
     this.opinionForm = this.fb.group({
       name: [
         '',
@@ -63,7 +71,7 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
           Validators.required,
           Validators.minLength(2),
           Validators.maxLength(50),
-          Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]*$/), // Lettres, espaces, tirets et apostrophes
+          Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]*$/),
         ],
       ],
       message: [
@@ -72,7 +80,7 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(500),
-          Validators.pattern(/^[a-zA-ZÀ-ÿ0-9\s.,!?'"()\-]*$/), // Caractères autorisés pour le message
+          Validators.pattern(/^[a-zA-ZÀ-ÿ0-9\s.,!?'"()\-]*$/),
         ],
       ],
       rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
@@ -80,7 +88,6 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          // Validation personnalisée pour empêcher les dates futures
           (control: AbstractControl): ValidationErrors | null => {
             const date = new Date(control.value);
             const today = new Date();
@@ -90,27 +97,10 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
         ],
       ],
     });
-
-    // Réinitialise le formulaire quand la modal se ferme
-    this.modalSubscription = this.modalService.isOpen$.subscribe((isOpen) => {
-      if (!isOpen) {
-        this.opinionForm.reset();
-      }
-    });
-  }
-
-  /**
-   * Nettoie la souscription à la modal
-   */
-  ngOnDestroy() {
-    if (this.modalSubscription) {
-      this.modalSubscription.unsubscribe();
-    }
   }
 
   /**
    * Getters pour vérifier les erreurs des champs du formulaire
-   * Utilisés dans le template pour afficher les messages d'erreur
    */
   get nameErrors() {
     const control = this.opinionForm.get('name');
@@ -129,8 +119,6 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
 
   /**
    * Gère la soumission du formulaire
-   * Envoie les données au service si le formulaire est valide
-   * Affiche des messages de succès ou d'erreur via le ToastService
    */
   onSubmit(): void {
     if (this.opinionForm.valid) {
@@ -144,8 +132,8 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
           this.toastService.showSuccess(
             'Votre avis a été envoyé avec succès ! Merci de votre contribution.'
           );
-          this.modalService.closeWithDelay();
-          this.userOpinionsService.getUserOpinions().subscribe();
+          this.opinionForm.reset();
+          this.opinionAdded.emit();
         },
         error: (error) => {
           console.error("Erreur lors de l'envoi de l'avis au backend", error);
@@ -157,10 +145,7 @@ export class AddUserOpinionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Ferme la modal via le service
-   */
-  closeModal(): void {
-    this.modalService.close();
+  onClose() {
+    this.closeModal.emit();
   }
 }
