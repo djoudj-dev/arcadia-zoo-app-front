@@ -6,8 +6,8 @@ import { InactivityService } from './core/services/inactivity.service';
 import { TokenService } from './core/token/token.service';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { NavComponent } from './shared/components/header/navbar/nav.component';
+import { ToastService } from './shared/components/toast/services/toast.service';
 import { ToastComponent } from './shared/components/toast/toast.component';
-import { ToastService } from './shared/services/toast.service';
 
 @Component({
   selector: 'app-root',

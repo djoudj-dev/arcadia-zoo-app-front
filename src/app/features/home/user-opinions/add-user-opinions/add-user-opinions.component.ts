@@ -11,8 +11,8 @@ import {
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { Subscription } from 'rxjs';
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
+import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
-import { ToastService } from '../../../../shared/services/toast.service';
 import { ModalService } from '../services/modal.service';
 import { UserOpinionsService } from '../services/user-opinions.service';
 

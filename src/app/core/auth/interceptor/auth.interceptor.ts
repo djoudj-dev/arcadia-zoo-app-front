@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ToastService } from '../../../shared/services/toast.service';
+import { ToastService } from '../../../shared/components/toast/services/toast.service';
 import { TokenService } from '../../token/token.service';
 import { AuthService } from '../auth.service';
 
