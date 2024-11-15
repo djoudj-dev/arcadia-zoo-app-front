@@ -14,7 +14,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Récupération du token d'authentification à partir du TokenService
   const token = tokenService.getToken();
-  console.log('Jeton récupéré par l’intercepteur:', token);
 
   // Clone de la requête avec en-tête Authorization si le token existe
   const authReq = token
@@ -25,7 +24,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         withCredentials: true,
       })
     : req.clone({ withCredentials: true });
-  console.log('Requête avec jeton:', authReq);
 
   // Gestion de la requête suivante et traitement des erreurs
   return next(authReq).pipe(

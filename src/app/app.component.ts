@@ -47,9 +47,6 @@ export class AppComponent implements OnInit, OnDestroy {
         // Démarrer la surveillance de l'inactivité SEULEMENT pour les utilisateurs connectés
         this.inactivityService.startMonitoring(); // Démarrer la surveillance
       }
-    } else {
-      console.log("Aucun token trouvé, l'utilisateur est un visiteur.");
-      // Ne pas démarrer la surveillance d'inactivité pour les visiteurs
     }
   }
 
