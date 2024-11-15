@@ -34,7 +34,9 @@
             class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center"
           >
             <span class="text-white text-xl font-semibold">
-              {{ userOpinions()[currentUserOpinionsIndex()].name.charAt(0) }}
+              {{
+                userOpinions()[currentUserOpinionsIndex()].name?.charAt(0) ?? ""
+              }}
             </span>
           </div>
           <!-- Nom et date -->
@@ -151,6 +153,6 @@
 </section>
 
 <!-- Modal pour l'ajout d'avis -->
-<app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
-  <app-add-user-opinions />
+<app-modal [isOpen]="isModalOpen()" (closed)="closeModal()">
+  <app-add-user-opinions (closeModal)="closeModal()"></app-add-user-opinions>
 </app-modal>
