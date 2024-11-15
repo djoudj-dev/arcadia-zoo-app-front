@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 import { User } from '../../features/dashboard/admin-dashboard/account-management/model/user.model';
-import { AlertService } from '../alert/service/alert.service';
+import { ToastService } from '../../shared/services/toast.service';
 import { TokenService } from '../token/token.service';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private tokenService: TokenService,
-    private alertService: AlertService // Injection du service d'alerte
+    private toastService: ToastService // Injection du service de notification
   ) {
     this.initializeCurrentUser(); // Initialisation de l'utilisateur actuel
   }
@@ -69,13 +69,10 @@ export class AuthService {
         tap((response: { user: User }) => {
           const user = response.user;
           if (user.role && user.token) {
-            this.currentUserSignal.set(user); // Met à jour le signal avec l'utilisateur connecté
-            localStorage.setItem('user', JSON.stringify(user)); // Stocke l'utilisateur dans le stockage local
-            this.tokenService.setToken(user.token); // Stocke le token
-            this.alertService.setAlert(
-              'Connexion réussie. Bienvenue!',
-              'success'
-            );
+            this.currentUserSignal.set(user);
+            localStorage.setItem('user', JSON.stringify(user));
+            this.tokenService.setToken(user.token);
+            this.toastService.showSuccess('Connexion réussie. Bienvenue!');
           } else {
             console.error(
               "Rôle ou token manquant dans les données de l'utilisateur"
@@ -84,9 +81,8 @@ export class AuthService {
         }),
         catchError((error) => {
           console.error('Erreur de connexion', error);
-          this.alertService.setAlert(
-            'Erreur de connexion. Vérifiez vos identifiants.',
-            'error'
+          this.toastService.showError(
+            'Erreur de connexion. Vérifiez vos identifiants.'
           );
           return throwError(() => new Error('Identifiants incorrects'));
         })
@@ -97,11 +93,11 @@ export class AuthService {
    * Déconnecte l'utilisateur actuel.
    */
   logout(): void {
-    this.currentUserSignal.set(null); // Réinitialise le signal de l'utilisateur
-    localStorage.removeItem('user'); // Supprime l'utilisateur du stockage local
-    this.tokenService.removeToken(); // Supprime le token
-    this.alertService.setAlert('Déconnexion réussie.', 'info'); // Affiche un message d'information
-    this.router.navigate(['/login']); // Redirige vers la page de connexion
+    this.currentUserSignal.set(null);
+    localStorage.removeItem('user');
+    this.tokenService.removeToken();
+    this.toastService.showSuccess('Déconnexion réussie.');
+    this.router.navigate(['/login']);
   }
 
   /**
