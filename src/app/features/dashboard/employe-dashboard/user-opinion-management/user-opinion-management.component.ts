@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { UserOpinion } from '../../../features/home/user-opinions/models/user-opinions.model';
-import { UserOpinionsService } from '../../../features/home/user-opinions/services/user-opinions.service';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { ToastService } from '../../../shared/components/toast/services/toast.service';
+import { Component, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { UserOpinion } from 'app/features/home/user-opinions/models/user-opinions.model';
+import { UserOpinionsService } from 'app/features/home/user-opinions/services/user-opinions.service';
+import { ButtonComponent } from 'app/shared/components/button/button.component';
+import { RateComponent } from 'app/shared/components/rate/rate.component';
+import { ToastService } from 'app/shared/components/toast/services/toast.service';
 
 @Component({
-  selector: 'app-employe-dashboard',
+  selector: 'app-user-opinion-management',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterOutlet],
-  templateUrl: './employe-dashboard.component.html',
+  imports: [CommonModule, ButtonComponent, RateComponent],
+  templateUrl: './user-opinion-management.component.html',
 })
-export class EmployeDashboardComponent implements OnInit {
+export class UserOpinionManagementComponent implements OnInit {
   // Liste de tous les avis
   allOpinions = signal<UserOpinion[]>([]);
 
@@ -26,48 +27,25 @@ export class EmployeDashboardComponent implements OnInit {
   currentFilter = signal<'pending' | 'validated' | 'rejected'>('pending');
 
   // Signal pour le mode lecture seule
-  readOnlySignal = signal(true);
-
-  // Création des compteurs réactifs avec computed()
-  pendingCount = computed(
-    () =>
-      this.allOpinions().filter(
-        (opinion) => !opinion.validated && !opinion.rejected
-      ).length
-  );
-
-  validatedCount = computed(
-    () => this.allOpinions().filter((opinion) => opinion.validated).length
-  );
-
-  rejectedCount = computed(
-    () => this.allOpinions().filter((opinion) => opinion.rejected).length
-  );
+  readOnlySignal = signal<boolean>(true);
 
   constructor(
     private userOpinionsService: UserOpinionsService,
     private toastService: ToastService,
-    private router: Router,
     private route: ActivatedRoute
-  ) {
-    // S'abonner aux mises à jour des avis
-    this.userOpinionsService.opinionsUpdated$.subscribe(() => {
-      this.loadAllOpinions();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.loadAllOpinions();
-    // Initialiser le filtre en fonction de l'URL actuelle
-    const currentPath = this.router.url.split('/').pop();
-    if (
-      currentPath &&
-      ['pending', 'validated', 'rejected'].includes(currentPath)
-    ) {
-      this.currentFilter.set(
-        currentPath as 'pending' | 'validated' | 'rejected'
-      );
-    }
+    // Écouter les changements de route
+    this.route.parent?.url.subscribe(() => {
+      const currentPath = this.route.snapshot.url[0]?.path;
+      if (currentPath) {
+        this.currentFilter.set(
+          currentPath as 'pending' | 'validated' | 'rejected'
+        );
+        this.loadAllOpinions();
+      }
+    });
   }
 
   // Charger tous les avis
@@ -106,20 +84,11 @@ export class EmployeDashboardComponent implements OnInit {
 
   // Mise à jour du filtre actuel
   changeFilter(filter: 'pending' | 'validated' | 'rejected'): void {
-    const currentUrl = this.router.url.split('/').pop();
-
-    // Si on clique sur le même filtre
-    if (currentUrl === filter) {
-      this.currentFilter.set('pending');
-      this.router.navigate(['./'], { relativeTo: this.route });
-    } else {
-      // Si on clique sur un nouveau filtre
-      this.currentFilter.set(filter);
-      this.router.navigate([filter], { relativeTo: this.route });
-    }
+    this.currentFilter.set(filter);
+    this.filterOpinions();
   }
 
-  // Méthodes pour compter les avis par catégorie (utilisant allOpinions)
+  // Méthodes pour compter les avis par catégorie
   getPendingCount(): number {
     return this.allOpinions().filter(
       (opinion) => !opinion.validated && !opinion.rejected
@@ -134,14 +103,18 @@ export class EmployeDashboardComponent implements OnInit {
     return this.allOpinions().filter((opinion) => opinion.rejected).length;
   }
 
-  // Après chaque action (validation, rejet, suppression), recharger tous les avis
+  // Méthode pour créer un signal de rating
+  createRatingSignal(rating: number) {
+    return signal<number>(rating);
+  }
+
   validateOpinion(opinion: UserOpinion): void {
     if (!opinion?._id) return;
 
     this.userOpinionsService.validateUserOpinions(opinion._id).subscribe({
       next: () => {
         this.toastService.showSuccess('Avis validé avec succès');
-        this.loadAllOpinions(); // Recharger tous les avis
+        this.loadAllOpinions();
       },
       error: (error) => {
         console.error('Erreur lors de la validation:', error);
@@ -154,7 +127,7 @@ export class EmployeDashboardComponent implements OnInit {
     this.userOpinionsService.rejectUserOpinions(id).subscribe({
       next: () => {
         this.toastService.showSuccess('Avis rejeté avec succès');
-        this.loadAllOpinions(); // Recharger tous les avis après le rejet
+        this.loadAllOpinions();
       },
       error: (error) => {
         console.error('Erreur lors du rejet:', error);
@@ -168,7 +141,7 @@ export class EmployeDashboardComponent implements OnInit {
       this.userOpinionsService.deleteUserOpinions(id).subscribe({
         next: () => {
           this.toastService.showSuccess('Avis supprimé avec succès');
-          this.loadAllOpinions(); // Recharger tous les avis
+          this.loadAllOpinions();
         },
         error: (error) => {
           console.error('Erreur lors de la suppression:', error);
@@ -176,10 +149,5 @@ export class EmployeDashboardComponent implements OnInit {
         },
       });
     }
-  }
-
-  // Méthode pour créer un signal de rating
-  createRatingSignal(rating: number) {
-    return signal(rating);
   }
 }

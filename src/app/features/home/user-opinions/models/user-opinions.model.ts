@@ -1,14 +1,12 @@
 export interface UserOpinion {
-  _id: string;
-  id?: number;
-  content: string;
-  status: string;
-  author: string;
+  _id?: string;
+  id_opinion?: number;
+  name: string;
+  message: string;
+  content?: string;
+  date?: Date;
+  createdAt?: Date;
+  rating: number;
   validated: boolean;
   rejected: boolean;
-  createdAt: Date;
-  rating: number;
-  name?: string;
-  message?: string;
-  date?: Date;
 }
