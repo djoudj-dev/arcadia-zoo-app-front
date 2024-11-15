@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 import { User } from '../../features/dashboard/admin-dashboard/account-management/model/user.model';
-import { ToastService } from '../../shared/services/toast.service';
+import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { TokenService } from '../token/token.service';
 
 @Injectable({
