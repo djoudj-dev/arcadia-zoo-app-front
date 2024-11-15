@@ -10,8 +10,18 @@
 
   <!-- Container des avis -->
   <div class="max-w-xl mx-auto">
-    <!-- Affichage conditionnel si des avis existent -->
-    @if (userOpinions().length > 0) {
+    @if (isLoading()) {
+    <div class="text-center py-8">
+      <p>Chargement des avis...</p>
+    </div>
+    } @else if (hasError()) {
+    <div class="text-center py-8 text-red-500">
+      <p>Une erreur est survenue lors du chargement des avis.</p>
+      <button class="mt-4 text-blue-500" (click)="loadUserOpinions()">
+        Réessayer
+      </button>
+    </div>
+    } @else if (userOpinions().length > 0) {
     <div
       class="bg-white rounded-lg shadow-lg p-8 mb-8 transition-all duration-300 border border-quinary/10 hover:border-quinary/20"
     >

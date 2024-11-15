@@ -1,10 +1,8 @@
 export interface UserOpinions {
-  readonly id: number;
+  id: number;
   name: string;
-  date: string;
-  message: string;
   rating: number;
-  accepted: boolean;
+  message: string;
+  date: string | Date;
   validated: boolean;
-  publishedAt?: Date;
 }
