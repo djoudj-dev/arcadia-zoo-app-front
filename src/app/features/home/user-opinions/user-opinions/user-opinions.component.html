@@ -90,18 +90,12 @@
 
         <!-- Indicateurs de pagination -->
         <div class="flex gap-2">
-          @for (review of userOpinions(); track review.id) {
+          @for (review of userOpinions(); track $index) {
           <div
             class="w-2 h-2 rounded-full cursor-pointer transition-all duration-300"
-            [class.bg-tertiary]="
-              userOpinions().indexOf(review) === currentUserOpinionsIndex()
-            "
-            [class.bg-gray-300]="
-              userOpinions().indexOf(review) !== currentUserOpinionsIndex()
-            "
-            (click)="
-              currentUserOpinionsIndex.set(userOpinions().indexOf(review))
-            "
+            [class.bg-tertiary]="$index === currentUserOpinionsIndex()"
+            [class.bg-gray-300]="$index !== currentUserOpinionsIndex()"
+            (click)="currentUserOpinionsIndex.set($index)"
           ></div>
           }
         </div>
