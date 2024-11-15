@@ -31,19 +31,12 @@ export class AuthService {
     const storedUser = localStorage.getItem('user');
     const token = this.tokenService.getToken();
 
-    console.log('Utilisateur stocké récupéré:', storedUser);
-
     if (storedUser && token) {
       try {
         const user = JSON.parse(storedUser);
-        console.log('Utilisateur après parsing:', user);
 
         if (user && user.role) {
           this.currentUserSignal.set(user);
-          console.log(
-            'Utilisateur initialisé dans currentUserSignal:',
-            this.currentUserSignal()
-          );
         } else {
           console.warn(
             "Rôle manquant dans les données de l'utilisateur au démarrage"
@@ -75,7 +68,6 @@ export class AuthService {
       .pipe(
         tap((response: { user: User }) => {
           const user = response.user;
-          console.log('Utilisateur reçu après connexion:', user);
           if (user.role && user.token) {
             this.currentUserSignal.set(user); // Met à jour le signal avec l'utilisateur connecté
             localStorage.setItem('user', JSON.stringify(user)); // Stocke l'utilisateur dans le stockage local
@@ -83,10 +75,6 @@ export class AuthService {
             this.alertService.setAlert(
               'Connexion réussie. Bienvenue!',
               'success'
-            );
-            console.log(
-              'Utilisateur mis à jour dans AuthService:',
-              this.currentUserSignal()
             );
           } else {
             console.error(
