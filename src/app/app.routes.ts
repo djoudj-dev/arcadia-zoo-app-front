@@ -138,11 +138,11 @@ export const routes: Routes = [
     path: 'employe',
     loadComponent: () =>
       import(
-        './features/dashboard/employe-dashboard/employe/employe.component'
-      ).then((m) => m.EmployeComponent),
+        './features/dashboard/employe-dashboard/employe-dashboard.component'
+      ).then((m) => m.EmployeDashboardComponent),
     title: 'Employé',
     canActivate: [authGuard],
-    data: { roles: ['Employé'] },
+    data: { roles: ['Employe'] },
   },
 
   { path: '**', redirectTo: '' }, // Redirection pour les chemins non définis

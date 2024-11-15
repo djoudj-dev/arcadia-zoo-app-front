@@ -6,8 +6,7 @@ import { ModalComponent } from '../../../../shared/components/modal/modal.compon
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
 import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import { AddUserOpinionsComponent } from '../add-user-opinions/add-user-opinions.component';
-import { UserOpinions } from '../models/user-opinions.model';
-import { ModalService } from '../services/modal.service';
+import { UserOpinion } from '../models/user-opinions.model';
 import { UserOpinionsService } from '../services/user-opinions.service';
 
 /**
@@ -31,7 +30,7 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
   readonly isReadOnly = signal<boolean>(true);
 
   /** Signal contenant la liste des avis utilisateurs */
-  readonly userOpinions = signal<UserOpinions[]>([]);
+  readonly userOpinions = signal<UserOpinion[]>([]);
 
   /** Signal pour l'index de l'avis actuellement affiché */
   readonly currentUserOpinionsIndex = signal<number>(0);
@@ -39,30 +38,22 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
   /** Signal pour la note de l'avis actuellement affiché */
   readonly currentRating = signal<number>(0);
 
-  /** Signal pour contrôler l'état d'ouverture de la modal */
-  isModalOpen = signal<boolean>(false);
-
   /** Signal pour contrôler l'état de chargement */
   isLoading = signal<boolean>(true);
 
   /** Signal pour contrôler l'état d'erreur */
   hasError = signal<boolean>(false);
 
-  /** Souscription au service modal */
-  private modalSubscription: Subscription;
+  /** Signal pour contrôler l'état d'ouverture de la modal */
+  isModalOpen = signal<boolean>(false);
 
   /** Souscription au service user opinions */
   private opinionsSubscription?: Subscription;
 
   constructor(
-    private modalService: ModalService,
     private userOpinionsService: UserOpinionsService,
     private toastService: ToastService
-  ) {
-    this.modalSubscription = this.modalService.isOpen$.subscribe((isOpen) => {
-      this.isModalOpen.set(isOpen);
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.loadUserOpinions();
@@ -96,7 +87,6 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
    * Nettoie la souscription à la modal lors de la destruction du composant
    */
   ngOnDestroy() {
-    this.modalSubscription?.unsubscribe();
     this.opinionsSubscription?.unsubscribe();
   }
 
@@ -132,16 +122,16 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Ouvre la modal d'ajout d'avis via le service
+   * Ouvre la modal d'ajout d'avis
    */
   openModal() {
-    this.modalService.open();
+    this.isModalOpen.set(true);
   }
 
   /**
-   * Ferme la modal d'ajout d'avis via le service
+   * Ferme la modal d'ajout d'avis
    */
   closeModal() {
-    this.modalService.close();
+    this.isModalOpen.set(false);
   }
 }

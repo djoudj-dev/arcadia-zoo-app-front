@@ -5,9 +5,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
-
-import { Habitat } from '../../../../core/models/habitat.model';
+import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
+import { ButtonComponent } from 'app/shared/components/button/button.component';
 
 @Component({
   selector: 'app-note-habitat',
