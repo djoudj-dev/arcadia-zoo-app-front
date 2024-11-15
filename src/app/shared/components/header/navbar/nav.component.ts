@@ -1,8 +1,8 @@
-import { Component, OnInit, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { BannerComponent } from '../banner/banner.component';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { BannerComponent } from '../banner/banner.component';
 
 @Component({
   selector: 'app-nav',
@@ -22,14 +22,7 @@ export class NavComponent implements OnInit {
     };
   });
 
-  constructor(public authService: AuthService, private router: Router) {
-    effect(() => {
-      const user = this.authService.currentUserSignal();
-      console.log('Utilisateur actuel dans NavComponent:', user);
-      const roles = this.userRoles();
-      console.log('Rôles après le subscribe dans NavComponent:', roles);
-    });
-  }
+  constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {}
 
