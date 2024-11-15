@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { RateComponent } from '../../../../shared/components/rate/rate.component';
+import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import { AddUserOpinionsComponent } from '../add-user-opinions/add-user-opinions.component';
 import { UserOpinions } from '../models/user-opinions.model';
 import { ModalService } from '../services/modal.service';
@@ -25,7 +26,7 @@ import { UserOpinionsService } from '../services/user-opinions.service';
     AddUserOpinionsComponent,
   ],
 })
-export class UserOpinionsComponent implements OnDestroy {
+export class UserOpinionsComponent implements OnInit, OnDestroy {
   /** Signal indiquant si la notation est en lecture seule */
   readonly isReadOnly = signal<boolean>(true);
 
@@ -41,32 +42,62 @@ export class UserOpinionsComponent implements OnDestroy {
   /** Signal pour contrôler l'état d'ouverture de la modal */
   isModalOpen = signal<boolean>(false);
 
+  /** Signal pour contrôler l'état de chargement */
+  isLoading = signal<boolean>(true);
+
+  /** Signal pour contrôler l'état d'erreur */
+  hasError = signal<boolean>(false);
+
   /** Souscription au service modal */
   private modalSubscription: Subscription;
 
+  /** Souscription au service user opinions */
+  private opinionsSubscription?: Subscription;
+
   constructor(
     private modalService: ModalService,
-    private userOpinionsService: UserOpinionsService
+    private userOpinionsService: UserOpinionsService,
+    private toastService: ToastService
   ) {
-    // Charge les avis utilisateurs au démarrage
-    this.userOpinionsService.getUserOpinions().subscribe((userOpinions) => {
-      this.userOpinions.set(userOpinions);
-      this.updateCurrentRating();
-    });
-
-    // Synchronise l'état de la modal avec le service
     this.modalSubscription = this.modalService.isOpen$.subscribe((isOpen) => {
       this.isModalOpen.set(isOpen);
     });
+  }
+
+  ngOnInit() {
+    this.loadUserOpinions();
+  }
+
+  public loadUserOpinions() {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
+    this.opinionsSubscription = this.userOpinionsService
+      .getUserOpinions()
+      .subscribe({
+        next: (opinions) => {
+          console.log('Opinions reçues:', opinions);
+          this.userOpinions.set(opinions);
+          this.updateCurrentRating();
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement des avis:', error);
+          this.hasError.set(true);
+          this.isLoading.set(false);
+          this.toastService.showError(
+            'Impossible de charger les avis utilisateurs'
+          );
+        },
+      });
   }
 
   /**
    * Nettoie la souscription à la modal lors de la destruction du composant
    */
   ngOnDestroy() {
-    if (this.modalSubscription) {
-      this.modalSubscription.unsubscribe();
-    }
+    this.modalSubscription?.unsubscribe();
+    this.opinionsSubscription?.unsubscribe();
   }
 
   /**
