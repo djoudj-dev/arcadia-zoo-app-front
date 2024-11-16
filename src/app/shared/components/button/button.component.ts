@@ -16,18 +16,26 @@ import { Component, Input } from '@angular/core';
     class="focus:outline-none text-white text-base font-sans w-full py-2 text-center"
     [disabled]="disabled"
   >
-    <ng-content></ng-content>
+    <ng-content />
     {{ text }}
   </button>`,
 })
 export class ButtonComponent {
-  /** Texte à afficher sur le bouton */
+  /**
+   * Propriétés de configuration du bouton :
+   * @param text - Texte à afficher dans le bouton (défaut: 'Button')
+   * @param type - Type HTML du bouton (défaut: 'button')
+   * @param color - Variante de couleur du bouton
+   *               Options: 'red', 'primary', 'secondary', 'tertiary',
+   *                       'quaternary', 'quinary', 'success', 'danger'
+   *               (défaut: 'secondary')
+   * @param noRounded - Désactive l'arrondi des coins si true (défaut: false)
+   * @param rounded - Active l'arrondi complet des coins si true (défaut: false)
+   * @param disabled - Désactive le bouton si true (défaut: false)
+   * @param customClass - Classes CSS additionnelles à appliquer (défaut: '')
+   */
   @Input() text: string = 'Button';
-
-  /** Type du bouton HTML */
   @Input() type: string = 'button';
-
-  /** Couleur du bouton parmi les thèmes prédéfinis */
   @Input() color:
     | 'red'
     | 'primary'
@@ -37,17 +45,9 @@ export class ButtonComponent {
     | 'quinary'
     | 'success'
     | 'danger' = 'secondary';
-
-  /** Désactive l'arrondi des coins */
   @Input() noRounded: boolean = false;
-
-  /** Active l'arrondi complet des coins */
   @Input() rounded: boolean = false;
-
-  /** État désactivé du bouton */
   @Input() disabled: boolean = false;
-
-  /** Classes CSS personnalisées additionnelles */
   @Input() customClass: string = '';
 
   /**
