@@ -3,7 +3,7 @@
     <div class="inline-flex rounded-lg border border-secondary">
       <button
         [ngClass]="[
-          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-l-lg',
+          'px-6 py-3 text-sm font-medium transition-all duration-200',
           activeTab === 'opinions'
             ? 'bg-tertiary text-white shadow-sm'
             : 'text-quinary hover:bg-secondary/10'
@@ -14,7 +14,7 @@
       </button>
       <button
         [ngClass]="[
-          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-r-lg',
+          'px-6 py-3 text-sm font-medium transition-all duration-200',
           activeTab === 'services'
             ? 'bg-tertiary text-white shadow-sm'
             : 'text-quinary hover:bg-secondary/10'
@@ -23,6 +23,17 @@
       >
         Gestion des services
       </button>
+      <button
+        [ngClass]="[
+          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-r-lg',
+          activeTab === 'feeding'
+            ? 'bg-tertiary text-white shadow-sm'
+            : 'text-quinary hover:bg-secondary/10'
+        ]"
+        (click)="setActiveTab('feeding')"
+      >
+        Gestion de l'alimentation des animaux
+      </button>
     </div>
   </div>
 
@@ -30,5 +41,7 @@
   <app-user-opinion-management />
   } @case ('services') {
   <app-service-management />
+  } @case ('feeding') {
+  <app-animal-feeding-management />
   } }
 </div>

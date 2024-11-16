@@ -1,4 +1,4 @@
-import { Animal } from '../../animal-management/model/animal.model';
+import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 
 export interface Habitat {
   id_habitat: number;
@@ -8,5 +8,4 @@ export interface Habitat {
   created_at?: Date;
   updated_at?: Date;
   animals: Animal[];
-  showDescription?: boolean;
 }

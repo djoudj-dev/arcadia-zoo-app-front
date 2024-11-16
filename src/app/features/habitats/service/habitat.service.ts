@@ -31,7 +31,9 @@ export class HabitatService {
       map((habitats) =>
         habitats.map((habitat) => ({
           ...habitat,
-          images: this.formatImageUrl('habitats', habitat.images),
+          images: habitat.images
+            ? this.formatImageUrl('habitats', habitat.images)
+            : '',
         }))
       ),
       tap((habitats) => this.habitatsCache.set(habitats))
@@ -47,7 +49,7 @@ export class HabitatService {
     return this.getHabitats().pipe(
       map((habitats) => habitats.find((habitat) => habitat.id_habitat === id)),
       tap((habitat) => {
-        if (habitat) {
+        if (habitat && habitat.images) {
           habitat.images = this.formatImageUrl('habitats', habitat.images);
         }
       })

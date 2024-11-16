@@ -34,9 +34,11 @@ export class HabitatsOverviewComponent implements OnInit {
   private formatHabitatImage(habitat: Habitat): Habitat {
     return {
       ...habitat,
-      images: habitat.images.startsWith('http')
-        ? habitat.images
-        : `${environment.apiUrl}/uploads/${habitat.images}`,
+      images: habitat.images
+        ? habitat.images.startsWith('http')
+          ? habitat.images
+          : `${environment.apiUrl}/uploads/${habitat.images}`
+        : '',
     };
   }
 }
