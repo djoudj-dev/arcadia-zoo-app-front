@@ -33,7 +33,7 @@ export class ServicesComponent implements OnInit {
           images:
             service.images?.startsWith('http') || false
               ? service.images
-              : `${environment.apiUrl}/${service.images}`,
+              : `${environment.apiUrl}/api/${service.images}`,
         }))
       );
     });

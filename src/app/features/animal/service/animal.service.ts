@@ -115,4 +115,8 @@ export class AnimalService {
     this.animalsCache$.next([]);
     this.cacheLoaded = false; // Réinitialise le drapeau pour indiquer que le cache doit être rechargé
   }
+
+  markAnimalAsFed(animalId: number): Observable<Animal> {
+    return this.http.post<Animal>(`${this.apiUrl}/${animalId}/feed`, {});
+  }
 }
