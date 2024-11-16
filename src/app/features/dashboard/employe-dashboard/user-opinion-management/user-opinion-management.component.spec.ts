@@ -8,9 +8,8 @@ describe('UserOpinionManagementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserOpinionManagementComponent]
-    })
-    .compileComponents();
+      imports: [UserOpinionManagementComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UserOpinionManagementComponent);
     component = fixture.componentInstance;
