@@ -33,9 +33,10 @@ export class ServicesOverviewComponent implements OnInit {
   private formatServiceImage(service: Service): Service {
     return {
       ...service,
-      images: service.images.startsWith('http')
-        ? service.images
-        : `${environment.apiUrl}/api/${service.images}`,
+      images:
+        service.images?.startsWith('http') || false
+          ? service.images
+          : `${environment.apiUrl}/api/${service.images}`,
     };
   }
 }

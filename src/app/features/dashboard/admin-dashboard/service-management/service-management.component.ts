@@ -4,6 +4,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
+import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { environment } from 'environments/environment.development';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
@@ -12,7 +13,13 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, FormsModule, SlicePipe],
+  imports: [
+    ButtonComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    SlicePipe,
+    ModalComponent,
+  ],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -21,7 +28,9 @@ export class ServiceManagementComponent implements OnInit {
   allFeatures = signal<Feature[]>([]);
   selectedFile = signal<File | null>(null);
   newServiceData: Partial<Service & { type?: string }> = {}; // Données pour création/mise à jour de service
-  imageBaseUrl = `${environment.apiUrl}`;
+  imageBaseUrl = `${environment.apiUrl}/api`;
+  showModal = false;
+  isFeatureDropdownOpen = false;
 
   constructor(
     private router: Router,
@@ -180,13 +189,16 @@ export class ServiceManagementComponent implements OnInit {
     if (service) {
       this.newServiceData = {
         ...service,
-        features: service.features || [], // Charger les caractéristiques existantes
-        images: service.images, // Charger l'image existante
+        features: service.features || [],
       };
-      this.selectedFile.set(null); // Réinitialiser le fichier sélectionné
-    } else {
-      console.warn(`Service avec l'ID ${id_service} introuvable`);
+      this.showModal = true;
     }
+  }
+
+  // Ajouter une méthode pour réinitialiser et ouvrir le modal pour un nouveau service
+  openNewServiceModal() {
+    this.resetForm();
+    this.showModal = true;
   }
 
   // Suppression d'un service
@@ -209,8 +221,9 @@ export class ServiceManagementComponent implements OnInit {
 
   // Réinitialisation du formulaire
   resetForm() {
-    this.newServiceData = {}; // Réinitialiser les données du formulaire
-    this.selectedFile.set(null); // Réinitialiser le fichier sélectionné
+    this.newServiceData = {};
+    this.selectedFile.set(null);
+    this.isFeatureDropdownOpen = false;
   }
 
   // Gestion de la description
@@ -247,5 +260,16 @@ export class ServiceManagementComponent implements OnInit {
 
   cancel() {
     this.resetForm();
+  }
+
+  toggleModal() {
+    this.showModal = !this.showModal;
+    if (!this.showModal) {
+      this.resetForm();
+    }
+  }
+
+  toggleFeatureDropdown() {
+    this.isFeatureDropdownOpen = !this.isFeatureDropdownOpen;
   }
 }

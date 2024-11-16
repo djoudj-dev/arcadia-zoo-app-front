@@ -1,64 +1,34 @@
 <div class="container mx-auto mt-4">
-  <!-- Titre et Filtres -->
-  <div class="flex flex-col items-center justify-center mb-10">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
-      Gestion des avis
-    </h2>
-    <div
-      class="inline-flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-lg gap-3"
-    >
-      <div class="relative">
-        <app-button
-          [text]="'En attente'"
-          [type]="'button'"
-          [color]="currentFilter() === 'pending' ? 'tertiary' : 'secondary'"
-          [rounded]="true"
-          [customClass]="
-            'font-semibold transition-all duration-300 min-w-[120px]'
-          "
-          (click)="changeFilter('pending')"
-        ></app-button>
-        <span
-          class="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center"
-        >
-          {{ pendingCount() }}
-        </span>
-      </div>
-      <div class="relative">
-        <app-button
-          [text]="'Validés'"
-          [type]="'button'"
-          [color]="currentFilter() === 'validated' ? 'tertiary' : 'secondary'"
-          [rounded]="true"
-          [customClass]="
-            'font-semibold transition-all duration-300 min-w-[120px]'
-          "
-          (click)="changeFilter('validated')"
-        ></app-button>
-        <span
-          class="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center"
-        >
-          {{ validatedCount() }}
-        </span>
-      </div>
-      <div class="relative">
-        <app-button
-          [text]="'Rejetés'"
-          [type]="'button'"
-          [color]="currentFilter() === 'rejected' ? 'tertiary' : 'secondary'"
-          [rounded]="true"
-          [customClass]="
-            'font-semibold transition-all duration-300 min-w-[120px]'
-          "
-          (click)="changeFilter('rejected')"
-        ></app-button>
-        <span
-          class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center"
-        >
-          {{ rejectedCount() }}
-        </span>
-      </div>
+  <div class="flex justify-center mb-6">
+    <div class="inline-flex rounded-lg border border-secondary">
+      <button
+        [ngClass]="[
+          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-l-lg',
+          activeTab === 'opinions'
+            ? 'bg-tertiary text-white shadow-sm'
+            : 'text-quinary hover:bg-secondary/10'
+        ]"
+        (click)="setActiveTab('opinions')"
+      >
+        Gestion des avis
+      </button>
+      <button
+        [ngClass]="[
+          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-r-lg',
+          activeTab === 'services'
+            ? 'bg-tertiary text-white shadow-sm'
+            : 'text-quinary hover:bg-secondary/10'
+        ]"
+        (click)="setActiveTab('services')"
+      >
+        Gestion des services
+      </button>
     </div>
   </div>
-  <router-outlet />
+
+  @switch (activeTab) { @case ('opinions') {
+  <app-user-opinion-management />
+  } @case ('services') {
+  <app-service-management />
+  } }
 </div>

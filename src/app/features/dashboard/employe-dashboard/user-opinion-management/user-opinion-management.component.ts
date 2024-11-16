@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserOpinion } from 'app/features/home/user-opinions/models/user-opinions.model';
 import { UserOpinionsService } from 'app/features/home/user-opinions/services/user-opinions.service';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { RateComponent } from 'app/shared/components/rate/rate.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
+
+interface FilterOption {
+  type: 'pending' | 'validated' | 'rejected';
+  label: string;
+  badgeColor: string;
+}
 
 @Component({
   selector: 'app-user-opinion-management',
@@ -15,10 +21,23 @@ import { ToastService } from 'app/shared/components/toast/services/toast.service
 })
 export class UserOpinionManagementComponent implements OnInit {
   // Liste de tous les avis
-  allOpinions = signal<UserOpinion[]>([]);
+  private allOpinions = signal<UserOpinion[]>([]);
 
   // Liste des avis filtrés (pour l'affichage)
-  opinions = signal<UserOpinion[]>([]);
+  public opinions = computed(() => {
+    switch (this.currentFilter()) {
+      case 'pending':
+        return this.allOpinions().filter(
+          (opinion) => !opinion.validated && !opinion.rejected
+        );
+      case 'validated':
+        return this.allOpinions().filter((opinion) => opinion.validated);
+      case 'rejected':
+        return this.allOpinions().filter((opinion) => opinion.rejected);
+      default:
+        return this.allOpinions();
+    }
+  });
 
   // Indicateur de chargement
   isLoading = signal<boolean>(true);
@@ -27,25 +46,66 @@ export class UserOpinionManagementComponent implements OnInit {
   currentFilter = signal<'pending' | 'validated' | 'rejected'>('pending');
 
   // Signal pour le mode lecture seule
-  readOnlySignal = signal<boolean>(true);
+  readOnlySignal = signal(true);
+
+  // Création des compteurs réactifs avec computed()
+  public pendingCount = computed(
+    () =>
+      this.allOpinions().filter(
+        (opinion) => !opinion.validated && !opinion.rejected
+      ).length
+  );
+
+  public validatedCount = computed(
+    () => this.allOpinions().filter((opinion) => opinion.validated).length
+  );
+
+  public rejectedCount = computed(
+    () => this.allOpinions().filter((opinion) => opinion.rejected).length
+  );
+
+  filters: FilterOption[] = [
+    {
+      type: 'pending',
+      label: 'En attente',
+      badgeColor: 'bg-yellow-500',
+    },
+    {
+      type: 'validated',
+      label: 'Validés',
+      badgeColor: 'bg-green-500',
+    },
+    {
+      type: 'rejected',
+      label: 'Rejetés',
+      badgeColor: 'bg-red-500',
+    },
+  ];
 
   constructor(
     private userOpinionsService: UserOpinionsService,
     private toastService: ToastService,
+    private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    // S'abonner aux mises à jour des avis
+    this.userOpinionsService.opinionsUpdated$.subscribe(() => {
+      this.loadAllOpinions();
+    });
+  }
 
   ngOnInit(): void {
-    // Écouter les changements de route
-    this.route.parent?.url.subscribe(() => {
-      const currentPath = this.route.snapshot.url[0]?.path;
-      if (currentPath) {
-        this.currentFilter.set(
-          currentPath as 'pending' | 'validated' | 'rejected'
-        );
-        this.loadAllOpinions();
-      }
-    });
+    this.loadAllOpinions();
+    // Initialiser le filtre en fonction de l'URL actuelle
+    const currentPath = this.router.url.split('/').pop();
+    if (
+      currentPath &&
+      ['pending', 'validated', 'rejected'].includes(currentPath)
+    ) {
+      this.currentFilter.set(
+        currentPath as 'pending' | 'validated' | 'rejected'
+      );
+    }
   }
 
   // Charger tous les avis
@@ -54,7 +114,6 @@ export class UserOpinionManagementComponent implements OnInit {
     this.userOpinionsService.getAllUserOpinions().subscribe({
       next: (opinions) => {
         this.allOpinions.set(opinions);
-        this.filterOpinions();
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -65,30 +124,17 @@ export class UserOpinionManagementComponent implements OnInit {
     });
   }
 
-  // Filtrer les avis selon le filtre actuel
-  filterOpinions(): void {
-    const filtered = this.allOpinions().filter((opinion) => {
-      switch (this.currentFilter()) {
-        case 'pending':
-          return !opinion.validated && !opinion.rejected;
-        case 'validated':
-          return opinion.validated;
-        case 'rejected':
-          return opinion.rejected;
-        default:
-          return true;
-      }
-    });
-    this.opinions.set(filtered);
-  }
-
   // Mise à jour du filtre actuel
   changeFilter(filter: 'pending' | 'validated' | 'rejected'): void {
     this.currentFilter.set(filter);
-    this.filterOpinions();
+    // Mettre à jour l'URL sans recharger la page
+    this.router.navigate([filter], {
+      relativeTo: this.route,
+      replaceUrl: true,
+    });
   }
 
-  // Méthodes pour compter les avis par catégorie
+  // Méthodes pour compter les avis par catégorie (utilisant allOpinions)
   getPendingCount(): number {
     return this.allOpinions().filter(
       (opinion) => !opinion.validated && !opinion.rejected
@@ -103,18 +149,14 @@ export class UserOpinionManagementComponent implements OnInit {
     return this.allOpinions().filter((opinion) => opinion.rejected).length;
   }
 
-  // Méthode pour créer un signal de rating
-  createRatingSignal(rating: number) {
-    return signal<number>(rating);
-  }
-
+  // Après chaque action (validation, rejet, suppression), recharger tous les avis
   validateOpinion(opinion: UserOpinion): void {
     if (!opinion?._id) return;
 
     this.userOpinionsService.validateUserOpinions(opinion._id).subscribe({
       next: () => {
         this.toastService.showSuccess('Avis validé avec succès');
-        this.loadAllOpinions();
+        this.loadAllOpinions(); // Recharger tous les avis
       },
       error: (error) => {
         console.error('Erreur lors de la validation:', error);
@@ -127,7 +169,7 @@ export class UserOpinionManagementComponent implements OnInit {
     this.userOpinionsService.rejectUserOpinions(id).subscribe({
       next: () => {
         this.toastService.showSuccess('Avis rejeté avec succès');
-        this.loadAllOpinions();
+        this.loadAllOpinions(); // Recharger tous les avis après le rejet
       },
       error: (error) => {
         console.error('Erreur lors du rejet:', error);
@@ -141,13 +183,31 @@ export class UserOpinionManagementComponent implements OnInit {
       this.userOpinionsService.deleteUserOpinions(id).subscribe({
         next: () => {
           this.toastService.showSuccess('Avis supprimé avec succès');
-          this.loadAllOpinions();
+          this.loadAllOpinions(); // Recharger tous les avis
         },
         error: (error) => {
           console.error('Erreur lors de la suppression:', error);
           this.toastService.showError('Erreur lors de la suppression');
         },
       });
+    }
+  }
+
+  // Méthode pour créer un signal de rating
+  createRatingSignal(rating: number) {
+    return signal(rating);
+  }
+
+  getCount(filterType: 'pending' | 'validated' | 'rejected'): number {
+    switch (filterType) {
+      case 'pending':
+        return this.pendingCount();
+      case 'validated':
+        return this.validatedCount();
+      case 'rejected':
+        return this.rejectedCount();
+      default:
+        return 0;
     }
   }
 }

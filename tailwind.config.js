@@ -15,6 +15,13 @@ module.exports = {
         quaternary: "#7A9F61",
         quinary: "#0E1805",
       },
+      backdropBlur: {
+        xs: "2px",
+      },
+      transitionProperty: {
+        height: "height",
+        spacing: "margin, padding",
+      },
     },
   },
   plugins: [typography],
