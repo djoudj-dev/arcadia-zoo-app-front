@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnimalFeedingManagementComponent } from './animal-feeding-management.component';
+import { FeedingDataComponent } from './animal-feeding-management.component';
 
-describe('AnimalFeedingManagementComponent', () => {
-  let component: AnimalFeedingManagementComponent;
-  let fixture: ComponentFixture<AnimalFeedingManagementComponent>;
+describe('FeedingDataComponent', () => {
+  let component: FeedingDataComponent;
+  let fixture: ComponentFixture<FeedingDataComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AnimalFeedingManagementComponent]
-    })
-    .compileComponents();
+      imports: [FeedingDataComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(AnimalFeedingManagementComponent);
+    fixture = TestBed.createComponent(FeedingDataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
