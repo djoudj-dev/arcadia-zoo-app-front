@@ -21,6 +21,7 @@
         <h3 class="text-xl font-bold text-tertiary mb-4 text-center">
           Animaux à nourrir
         </h3>
+
         <div class="space-y-2">
           @for (animal of currentHabitat.animals; track animal.id_animal) {
           <div
@@ -34,14 +35,25 @@
               />
               <span class="font-medium">{{ animal.name }}</span>
             </div>
+            <!-- Toast pour cet animal spécifique -->
+            @if (activeToasts().has(animal.id_animal)) {
+            <app-toast
+              [message]="'Animal nourri avec succès !'"
+              [type]="'success'"
+              [customClass]="
+                'bottom-2 left-1/2 transform -translate-x-1/2 w-[90%]'
+              "
+            />
+            }
             <app-button
               [text]="'Nourrir'"
               [type]="'button'"
               [color]="'tertiary'"
               [rounded]="true"
               class="w-24"
-              (click)="markAsFed(animal.id_animal)"
+              (click)="openFeedingModal(animal.id_animal)"
             ></app-button>
+            <app-feeding-history [animalId]="animal.id_animal" />
           </div>
           }
         </div>
@@ -61,5 +73,95 @@
       (click)="goBack()"
     ></app-button>
   </div>
+
+  <!-- Ajouter avant la fermeture de la section -->
+  <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
+    <div class="bg-white p-6 rounded-lg shadow-xl">
+      <h2 class="text-2xl font-bold text-tertiary mb-6 text-center">
+        Enregistrer une consommation
+      </h2>
+
+      <form (submit)="handleFeedingSave()" class="space-y-6">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            Date et heure
+          </label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="feedingData.feedingTime"
+            name="dateTime"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary"
+            required
+          />
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            Type d'alimentation
+          </label>
+          <select
+            [(ngModel)]="feedingData.foodType"
+            name="foodType"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary bg-white"
+            required
+          >
+            <option value="">Sélectionnez un type</option>
+            <option value="viande">Viande</option>
+            <option value="poisson">Poisson</option>
+            <option value="fruits">Fruits</option>
+            <option value="legumes">Légumes</option>
+            <option value="graines">Graines</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            Quantité (en kg)
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="feedingData.quantity"
+            name="quantity"
+            min="0"
+            step="0.1"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary"
+            required
+          />
+        </div>
+
+        <!-- Nouveau champ pour les notes -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">
+            Notes (optionnel)
+          </label>
+          <textarea
+            [(ngModel)]="feedingData.notes"
+            name="notes"
+            rows="3"
+            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary resize-none"
+            placeholder="Ajoutez des observations ou commentaires..."
+          ></textarea>
+        </div>
+
+        <div class="flex justify-center space-x-4 mt-8">
+          <app-button
+            [text]="'Annuler'"
+            [type]="'button'"
+            [color]="'secondary'"
+            [rounded]="true"
+            class="w-32"
+            (click)="closeModal()"
+          ></app-button>
+          <app-button
+            [text]="'Enregistrer'"
+            [type]="'submit'"
+            [color]="'tertiary'"
+            [rounded]="true"
+            class="w-32"
+          ></app-button>
+        </div>
+      </form>
+    </div>
+  </app-modal>
 </section>
 }

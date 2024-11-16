@@ -4,6 +4,7 @@ import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { environment } from 'environments/environment.development';
 import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
+import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-management/models/feeding-data.model';
 
 @Injectable({
   providedIn: 'root',
@@ -116,7 +117,14 @@ export class AnimalService {
     this.cacheLoaded = false; // Réinitialise le drapeau pour indiquer que le cache doit être rechargé
   }
 
-  markAnimalAsFed(animalId: number): Observable<Animal> {
-    return this.http.post<Animal>(`${this.apiUrl}/${animalId}/feed`, {});
+  markAnimalAsFed(
+    animalId: number,
+    feedingData?: FeedingData
+  ): Observable<Animal> {
+    return this.http.post<Animal>(`${this.apiUrl}/${animalId}/feeding`, {
+      ...feedingData,
+      feedingTime: new Date(),
+      animalId: animalId,
+    });
   }
 }
