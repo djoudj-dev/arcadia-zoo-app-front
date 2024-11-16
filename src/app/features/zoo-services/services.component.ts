@@ -30,9 +30,10 @@ export class ServicesComponent implements OnInit {
       this.services.set(
         data.map((service) => ({
           ...service,
-          images: service.images.startsWith('http')
-            ? service.images
-            : `${environment.apiUrl}/${service.images}`,
+          images:
+            service.images?.startsWith('http') || false
+              ? service.images
+              : `${environment.apiUrl}/${service.images}`,
         }))
       );
     });

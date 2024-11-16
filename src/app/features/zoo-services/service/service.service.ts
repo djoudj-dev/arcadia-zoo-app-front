@@ -29,7 +29,9 @@ export class ServiceService {
       map((services) =>
         services.map((service) => ({
           ...service,
-          image: this.formatImageUrl('services', service.images),
+          image: service.images
+            ? this.formatImageUrl('services', service.images)
+            : '',
           // Utilise une chaîne vide si `images` est `undefined`
         }))
       ),

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guard/auth.guard';
 import { LoginComponent } from './core/login/login.component';
-import { EmptyStateComponent } from './features/dashboard/employe-dashboard/empty-state/empty-state.component';
 import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
@@ -135,6 +134,7 @@ export const routes: Routes = [
   //   data: { roles: ['Vétérinaire'] },
   // },
 
+  // Routes pour les employés
   {
     path: 'employe',
     loadComponent: () =>
@@ -145,7 +145,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['Employe'] },
     children: [
-      { path: '', component: EmptyStateComponent },
       {
         path: 'pending',
         loadComponent: () =>
