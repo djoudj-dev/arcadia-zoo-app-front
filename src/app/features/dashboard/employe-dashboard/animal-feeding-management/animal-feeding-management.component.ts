@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { AnimalService } from '../../../animal/service/animal.service';
@@ -11,7 +11,7 @@ import { Animal } from '../../admin-dashboard/animal-management/model/animal.mod
 @Component({
   selector: 'app-animal-feeding-management',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterLink],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './animal-feeding-management.component.html',
 })
 export class AnimalFeedingManagementComponent implements OnInit, OnDestroy {
