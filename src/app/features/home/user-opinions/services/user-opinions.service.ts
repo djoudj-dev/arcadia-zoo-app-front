@@ -85,7 +85,7 @@ export class UserOpinionsService {
           this.toastService.showError(
             "Une erreur est survenue lors de la validation de l'avis"
           );
-          throw error;
+          return throwError(() => error);
         })
       );
   }
@@ -137,7 +137,10 @@ export class UserOpinionsService {
         }),
         catchError((error) => {
           console.error("Erreur lors du rejet de l'avis", error);
-          throw error;
+          this.toastService.showError(
+            "Une erreur est survenue lors du rejet de l'avis"
+          );
+          return throwError(() => error);
         })
       );
   }
@@ -150,25 +153,7 @@ export class UserOpinionsService {
     );
   }
 
-  rejectUserOpinion(id: string): Observable<UserOpinion> {
-    return this.http.patch<UserOpinion>(
-      `${this.apiUrl}/user-opinions/${id}/reject`,
-      {}
-    );
-  }
-
   notifyOpinionsUpdated() {
     this.opinionsUpdatedSource.next();
-  }
-
-  validateOpinion(opinionId: string) {
-    return this.http
-      .patch(`${this.apiUrl}/user-opinions/${opinionId}/validate`, {})
-      .pipe(
-        catchError((error) => {
-          console.error('Erreur de validation:', error);
-          return throwError(() => error);
-        })
-      );
   }
 }
