@@ -132,21 +132,21 @@ export class AddUserOpinionsComponent implements OnInit {
         date: new Date().toISOString().split('T')[0],
       };
       this.userOpinionsService.addUserOpinions(userOpinions).subscribe({
-        next: (response) => {
-          console.log('Avis ajouté avec succès:', response);
+        next: () => {
           this.toastService.showSuccess(
-            'Votre avis a été envoyé avec succès ! Merci de votre contribution.'
+            'Votre avis a été envoyé avec succès ! Merci de votre contribution.',
+            2500
           );
           this.opinionForm.reset();
           this.opinionAdded.emit();
           setTimeout(() => {
             this.closeModal.emit();
-          }, 3000);
+          }, 2500);
         },
         error: (error) => {
           console.error("Erreur lors de l'envoi de l'avis au backend", error);
           this.toastService.showError(
-            "Une erreur est survenue lors de l'envoi de votre avis. Veuillez réessayer ou contacter l'administrateur si le problème persiste."
+            "Une erreur est survenue lors de l'envoi de votre avis. Veuillez réessayer."
           );
         },
       });

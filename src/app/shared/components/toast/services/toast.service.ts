@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 
 export interface Toast {
   message: string;
   type: 'success' | 'error';
+  duration?: number;
 }
 
 @Injectable({
@@ -11,13 +12,24 @@ export interface Toast {
 })
 export class ToastService {
   private toastSubject = new Subject<Toast>();
-  toast$ = this.toastSubject.asObservable();
+  private hideToastSubject = new Subject<void>();
 
-  showSuccess(message: string) {
-    this.toastSubject.next({ message, type: 'success' });
+  toast$ = this.toastSubject.asObservable();
+  hideToast$ = this.hideToastSubject.asObservable();
+
+  showSuccess(message: string, duration: number = 3000) {
+    this.toastSubject.next({ message, type: 'success', duration });
+
+    timer(duration).subscribe(() => {
+      this.hideToastSubject.next();
+    });
   }
 
-  showError(message: string) {
-    this.toastSubject.next({ message, type: 'error' });
+  showError(message: string, duration: number = 3000) {
+    this.toastSubject.next({ message, type: 'error', duration });
+
+    timer(duration).subscribe(() => {
+      this.hideToastSubject.next();
+    });
   }
 }

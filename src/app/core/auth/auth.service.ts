@@ -96,8 +96,13 @@ export class AuthService {
     this.currentUserSignal.set(null);
     localStorage.removeItem('user');
     this.tokenService.removeToken();
-    this.toastService.showSuccess('Déconnexion réussie.');
-    this.router.navigate(['/login']);
+
+    // Afficher le toast et rediriger après sa disparition
+    this.toastService.showSuccess('Déconnexion réussie !', 2500);
+
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 2500);
   }
 
   /**
