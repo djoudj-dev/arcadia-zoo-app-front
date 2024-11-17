@@ -1,18 +1,22 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { AnimalService } from '../../animal/service/animal.service';
+import { HabitatService } from '../../habitats/service/habitat.service';
 import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
-import { HabitatService } from '../../habitats/service/habitat.service';
-import { AnimalService } from '../../animal/service/animal.service';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { VeterinaryFeedingHistoryComponent } from './feeding-history/feeding-history.component';
 
 @Component({
   selector: 'app-veterinary-dashboard',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, ButtonComponent, VeterinaryFeedingHistoryComponent],
   templateUrl: './veterinary-dashboard.component.html',
 })
 export class VeterinaryDashboardComponent implements OnInit {
   habitats = signal<Habitat[]>([]);
   animals = signal<Animal[]>([]);
+  activeTab = signal<'overview' | 'history'>('overview');
 
   constructor(
     private habitatService: HabitatService,
@@ -22,6 +26,10 @@ export class VeterinaryDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadHabitats();
     this.loadAnimals();
+  }
+
+  setActiveTab(tab: 'overview' | 'history'): void {
+    this.activeTab.set(tab);
   }
 
   private loadHabitats(): void {
