@@ -1,83 +1,85 @@
 @if (habitat()) {
-<section class="w-full bg-primary shadow py-4">
-  <!-- Section Titre de l'habitat -->
-  <div class="text-center">
-    <h1
-      class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
-    >
-      {{ habitat()?.name }}
-    </h1>
+<section class="w-full bg-primary shadow py-8">
+  <div class="container mx-auto px-4">
+    <!-- En-tête de section -->
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+        {{ habitat()?.name }}
+      </h1>
+      <p class="text-base md:text-lg text-quinary font-sans max-w-4xl mx-auto">
+        {{ habitat()?.description }}
+      </p>
+    </div>
 
-    <!-- Section Description et Image de l'habitat -->
-    <div class="w-full flex flex-col items-center">
-      <!-- Description de l'habitat -->
-      <div class="w-full lg:w-2/3">
-        <h1 class="text-lg text-quinary font-sans text-center py-4">
-          {{ habitat()?.description }}
-        </h1>
-      </div>
-
-      <!-- Image de l'habitat -->
+    <!-- Image principale de l'habitat -->
+    <div class="max-w-4xl mx-auto mb-12">
       <div
-        class="w-full lg:w-2/3 rounded-lg overflow-hidden pb-2 flex justify-center"
+        class="relative group rounded-2xl overflow-hidden shadow-lg h-[250px] md:h-[400px]"
       >
         <img
           [src]="habitat()?.images"
           [alt]="habitat()?.name"
-          class="w-full h-96 object-cover rounded-lg"
+          class="w-full h-full object-cover"
         />
       </div>
     </div>
-  </div>
 
-  <!-- Section Carte des animaux associés à l'habitat -->
-  <div class="flex justify-center items-center w-full">
-    <div
-      class="bg-secondary shadow-lg rounded-lg p-6 w-full lg:w-2/3 flex flex-col items-center"
-    >
-      <div class="w-full flex flex-col items-center">
-        <h2 class="text-4xl text-quinary font-bold font-serif pt-2">
-          Les animaux de l'habitat
-        </h2>
+    <!-- Section des animaux -->
+    <div class="max-w-5xl mx-auto">
+      <h2
+        class="text-2xl md:text-4xl font-serif text-quinary font-bold text-center mb-8"
+      >
+        Les animaux de l'habitat
+      </h2>
 
-        <!-- Boucle pour afficher les cartes des animaux -->
-        <div class="flex flex-wrap justify-center gap-4 w-full mt-4">
-          @for (animal of animals(); track animal.id_animal) {
-          <a
-            [routerLink]="['/animal', animal.id_animal]"
-            class="w-full sm:w-1/2 lg:w-1/3 flex flex-col items-center rounded-lg shadow"
-            appBorderCard
-          >
-            <!-- Nom de l'animal -->
-            <div class="w-full">
-              <div
-                class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
+      <!-- Grille des animaux -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+        @for (animal of animals(); track animal.id_animal) {
+        <div
+          class="relative group rounded-2xl overflow-hidden shadow-lg h-[100px] md:h-[300px]"
+        >
+          <a [routerLink]="['/animal', animal.id_animal]" class="block h-full">
+            <!-- Image -->
+            <img
+              [src]="animal.images"
+              [alt]="animal.name"
+              class="w-full h-full object-cover"
+            />
+
+            <!-- Overlay au survol -->
+            <div
+              class="absolute inset-0 bg-tertiary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-6"
+            >
+              <h3
+                class="text-primary text-xl md:text-2xl font-serif font-semibold mb-4"
               >
                 {{ animal.name }}
-              </div>
+              </h3>
             </div>
 
-            <!-- Image de l'animal -->
-            <div class="relative group w-full h-64">
-              <img
-                [src]="animal.images"
-                [alt]="'Animal ' + animal.name"
-                class="w-full h-full object-cover rounded-b-lg"
-              />
+            <!-- Titre visible en permanence sur mobile -->
+            <div
+              class="absolute bottom-0 left-0 right-0 bg-tertiary bg-opacity-90 p-4 md:group-hover:opacity-0 transition-opacity"
+            >
+              <h3
+                class="text-primary text-lg font-serif font-semibold text-center"
+              >
+                {{ animal.name }}
+              </h3>
             </div>
           </a>
-          }
         </div>
+        }
       </div>
 
       <!-- Bouton de retour -->
-      <div class="w-full flex justify-center pt-8">
+      <div class="flex justify-center">
         <app-button
           [text]="'Retour'"
           [type]="'button'"
           [color]="'tertiary'"
           [rounded]="true"
-          class="w-1/4 lg:w-1/4 font-bold"
+          class="w-full sm:w-1/2 lg:w-1/4 font-bold"
           (click)="goBack()"
         ></app-button>
       </div>

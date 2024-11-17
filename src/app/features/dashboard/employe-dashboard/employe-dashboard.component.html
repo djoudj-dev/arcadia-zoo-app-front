@@ -1,9 +1,12 @@
-<div class="container mx-auto mt-4">
+<div class="container mx-auto px-4 mt-4">
   <div class="flex justify-center mb-6">
-    <div class="inline-flex rounded-lg border border-secondary">
+    <div
+      class="flex flex-col w-full sm:inline-flex sm:w-auto rounded-lg border border-secondary"
+    >
       <button
         [ngClass]="[
-          'px-6 py-3 text-sm font-medium transition-all duration-200',
+          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
+          'sm:first:rounded-l-lg first:rounded-t-lg sm:first:rounded-t-none',
           activeTab === 'opinions'
             ? 'bg-tertiary text-white shadow-sm'
             : 'text-quinary hover:bg-secondary/10'
@@ -14,7 +17,7 @@
       </button>
       <button
         [ngClass]="[
-          'px-6 py-3 text-sm font-medium transition-all duration-200',
+          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
           activeTab === 'services'
             ? 'bg-tertiary text-white shadow-sm'
             : 'text-quinary hover:bg-secondary/10'
@@ -25,7 +28,8 @@
       </button>
       <button
         [ngClass]="[
-          'px-6 py-3 text-sm font-medium transition-all duration-200 rounded-r-lg',
+          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
+          'sm:last:rounded-r-lg last:rounded-b-lg sm:last:rounded-b-none',
           activeTab === 'feeding'
             ? 'bg-tertiary text-white shadow-sm'
             : 'text-quinary hover:bg-secondary/10'
@@ -37,11 +41,13 @@
     </div>
   </div>
 
-  @switch (activeTab) { @case ('opinions') {
-  <app-user-opinion-management />
-  } @case ('services') {
-  <app-service-management />
-  } @case ('feeding') {
-  <app-animal-feeding-management />
-  } }
+  <div class="w-full overflow-x-hidden">
+    @switch (activeTab) { @case ('opinions') {
+    <app-user-opinion-management />
+    } @case ('services') {
+    <app-service-management />
+    } @case ('feeding') {
+    <app-animal-feeding-management />
+    } }
+  </div>
 </div>

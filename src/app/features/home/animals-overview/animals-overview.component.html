@@ -1,63 +1,53 @@
-<section class="w-full bg-primary shadow py-4">
-  <!-- Titre de la section -->
-  <div class="text-center">
-    <h1
-      class="text-xl sm:text-2xl md:text-6xl text-quinary font-bold font-serif"
-    >
-      Nos Animaux
-    </h1>
-    <h3
-      class="text-base sm:text-lg md:text-xl text-quinary font-sans leading-relaxed max-w-7xl mx-auto my-4"
-    >
-      Découvrez les animaux fascinants qui peuplent nos trois habitats uniques.
-      Dans la jungle luxuriante, le tigre Raihan rôde silencieusement, tandis
-      que le singe Ziko s'amuse dans les hauteurs, le perroquet Kapi explore la
-      canopée colorée, et le serpent Liana chasse discrètement. Les marais
-      mystérieux abritent Grom, le puissant crocodile, ainsi que Nymbus, le
-      héron élégant, Flip la grenouille chanteuse, et Sly le serpent aquatique.
-      Dans la savane aride, Aslan, le lion majestueux, règne en maître aux côtés
-      de Tembo, l'éléphant imposant, Zuri, la girafe élancée, et Dash, le rapide
-      guépard. Chaque animal révèle un aperçu captivant de son habitat naturel.
-    </h3>
-  </div>
-
-  <!-- Liste des animaux avec la directive @for -->
-  <div
-    appRandomAnimals
-    [animals]="animals()"
-    [count]="3"
-    (updateAnimals)="onUpdateDisplayedAnimals($event)"
-    class="flex flex-wrap justify-center gap-2 sm:gap-4 md:gap-6 lg:gap-4 mb-4 px-4"
-  >
-    <!-- Boucle @for pour afficher les cartes d'animaux -->
-    @for (animal of displayedAnimals(); track animal.id_animal) {
-    <div
-      class="flex justify-center pt-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/4"
-    >
-      <a [routerLink]="['/animal', animal.id_animal]" class="w-full">
-        <div
-          class="bg-secondary shadow-lg rounded-lg p-6 text-center"
-          appBorderCardAnimal
-        >
-          <!-- Titre de l'animal -->
-          <h2 class="text-xl font-bold text-primary mb-4">
-            {{ animal.name }}
-          </h2>
-
-          <!-- Image de l'animal -->
-          <div
-            class="w-full h-full overflow-hidden rounded-lg flex justify-center items-center"
-          >
-            <img
-              [src]="animal.images"
-              [alt]="animal.name"
-              loading="lazy"
-              class="w-96 h-96 object-cover rounded-lg"
-            />
-          </div>
-        </div>
-      </a>
+<section class="w-full bg-primary shadow py-8">
+  <!-- En-tête de la section -->
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+        Nos Services
+      </h1>
+      <p class="text-base md:text-lg text-quinary font-sans max-w-4xl mx-auto">
+        Découvrez nos animaux fascinants qui peuplent nos trois habitats uniques
+        : la jungle luxuriante, les marais mystérieux et la savane aride. Chaque
+        animal révèle un aperçu captivant de son habitat naturel.
+      </p>
     </div>
-    }
+
+    <!-- Liste des animaux -->
+    <div
+      appRandomAnimals
+      [animals]="animals()"
+      [count]="3"
+      (updateAnimals)="onUpdateDisplayedAnimals($event)"
+      class="max-w-7xl mx-auto px-4"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for (animal of displayedAnimals(); track animal.id_animal) {
+        <a
+          [routerLink]="['/animal', animal.id_animal]"
+          class="transform transition duration-300 hover:scale-105"
+        >
+          <div class="bg-primary rounded-2xl shadow-lg overflow-hidden">
+            <!-- Image de l'animal -->
+            <div class="aspect-w-16 aspect-h-9">
+              <img
+                [src]="animal.images"
+                [alt]="animal.name"
+                loading="lazy"
+                class="w-full h-96 object-cover"
+              />
+            </div>
+            <!-- Informations de l'animal -->
+            <div class="p-6">
+              <h2
+                class="text-2xl font-bold text-tertiary mb-2 text-center font-serif"
+              >
+                {{ animal.name }}
+              </h2>
+            </div>
+          </div>
+        </a>
+        }
+      </div>
+    </div>
   </div>
 </section>

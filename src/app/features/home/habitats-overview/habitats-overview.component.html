@@ -1,53 +1,58 @@
-<section class="w-screen bg-secondary shadow pb-4 pt-4">
-  <!-- Titre de la section -->
-  <div class="text-center mb-4">
-    <h1
-      class="text-xl sm:text-2xl md:text-6xl font-bold text-primary font-serif"
-    >
-      Nos Habitats
-    </h1>
-    <h3
-      class="text-base sm:text-lg md:text-xl text-quinary font-sans leading-relaxed max-w-7xl mx-auto mt-4"
-    >
-      Explorez la beauté sauvage et la diversité fascinante de trois écosystèmes
-      uniques : la savane, la jungle et les marais. Dans la vaste étendue
-      herbeuse de la savane, observez les majestueux lions, éléphants et
-      antilopes, parfaitement adaptés aux conditions chaudes et arides. En
-      entrant dans la jungle dense et luxuriante, laissez-vous envoûter par
-      l'ambiance mystérieuse et les sons des animaux exotiques cachés dans cet
-      écosystème vibrant. Enfin, pénétrez les marais, un monde humide et
-      mystérieux où reptiles et amphibiens prospèrent, rappelant l’importance
-      vitale de cet équilibre naturel. Chaque habitat vous dévoile la richesse
-      de la vie sous ses formes les plus étonnantes.
-    </h3>
-  </div>
+<section class="w-full bg-secondary shadow py-8">
+  <!-- En-tête de section -->
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+        Nos Habitats
+      </h1>
+      <p class="text-base md:text-lg text-quinary font-sans max-w-4xl mx-auto">
+        Explorez la beauté sauvage et la diversité fascinante de trois
+        écosystèmes uniques : la savane, la jungle et les marais. Chaque habitat
+        vous dévoile la richesse de la vie sous ses formes les plus étonnantes.
+      </p>
+    </div>
 
-  <!-- Liste des habitats -->
-  <div
-    class="flex flex-col sm:flex-row sm:flex-nowrap justify-center gap-6 px-6 sm:px-12 pb-4"
-  >
-    @for (habitat of habitats(); track habitat.id_habitat) {
-    <a
-      [routerLink]="['/habitat', habitat.id_habitat]"
-      class="w-full sm:w-1/4 flex flex-col items-center rounded-lg shadow"
-      appBorderCard
-    >
-      <div class="w-full">
-        <div
-          class="text-center font-bold py-2 bg-tertiary text-white rounded-t-lg"
-        >
-          {{ habitat.name }}
-        </div>
-      </div>
+    <!-- Grille des habitats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (habitat of habitats(); track habitat.id_habitat) {
+      <div
+        class="relative group aspect-square rounded-2xl overflow-hidden shadow-lg"
+      >
+        <a [routerLink]="['/habitat', habitat.id_habitat]" class="block h-full">
+          <!-- Image -->
+          <img
+            [src]="habitat.images"
+            [alt]="habitat.name"
+            class="w-full h-full object-cover"
+          />
 
-      <div class="relative group w-full h-64">
-        <img
-          [src]="habitat.images"
-          [alt]="'Habitat de ' + habitat.name"
-          class="w-full h-full object-cover rounded-b-lg"
-        />
+          <!-- Overlay au survol -->
+          <div
+            class="absolute inset-0 bg-tertiary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-6"
+          >
+            <h3
+              class="text-primary text-xl md:text-2xl font-serif font-semibold mb-4"
+            >
+              {{ habitat.name }}
+            </h3>
+            <p class="text-primary text-center text-sm md:text-base font-sans">
+              {{ habitat.description }}
+            </p>
+          </div>
+
+          <!-- Titre visible en permanence sur mobile -->
+          <div
+            class="absolute bottom-0 left-0 right-0 bg-tertiary bg-opacity-90 p-4 md:group-hover:opacity-0 transition-opacity"
+          >
+            <h3
+              class="text-primary text-lg font-serif font-semibold text-center"
+            >
+              {{ habitat.name }}
+            </h3>
+          </div>
+        </a>
       </div>
-    </a>
-    }
+      }
+    </div>
   </div>
 </section>
