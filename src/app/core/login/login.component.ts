@@ -7,27 +7,27 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { InactivityService } from '../../core/services/inactivity.service'; // Ajouter InactivityService
+import { InactivityService } from '../../core/services/inactivity.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AuthService } from '../auth/auth.service';
+import { ToastService } from '../../shared/components/toast/services/toast.service';
+import { ToastComponent } from '../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonComponent, CommonModule],
+  imports: [ReactiveFormsModule, ButtonComponent, CommonModule, ToastComponent],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  errorMessage: string = ''; // Variable pour afficher les erreurs
-  private router = inject(Router); // Utilisation de inject() pour le Router
-  private inactivityService = inject(InactivityService); // Injecter le service d'inactivité
+  errorMessage: string = '';
+  private router = inject(Router);
+  private inactivityService = inject(InactivityService);
+  private toastService = inject(ToastService);
 
-  // Regex pour l'email et le mot de passe
   private readonly EMAIL_PATTERN =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  // private readonly PASSWORD_PATTERN =
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
@@ -39,39 +39,42 @@ export class LoginComponent {
           Validators.pattern(this.EMAIL_PATTERN),
         ],
       ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          // Validators.pattern(this.PASSWORD_PATTERN),
-        ],
-      ],
+      password: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
-  // Soumission du formulaire de connexion
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe({
         next: () => {
-          this.errorMessage = ''; // Réinitialiser le message d'erreur
-          this.inactivityService.startMonitoring(); // Démarrer la surveillance d'inactivité après la connexion réussie
-          this.router.navigate(['/dashboard']); // Rediriger après la connexion réussie
+          this.errorMessage = '';
+          this.inactivityService.startMonitoring();
+
+          this.toastService.showSuccess(
+            'Connexion réussie ! Redirection en cours...',
+            2500
+          );
+
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+          }, 2500);
         },
         error: (error) => {
-          this.errorMessage = 'Identifiants incorrects, veuillez réessayer.';
           console.error('Erreur lors de la connexion:', error);
+          this.toastService.showError(
+            'Identifiants incorrects, veuillez réessayer.'
+          );
         },
       });
     } else {
-      this.errorMessage = 'Veuillez vérifier les informations fournies.';
+      this.toastService.showError(
+        'Veuillez vérifier les informations fournies.'
+      );
     }
   }
 
-  // Méthode améliorée pour obtenir les messages d'erreur
   getErrorMessage(field: string): string {
     const control = this.loginForm.get(field);
     if (!control) return '';

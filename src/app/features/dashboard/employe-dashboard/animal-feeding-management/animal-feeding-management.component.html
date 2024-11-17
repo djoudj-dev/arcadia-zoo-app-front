@@ -76,7 +76,15 @@
 
   <!-- Ajouter avant la fermeture de la section -->
   <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
-    <div class="bg-white p-6 rounded-lg shadow-xl">
+    <div class="bg-white p-6 rounded-lg shadow-xl relative">
+      @if (modalToastVisible()) {
+      <app-toast
+        [message]="'Consommation enregistrée avec succès !'"
+        [type]="'success'"
+        [customClass]="'absolute top-4 left-0 right-0 z-50 mx-auto w-[90%]'"
+      />
+      }
+
       <h2 class="text-2xl font-bold text-tertiary mb-6 text-center">
         Enregistrer une consommation
       </h2>

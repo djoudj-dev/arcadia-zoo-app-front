@@ -1,4 +1,6 @@
 <section class="h-auto flex items-center justify-center bg-primary">
+  <!-- Toast positionné dans le formulaire -->
+
   <div
     class="bg-secondary p-6 rounded-lg shadow-lg w-full max-w-xs sm:max-w-md my-8"
   >
@@ -7,6 +9,9 @@
     </h2>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="relative">
+        <app-toast />
+      </div>
       <!-- Champ d'email -->
       <div class="mb-4">
         <label for="email" class="block text-sm font-medium text-gray-700"
