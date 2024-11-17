@@ -71,7 +71,7 @@ export class UserOpinionsService {
 
   validateUserOpinions(id: string): Observable<UserOpinion> {
     return this.http
-      .patch<UserOpinion>(`${this.apiUrl}/${id}/validate`, {
+      .put<UserOpinion>(`${this.apiUrl}/${id}/validate`, {
         validated: true,
       })
       .pipe(
