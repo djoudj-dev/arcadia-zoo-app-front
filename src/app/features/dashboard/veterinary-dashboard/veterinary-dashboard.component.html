@@ -1,58 +1,90 @@
-<section class="w-full bg-primary shadow py-8">
-  <div class="container mx-auto px-4">
-    <h1
-      class="text-3xl md:text-5xl font-serif text-quinary font-bold text-center mb-12"
+<section class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-serif text-quinary font-bold text-center mb-8">
+    Tableau de Bord Vétérinaire
+  </h1>
+
+  <!-- Onglets style cohérent -->
+  <div class="flex justify-center mb-8">
+    <div
+      class="flex flex-row w-full sm:inline-flex sm:w-auto rounded-lg border border-secondary"
     >
-      Tableau de Bord Vétérinaire
-    </h1>
-
-    <!-- Section Habitats -->
-    <div class="mb-12">
-      <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-        Habitats
-      </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        @for (habitat of habitats(); track habitat.id_habitat) {
-        <div class="bg-secondary p-6 rounded-lg shadow-lg">
-          <img
-            [src]="habitat.images"
-            [alt]="habitat.name"
-            class="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 class="text-xl font-bold mb-2">{{ habitat.name }}</h3>
-          <p class="text-sm mb-4">{{ habitat.description }}</p>
-        </div>
-        }
-      </div>
-    </div>
-
-    <!-- Section Animaux -->
-    <div class="mb-12">
-      <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-        Animaux
-      </h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        @for (animal of animals(); track animal.id_animal) {
-        <div class="bg-secondary p-6 rounded-lg shadow-lg">
-          <img
-            [src]="animal.images"
-            [alt]="animal.name"
-            class="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 class="text-xl font-bold mb-2">{{ animal.name }}</h3>
-          <p class="text-sm mb-2">
-            <span class="font-bold">Espèce:</span> {{ animal.species }}
-          </p>
-          <p class="text-sm mb-2">
-            <span class="font-bold">Régime:</span> {{ animal.diet }}
-          </p>
-          <p class="text-sm">
-            <span class="font-bold">Caractéristiques:</span>
-            {{ animal.characteristics }}
-          </p>
-        </div>
-        }
-      </div>
+      <button
+        [ngClass]="[
+          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
+          'sm:first:rounded-l-lg first:rounded-t-lg sm:first:rounded-t-none',
+          activeTab() === 'overview'
+            ? 'bg-tertiary text-white shadow-sm'
+            : 'text-quinary hover:bg-secondary/10'
+        ]"
+        (click)="setActiveTab('overview')"
+      >
+        Vue d'ensemble
+      </button>
+      <button
+        [ngClass]="[
+          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
+          'sm:last:rounded-r-lg last:rounded-b-lg sm:last:rounded-b-none',
+          activeTab() === 'history'
+            ? 'bg-tertiary text-white shadow-sm'
+            : 'text-quinary hover:bg-secondary/10'
+        ]"
+        (click)="setActiveTab('history')"
+      >
+        Historique des repas
+      </button>
     </div>
   </div>
+
+  @if (activeTab() === 'overview') {
+  <!-- Section Animaux -->
+  <div class="mb-12">
+    <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
+      Animaux
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (animal of animals(); track animal.id_animal) {
+      <div class="bg-secondary p-6 rounded-lg shadow-lg">
+        <img
+          [src]="animal.images"
+          [alt]="animal.name"
+          class="w-full h-48 object-cover rounded-lg mb-4"
+        />
+        <h3 class="text-xl font-bold mb-2">{{ animal.name }}</h3>
+        <p class="text-sm mb-2">
+          <span class="font-bold">Espèce:</span> {{ animal.species }}
+        </p>
+        <p class="text-sm mb-2">
+          <span class="font-bold">Régime:</span> {{ animal.diet }}
+        </p>
+        <p class="text-sm">
+          <span class="font-bold">Caractéristiques:</span>
+          {{ animal.characteristics }}
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Section Habitats -->
+  <div class="mb-12">
+    <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
+      Habitats
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (habitat of habitats(); track habitat.id_habitat) {
+      <div class="bg-secondary p-6 rounded-lg shadow-lg">
+        <img
+          [src]="habitat.images"
+          [alt]="habitat.name"
+          class="w-full h-48 object-cover rounded-lg mb-4"
+        />
+        <h3 class="text-xl font-bold mb-2">{{ habitat.name }}</h3>
+        <p class="text-sm">{{ habitat.description }}</p>
+      </div>
+      }
+    </div>
+  </div>
+  } @else {
+  <app-veterinary-feeding-history />
+  }
 </section>
