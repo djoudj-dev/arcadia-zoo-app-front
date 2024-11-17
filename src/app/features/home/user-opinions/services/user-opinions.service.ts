@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment.development';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import { UserOpinion } from '../models/user-opinions.model';
@@ -159,5 +159,16 @@ export class UserOpinionsService {
 
   notifyOpinionsUpdated() {
     this.opinionsUpdatedSource.next();
+  }
+
+  validateOpinion(opinionId: string) {
+    return this.http
+      .patch(`${this.apiUrl}/user-opinions/${opinionId}/validate`, {})
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur de validation:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }

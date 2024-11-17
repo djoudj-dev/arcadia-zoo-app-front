@@ -14,7 +14,6 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   standalone: true,
   imports: [NavComponent, FooterComponent, RouterOutlet, ToastComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private inactivitySubscription!: Subscription;
