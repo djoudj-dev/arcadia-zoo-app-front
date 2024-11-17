@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { environment } from 'environments/environment.development';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, tap, BehaviorSubject } from 'rxjs';
 import { FeedingData } from '../models/feeding-data.model';
 import { FeedingHistoryResponse } from '../models/feeding-history.model';
+import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,9 @@ import { FeedingHistoryResponse } from '../models/feeding-history.model';
 export class AnimalFeedingManagementService {
   private apiUrl = `${environment.apiUrl}/api/employe/animal-feeding-management`;
   private userApiUrl = `${environment.apiUrl}/api/users`;
+  private habitatsCache = new BehaviorSubject<Habitat[]>([]);
+  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private lastCacheUpdate = 0;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -119,6 +123,21 @@ export class AnimalFeedingManagementService {
           })
         ),
         tap((data) => console.log('Historique transformé:', data))
+      );
+  }
+
+  getHabitatsWithAnimals(): Observable<Habitat[]> {
+    if (Date.now() - this.lastCacheUpdate < this.cacheTimeout) {
+      return this.habitatsCache.asObservable();
+    }
+
+    return this.http
+      .get<Habitat[]>(`${this.apiUrl}/habitats-with-animals`)
+      .pipe(
+        tap((data) => {
+          this.habitatsCache.next(data);
+          this.lastCacheUpdate = Date.now();
+        })
       );
   }
 }
