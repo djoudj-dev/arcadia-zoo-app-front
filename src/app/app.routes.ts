@@ -123,16 +123,16 @@ export const routes: Routes = [
     ],
   },
 
-  // {
-  //   path: 'veterinaire',
-  //   loadComponent: () =>
-  //     import('./features/veterinaire-dashboard/vet/vet.component').then(
-  //       (m) => m.VetComponent
-  //     ),
-  //   title: 'Vétérinaire',
-  //   canActivate: [authGuard],
-  //   data: { roles: ['Vétérinaire'] },
-  // },
+  {
+    path: 'veterinaire',
+    loadComponent: () =>
+      import(
+        './features/dashboard/veterinary-dashboard/veterinary-dashboard.component'
+      ).then((m) => m.VeterinaryDashboardComponent),
+    title: 'Vétérinaire',
+    canActivate: [authGuard],
+    data: { roles: ['Veterinaire'] },
+  },
 
   // Routes pour les employés
   {
