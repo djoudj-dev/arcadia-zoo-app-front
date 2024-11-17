@@ -92,7 +92,7 @@ export class UserOpinionsService {
 
   getAllUserOpinions(): Observable<UserOpinion[]> {
     return this.http
-      .get<UserOpinion[]>(`${this.apiUrl}/all`, {
+      .get<UserOpinion[]>(`${this.apiUrl}`, {
         params: {
           sort: 'date,desc',
         },
