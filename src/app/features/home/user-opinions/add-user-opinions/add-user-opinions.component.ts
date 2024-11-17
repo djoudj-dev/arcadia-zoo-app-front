@@ -89,10 +89,15 @@ export class AddUserOpinionsComponent implements OnInit {
         [
           Validators.required,
           (control: AbstractControl): ValidationErrors | null => {
-            const date = new Date(control.value);
+            if (!control.value) return null;
+            const selectedDate = new Date(control.value);
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return date > today ? { futureDate: true } : null;
+
+            // Comparer uniquement les dates (sans les heures)
+            const selected = new Date(selectedDate.toDateString());
+            const current = new Date(today.toDateString());
+
+            return selected > current ? { futureDate: true } : null;
           },
         ],
       ],
