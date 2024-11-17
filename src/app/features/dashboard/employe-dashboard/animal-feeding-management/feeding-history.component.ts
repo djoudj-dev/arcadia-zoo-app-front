@@ -20,7 +20,7 @@ import { AnimalFeedingManagementService } from './services/animal-feeding-manage
     </button>
 
     <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
-      <div class="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full">
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-3xl w-full">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold text-tertiary">Historique des repas</h2>
           <button
