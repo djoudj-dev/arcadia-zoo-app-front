@@ -71,9 +71,7 @@ export class UserOpinionsService {
 
   validateUserOpinions(id: string): Observable<UserOpinion> {
     return this.http
-      .patch<UserOpinion>(`${this.apiUrl}/${id}/validate`, {
-        validated: true,
-      })
+      .patch<UserOpinion>(`${this.apiUrl}/validate/${id}`, {})
       .pipe(
         tap((opinion) => {
           console.log('Avis validé avec succès:', opinion);
@@ -126,23 +124,19 @@ export class UserOpinionsService {
   }
 
   rejectUserOpinions(id: string): Observable<UserOpinion> {
-    return this.http
-      .patch<UserOpinion>(`${this.apiUrl}/${id}/reject`, {
-        rejected: true,
+    return this.http.patch<UserOpinion>(`${this.apiUrl}/reject/${id}`, {}).pipe(
+      tap((opinion) => {
+        console.log('Avis rejeté avec succès:', opinion);
+        this.notifyOpinionsUpdated();
+      }),
+      catchError((error) => {
+        console.error("Erreur lors du rejet de l'avis", error);
+        this.toastService.showError(
+          "Une erreur est survenue lors du rejet de l'avis"
+        );
+        return throwError(() => error);
       })
-      .pipe(
-        tap((opinion) => {
-          console.log('Avis rejeté avec succès:', opinion);
-          this.notifyOpinionsUpdated();
-        }),
-        catchError((error) => {
-          console.error("Erreur lors du rejet de l'avis", error);
-          this.toastService.showError(
-            "Une erreur est survenue lors du rejet de l'avis"
-          );
-          return throwError(() => error);
-        })
-      );
+    );
   }
 
   deleteUserOpinions(id: string): Observable<void> {
