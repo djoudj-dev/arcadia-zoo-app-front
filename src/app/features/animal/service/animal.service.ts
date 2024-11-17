@@ -12,7 +12,7 @@ import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-ma
 export class AnimalService {
   private apiUrl = `${environment.apiUrl}/api/animals`;
   private habitatUrl = `${environment.apiUrl}/api/habitats`; // URL de base pour les habitats
-  private uploadsUrl = `${environment.apiUrl}/api/uploads`; // URL de base pour les images
+  private imageBaseUrl = `${environment.apiUrl}/api`; // URL de base pour les images
   private animalsCache$ = new ReplaySubject<Animal[]>(1); // Cache pour optimiser les requêtes
   private cacheLoaded = false; // Drapeau pour indiquer si le cache est chargé
 
@@ -27,12 +27,12 @@ export class AnimalService {
       this.http
         .get<Animal[]>(this.apiUrl)
         .pipe(
-          // Ajoute l'URL complète de l'image pour chaque animal
           map((animals) =>
             animals.map((animal) => ({
               ...animal,
-              image: animal.images
-                ? `${environment.apiUrl}/uploads/animals/${animal.images}`
+              // Correction pour ajouter le préfixe uploads/animals
+              images: animal.images
+                ? `${this.imageBaseUrl}/${animal.images}`
                 : '',
             }))
           ),
