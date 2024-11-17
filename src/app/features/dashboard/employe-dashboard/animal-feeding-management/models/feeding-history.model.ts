@@ -1,9 +1,7 @@
 export interface FeedingHistory {
-  id: number;
-  animalId: number;
-  employeId: number;
-  employeName: string;
-  feedingTime: string;
+  _id: string;
+  animalId: string;
+  feedingTime: Date;
   foodType: string;
   quantity: number;
   notes?: string;
