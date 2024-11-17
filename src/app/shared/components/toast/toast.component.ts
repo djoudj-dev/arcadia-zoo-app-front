@@ -15,41 +15,47 @@ import { ToastService } from './services/toast.service';
   template: `
     @if (visible) {
     <div
-      class="mb-4 transition-opacity duration-300"
+      class="transition-opacity duration-300"
       [class.opacity-0]="!visible"
+      [class]="customClass"
       role="alert"
     >
       <div [class]="getTypeClass()">
-        {{ currentMessage }}
+        {{ message }}
       </div>
     </div>
     }
   `,
 })
 export class ToastComponent implements OnInit, OnDestroy {
-  visible = false;
-  currentMessage = '';
-  currentType: 'success' | 'error' = 'success';
-  private subscription: Subscription = new Subscription();
-
   @Input() message!: string;
-  @Input() type!: string;
-  @Input() customClass!: string;
+  @Input() type: 'success' | 'error' = 'success';
+  @Input() customClass = '';
+
+  visible = false;
+  private subscription: Subscription = new Subscription();
 
   constructor(private toastService: ToastService) {}
 
   ngOnInit() {
+    // Si des inputs sont fournis, afficher directement
+    if (this.message) {
+      this.visible = true;
+      setTimeout(() => {
+        this.visible = false;
+      }, 3000);
+    }
+
+    // Écouter aussi le service
     this.subscription.add(
       this.toastService.toast$.subscribe((toast) => {
-        this.currentMessage = toast.message;
-        this.currentType = toast.type;
+        this.message = toast.message;
+        this.type = toast.type;
         this.visible = true;
-      })
-    );
 
-    this.subscription.add(
-      this.toastService.hideToast$.subscribe(() => {
-        this.visible = false;
+        setTimeout(() => {
+          this.visible = false;
+        }, 3000);
       })
     );
   }
@@ -59,11 +65,11 @@ export class ToastComponent implements OnInit, OnDestroy {
   }
 
   getTypeClass() {
-    const baseClasses = 'p-4 rounded-lg shadow-lg w-full';
+    const baseClasses = 'p-4 rounded-lg shadow-lg';
     const typeClasses = {
       success: 'bg-green-100 text-green-800 border-l-4 border-green-500',
       error: 'bg-red-100 text-red-800 border-l-4 border-red-500',
     };
-    return `${baseClasses} ${typeClasses[this.currentType]}`;
+    return `${baseClasses} ${typeClasses[this.type]}`;
   }
 }

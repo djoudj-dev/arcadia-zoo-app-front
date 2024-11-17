@@ -54,6 +54,8 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
   // Ajouter une nouvelle propriété pour gérer l'état du chargement par animal
   public feedingInProgress = signal<Set<number>>(new Set());
 
+  modalToastVisible = signal(false);
+
   constructor(
     private readonly habitatService: HabitatService,
     private readonly animalFeedingService: AnimalFeedingManagementService,
@@ -90,58 +92,60 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     }, 3000);
   }
 
-  public markAsFed(animalId: number): void {
-    if (this.feedingInProgress().has(animalId)) {
-      return;
-    }
+  public markAsFed(animalId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.feedingInProgress().has(animalId)) {
+        reject('Opération déjà en cours');
+        return;
+      }
 
-    const currentUser = this.authService.currentUserSignal();
-    if (!currentUser?.id) {
-      this.toastService.showError('Erreur : ID utilisateur non disponible');
-      return;
-    }
+      const currentUser = this.authService.currentUserSignal();
+      if (!currentUser?.id) {
+        reject('ID utilisateur non disponible');
+        return;
+      }
 
-    // Récupération du nom complet
-    const userName = currentUser.name
-      ? `${currentUser.name}`
-      : currentUser.name || 'Employé inconnu';
+      const userName = currentUser.name
+        ? `${currentUser.name}`
+        : currentUser.name || 'Employé inconnu';
 
-    const feedingDataToSend: FeedingData = {
-      ...this.feedingData,
-      feedingTime: new Date(),
-      animalId: animalId,
-      employeId: currentUser.id,
-      employeName: userName.trim(), // Utilisation du nom complet
-      foodType: 'Nourriture standard',
-      quantity: this.feedingData.quantity || 0,
-    };
+      const feedingDataToSend: FeedingData = {
+        ...this.feedingData,
+        feedingTime: new Date(),
+        animalId: animalId,
+        employeId: currentUser.id,
+        employeName: userName.trim(),
+        foodType: this.feedingData.foodType,
+        quantity: this.feedingData.quantity,
+        notes: this.feedingData.notes,
+      };
 
-    console.log('Données de nourrissage à envoyer:', feedingDataToSend);
-
-    this.animalFeedingService
-      .markAnimalAsFed(animalId, feedingDataToSend)
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          const updatedFeeding = new Set(this.feedingInProgress());
-          updatedFeeding.delete(animalId);
-          this.feedingInProgress.set(updatedFeeding);
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.showToastForAnimal(animalId);
-          this.habitatService.clearCache();
-          this.loadHabitats();
-        },
-        error: (error) => {
-          console.error('Erreur complète:', error);
-          let errorMessage =
-            "Erreur lors du marquage de l'animal comme nourri.";
-          this.error.set(errorMessage);
-          this.showToastForAnimal(animalId);
-        },
-      });
+      this.animalFeedingService
+        .markAnimalAsFed(animalId, feedingDataToSend)
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => {
+            const updatedFeeding = new Set(this.feedingInProgress());
+            updatedFeeding.delete(animalId);
+            this.feedingInProgress.set(updatedFeeding);
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.showToastForAnimal(animalId);
+            this.habitatService.clearCache();
+            this.loadHabitats();
+            resolve();
+          },
+          error: (error) => {
+            console.error('Erreur complète:', error);
+            let errorMessage =
+              "Erreur lors du marquage de l'animal comme nourri.";
+            this.error.set(errorMessage);
+            reject(error);
+          },
+        });
+    });
   }
 
   private loadHabitats(): void {
@@ -186,7 +190,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     this.isModalOpen.set(true);
   }
 
-  handleFeedingSave(): void {
+  async handleFeedingSave() {
     if (
       !this.feedingData.animalId ||
       !this.feedingData.foodType ||
@@ -197,8 +201,12 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     }
 
     try {
-      this.markAsFed(this.feedingData.animalId);
-      this.isModalOpen.set(false);
+      // Appeler markAsFed d'abord
+      await this.markAsFed(this.feedingData.animalId);
+
+      // Activer le toast modal
+      this.modalToastVisible.set(true);
+
       // Réinitialiser les données du formulaire
       this.feedingData = {
         feedingTime: new Date(),
@@ -209,14 +217,23 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
         employeName: '',
         notes: '',
       };
+
+      // Attendre 3 secondes avant de fermer
+      setTimeout(() => {
+        this.modalToastVisible.set(false);
+        this.isModalOpen.set(false);
+      }, 3000);
     } catch (error) {
-      this.error.set("Une erreur est survenue lors de l'enregistrement");
-      console.error('Erreur lors de la sauvegarde:', error);
+      console.error("Erreur lors de l'enregistrement:", error);
+      this.toastService.showError(
+        "Erreur lors de l'enregistrement de la consommation"
+      );
     }
   }
 
   closeModal(): void {
     this.isModalOpen.set(false);
+    this.modalToastVisible.set(false);
   }
 
   goBack() {
