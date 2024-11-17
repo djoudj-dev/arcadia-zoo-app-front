@@ -1,4 +1,10 @@
-@if (habitats().length > 0) {
+@if (isLoading()) {
+<div class="flex justify-center items-center h-64">
+  <div
+    class="animate-spin rounded-full h-16 w-16 border-t-4 border-tertiary"
+  ></div>
+</div>
+} @else if (habitats().length > 0) {
 <section class="w-full bg-primary shadow py-4 px-4">
   <!-- Container pour les 3 cartes d'habitats -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

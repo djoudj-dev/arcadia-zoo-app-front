@@ -169,18 +169,12 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
             )
           )
         ),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe({
-        next: (habitatsWithAnimals) => {
-          this.habitats.set(habitatsWithAnimals);
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          this.error.set('Erreur lors du chargement des habitats');
-          this.isLoading.set(false);
-          console.error('Erreur lors du chargement des habitats:', error);
-        },
+        next: (habitatsWithAnimals) => this.habitats.set(habitatsWithAnimals),
+        error: () => this.error.set('Erreur lors du chargement des habitats'),
       });
   }
 
