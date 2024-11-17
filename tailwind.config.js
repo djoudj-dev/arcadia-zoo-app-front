@@ -22,7 +22,16 @@ module.exports = {
         height: "height",
         spacing: "margin, padding",
       },
+      zIndex: {
+        9999: "9999",
+      },
     },
   },
   plugins: [typography],
+  variants: {
+    extend: {
+      backgroundColor: ["active"],
+      opacity: ["disabled"],
+    },
+  },
 };

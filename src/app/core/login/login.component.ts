@@ -9,9 +9,9 @@ import {
 import { Router } from '@angular/router';
 import { InactivityService } from '../../core/services/inactivity.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { AuthService } from '../auth/auth.service';
 import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../shared/components/toast/toast.component';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -54,12 +54,12 @@ export class LoginComponent {
 
           this.toastService.showSuccess(
             'Connexion réussie ! Redirection en cours...',
-            2500
+            500
           );
 
           setTimeout(() => {
             this.router.navigate(['/dashboard']);
-          }, 2500);
+          }, 500);
         },
         error: (error) => {
           console.error('Erreur lors de la connexion:', error);
