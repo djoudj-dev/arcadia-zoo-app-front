@@ -6,7 +6,6 @@ import { AnimalService } from '../../animal/service/animal.service';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
-import { FeedingHistoryComponent } from '../employe-dashboard/animal-feeding-management/feeding-history.component';
 import { FeedingHistoryVetComponent } from './feeding-history-vet.component';
 
 @Component({
@@ -16,7 +15,6 @@ import { FeedingHistoryVetComponent } from './feeding-history-vet.component';
     CommonModule,
     ButtonComponent,
     ModalComponent,
-    FeedingHistoryComponent,
     FeedingHistoryVetComponent,
   ],
   templateUrl: './veterinary-dashboard.component.html',
