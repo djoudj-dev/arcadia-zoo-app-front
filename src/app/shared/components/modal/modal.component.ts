@@ -9,6 +9,8 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
+  Inject,
+  PLATFORM_ID,
 } from '@angular/core';
 
 /**
@@ -44,7 +46,7 @@ import {
 })
 export class ModalComponent {
   @Input() set isOpen(value: boolean) {
-    if (value) {
+    if (value && this.modalTemplate) {
       this.openModal();
     } else {
       this.closeOverlay();
@@ -58,12 +60,12 @@ export class ModalComponent {
 
   constructor(
     private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   private openModal(): void {
-    if (!this.overlayRef) {
-      // Configuration de l'overlay
+    if (!this.overlayRef && this.modalTemplate) {
       const positionStrategy = this.overlay
         .position()
         .global()
@@ -71,23 +73,22 @@ export class ModalComponent {
         .centerVertically();
 
       const overlayConfig = {
-        hasBackdrop: false, // On gère nous-même le backdrop avec Tailwind
+        hasBackdrop: false,
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy,
       };
 
-      // Création de l'overlay
       this.overlayRef = this.overlay.create(overlayConfig);
 
-      // Création et attachement du portal
       const portal = new TemplatePortal(
         this.modalTemplate,
         this.viewContainerRef
       );
-      this.overlayRef.attach(portal);
 
-      // Bloquer le scroll du body
-      document.body.classList.add('overflow-hidden');
+      if (this.overlayRef && portal) {
+        this.overlayRef.attach(portal);
+        document.body.classList.add('overflow-hidden');
+      }
     }
   }
 

@@ -3,7 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { environment } from 'environments/environment.development';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  map,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FeedingData } from '../models/feeding-data.model';
 import { FeedingHistoryResponse } from '../models/feeding-history.model';
 
@@ -36,38 +43,48 @@ export class AnimalFeedingManagementService {
     animalId: number,
     feedingData: FeedingData
   ): Observable<FeedingHistoryResponse> {
-    const currentUser = this.authService.currentUserSignal();
+    // Vérifiez que les données sont valides
+    if (!feedingData || !animalId) {
+      console.error(
+        "Les données d'alimentation ou l'ID de l'animal sont manquants."
+      );
+      return throwError(
+        () =>
+          new Error(
+            "Les données d'alimentation ou l'ID de l'animal sont invalides."
+          )
+      );
+    }
 
+    // Enrichir les données avec des champs supplémentaires
     const enrichedData = {
       ...feedingData,
-      employeId: currentUser?.id ?? feedingData.employeId,
-      employeName:
-        feedingData.employeName ?? currentUser?.name ?? 'Employé inconnu',
-      foodType: feedingData.foodType ?? 'Nourriture standard',
-      feedingTime: new Date().toISOString(),
+      feedingTime: new Date().toISOString(), // Format ISO pour le backend
+      animalId: animalId,
     };
 
+    // Envoyer la requête POST
     return this.http
       .post<FeedingHistoryResponse>(
-        `${this.BASE_URL}/feed/${animalId}`,
+        `${this.BASE_URL}/feed/${animalId}`, // Corrige l'URL
         enrichedData
       )
       .pipe(
-        map(this.transformFeedingResponse(feedingData)),
-        tap((response) => console.log('Réponse transformée:', response))
+        tap((response) => console.log('Réponse du serveur:', response)),
+        catchError((error) => {
+          // Gestion des erreurs
+          console.error(
+            "Erreur lors du marquage de l'animal comme nourri:",
+            error
+          );
+          return throwError(
+            () =>
+              new Error(
+                "Impossible de marquer l'animal comme nourri. Veuillez réessayer."
+              )
+          );
+        })
       );
-  }
-
-  /**
-   * Transforme la réponse du serveur pour uniformiser les données
-   */
-  private transformFeedingResponse(originalData: FeedingData) {
-    return (response: FeedingHistoryResponse): FeedingHistoryResponse => ({
-      ...response,
-      employee_name: originalData.employeName,
-      employee_id:
-        response.user_id ?? response.employee_id ?? originalData.employeId,
-    });
   }
 
   /**
@@ -77,31 +94,17 @@ export class AnimalFeedingManagementService {
     return this.http
       .get<FeedingHistoryResponse[]>(`${this.BASE_URL}/history/${animalId}`)
       .pipe(
-        map((data) => this.enrichFeedingHistoryWithEmployeeNames(data)),
-        tap((data) => console.log('Historique enrichi:', data))
+        tap((data) => console.log("Données brutes de l'historique:", data)),
+        map((data) =>
+          data.map((item) => ({
+            ...item,
+            user_name:
+              item.user_name || `Employé #${item.employe_id || item.user_id}`,
+            employe_id: item.employe_id || item.user_id || 0,
+          }))
+        ),
+        tap((data) => console.log('Données après transformation:', data))
       );
-  }
-
-  /**
-   * Enrichit l'historique avec les noms des employés
-   */
-  private enrichFeedingHistoryWithEmployeeNames(
-    history: FeedingHistoryResponse[]
-  ): FeedingHistoryResponse[] {
-    const currentUser = this.authService.currentUserSignal();
-
-    return history.map((item) => {
-      const employeeId = item.user_id ?? item.employee_id;
-      return {
-        ...item,
-        employee_name:
-          item.employee_name ??
-          (currentUser?.id === employeeId
-            ? currentUser.name
-            : `Employé #${employeeId}`),
-        employee_id: employeeId,
-      };
-    });
   }
 
   /**
