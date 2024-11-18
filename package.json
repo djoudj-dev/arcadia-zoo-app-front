@@ -19,9 +19,10 @@
     "@angular/forms": "^18.2.0",
     "@angular/platform-browser": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "chokidar": "^4.0.1",
+    "readdirp": "^4.0.2",
     "rxjs": "~7.8.0",
-    "zone.js": "~0.14.10",
-    "@heroicons/react": "^2.1.1"
+    "zone.js": "~0.14.10"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.11",

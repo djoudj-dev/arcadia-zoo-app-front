@@ -10,8 +10,8 @@
   <nav class="bg-secondary rounded-lg shadow-lg shadow-tertiary/30 mb-8">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
       <!-- Boutons de navigation -->
+      @for (item of navigationItems; track item.route) {
       <app-button
-        *ngFor="let item of navigationItems"
         [text]="item.text"
         [type]="'button'"
         [color]="'tertiary'"
@@ -19,6 +19,7 @@
         class="w-full transition-transform hover:scale-102"
         (click)="navigateTo(item.route)"
       ></app-button>
+      }
     </div>
   </nav>
 
