@@ -3,7 +3,9 @@ import {
   Component,
   DestroyRef,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
   inject,
   signal,
 } from '@angular/core';
@@ -142,7 +144,7 @@ import { AnimalFeedingManagementService } from '../employe-dashboard/animal-feed
     `,
   ],
 })
-export class FeedingHistoryVetComponent implements OnInit {
+export class FeedingHistoryVetComponent implements OnInit, OnChanges {
   @Input({ required: true }) animalId!: number;
 
   private readonly feedingService = inject(AnimalFeedingManagementService);
@@ -153,8 +155,16 @@ export class FeedingHistoryVetComponent implements OnInit {
     this.loadHistory();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['animalId'] && !changes['animalId'].firstChange) {
+      this.loadHistory();
+    }
+  }
+
   private async loadHistory(): Promise<void> {
     try {
+      this.feedingHistory.set([]);
+
       const history = await firstValueFrom(
         this.feedingService
           .getFeedingHistory(this.animalId)
