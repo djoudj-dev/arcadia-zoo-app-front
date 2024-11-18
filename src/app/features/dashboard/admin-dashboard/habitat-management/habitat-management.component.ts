@@ -23,7 +23,7 @@ export class HabitatManagementComponent implements OnInit {
   newHabitatData: Partial<Habitat> = {};
 
   // Chemin d'accès aux images (dérivé de l'environnement)
-  imageBaseUrl = `${environment.apiUrl}`;
+  imageBaseUrl = `${environment.apiUrl}/api`;
 
   constructor(
     private router: Router,
