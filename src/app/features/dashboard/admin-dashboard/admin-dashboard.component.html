@@ -1,77 +1,32 @@
-<div class="admin-dashboard p-4 sm:p-8 bg-primary">
+<div class="admin-dashboard min-h-screen p-4 sm:p-8 bg-primary">
+  <!-- En-tête -->
   <h1
-    class="text-xl sm:text-2xl lg:text-3xl font-bold mb-6 sm:mb-8 text-center"
+    class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-center text-quinary"
   >
     Panneau d'administration du Zoo
   </h1>
 
-  <nav class="bg-secondary rounded-lg shadow-lg shadow-tertiary mb-4">
-    <ul class="flex flex-wrap gap-2 justify-center py-4 px-2">
-      <li>
-        <app-button
-          [text]="'Gestion des comptes'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/account-management')"
-        ></app-button>
-      </li>
-      <li>
-        <app-button
-          [text]="'Gestion des services'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/service-management')"
-        ></app-button>
-      </li>
-      <li>
-        <app-button
-          [text]="'Gestion des habitats'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/habitat-management')"
-        ></app-button>
-      </li>
-      <li>
-        <app-button
-          [text]="'Gestion des animaux'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/animal-management')"
-        ></app-button>
-      </li>
-      <li>
-        <app-button
-          [text]="'Comptes rendus des vétérinaires'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/vet-reports')"
-        ></app-button>
-      </li>
-      <li>
-        <app-button
-          [text]="'Consultation des habitats'"
-          [type]="'button'"
-          [color]="'tertiary'"
-          [rounded]="true"
-          class="font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
-          (click)="navigateTo('admin/habitats-dashboard')"
-        ></app-button>
-      </li>
-    </ul>
+  <!-- Menu de navigation -->
+  <nav class="bg-secondary rounded-lg shadow-lg shadow-tertiary/30 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4">
+      <!-- Boutons de navigation -->
+      <app-button
+        *ngFor="let item of navigationItems"
+        [text]="item.text"
+        [type]="'button'"
+        [color]="'tertiary'"
+        [rounded]="true"
+        class="w-full transition-transform hover:scale-102"
+        (click)="navigateTo(item.route)"
+      ></app-button>
+    </div>
   </nav>
-  <app-count-resource />
-  <!-- Le router-outlet pour afficher les routes correspondantes -->
-  <router-outlet></router-outlet>
+
+  <!-- Contenu principal -->
+  <div class="bg-white rounded-lg shadow-lg p-4 mb-8">
+    <app-count-resource />
+    <router-outlet></router-outlet>
+  </div>
 
   <!-- Bouton de retour -->
   <div class="flex justify-center pt-4">
