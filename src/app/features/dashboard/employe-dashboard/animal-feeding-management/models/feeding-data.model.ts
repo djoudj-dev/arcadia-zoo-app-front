@@ -7,4 +7,6 @@ export interface FeedingData {
   employeId: number;
   employeName: string;
   notes: string;
+  user_id?: number;
+  user_name?: string;
 }

@@ -1,90 +1,171 @@
-<section class="container mx-auto px-4 py-8">
-  <h1 class="text-4xl font-serif text-quinary font-bold text-center mb-8">
-    Tableau de Bord Vétérinaire
-  </h1>
+<section class="w-full bg-primary shadow py-8">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+        Tableau de Bord Vétérinaire
+      </h1>
 
-  <!-- Onglets style cohérent -->
-  <div class="flex justify-center mb-8">
-    <div
-      class="flex flex-row w-full sm:inline-flex sm:w-auto rounded-lg border border-secondary"
-    >
-      <button
-        [ngClass]="[
-          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
-          'sm:first:rounded-l-lg first:rounded-t-lg sm:first:rounded-t-none',
-          activeTab() === 'overview'
-            ? 'bg-tertiary text-white shadow-sm'
-            : 'text-quinary hover:bg-secondary/10'
-        ]"
-        (click)="setActiveTab('overview')"
-      >
-        Vue d'ensemble
-      </button>
-      <button
-        [ngClass]="[
-          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
-          'sm:last:rounded-r-lg last:rounded-b-lg sm:last:rounded-b-none',
-          activeTab() === 'history'
-            ? 'bg-tertiary text-white shadow-sm'
-            : 'text-quinary hover:bg-secondary/10'
-        ]"
-        (click)="setActiveTab('history')"
-      >
-        Historique des repas
-      </button>
-    </div>
-  </div>
+      <!-- Contenu conditionnel basé sur l'onglet actif -->
+      @if (activeTab() === 'overview') {
+      <!-- Section Animaux -->
+      <div class="mb-12">
+        <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
+          Animaux
+        </h2>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-6 md:gap-8"
+        >
+          @for (animal of animals(); track animal.id_animal) {
+          <div
+            class="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+          >
+            <!-- Image Container avec overlay -->
+            <div class="relative h-56 overflow-hidden">
+              <img
+                [src]="animal.images"
+                [alt]="animal.name"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+              ></div>
+              <h3
+                class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
+              >
+                {{ animal.name }}
+              </h3>
+            </div>
 
-  @if (activeTab() === 'overview') {
-  <!-- Section Animaux -->
-  <div class="mb-12">
-    <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-      Animaux
-    </h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (animal of animals(); track animal.id_animal) {
-      <div class="bg-secondary p-6 rounded-lg shadow-lg">
-        <img
-          [src]="animal.images"
-          [alt]="animal.name"
-          class="w-full h-48 object-cover rounded-lg mb-4"
-        />
-        <h3 class="text-xl font-bold mb-2">{{ animal.name }}</h3>
-        <p class="text-sm mb-2">
-          <span class="font-bold">Espèce:</span> {{ animal.species }}
-        </p>
-        <p class="text-sm mb-2">
-          <span class="font-bold">Régime:</span> {{ animal.diet }}
-        </p>
-        <p class="text-sm">
-          <span class="font-bold">Caractéristiques:</span>
-          {{ animal.characteristics }}
-        </p>
+            <!-- Contenu -->
+            <div class="p-6">
+              <div class="space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-tertiary font-medium">Espèce:</span>
+                  <span class="text-quinary/80">{{ animal.species }}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <span class="text-tertiary font-medium">Régime:</span>
+                  <span class="text-quinary/80">{{ animal.diet }}</span>
+                </div>
+                <p class="text-sm text-quinary/70 line-clamp-2">
+                  {{ animal.characteristics }}
+                </p>
+              </div>
+
+              <!-- Bouton -->
+              <button
+                (click)="selectAnimal(animal.id_animal)"
+                class="mt-6 w-full bg-tertiary text-white py-3 px-4 rounded-xl hover:bg-quaternary transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-tertiary/50"
+              >
+                Voir l'historique des repas
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Section Habitats -->
+      <div class="mb-12">
+        <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
+          Habitats
+        </h2>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+        >
+          @for (habitat of habitats(); track habitat.id_habitat) {
+          <div
+            class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+          >
+            <div class="relative h-48 overflow-hidden">
+              <img
+                [src]="habitat.images"
+                [alt]="habitat.name"
+                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+              ></div>
+              <h3
+                class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
+              >
+                {{ habitat.name }}
+              </h3>
+            </div>
+            <div class="p-6">
+              <p class="text-sm text-quinary/70 leading-relaxed">
+                {{ habitat.description }}
+              </p>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      } @else {
+      <!-- Vue historique des repas -->
+      <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold mb-6">
+          Historique des repas des animaux
+        </h2>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+        >
+          @for (animal of animals(); track animal.id_animal) {
+          <div
+            class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+          >
+            <div class="flex items-center p-4 space-x-4">
+              <img
+                [src]="animal.images"
+                [alt]="animal.name"
+                class="w-20 h-20 rounded-xl object-cover"
+              />
+              <div class="flex-1">
+                <h3 class="text-xl font-serif font-bold text-quinary mb-2">
+                  {{ animal.name }}
+                </h3>
+                <button
+                  (click)="selectAnimal(animal.id_animal)"
+                  class="w-full bg-tertiary text-white py-2 px-4 rounded-lg hover:bg-quaternary transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-tertiary/50"
+                >
+                  Voir l'historique des repas
+                </button>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
       </div>
       }
-    </div>
-  </div>
 
-  <!-- Section Habitats -->
-  <div class="mb-12">
-    <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-      Habitats
-    </h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      @for (habitat of habitats(); track habitat.id_habitat) {
-      <div class="bg-secondary p-6 rounded-lg shadow-lg">
-        <img
-          [src]="habitat.images"
-          [alt]="habitat.name"
-          class="w-full h-48 object-cover rounded-lg mb-4"
-        />
-        <h3 class="text-xl font-bold mb-2">{{ habitat.name }}</h3>
-        <p class="text-sm">{{ habitat.description }}</p>
-      </div>
-      }
+      <!-- Modal pour l'historique des repas -->
+      <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
+        <div
+          class="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl"
+        >
+          @if (selectedAnimalId()) {
+          <h2
+            class="text-xl sm:text-2xl font-bold text-tertiary mb-6 text-center drop-shadow-sm"
+          >
+            Historique des repas
+          </h2>
+
+          <!-- Utilisation du nouveau composant -->
+          <app-feeding-history-vet [animalId]="selectedAnimalId()!" />
+          }
+
+          <div class="flex justify-center mt-6">
+            <app-button
+              [text]="'Fermer'"
+              [type]="'button'"
+              [color]="'secondary'"
+              [rounded]="true"
+              class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
+              (click)="closeModal()"
+            />
+          </div>
+        </div>
+      </app-modal>
     </div>
   </div>
-  } @else {
-  <app-veterinary-feeding-history />
-  }
 </section>

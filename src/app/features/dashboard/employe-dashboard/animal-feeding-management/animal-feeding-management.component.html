@@ -1,82 +1,62 @@
 @if (isLoading()) {
-<div class="flex justify-center items-center h-48 sm:h-64">
+<div class="flex justify-center items-center h-48">
   <div
-    class="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-tertiary/30 border-t-tertiary shadow-lg"
+    class="animate-spin rounded-full h-12 w-12 border-4 border-tertiary/30 border-t-tertiary"
   ></div>
 </div>
 } @else if (habitats().length > 0) {
-<section
-  class="w-full bg-gradient-to-br from-primary/40 to-secondary/10 py-3 sm:py-6 px-3 sm:px-6"
->
-  <!-- Container pour les cartes d'habitats -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-    @for (currentHabitat of habitats(); track currentHabitat.id_habitat) {
-    <div
-      class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-secondary/10 hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
-    >
+<div class="container mx-auto px-4 py-8">
+  <!-- Grid des habitats -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (habitat of habitats(); track habitat.id_habitat) {
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
       <!-- En-tête de l'habitat -->
-      <div class="relative p-3 sm:p-4">
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-secondary/5 to-transparent"
-        ></div>
-        <h2
-          class="relative text-xl sm:text-2xl text-quinary font-bold font-serif text-center mb-3 drop-shadow-sm"
-        >
-          {{ currentHabitat.name }}
-        </h2>
+      <div class="relative">
         <img
-          [src]="currentHabitat.images"
-          [alt]="currentHabitat.name"
-          class="w-full h-32 sm:h-48 object-cover rounded-lg shadow-md mb-3 sm:mb-4"
+          [src]="habitat.images"
+          [alt]="habitat.name"
+          class="w-full h-48 object-cover"
         />
+        <h2
+          class="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-4 text-xl font-bold"
+        >
+          {{ habitat.name }}
+        </h2>
       </div>
 
-      <!-- Liste des animaux -->
-      <div class="bg-gradient-to-b from-white/50 to-white/95 p-3 sm:p-4">
-        <h3
-          class="text-lg sm:text-xl font-bold text-tertiary mb-4 text-center drop-shadow-sm"
-        >
+      <!-- Section des animaux -->
+      <div class="p-4">
+        <h3 class="text-lg font-semibold text-tertiary mb-4">
           Animaux à nourrir
         </h3>
 
-        <div class="space-y-3">
-          @for (animal of currentHabitat.animals; track animal.id_animal) {
+        <div class="space-y-4">
+          @for (animal of habitat.animals; track animal.id_animal) {
           <div
-            class="group flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white/80 backdrop-blur-sm p-3 rounded-xl gap-2 sm:gap-0 border border-secondary/10 hover:shadow-md transition-all duration-300"
+            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
           >
-            <div class="flex items-center space-x-3">
-              <div class="relative">
-                <img
-                  [src]="animal.images"
-                  [alt]="animal.name"
-                  class="w-12 h-12 rounded-full object-cover shadow-md group-hover:scale-105 transition-transform duration-300"
-                />
-                <div class="absolute inset-0 rounded-full shadow-inner"></div>
-              </div>
-              <span class="text-sm sm:text-base font-medium text-quinary">{{
-                animal.name
-              }}</span>
+            <div class="flex items-center gap-3">
+              <img
+                [src]="animal.images"
+                [alt]="animal.name"
+                class="w-12 h-12 rounded-full object-cover"
+              />
+              <span class="font-medium">{{ animal.name }}</span>
             </div>
 
-            <div class="flex items-center justify-end gap-2 sm:gap-3">
-              <!-- Toast pour cet animal spécifique -->
+            <div class="flex items-center gap-2">
               @if (activeToasts().has(animal.id_animal)) {
               <app-toast
                 [message]="'Animal nourri avec succès !'"
                 [type]="'success'"
-                [customClass]="
-                  'bottom-2 left-1/2 transform -translate-x-1/2 w-[90%]'
-                "
               />
               }
-              <app-button
-                [text]="'Nourrir'"
-                [type]="'button'"
-                [color]="'tertiary'"
-                [rounded]="true"
-                class="w-20 sm:w-24 text-sm shadow-sm hover:shadow-md transition-shadow"
+              <button
+                class="px-4 py-2 bg-tertiary text-white rounded-lg hover:bg-tertiary/90 transition"
                 (click)="openFeedingModal(animal.id_animal)"
-              ></app-button>
+              >
+                Nourrir
+              </button>
               <app-feeding-history [animalId]="animal.id_animal" />
             </div>
           </div>
@@ -87,59 +67,54 @@
     }
   </div>
 
-  <!-- Bouton de retour -->
-  <div class="w-full flex justify-center mt-8 sm:mt-10">
-    <app-button
-      [text]="'Retour'"
-      [type]="'button'"
-      [color]="'tertiary'"
-      [rounded]="true"
-      class="w-full sm:w-1/4 lg:w-1/6 shadow-md hover:shadow-lg transition-all duration-300"
+  <!-- Bouton retour -->
+  <div class="mt-8 flex justify-center">
+    <button
+      class="px-6 py-2 bg-tertiary text-white rounded-lg hover:bg-tertiary/90 transition"
       (click)="goBack()"
-    ></app-button>
+    >
+      Retour
+    </button>
   </div>
 
   <!-- Modal -->
   <app-modal [isOpen]="isModalOpen()" (close)="closeModal()">
-    <div
-      class="bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl relative max-w-lg mx-auto border border-secondary/10"
-    >
+    <div class="bg-white p-6 rounded-lg max-w-lg mx-auto">
       @if (modalToastVisible()) {
       <app-toast
         [message]="'Consommation enregistrée avec succès !'"
         [type]="'success'"
-        [customClass]="'absolute top-4 left-0 right-0 z-50 mx-auto w-[90%]'"
       />
       }
 
-      <h2
-        class="text-xl sm:text-2xl font-bold text-tertiary mb-6 text-center drop-shadow-sm"
-      >
+      <h2 class="text-2xl font-bold text-tertiary mb-6">
         Enregistrer une consommation
       </h2>
 
-      <form (submit)="handleFeedingSave()" class="space-y-5">
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">
+      <form (submit)="handleFeedingSave()" class="space-y-4">
+        <!-- Date et heure -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
             Date et heure
           </label>
           <input
             type="datetime-local"
             [(ngModel)]="feedingData.feedingTime"
             name="dateTime"
-            class="w-full p-3 border border-secondary/20 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary text-sm sm:text-base bg-white/80 backdrop-blur-sm shadow-sm"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary"
             required
           />
         </div>
 
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">
+        <!-- Type d'alimentation -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
             Type d'alimentation
           </label>
           <select
             [(ngModel)]="feedingData.foodType"
             name="foodType"
-            class="w-full p-3 border border-secondary/20 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary text-sm sm:text-base bg-white/80 backdrop-blur-sm shadow-sm"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary"
             required
           >
             <option value="">Sélectionnez un type</option>
@@ -151,8 +126,9 @@
           </select>
         </div>
 
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">
+        <!-- Quantité -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
             Quantité (en kg)
           </label>
           <input
@@ -161,43 +137,43 @@
             name="quantity"
             min="0"
             step="0.1"
-            class="w-full p-3 border border-secondary/20 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary text-sm sm:text-base bg-white/80 backdrop-blur-sm shadow-sm"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary"
             required
           />
         </div>
 
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-gray-700">
+        <!-- Notes -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
             Notes (optionnel)
           </label>
           <textarea
             [(ngModel)]="feedingData.notes"
             name="notes"
             rows="3"
-            class="w-full p-3 border border-secondary/20 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-tertiary resize-none text-sm sm:text-base bg-white/80 backdrop-blur-sm shadow-sm"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary resize-none"
             placeholder="Ajoutez des observations ou commentaires..."
           ></textarea>
         </div>
 
-        <div class="flex justify-center gap-4 mt-8">
-          <app-button
-            [text]="'Annuler'"
-            [type]="'button'"
-            [color]="'secondary'"
-            [rounded]="true"
-            class="w-full sm:w-32 text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-300"
+        <!-- Boutons -->
+        <div class="flex justify-end gap-4 mt-6">
+          <button
+            type="button"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
             (click)="closeModal()"
-          ></app-button>
-          <app-button
-            [text]="'Enregistrer'"
-            [type]="'submit'"
-            [color]="'tertiary'"
-            [rounded]="true"
-            class="w-full sm:w-32 text-sm sm:text-base shadow-sm hover:shadow-md transition-all duration-300"
-          ></app-button>
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 bg-tertiary text-white rounded-lg hover:bg-tertiary/90 transition"
+          >
+            Enregistrer
+          </button>
         </div>
       </form>
     </div>
   </app-modal>
-</section>
+</div>
 }

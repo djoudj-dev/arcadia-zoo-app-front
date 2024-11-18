@@ -1,6 +1,8 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
+  importProvidersFrom,
   LOCALE_ID,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -16,5 +18,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authInterceptor]) // Ajouter l'intercepteur
     ),
     { provide: LOCALE_ID, useValue: 'fr-FR' },
+    importProvidersFrom(OverlayModule),
   ],
 };
