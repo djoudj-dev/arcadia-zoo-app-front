@@ -67,7 +67,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import(
         './features/dashboard/admin-dashboard/admin-dashboard.component'
-      ).then((m) => m.DashboardComponent),
+      ).then((m) => m.AdminDashboardComponent),
     title: 'Admin',
     canActivate: [authGuard],
     data: { roles: ['Admin'] },
@@ -113,12 +113,12 @@ export const routes: Routes = [
         title: 'Comptes rendus des vétérinaires',
       },
       {
-        path: 'habitats-dashboard',
+        path: 'history-management',
         loadComponent: () =>
           import(
-            './features/dashboard/admin-dashboard/habitats-dashboard/habitats-dashboard.component'
-          ).then((m) => m.HabitatsDashboardComponent),
-        title: 'Consultation des habitats',
+            './features/dashboard/admin-dashboard/history-management/history-management.component'
+          ).then((m) => m.HistoryManagementComponent),
+        title: 'Consultation des historiques',
       },
     ],
   },

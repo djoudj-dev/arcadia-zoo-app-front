@@ -13,8 +13,7 @@ import { HabitatCommentService } from '../habitat-comment/service/habitat-commen
       <p class="text-center text-gray-500">
         Aucun commentaire pour cet habitat
       </p>
-      } @else { @for (comment of filteredComments(); track
-      comment.id_habitat_comment) {
+      } @else { @for (comment of filteredComments(); track comment.id_habitat) {
       <div
         class="bg-white p-6 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300"
       >

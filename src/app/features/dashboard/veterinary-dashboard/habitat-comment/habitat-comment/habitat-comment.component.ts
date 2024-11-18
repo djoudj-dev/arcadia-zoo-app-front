@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  Input,
-  OnInit,
-  signal,
-  Output,
   EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject,
+  signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommentStatusService } from 'app/shared/services/comment-status.service';
+import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../../../../shared/components/button/button.component';
+import { ToastComponent } from '../../../../../shared/components/toast/toast.component';
 import { HabitatComment } from './model/habitat-comment.model';
 import { HabitatCommentService } from './service/habitat-comment.service';
-import { ToastComponent } from '../../../../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-habitat-comment',
@@ -19,7 +23,7 @@ import { ToastComponent } from '../../../../../shared/components/toast/toast.com
   imports: [CommonModule, FormsModule, ButtonComponent, ToastComponent],
   templateUrl: './habitat-comment.component.html',
 })
-export class HabitatCommentComponent implements OnInit {
+export class HabitatCommentComponent implements OnInit, OnDestroy {
   @Input() habitatId!: number;
   @Output() commentAdded = new EventEmitter<void>();
 
@@ -40,6 +44,9 @@ export class HabitatCommentComponent implements OnInit {
     'Nécessite des améliorations',
   ] as const;
 
+  private commentStatusService = inject(CommentStatusService);
+  private statusSubscription: Subscription | undefined;
+
   constructor(private habitatComments: HabitatCommentService) {}
 
   ngOnInit() {
@@ -47,13 +54,47 @@ export class HabitatCommentComponent implements OnInit {
       this.newHabitatCommentData.id_habitat = this.habitatId;
       this.loadHabitatsComments();
     }
+
+    // S'abonner aux changements de statut
+    this.statusSubscription =
+      this.commentStatusService.commentStatusChanged$.subscribe(
+        (updatedComment) => {
+          console.log(
+            'Mise à jour du commentaire reçue dans le composant vétérinaire:',
+            updatedComment
+          );
+
+          // Recharger immédiatement les commentaires
+          this.loadHabitatsComments();
+
+          // Afficher un toast de confirmation
+          this.showToast(
+            `Commentaire ${
+              updatedComment.is_resolved ? 'marqué comme réglé' : 'réouvert'
+            }`,
+            'success'
+          );
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    if (this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
+    }
   }
 
   loadHabitatsComments() {
+    console.log("Chargement des commentaires pour l'habitat:", this.habitatId);
     this.habitatComments.getCommentsByHabitatId(this.habitatId).subscribe({
       next: (comments) => {
-        console.log('Commentaires chargés:', comments);
-        this.habitatsComments.set(comments);
+        console.log("Commentaires reçus pour l'habitat:", comments);
+        // Trier les commentaires par date de création (plus récents en premier)
+        const sortedComments = [...comments].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        this.habitatsComments.set(sortedComments);
       },
       error: (error) =>
         console.error(

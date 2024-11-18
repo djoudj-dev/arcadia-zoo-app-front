@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../../../../../../environments/environment';
 import { HabitatComment } from '../model/habitat-comment.model';
-import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

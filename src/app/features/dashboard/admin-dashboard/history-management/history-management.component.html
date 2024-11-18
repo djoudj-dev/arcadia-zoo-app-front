@@ -1,0 +1,160 @@
+<!-- Section du dashboard de consultation des habitats -->
+<section class="p-6 bg-white rounded-xl shadow-xl shadow-tertiary/20 my-4">
+  <h2 class="text-3xl font-serif font-bold text-tertiary text-center mb-8">
+    Consultation des commentaires sur les habitats
+  </h2>
+
+  <div class="space-y-4">
+    @for (comment of commentHistory; track comment._id) {
+    <div
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
+    >
+      <!-- Bande de statut en haut -->
+      <div
+        class="h-1 w-full"
+        [class.bg-green-500]="comment.is_resolved"
+        [class.bg-red-500]="!comment.is_resolved"
+      ></div>
+
+      <div class="p-4">
+        <!-- En-tête avec date et statut -->
+        <div class="flex justify-between items-start mb-4">
+          <div class="text-sm text-tertiary/80">
+            {{ comment.createdAt | date : "dd/MM/yyyy HH:mm" }}
+          </div>
+          <div class="flex items-center gap-2">
+            @if (comment.is_resolved) {
+            <div
+              class="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3.5 w-3.5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Réglé</span>
+            </div>
+            } @else {
+            <div
+              class="flex items-center gap-1.5 bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3.5 w-3.5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 102 0V6zm-1 8a1 1 0 100-2 1 1 0 000 2z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>En attente</span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Informations principales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div class="space-y-1">
+            <div class="text-xs font-medium text-tertiary/60 uppercase">
+              Habitat
+            </div>
+            <div class="text-sm text-tertiary">{{ comment.habitat_name }}</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-xs font-medium text-tertiary/60 uppercase">
+              Vétérinaire
+            </div>
+            <div class="text-sm text-tertiary">{{ comment.user_name }}</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-xs font-medium text-tertiary/60 uppercase">
+              Commentaire
+            </div>
+            <div class="text-sm text-tertiary">{{ comment.comment }}</div>
+          </div>
+        </div>
+
+        <!-- Pied avec actions -->
+        <div
+          class="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100"
+        >
+          @if (comment.is_resolved) {
+          <div class="text-sm text-tertiary/70 flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-tertiary/50"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span>
+              Résolu par
+              <span class="font-medium text-tertiary">{{
+                comment.resolved_by
+              }}</span>
+              <span class="text-tertiary/50"
+                >le {{ comment.resolved_at | date : "dd/MM/yyyy" }}</span
+              >
+            </span>
+          </div>
+          <app-button
+            [color]="'tertiary'"
+            [text]="'Rouvrir le ticket'"
+            (click)="$event.preventDefault(); reopenComment(comment._id)"
+            [rounded]="true"
+            class="w-full sm:w-auto min-w-[160px]"
+          />
+          } @else {
+          <div class="text-sm text-tertiary/70 flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4 text-tertiary/50"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span>En attente de résolution</span>
+          </div>
+          <app-button
+            [color]="'success'"
+            [text]="'Valider la résolution'"
+            (click)="$event.preventDefault(); markAsResolved(comment._id)"
+            [rounded]="true"
+            class="w-full sm:w-auto min-w-[160px]"
+          />
+          }
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  @if (commentHistory.length === 0) {
+  <div class="text-center py-12">
+    <div class="text-tertiary/50 text-lg font-medium">
+      Aucun historique de commentaire disponible
+    </div>
+  </div>
+  }
+</section>

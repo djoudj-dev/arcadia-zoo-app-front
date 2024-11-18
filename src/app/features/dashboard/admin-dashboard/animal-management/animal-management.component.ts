@@ -30,7 +30,7 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Données temporaires pour le formulaire d'ajout ou de modification d'un animal **/
   newAnimalData = signal<Partial<Animal>>({});
-  imageBaseUrl = `${environment.apiUrl}`; // URL des images
+  imageBaseUrl = `${environment.apiUrl}/api`; // URL des images
 
   filteredAnimals = computed(() =>
     this.animals().filter(
