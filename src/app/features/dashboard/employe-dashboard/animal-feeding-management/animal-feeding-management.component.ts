@@ -7,7 +7,6 @@ import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { finalize, forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { Habitat } from '../../../habitats/models/habitat.model';
 import { HabitatService } from '../../../habitats/service/habitat.service';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
@@ -20,7 +19,6 @@ import { AnimalFeedingManagementService } from './services/animal-feeding-manage
   standalone: true,
   imports: [
     CommonModule,
-    ButtonComponent,
     ModalComponent,
     FormsModule,
     ToastComponent,
@@ -105,26 +103,29 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const userName = currentUser.name
-        ? `${currentUser.name}`
-        : currentUser.name || 'Employé inconnu';
-
       const feedingDataToSend: FeedingData = {
-        ...this.feedingData,
         feedingTime: new Date(),
         animalId: animalId,
         employeId: currentUser.id,
-        employeName: userName.trim(),
+        employeName: currentUser.name || 'Employé inconnu',
+        user_id: currentUser.id,
+        user_name: currentUser.name || 'Employé inconnu',
         foodType: this.feedingData.foodType,
         quantity: this.feedingData.quantity,
-        notes: this.feedingData.notes,
+        notes: this.feedingData.notes || '',
       };
+
+      // Ajout de l'animal à la liste des opérations en cours
+      const updatedFeeding = new Set(this.feedingInProgress());
+      updatedFeeding.add(animalId);
+      this.feedingInProgress.set(updatedFeeding);
 
       this.animalFeedingService
         .markAnimalAsFed(animalId, feedingDataToSend)
         .pipe(
           takeUntil(this.destroy$),
           finalize(() => {
+            // Retrait de l'animal de la liste des opérations en cours
             const updatedFeeding = new Set(this.feedingInProgress());
             updatedFeeding.delete(animalId);
             this.feedingInProgress.set(updatedFeeding);
@@ -139,7 +140,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Erreur complète:', error);
-            let errorMessage =
+            const errorMessage =
               "Erreur lors du marquage de l'animal comme nourri.";
             this.error.set(errorMessage);
             reject(error);
@@ -179,9 +180,15 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
   }
 
   openFeedingModal(animalId: number): void {
-    this.selectedAnimalId.set(animalId);
-    this.feedingData.animalId = animalId;
-    this.isModalOpen.set(true);
+    // Validez l'animalId avant d'ouvrir le modal
+    if (!animalId) {
+      console.error('animalId invalide:', animalId);
+      return;
+    }
+
+    this.selectedAnimalId.set(animalId); // Associez l'animal au modal
+    this.feedingData.animalId = animalId; // Mettez à jour feedingData
+    this.isModalOpen.set(true); // Ouvrez le modal
   }
 
   async handleFeedingSave() {

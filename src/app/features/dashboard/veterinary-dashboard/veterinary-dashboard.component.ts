@@ -1,22 +1,32 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { AnimalService } from '../../animal/service/animal.service';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { VeterinaryFeedingHistoryComponent } from './feeding-history/feeding-history.component';
+import { FeedingHistoryComponent } from '../employe-dashboard/animal-feeding-management/feeding-history.component';
+import { FeedingHistoryVetComponent } from './feeding-history-vet.component';
 
 @Component({
   selector: 'app-veterinary-dashboard',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, VeterinaryFeedingHistoryComponent],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    ModalComponent,
+    FeedingHistoryComponent,
+    FeedingHistoryVetComponent,
+  ],
   templateUrl: './veterinary-dashboard.component.html',
 })
 export class VeterinaryDashboardComponent implements OnInit {
   habitats = signal<Habitat[]>([]);
   animals = signal<Animal[]>([]);
   activeTab = signal<'overview' | 'history'>('overview');
+  selectedAnimalId = signal<number | null>(null);
+  isModalOpen = signal(false);
 
   constructor(
     private habitatService: HabitatService,
@@ -46,5 +56,14 @@ export class VeterinaryDashboardComponent implements OnInit {
       error: (error) =>
         console.error('Erreur lors du chargement des animaux:', error),
     });
+  }
+
+  selectAnimal(animalId: number): void {
+    this.selectedAnimalId.set(animalId);
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
   }
 }

@@ -132,16 +132,6 @@ export const routes: Routes = [
     title: 'Vétérinaire',
     canActivate: [authGuard],
     data: { roles: ['Veterinaire'] },
-    children: [
-      {
-        path: 'feeding-history',
-        loadComponent: () =>
-          import(
-            './features/dashboard/veterinary-dashboard/feeding-history/feeding-history.component'
-          ).then((m) => m.VeterinaryFeedingHistoryComponent),
-        title: 'Historique des repas',
-      },
-    ],
   },
 
   // Routes pour les employés
