@@ -1,34 +1,32 @@
-<section class="w-full bg-primary shadow py-8">
+<section
+  class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-8"
+>
   <div class="container mx-auto px-4">
-    <!-- Titre principal -->
-    <h1
-      class="text-3xl md:text-5xl font-serif text-quinary font-bold text-center mb-12"
-    >
-      Bienvenue au Zoo Arcadia
-    </h1>
+    <!-- En-tête avec titre -->
+    <div class="text-center space-y-4 mb-12">
+      <h1
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
+      >
+        Bienvenue au Zoo Arcadia
+      </h1>
+    </div>
 
     <!-- Contenu principal -->
     <div class="max-w-7xl mx-auto">
-      <!-- Texte et citation -->
-      <div class="relative mb-12">
-        <!-- Citation (mobile-first) -->
+      <!-- Citation et présentation -->
+      <div
+        class="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-secondary/20 mb-12 relative"
+      >
+        <!-- Icône de citation -->
         <div class="absolute -top-4 left-4 md:-top-6 md:left-6">
-          <svg
-            class="w-6 h-6 md:w-8 md:h-8 text-tertiary opacity-50"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 18 14"
-          >
-            <path
-              d="M6 0H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3H2a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Zm10 0h-4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v1a3 3 0 0 1-3 3h-1a1 1 0 0 0 0 2h1a5.006 5.006 0 0 0 5-5V2a2 2 0 0 0-2-2Z"
-            />
-          </svg>
+          <i
+            class="fas fa-quote-left text-tertiary/50 text-4xl md:text-5xl"
+          ></i>
         </div>
 
         <!-- Texte de présentation -->
         <p
-          class="text-base md:text-xl text-quinary font-sans leading-relaxed text-center max-w-5xl mx-auto px-4 md:px-8"
+          class="text-base md:text-xl text-quinary/90 font-sans leading-relaxed text-center max-w-5xl mx-auto pt-6"
         >
           Le Zoo Arcadia, fondé en 1960, est un parc zoologique situé près de la
           légendaire forêt de Brocéliande, en Bretagne, France. Ce zoo, reconnu
@@ -40,26 +38,27 @@
 
       <!-- Image principale avec overlay -->
       <div
-        class="relative group rounded-3xl overflow-hidden shadow-xl h-[300px] md:h-[500px]"
+        class="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300"
       >
         <img
           src="images/img_home/img-back.webp"
           alt="Vue du Zoo Arcadia"
-          class="w-full h-full object-cover"
+          class="w-full h-[300px] md:h-[500px] object-cover transform group-hover:scale-105 transition-transform duration-500"
         />
-        <!-- Overlay au survol -->
+
+        <!-- Overlay avec informations -->
         <div
-          class="absolute inset-0 bg-tertiary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-6 md:p-12"
+          class="absolute inset-0 bg-gradient-to-t from-tertiary/90 to-tertiary/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center items-center p-6 md:p-12"
         >
-          <p
-            class="text-primary text-center text-sm md:text-xl font-sans max-w-4xl"
-          >
-            Chaque jour, une équipe de vétérinaires effectue des contrôles
-            rigoureux sur chaque animal avant l'ouverture du zoo pour garantir
-            leur bonne santé. L'alimentation des animaux est minutieusement
-            calculée pour répondre aux besoins nutritionnels spécifiques de
-            chaque espèce.
-          </p>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-4xl">
+            <p class="text-primary text-center text-sm md:text-xl font-sans">
+              Chaque jour, une équipe de vétérinaires effectue des contrôles
+              rigoureux sur chaque animal avant l'ouverture du zoo pour garantir
+              leur bonne santé. L'alimentation des animaux est minutieusement
+              calculée pour répondre aux besoins nutritionnels spécifiques de
+              chaque espèce.
+            </p>
+          </div>
         </div>
       </div>
     </div>
