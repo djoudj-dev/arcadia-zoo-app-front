@@ -1,57 +1,60 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Animal } from '../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { VeterinaryReports } from '../dashboard/veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
+import { VeterinaryReportsService } from '../dashboard/veterinary-dashboard/veterinary-reports/service/veterinary-reports.service';
 import { AnimalService } from './service/animal.service';
 
+/**
+ * Composant de détail d'un animal
+ * Affiche les informations détaillées d'un animal spécifique, son habitat et son dernier rapport vétérinaire
+ */
 @Component({
   selector: 'app-animal',
   standalone: true,
   imports: [ButtonComponent, DatePipe],
   templateUrl: './animal.component.html',
-  styles: [
-    `
-      span {
-        font-weight: bold;
-        color: #0e1805;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class AnimalComponent implements OnInit {
-  /** Signal pour stocker les informations */
+  /** Signal contenant les données de l'animal */
   animal = signal<Animal | undefined>(undefined);
+
+  /** Signal contenant les données de l'habitat de l'animal */
   habitat = signal<Habitat | undefined>(undefined);
-  veterinary = signal<VeterinaryReports | undefined>(undefined);
+
+  /** Signal contenant le dernier rapport vétérinaire de l'animal */
+  latestVeterinaryReport = signal<VeterinaryReports | undefined>(undefined);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private animalService: AnimalService // Service pour gérer les opérations liées à Animal
+    private animalService: AnimalService,
+    private veterinaryReportsService: VeterinaryReportsService
   ) {}
 
-  /** Initialisation du composant pour charger les données de l'animal */
+  /** Initialise le composant en chargeant les données de l'animal */
   ngOnInit() {
-    this.loadAnimal(); // Appel à la méthode de chargement
+    this.loadAnimal();
   }
 
   /**
-   * Charge les informations de l'animal en fonction de l'ID récupéré depuis la route.
+   * Charge les informations de l'animal à partir de l'ID dans l'URL
+   * Déclenche également le chargement de l'habitat et du rapport vétérinaire associés
    */
   private loadAnimal() {
-    const id = Number(this.route.snapshot.paramMap.get('id')); // Récupération de l'ID de l'animal depuis les paramètres de la route
-    console.log('Route param ID:', id);
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
     this.animalService.getAnimalById(id).subscribe({
       next: (animal) => {
         this.animal.set(animal);
-
-        // Si l'animal a été trouvé, charger son habitat associé
         if (animal) {
           this.loadHabitat(animal.habitat_id);
+          this.loadVeterinaryReports(animal.id_animal);
         }
       },
       error: (error) =>
@@ -60,34 +63,77 @@ export class AnimalComponent implements OnInit {
   }
 
   /**
-   * Charge les informations de l'habitat associé à l'animal depuis le backend.
-   * @param habitat_id - Identifiant de l'habitat associé
+   * Charge les informations de l'habitat associé à l'animal
+   * @param habitat_id - ID de l'habitat à charger
    */
   private loadHabitat(habitat_id: number | undefined) {
     if (habitat_id != null) {
       this.animalService.getHabitatById(habitat_id).subscribe({
-        next: (habitat) => {
-          this.habitat.set(habitat); // Mise à jour du signal de l'habitat
-        },
+        next: (habitat) => this.habitat.set(habitat),
         error: (error) =>
           console.error("Erreur lors de la récupération de l'habitat :", error),
       });
     }
   }
 
-  /** Retour à la page d'accueil */
+  /** Navigue vers la page d'accueil */
   goBack() {
     this.router.navigate(['/']);
   }
 
-  /**
-   * Redirection vers la page de l'habitat associé.
-   * Vérifie si l'ID de l'habitat est valide avant de naviguer.
-   */
+  /** Navigue vers la page de l'habitat de l'animal */
   goHabitat() {
     const habitat_id = this.habitat()?.id_habitat;
     if (habitat_id) {
       this.router.navigate(['/habitat', habitat_id]);
+    }
+  }
+
+  /**
+   * Charge le dernier rapport vétérinaire de l'animal
+   * @param animalId - ID de l'animal dont on veut récupérer le rapport
+   */
+  private loadVeterinaryReports(animalId: number) {
+    this.veterinaryReportsService
+      .getAllReports()
+      .pipe(
+        map(
+          (reports) =>
+            reports
+              .filter((report) => report.id_animal === animalId)
+              .sort(
+                (a, b) =>
+                  new Date(b.visit_date).getTime() -
+                  new Date(a.visit_date).getTime()
+              )[0]
+        )
+      )
+      .subscribe({
+        next: (latestReport) => this.latestVeterinaryReport.set(latestReport),
+        error: (error) =>
+          console.error(
+            'Erreur lors du chargement du dernier rapport vétérinaire:',
+            error
+          ),
+      });
+  }
+
+  /**
+   * Retourne les classes CSS pour l'état de santé de l'animal
+   * @param state - État de santé de l'animal
+   * @returns Classes CSS correspondant à l'état de santé
+   */
+  getStateClass(state: string): string {
+    const baseClasses = 'px-3 py-1 rounded-full text-sm font-semibold';
+    switch (state.toLowerCase()) {
+      case 'bonne santé':
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case 'surveillance':
+        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+      case 'malade':
+        return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800`;
     }
   }
 }
