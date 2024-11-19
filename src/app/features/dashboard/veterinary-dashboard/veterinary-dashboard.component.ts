@@ -6,20 +6,26 @@ import { AnimalService } from '../../animal/service/animal.service';
 import { HabitatService } from '../../habitats/service/habitat.service';
 import { Animal } from '../admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../admin-dashboard/habitat-management/model/habitat.model';
+import { AnimalFeedingManagementService } from '../employe-dashboard/animal-feeding-management/services/animal-feeding-management.service';
 import { FeedingHistoryVetComponent } from './feeding-history-vet.component';
+import { HabitatCommentHistoryComponent } from './habitat-comment/habitat-comment-history/habitat-comment-history.component';
 import { HabitatCommentComponent } from './habitat-comment/habitat-comment/habitat-comment.component';
 import { HabitatComment } from './habitat-comment/habitat-comment/model/habitat-comment.model';
 import { HabitatCommentService } from './habitat-comment/habitat-comment/service/habitat-comment.service';
+import { VeterinaryReportsListComponent } from './veterinary-reports-list/veterinary-reports-list.component';
+import { VeterinaryReportsService } from './veterinary-reports/service/veterinary-reports.service';
 
 @Component({
   selector: 'app-veterinary-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    ButtonComponent,
     ModalComponent,
     FeedingHistoryVetComponent,
     HabitatCommentComponent,
+    ButtonComponent,
+    HabitatCommentHistoryComponent,
+    VeterinaryReportsListComponent,
   ],
   templateUrl: './veterinary-dashboard.component.html',
 })
@@ -33,11 +39,19 @@ export class VeterinaryDashboardComponent implements OnInit {
   private _isHabitatModalOpen = signal(false);
   private _isHabitatHistoryModalOpen = signal(false);
   habitatComments = signal<HabitatComment[]>([]);
+  activeHistoryTab: 'meals' | 'habitats' | 'consultations' = 'meals';
+  habitatCommentsMap = signal<Map<number, HabitatComment[]>>(new Map());
+  private _isReportModalOpen = signal(false);
+  private _showVetReports = signal(false);
+  showVetReports = computed(() => this._showVetReports());
+  hasHistory = signal(false);
 
   constructor(
     private habitatService: HabitatService,
     private animalService: AnimalService,
-    private habitatCommentService: HabitatCommentService
+    private habitatCommentService: HabitatCommentService,
+    private reportsService: VeterinaryReportsService,
+    private animalFeedingService: AnimalFeedingManagementService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +92,7 @@ export class VeterinaryDashboardComponent implements OnInit {
   closeHistoryModal() {
     this._isHistoryModalOpen.set(false);
     this.selectedAnimalId.set(null);
+    this._showVetReports.set(false);
   }
 
   closeHabitatModal() {
@@ -94,7 +109,9 @@ export class VeterinaryDashboardComponent implements OnInit {
   private loadHabitatComments(habitatId: number): void {
     this.habitatCommentService.getCommentsByHabitatId(habitatId).subscribe({
       next: (comments) => {
-        this.habitatComments.set(comments);
+        const currentMap = new Map(this.habitatCommentsMap());
+        currentMap.set(habitatId, comments);
+        this.habitatCommentsMap.set(currentMap);
       },
       error: (error) => {
         console.error('Erreur lors du chargement des commentaires:', error);
@@ -108,9 +125,14 @@ export class VeterinaryDashboardComponent implements OnInit {
     this.habitatComments.set([]);
   }
 
-  generateReport(animalId: number): void {
-    console.log(`Génération du rapport pour l'animal ${animalId}`);
-    // Implémentez ici la logique pour générer le rapport
+  openReportForm(animalId: number): void {
+    this.selectedAnimalId.set(animalId);
+    this._isReportModalOpen.set(true);
+  }
+
+  closeReportModal() {
+    this._isReportModalOpen.set(false);
+    this.selectedAnimalId.set(null);
   }
 
   getHabitatName(habitatId: number): string {
@@ -126,10 +148,49 @@ export class VeterinaryDashboardComponent implements OnInit {
   isHistoryModalOpen = computed(() => this._isHistoryModalOpen());
   isHabitatModalOpen = computed(() => this._isHabitatModalOpen());
   isHabitatHistoryModalOpen = computed(() => this._isHabitatHistoryModalOpen());
+  isReportModalOpen = computed(() => this._isReportModalOpen());
 
   getSelectedHabitat() {
     return this.habitats().find(
       (h) => h.id_habitat === this.selectedHabitatId()
     );
+  }
+
+  setActiveHistoryTab(tab: 'meals' | 'habitats' | 'consultations') {
+    this.activeHistoryTab = tab;
+    if (tab === 'habitats') {
+      this.habitats().forEach((habitat) => {
+        this.loadHabitatComments(habitat.id_habitat);
+      });
+    }
+  }
+
+  viewConsultations(animalId: number) {
+    console.log("Voir les consultations pour l'animal:", animalId);
+  }
+
+  getHabitatComments(habitatId: number): HabitatComment[] {
+    return this.habitatCommentsMap().get(habitatId) || [];
+  }
+
+  toggleHistoryView(showReports: boolean) {
+    this._showVetReports.set(showReports);
+  }
+
+  openVetReportsHistory(animalId: number): void {
+    this.selectedAnimalId.set(animalId);
+    this._isHistoryModalOpen.set(true);
+    this._showVetReports.set(true);
+  }
+
+  loadFeedingHistory(animalId: number) {
+    this.animalFeedingService.getFeedingHistory(animalId).subscribe({
+      next: (history) => {
+        this.hasHistory.set(history.length > 0);
+      },
+      error: (error) => {
+        console.error("Erreur lors du chargement de l'historique:", error);
+      },
+    });
   }
 }

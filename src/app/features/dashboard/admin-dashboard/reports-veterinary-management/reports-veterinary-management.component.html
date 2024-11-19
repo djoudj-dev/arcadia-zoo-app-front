@@ -1,0 +1,83 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <h1 class="text-2xl font-serif text-tertiary mb-6">
+      Rapports Vétérinaires
+    </h1>
+
+    @if (isLoading) {
+    <div class="flex justify-center items-center py-8">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-tertiary"
+      ></div>
+    </div>
+    } @if (error) {
+    <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-6">
+      {{ error }}
+    </div>
+    } @if (!isLoading && !error && reports.length === 0) {
+    <div class="text-center py-8 text-gray-600">
+      Aucun rapport vétérinaire disponible.
+    </div>
+    } @if (!isLoading && reports.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (report of reports; track $index) {
+      <div class="bg-gray-50 rounded-lg p-6 shadow-sm">
+        <div class="flex justify-between items-start">
+          <div class="flex items-start gap-4 w-full">
+            <img
+              [src]="report.animal_photo"
+              [alt]="report.animal_name"
+              class="w-16 h-16 rounded-full object-cover"
+            />
+            <div class="space-y-4 flex-grow">
+              <div>
+                <h3 class="text-lg font-medium text-tertiary">
+                  Animal: {{ report.animal_name }}
+                </h3>
+                <p class="text-sm text-gray-600">
+                  Date de visite: {{ report.visit_date | date : "dd/MM/yyyy" }}
+                </p>
+              </div>
+
+              <div class="space-y-2">
+                <p class="text-sm">
+                  <span class="font-medium">Alimentation recommandée:</span>
+                  {{ report.recommended_food_quantity
+                  }}{{ report.food_unit }} de
+                  {{ report.recommended_food_type }}
+                </p>
+
+                @if (report.additional_details) {
+                <p class="text-sm">
+                  <span class="font-medium">Détails supplémentaires:</span>
+                  {{ report.additional_details }}
+                </p>
+                }
+
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">Vétérinaire:</span>
+                  {{ report.user_name }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-2">
+            <span [class]="getStateClass(report.animal_state)" class="ml-2">
+              <i class="fas fa-{{ getStateIcon(report.animal_state) }}"></i>
+              {{ report.animal_state }}
+            </span>
+            <button
+              (click)="toggleReportStatus(report)"
+              [class]="getStatusButtonClass(report.is_processed ?? false)"
+              class="px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            >
+              {{ report.is_processed ? "Traité" : "Non traité" }}
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

@@ -1,371 +1,265 @@
-<section class="w-full bg-primary shadow py-8">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
-        Tableau de Bord Vétérinaire
-      </h1>
-
-      <!-- Contenu conditionnel basé sur l'onglet actif -->
-      @if (activeTab() === 'overview') {
-      <!-- Section Animaux -->
-      <div class="mb-12">
-        <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-          Animaux
-        </h2>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-6 md:gap-8"
+<section
+  class="relative bg-gradient-to-r from-secondary to-tertiary/90 shadow-lg"
+>
+  <div
+    class="absolute inset-0 bg-[url('/assets/patterns/subtle-dots.png')] opacity-10"
+  ></div>
+  <div class="container mx-auto px-4 py-12">
+    <div class="relative z-10">
+      <div class="flex flex-col items-center justify-center space-y-4">
+        <h1
+          class="text-4xl md:text-6xl font-serif text-white font-bold tracking-tight"
         >
-          @for (animal of animals(); track animal.id_animal) {
-          <div
-            class="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-          >
-            <!-- Image Container avec overlay -->
-            <div class="relative h-56 overflow-hidden">
-              <img
-                [src]="animal.images"
-                [alt]="animal.name"
-                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
-              ></div>
-              <h3
-                class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
-              >
-                {{ animal.name }}
-              </h3>
-            </div>
-
-            <!-- Contenu -->
-            <div class="p-6">
-              <table class="w-full text-sm">
-                <tbody>
-                  <tr>
-                    <td class="text-tertiary font-medium pr-2">Espèce:</td>
-                    <td class="text-quinary/80">{{ animal.species }}</td>
-                  </tr>
-                  <tr>
-                    <td class="text-tertiary font-medium pr-2">Régime:</td>
-                    <td class="text-quinary/80">{{ animal.diet }}</td>
-                  </tr>
-                  <tr>
-                    <td class="text-tertiary font-medium pr-2">Habitat:</td>
-                    <td class="text-quinary/80 line-clamp-2">
-                      {{ getHabitatName(animal.habitat_id) }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- Boutons -->
-              <div class="grid grid-cols-2 gap-2 mt-4">
-                <app-button
-                  [text]="'Rapport'"
-                  [color]="'tertiary'"
-                  [rounded]="true"
-                  (click)="generateReport(animal.id_animal)"
-                  class="transform hover:-translate-y-0.5 transition-all duration-300"
-                />
-                <app-button
-                  [text]="'Historique'"
-                  [color]="'secondary'"
-                  [rounded]="true"
-                  (click)="openFeedingHistory(animal.id_animal)"
-                  class="transform hover:-translate-y-0.5 transition-all duration-300"
-                />
-              </div>
-            </div>
-          </div>
-          }
-        </div>
+          Tableau de Bord Vétérinaire
+        </h1>
       </div>
-
-      <!-- Section Habitats -->
-      <div class="mb-12">
-        <h2 class="text-2xl md:text-4xl font-serif text-quinary font-bold mb-8">
-          Habitats
-        </h2>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-        >
-          @for (habitat of habitats(); track habitat.id_habitat) {
-          <div
-            class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-          >
-            <div class="relative h-48 overflow-hidden">
-              <img
-                [src]="habitat.images"
-                [alt]="habitat.name"
-                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
-              ></div>
-              <h3
-                class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
-              >
-                {{ habitat.name }}
-              </h3>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 p-4">
-              <app-button
-                [text]="'Commentaire'"
-                [color]="'tertiary'"
-                [rounded]="true"
-                (click)="selectHabitat(habitat.id_habitat)"
-                class="transform hover:-translate-y-0.5 transition-all duration-300"
-              />
-              <app-button
-                [text]="'Historique'"
-                [color]="'secondary'"
-                [rounded]="true"
-                (click)="viewHabitatComments(habitat.id_habitat)"
-                class="transform hover:-translate-y-0.5 transition-all duration-300"
-              />
-            </div>
-          </div>
-          }
-        </div>
-      </div>
-      } @else {
-      <!-- Vue historique des repas -->
-      <div class="container mx-auto px-4">
-        <h2 class="text-2xl font-bold mb-6">
-          Historique des repas des animaux
-        </h2>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-        >
-          @for (animal of animals(); track animal.id_animal) {
-          <div
-            class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-          >
-            <div class="flex items-center p-4 space-x-4">
-              <img
-                [src]="animal.images"
-                [alt]="animal.name"
-                class="w-20 h-20 rounded-xl object-cover"
-              />
-              <div class="flex-1">
-                <h3 class="text-xl font-serif font-bold text-quinary mb-2">
-                  {{ animal.name }}
-                </h3>
-                <button
-                  (click)="selectAnimal(animal.id_animal)"
-                  class="w-full bg-tertiary text-white py-2 px-4 rounded-lg hover:bg-quaternary transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-tertiary/50"
-                >
-                  Voir l'historique des repas
-                </button>
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-      </div>
-      }
-
-      <!-- Modal pour l'historique des repas -->
-      <app-modal [isOpen]="isHistoryModalOpen()" (close)="closeHistoryModal()">
-        <div
-          class="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl"
-        >
-          @if (selectedAnimalId()) {
-          <h2
-            class="text-xl sm:text-2xl font-bold text-tertiary mb-6 text-center drop-shadow-sm"
-          >
-            Historique des repas
-          </h2>
-          <app-feeding-history-vet [animalId]="selectedAnimalId()!" />
-          }
-          <div class="flex justify-center mt-6">
-            <app-button
-              [text]="'Fermer'"
-              [type]="'button'"
-              [color]="'secondary'"
-              [rounded]="true"
-              class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
-              (click)="closeHistoryModal()"
-            />
-          </div>
-        </div>
-      </app-modal>
-
-      <!-- Modal pour les commentaires d'habitat -->
-      <app-modal [isOpen]="isHabitatModalOpen()" (close)="closeHabitatModal()">
-        <div
-          class="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl"
-        >
-          @if (selectedHabitatId()) {
-          <app-habitat-comment
-            [habitatId]="selectedHabitatId()!"
-            (commentAdded)="closeHabitatModal()"
-          />
-          }
-          <div class="flex justify-center mt-6">
-            <app-button
-              [text]="'Fermer'"
-              [type]="'button'"
-              [color]="'secondary'"
-              [rounded]="true"
-              class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
-              (click)="closeHabitatModal()"
-            />
-          </div>
-        </div>
-      </app-modal>
-
-      <!-- Nouveau Modal pour l'historique des commentaires d'habitat -->
-      <app-modal
-        [isOpen]="isHabitatHistoryModalOpen()"
-        (close)="closeHabitatHistoryModal()"
-      >
-        <div
-          class="w-full max-w-6xl mx-auto bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-xl"
-        >
-          @if (selectedHabitatId()) {
-          <div class="flex items-center gap-4 mb-8">
-            <img
-              [src]="getSelectedHabitat()?.images"
-              [alt]="getSelectedHabitat()?.name"
-              class="w-24 h-24 rounded-xl object-cover shadow-md"
-            />
-            <div>
-              <h2
-                class="text-2xl sm:text-3xl font-serif font-bold text-tertiary"
-              >
-                Historique des commentaires
-              </h2>
-              <p class="text-lg text-quinary/70 font-medium">
-                {{ getHabitatName(selectedHabitatId()!) }}
-              </p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @if (habitatComments().length === 0) {
-            <p class="col-span-full text-center text-tertiary/70 py-8">
-              Aucun commentaire pour cet habitat.
-            </p>
-            } @else { @for (comment of habitatComments(); track
-            comment.id_habitat) {
-            <div
-              class="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 relative overflow-hidden"
-            >
-              <div
-                class="absolute top-0 left-0 right-0 h-1"
-                [ngClass]="{
-                  'bg-green-500': comment.habitat_status === 'Optimal',
-                  'bg-yellow-500': comment.habitat_status === 'Acceptable',
-                  'bg-red-500':
-                    comment.habitat_status === 'Nécessite des améliorations'
-                }"
-              ></div>
-
-              <div class="flex justify-between items-start mt-2">
-                <div class="flex items-center gap-2">
-                  <div class="text-sm text-tertiary/80 font-medium">
-                    {{ comment.createdAt | date : "dd/MM/yyyy à HH:mm" }}
-                  </div>
-                </div>
-                <div class="flex flex-col items-end gap-2">
-                  <div
-                    class="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1"
-                    [ngClass]="{
-                      'bg-green-100 text-green-800':
-                        comment.habitat_status === 'Optimal',
-                      'bg-yellow-100 text-yellow-800':
-                        comment.habitat_status === 'Acceptable',
-                      'bg-red-100 text-red-800':
-                        comment.habitat_status === 'Nécessite des améliorations'
-                    }"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full"
-                      [ngClass]="{
-                        'bg-green-500': comment.habitat_status === 'Optimal',
-                        'bg-yellow-500':
-                          comment.habitat_status === 'Acceptable',
-                        'bg-red-500':
-                          comment.habitat_status ===
-                          'Nécessite des améliorations'
-                      }"
-                    ></span>
-                    {{ comment.habitat_status }}
-                  </div>
-
-                  @if (comment.is_resolved) {
-                  <div
-                    class="flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <span>Réglé</span>
-                  </div>
-                  } @else {
-                  <div
-                    class="flex items-center gap-1.5 bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-3.5 w-3.5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 102 0V6zm-1 8a1 1 0 100-2 1 1 0 000 2z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <span>En attente</span>
-                  </div>
-                  }
-                </div>
-              </div>
-
-              <p class="text-quinary/80 my-4 line-clamp-3">
-                {{ comment.comment }}
-              </p>
-
-              <div class="flex justify-between items-end">
-                <div class="text-sm text-tertiary/70">
-                  Par: <span class="font-medium">{{ comment.user_name }}</span>
-                </div>
-                @if (comment.is_resolved) {
-                <div class="text-xs text-gray-500 italic">
-                  Résolu par {{ comment.resolved_by }} le
-                  {{ comment.resolved_at | date : "dd/MM/yyyy" }}
-                </div>
-                }
-              </div>
-            </div>
-            } }
-          </div>
-
-          <div class="flex justify-center mt-8">
-            <app-button
-              [text]="'Fermer'"
-              [type]="'button'"
-              [color]="'secondary'"
-              [rounded]="true"
-              class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
-              (click)="closeHabitatHistoryModal()"
-            />
-          </div>
-          }
-        </div>
-      </app-modal>
     </div>
   </div>
 </section>
+
+<div class="container mx-auto px-4 py-8">
+  @if (activeTab() === 'overview') {
+  <div class="mb-16">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-serif text-tertiary font-bold">
+        <i class="fas fa-paw mr-2"></i>Animaux
+      </h2>
+      <div class="flex space-x-2">
+        <!-- Vous pouvez ajouter des filtres ou des actions ici -->
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-6 md:gap-8">
+      @for (animal of animals(); track animal.id_animal) {
+      <div
+        class="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+      >
+        <div class="relative h-56 overflow-hidden">
+          <img
+            [src]="animal.images"
+            [alt]="animal.name"
+            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+          ></div>
+          <h3
+            class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
+          >
+            {{ animal.name }}
+          </h3>
+        </div>
+
+        <div class="p-6">
+          <table class="w-full text-sm">
+            <tbody>
+              <tr>
+                <td class="text-tertiary font-medium pr-2">Espèce:</td>
+                <td class="text-quinary/80">{{ animal.species }}</td>
+              </tr>
+              <tr>
+                <td class="text-tertiary font-medium pr-2">Régime:</td>
+                <td class="text-quinary/80">{{ animal.diet }}</td>
+              </tr>
+              <tr>
+                <td class="text-tertiary font-medium pr-2">Habitat:</td>
+                <td class="text-quinary/80 line-clamp-2">
+                  {{ getHabitatName(animal.habitat_id) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <app-button
+              [text]="'Rapports'"
+              [color]="'tertiary'"
+              [rounded]="true"
+              (click)="openVetReportsHistory(animal.id_animal)"
+              class="transform hover:-translate-y-0.5 transition-all duration-300"
+            />
+            <app-button
+              [text]="'Historique'"
+              [color]="'secondary'"
+              [rounded]="true"
+              (click)="openFeedingHistory(animal.id_animal)"
+              class="transform hover:-translate-y-0.5 transition-all duration-300"
+            />
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="mb-16">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-serif text-tertiary font-bold">
+        <i class="fas fa-home mr-2"></i>Habitats
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      @for (habitat of habitats(); track habitat.id_habitat) {
+      <div
+        class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+      >
+        <div class="relative h-48 overflow-hidden">
+          <img
+            [src]="habitat.images"
+            [alt]="habitat.name"
+            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+          ></div>
+          <h3
+            class="absolute bottom-4 left-4 text-2xl font-serif text-white font-bold"
+          >
+            {{ habitat.name }}
+          </h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 p-4">
+          <app-button
+            [text]="'Commentaire'"
+            [color]="'tertiary'"
+            [rounded]="true"
+            (click)="selectHabitat(habitat.id_habitat)"
+            class="transform hover:-translate-y-0.5 transition-all duration-300"
+          />
+          <app-button
+            [text]="'Historique'"
+            [color]="'secondary'"
+            [rounded]="true"
+            (click)="viewHabitatComments(habitat.id_habitat)"
+            class="transform hover:-translate-y-0.5 transition-all duration-300"
+          />
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <app-modal [isOpen]="isHistoryModalOpen()" (close)="closeHistoryModal()">
+    <div
+      class="w-full max-w-3xl mx-auto bg-white/95 backdrop-blur-sm p-6 rounded-xl shadow-xl"
+    >
+      @if (selectedAnimalId()) {
+      <div class="flex justify-between items-center mb-6">
+        <div class="flex gap-4">
+          <app-button
+            [text]="'Historique des repas'"
+            [color]="!showVetReports() ? 'tertiary' : 'secondary'"
+            [rounded]="true"
+            (click)="toggleHistoryView(false)"
+            [customClass]="
+              'transform hover:-translate-y-0.5 transition-all duration-300'
+            "
+          />
+          <app-button
+            [text]="'Rapports vétérinaires'"
+            [color]="showVetReports() ? 'tertiary' : 'secondary'"
+            [rounded]="true"
+            (click)="toggleHistoryView(true)"
+            [customClass]="
+              'transform hover:-translate-y-0.5 transition-all duration-300'
+            "
+          />
+        </div>
+        <button
+          (click)="closeHistoryModal()"
+          class="rounded-full p-2 hover:bg-tertiary/10 transition-colors"
+        >
+          <svg
+            class="w-6 h-6 text-tertiary"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      @if (!showVetReports()) {
+      <div class="min-h-[400px] flex flex-col">
+        <app-feeding-history-vet [animalId]="selectedAnimalId()!" />
+      </div>
+      } @else {
+      <div class="min-h-[400px]">
+        <app-veterinary-reports-list
+          [animalId]="selectedAnimalId()!"
+          [showReportForm]="false"
+        />
+      </div>
+      } }
+    </div>
+  </app-modal>
+
+  <app-modal [isOpen]="isHabitatModalOpen()" (close)="closeHabitatModal()">
+    <div
+      class="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl"
+    >
+      @if (selectedHabitatId()) {
+      <app-habitat-comment
+        [habitatId]="selectedHabitatId()!"
+        (commentAdded)="closeHabitatModal()"
+      />
+      }
+      <div class="flex justify-center mt-6">
+        <app-button
+          [text]="'Fermer'"
+          [type]="'button'"
+          [color]="'secondary'"
+          [rounded]="true"
+          class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
+          (click)="closeHabitatModal()"
+        />
+      </div>
+    </div>
+  </app-modal>
+
+  <app-modal
+    [isOpen]="isHabitatHistoryModalOpen()"
+    (close)="closeHabitatHistoryModal()"
+  >
+    @if (selectedHabitatId()) {
+    <app-habitat-comment-history
+      [habitatId]="selectedHabitatId()!"
+      [habitatImage]="getSelectedHabitat()?.images"
+      [habitatName]="getHabitatName(selectedHabitatId()!)"
+      (close)="closeHabitatHistoryModal()"
+    />
+    }
+  </app-modal>
+
+  <app-modal [isOpen]="isReportModalOpen()" (close)="closeReportModal()">
+    <div
+      class="w-full max-w-4xl mx-auto bg-white/95 backdrop-blur-sm p-4 sm:p-6 rounded-xl shadow-xl"
+    >
+      @if (selectedAnimalId()) {
+      <app-veterinary-reports-list
+        [animalId]="selectedAnimalId()!"
+        [showReportForm]="false"
+      />
+      }
+      <div class="flex justify-center mt-6">
+        <app-button
+          [text]="'Fermer'"
+          [type]="'button'"
+          [color]="'secondary'"
+          [rounded]="true"
+          class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
+          (click)="closeReportModal()"
+        />
+      </div>
+    </div>
+  </app-modal>
+  }
+</div>
