@@ -1,50 +1,64 @@
 <!-- Section principale des avis utilisateurs -->
-<section class="w-full bg-primary shadow py-8">
+<section
+  class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-8"
+>
   <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h1 class="text-3xl md:text-5xl font-serif text-quinary font-bold mb-6">
+    <!-- En-tête avec titre et description -->
+    <div class="text-center space-y-4 mb-12">
+      <h2
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
+      >
         Avis de nos visiteurs
-      </h1>
-      <p class="text-base md:text-lg text-quinary font-sans max-w-4xl mx-auto">
+      </h2>
+      <p
+        class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
+      >
         Découvrez ce que nos visiteurs pensent de leur expérience
       </p>
     </div>
 
     <!-- Container des avis -->
-    <div class="max-w-xl mx-auto">
+    <div class="max-w-3xl mx-auto">
       @if (isLoading()) {
-      <div class="text-center py-8">
-        <p>Chargement des avis...</p>
+      <div class="text-center py-8 text-tertiary">
+        <i class="fas fa-circle-notch fa-spin text-3xl"></i>
+        <p class="mt-4">Chargement des avis...</p>
       </div>
       } @else if (hasError()) {
-      <div class="text-center py-8 text-red-500">
-        <p>Une erreur est survenue lors du chargement des avis.</p>
-        <button class="mt-4 text-blue-500" (click)="loadUserOpinions()">
-          Réessayer
-        </button>
+      <div class="text-center py-8">
+        <p class="text-red-500 mb-4">
+          Une erreur est survenue lors du chargement des avis.
+        </p>
+        <app-button
+          [text]="'Réessayer'"
+          [type]="'button'"
+          [color]="'tertiary'"
+          [rounded]="true"
+          class="w-auto mx-auto font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+          (click)="loadUserOpinions()"
+        ></app-button>
       </div>
       } @else if (userOpinions().length > 0) {
       <div
-        class="bg-white rounded-lg shadow-lg p-8 mb-8 transition-all duration-300 border border-quinary/10 hover:border-quinary/20"
+        class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 transition-all duration-300 border border-secondary/20"
       >
-        <!-- En-tête de l'avis avec informations utilisateur et note -->
+        <!-- En-tête de l'avis -->
         <div class="flex items-center justify-between mb-6">
-          <!-- Informations utilisateur -->
           <div class="flex items-center gap-4">
-            <!-- Avatar avec première lettre du nom -->
+            <!-- Avatar avec première lettre -->
             <div
-              class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center"
+              class="w-12 h-12 bg-tertiary rounded-full flex items-center justify-center shadow-md"
             >
-              <span class="text-white text-xl font-semibold">
+              <span class="text-primary text-xl font-semibold">
                 {{ userOpinions()[currentUserOpinionsIndex()].name.charAt(0) }}
               </span>
             </div>
             <!-- Nom et date -->
             <div>
-              <h3 class="font-semibold text-lg text-quinary">
+              <h3 class="font-serif font-semibold text-lg text-tertiary">
                 {{ userOpinions()[currentUserOpinionsIndex()].name }}
               </h3>
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-tertiary/70">
                 {{
                   userOpinions()[currentUserOpinionsIndex()].date
                     | date : "dd MMMM yyyy" : "fr-FR"
@@ -52,8 +66,7 @@
               </p>
             </div>
           </div>
-
-          <!-- Composant d'affichage de la note -->
+          <!-- Composant de notation -->
           <app-rate
             [rating]="currentRating"
             [isReadOnly]="isReadOnly"
@@ -61,7 +74,7 @@
         </div>
 
         <!-- Message de l'avis -->
-        <p class="text-gray-700 mb-6 italic">
+        <p class="text-quinary/80 mb-6 italic text-lg leading-relaxed">
           "{{ userOpinions()[currentUserOpinionsIndex()].message }}"
         </p>
 
@@ -70,89 +83,69 @@
           <!-- Bouton précédent -->
           <app-button
             [text]="''"
-            [color]="'secondary'"
+            [type]="'button'"
+            [color]="'tertiary'"
+            [rounded]="true"
+            [disabled]="currentUserOpinionsIndex() === 0"
             [customClass]="
-              '!w-10 !h-10 flex items-center justify-center rounded-full !p-0'
+              '!w-10 !h-10 flex items-center justify-center !p-0 
+                           transition-all duration-300 transform hover:-translate-x-1'
             "
             (click)="changeUserOpinions('previous')"
-            [disabled]="currentUserOpinionsIndex() === 0"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+            <i class="fas fa-chevron-left"></i>
           </app-button>
 
           <!-- Indicateurs de pagination -->
           <div class="flex gap-2">
             @for (review of userOpinions(); track $index) {
-            <div
-              class="w-2 h-2 rounded-full cursor-pointer transition-all duration-300"
+            <button
+              class="w-2 h-2 rounded-full transition-all duration-300"
               [class.bg-tertiary]="$index === currentUserOpinionsIndex()"
-              [class.bg-gray-300]="$index !== currentUserOpinionsIndex()"
+              [class.bg-tertiary]="$index !== currentUserOpinionsIndex()"
               (click)="currentUserOpinionsIndex.set($index)"
-            ></div>
+            ></button>
             }
           </div>
 
           <!-- Bouton suivant -->
           <app-button
             [text]="''"
-            [color]="'secondary'"
-            [customClass]="
-              '!w-10 !h-10 flex items-center justify-center rounded-full !p-0'
-            "
-            (click)="changeUserOpinions('next')"
+            [type]="'button'"
+            [color]="'tertiary'"
+            [rounded]="true"
             [disabled]="
               currentUserOpinionsIndex() === userOpinions().length - 1
             "
+            [customClass]="
+              '!w-10 !h-10 flex items-center justify-center !p-0 
+                           transition-all duration-300 transform hover:translate-x-1'
+            "
+            (click)="changeUserOpinions('next')"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <i class="fas fa-chevron-right"></i>
           </app-button>
         </div>
       </div>
       } @else {
-      <!-- Message affiché quand aucun avis n'est disponible -->
-      <p class="text-center text-gray-500">
+      <p class="text-center text-tertiary/70">
         Aucun avis disponible pour le moment.
       </p>
       }
 
-      <!-- Bouton pour ajouter un nouvel avis -->
+      <!-- Bouton d'ajout d'avis -->
       <div class="text-center mt-8">
         <app-button
           [text]="'Partagez votre expérience'"
+          [type]="'button'"
           [color]="'tertiary'"
           [rounded]="true"
           [customClass]="
-            '!w-auto !px-6 !py-3 font-semibold text-white hover:bg-quaternary transition-colors duration-300'
+            '!w-auto !px-8 !py-4 font-bold shadow-md hover:shadow-lg 
+                         transition-all duration-300 transform hover:-translate-y-1'
           "
           (click)="openModal()"
-        >
-        </app-button>
+        ></app-button>
       </div>
     </div>
   </div>
