@@ -1,0 +1,56 @@
+@if (isOpen) {
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-quinary/50 backdrop-blur-sm"
+>
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-2xl mx-4 w-full">
+    <!-- En-tête -->
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-2xl font-serif font-bold text-tertiary">
+        Plan d'accès et Horaires
+      </h3>
+      <button
+        (click)="close()"
+        class="text-tertiary hover:text-quinary transition-colors duration-300"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Horaires -->
+    <div class="space-y-4 mb-6">
+      <h4 class="text-lg font-bold text-tertiary">Horaires d'ouverture</h4>
+      <ul class="space-y-2 text-quinary">
+        <li class="flex justify-between">
+          <span>Lundi - Vendredi</span>
+          <span>9h00 - 19h00</span>
+        </li>
+        <li class="flex justify-between">
+          <span>Samedi - Dimanche</span>
+          <span>9h00 - 20h00</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Adresse -->
+    <div class="mb-6">
+      <h4 class="text-lg font-bold text-tertiary mb-2">Adresse</h4>
+      <p class="text-quinary">
+        666 chemin de l'étrange, 35380 Paimpont, France
+      </p>
+    </div>
+
+    <!-- Carte -->
+    <div class="rounded-xl overflow-hidden shadow-lg">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2668.735021438556!2d-2.1739626!3d48.018829!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x480faceab3587495%3A0xcdc883e818be2eb2!2sFor%C3%AAt%20de%20Broc%C3%A9liande!5e0!3m2!1sfr!2sfr!4v1728318223640!5m2!1sfr!2sfr"
+        width="100%"
+        height="300"
+        style="border: 0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      >
+      </iframe>
+    </div>
+  </div>
+</div>
+}
