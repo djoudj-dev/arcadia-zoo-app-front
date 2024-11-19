@@ -32,7 +32,7 @@ import { UserOpinionsService } from '../services/user-opinions.service';
 })
 export class AddUserOpinionsComponent implements OnInit {
   /** Formulaire réactif pour la saisie d'avis */
-  opinionForm: FormGroup = new FormGroup({});
+  opinionForm: FormGroup;
 
   /** Date du jour formatée en YYYY-MM-DD */
   currentDate: string;
@@ -43,6 +43,7 @@ export class AddUserOpinionsComponent implements OnInit {
   /** Event emitter pour notifier quand un avis est ajouté */
   @Output() opinionAdded = new EventEmitter<void>();
 
+  /** Event emitter pour fermer la modal */
   @Output() closeModal = new EventEmitter<void>();
 
   constructor(
@@ -51,11 +52,10 @@ export class AddUserOpinionsComponent implements OnInit {
     private toastService: ToastService
   ) {
     this.currentDate = new Date().toISOString().split('T')[0];
+    this.opinionForm = this.fb.group({}); // Initialisation requise
   }
 
-  /**
-   * Initialise le formulaire avec les validations
-   */
+  /** Initialise le formulaire avec les validations */
   ngOnInit() {
     this.initForm();
   }
@@ -84,47 +84,25 @@ export class AddUserOpinionsComponent implements OnInit {
         ],
       ],
       rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
-      date: [
-        '',
-        [
-          Validators.required,
-          (control: AbstractControl): ValidationErrors | null => {
-            if (!control.value) return null;
-            const selectedDate = new Date(control.value);
-            const today = new Date();
-
-            // Comparer uniquement les dates (sans les heures)
-            const selected = new Date(selectedDate.toDateString());
-            const current = new Date(today.toDateString());
-
-            return selected > current ? { futureDate: true } : null;
-          },
-        ],
-      ],
+      date: ['', [Validators.required, this.futureDateValidator]],
     });
   }
 
   /**
-   * Getters pour vérifier les erreurs des champs du formulaire
+   * Validateur personnalisé pour empêcher les dates futures
    */
-  get nameErrors() {
-    const control = this.opinionForm.get('name');
-    return control?.errors && control.touched;
+  private futureDateValidator(
+    control: AbstractControl
+  ): ValidationErrors | null {
+    if (!control.value) return null;
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    const selected = new Date(selectedDate.toDateString());
+    const current = new Date(today.toDateString());
+    return selected > current ? { futureDate: true } : null;
   }
 
-  get opinionErrors() {
-    const control = this.opinionForm.get('opinion');
-    return control?.errors && control.touched;
-  }
-
-  get dateErrors() {
-    const control = this.opinionForm.get('date');
-    return control?.errors && control.touched;
-  }
-
-  /**
-   * Gère la soumission du formulaire
-   */
+  /** Gère la soumission du formulaire */
   onSubmit(): void {
     if (this.opinionForm.valid) {
       const userOpinions = {
@@ -139,12 +117,10 @@ export class AddUserOpinionsComponent implements OnInit {
           );
           this.opinionForm.reset();
           this.opinionAdded.emit();
-          setTimeout(() => {
-            this.closeModal.emit();
-          }, 2500);
+          setTimeout(() => this.closeModal.emit(), 2500);
         },
         error: (error) => {
-          console.error("Erreur lors de l'envoi de l'avis au backend", error);
+          console.error("Erreur lors de l'envoi de l'avis", error);
           this.toastService.showError(
             "Une erreur est survenue lors de l'envoi de votre avis. Veuillez réessayer."
           );
@@ -153,6 +129,7 @@ export class AddUserOpinionsComponent implements OnInit {
     }
   }
 
+  /** Ferme la modal */
   onClose() {
     this.closeModal.emit();
   }
