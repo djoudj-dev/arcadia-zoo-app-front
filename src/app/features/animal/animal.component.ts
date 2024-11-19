@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { VetNote } from '../../core/models/vetnote.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Animal } from '../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
+import { VeterinaryReports } from '../dashboard/veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
 import { AnimalService } from './service/animal.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class AnimalComponent implements OnInit {
   /** Signal pour stocker les informations */
   animal = signal<Animal | undefined>(undefined);
   habitat = signal<Habitat | undefined>(undefined);
-  vetNote = signal<VetNote | undefined>(undefined);
+  veterinary = signal<VeterinaryReports | undefined>(undefined);
 
   constructor(
     private route: ActivatedRoute,

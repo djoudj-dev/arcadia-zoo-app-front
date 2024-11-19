@@ -1,4 +1,4 @@
-import { VetNote } from '../../../../../core/models/vetnote.model';
+import { VeterinaryReports } from 'app/features/dashboard/veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
 
 export enum Diet {
   Herbivore = 'Herbivore',
@@ -16,7 +16,7 @@ export interface Animal {
   weightRange: string; // Fourchette de poids (ex : '150 à 300 kg')
   diet: Diet; // Régime alimentaire (utilise l'enum Diet)
   habitats?: string[]; // Liste des habitats où l'animal peut être trouvé (optionnel)
-  vetNote?: VetNote; // Note vétérinaire optionnelle
+  veterinary?: VeterinaryReports; // Note vétérinaire optionnelle
   showTime?: boolean; // Afficher les caractéristiques de l'animal
   created_at: Date; // Date de création
   updated_at: Date; // Date de mise à jour

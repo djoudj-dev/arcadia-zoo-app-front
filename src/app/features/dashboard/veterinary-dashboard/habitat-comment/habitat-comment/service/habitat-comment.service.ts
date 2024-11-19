@@ -28,4 +28,10 @@ export class HabitatCommentService {
       .post<HabitatComment>(this.apiUrl, comment)
       .pipe(tap((response) => console.log('Réponse création:', response)));
   }
+
+  getAllComments(): Observable<HabitatComment[]> {
+    return this.http
+      .get<HabitatComment[]>(`${this.apiUrl}`)
+      .pipe(tap((comments) => console.log('All comments loaded:', comments)));
+  }
 }

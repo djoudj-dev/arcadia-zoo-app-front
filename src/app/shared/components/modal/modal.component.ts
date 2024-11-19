@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
+  Inject,
   Input,
   Output,
+  PLATFORM_ID,
   TemplateRef,
   ViewChild,
   ViewContainerRef,
-  Inject,
-  PLATFORM_ID,
 } from '@angular/core';
 
 /**
@@ -43,6 +43,7 @@ import {
       </div>
     </ng-template>
   `,
+  exportAs: 'modal',
 })
 export class ModalComponent {
   @Input() set isOpen(value: boolean) {

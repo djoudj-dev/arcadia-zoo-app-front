@@ -1,0 +1,170 @@
+<div class="w-full max-w-2xl mx-auto bg-white p-6 rounded-xl">
+  <app-toast />
+
+  <!-- En-tête avec titre et bouton de fermeture -->
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-2xl font-serif text-tertiary">Nouveau Rapport</h2>
+    <button
+      (click)="closeModal()"
+      class="rounded-full p-2 hover:bg-tertiary/10 transition-colors"
+    >
+      <svg
+        class="w-6 h-6 text-tertiary"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <form [formGroup]="reportForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Information de l'animal -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-quinary/60 mb-2"
+        >Animal</label
+      >
+      <input
+        type="text"
+        [formControl]="$any(reportForm.get('animal_name'))"
+        readonly
+        class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 text-lg text-tertiary font-medium focus:outline-none"
+      />
+    </div>
+
+    <!-- Date et État -->
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <div>
+        <label class="block text-sm font-medium text-quinary/60 mb-2"
+          >Date de visite</label
+        >
+        <input
+          type="date"
+          [formControl]="$any(reportForm.get('visit_date'))"
+          class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-quinary/60 mb-2"
+          >État de santé</label
+        >
+        <select
+          [formControl]="$any(reportForm.get('animal_state'))"
+          class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none appearance-none cursor-pointer"
+        >
+          <option value="" disabled selected>Choisir un état</option>
+          @for (state of animalStates; track state) {
+          <option [value]="state">{{ state }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Recommandations alimentaires -->
+    <div class="space-y-6">
+      <h3 class="text-lg font-medium text-tertiary">
+        Recommandations alimentaires
+      </h3>
+
+      <div>
+        <label class="block text-sm font-medium text-quinary/60 mb-2"
+          >Type d'alimentation</label
+        >
+        <input
+          type="text"
+          [formControl]="$any(reportForm.get('recommended_food_type'))"
+          class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
+          placeholder="Ex: Croquettes premium"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-quinary/60 mb-2"
+            >Quantité</label
+          >
+          <input
+            type="number"
+            [formControl]="$any(reportForm.get('recommended_food_quantity'))"
+            class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
+            placeholder="Ex: 250"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-quinary/60 mb-2"
+            >Unité</label
+          >
+          <select
+            [formControl]="$any(reportForm.get('food_unit'))"
+            class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none appearance-none cursor-pointer"
+          >
+            <option value="" disabled selected>Choisir une unité</option>
+            @for (unit of foodUnits; track unit) {
+            <option [value]="unit">{{ unit }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observations -->
+    <div>
+      <label class="block text-sm font-medium text-quinary/60 mb-2"
+        >Observations</label
+      >
+      <textarea
+        [formControl]="$any(reportForm.get('additional_details'))"
+        rows="4"
+        class="w-full p-4 bg-tertiary/5 rounded-lg focus:outline-none focus:ring-1 focus:ring-tertiary/30 transition-all resize-none"
+        placeholder="Ajoutez des observations complémentaires..."
+      ></textarea>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="flex justify-end gap-4 pt-6">
+      <app-button
+        [text]="'Annuler'"
+        [type]="'button'"
+        [color]="'secondary'"
+        [customClass]="'px-6 py-2 rounded-lg hover:bg-gray-100'"
+        (click)="closeModal()"
+      />
+      <app-button
+        [text]="'Enregistrer'"
+        [type]="'submit'"
+        [color]="'tertiary'"
+        [disabled]="!reportForm.valid"
+        [customClass]="'px-6 py-2 rounded-lg'"
+      />
+    </div>
+  </form>
+</div>
+
+<!-- Style pour les inputs -->
+<style>
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(85, 122, 70, 0.4);
+  }
+
+  input:focus::placeholder,
+  textarea:focus::placeholder {
+    color: rgba(85, 122, 70, 0.6);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23557A46'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+</style>
