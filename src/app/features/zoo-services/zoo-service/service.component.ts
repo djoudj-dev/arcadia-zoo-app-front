@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Feature } from 'app/features/dashboard/admin-dashboard/service-management/model/feature.model';
 import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ServiceService } from '../service/service.service';
 
+/**
+ * Composant de détail d'un service
+ * Affiche les informations détaillées d'un service et ses caractéristiques
+ */
 @Component({
   standalone: true,
   imports: [ButtonComponent],
@@ -12,8 +16,11 @@ import { ServiceService } from '../service/service.service';
   templateUrl: './service.component.html',
 })
 export class ServiceComponent implements OnInit {
-  service: Service | null = null;
-  feature: Feature[] = [];
+  /** Signal contenant les données du service */
+  service = signal<Service | null>(null);
+
+  /** Signal contenant les caractéristiques du service */
+  features = signal<Feature[]>([]);
 
   constructor(
     private route: ActivatedRoute,
@@ -21,32 +28,41 @@ export class ServiceComponent implements OnInit {
     private serviceService: ServiceService
   ) {}
 
+  /** Initialise le composant en chargeant les données du service */
   ngOnInit() {
+    this.loadService();
+  }
+
+  /**
+   * Charge les informations du service et ses caractéristiques
+   */
+  private loadService(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
-      this.serviceService.getServiceById(id).subscribe((data) => {
-        if (data) {
-          this.service = data;
-
-          // Vérification et extraction des caractéristiques si nécessaire
-          this.feature = data.features
-            ? data.features.map(
-                (item) => ('feature' in item ? item.feature : item) as Feature
-              )
-            : [];
-
-          console.log('Service trouvé :', this.service);
-          console.log('Caractéristiques du service :', this.feature);
-        } else {
-          console.error('Service non trouvé');
-        }
+      this.serviceService.getServiceById(id).subscribe({
+        next: (data) => {
+          if (data) {
+            this.service.set(data);
+            // Extraction et traitement des caractéristiques
+            this.features.set(
+              data.features
+                ? (data.features.map((item) =>
+                    'feature' in item ? item.feature : item
+                  ) as Feature[])
+                : []
+            );
+          } else {
+            console.error('Service non trouvé');
+          }
+        },
+        error: (error) =>
+          console.error('Erreur lors du chargement du service:', error),
       });
-    } else {
-      console.error('ID de service non valide');
     }
   }
 
-  goBack() {
+  /** Navigue vers la page d'accueil */
+  goBack(): void {
     this.router.navigate(['/']);
   }
 }
