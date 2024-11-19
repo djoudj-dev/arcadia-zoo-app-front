@@ -39,13 +39,13 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
   readonly currentRating = signal<number>(0);
 
   /** Signal pour contrôler l'état de chargement */
-  isLoading = signal<boolean>(true);
+  readonly isLoading = signal<boolean>(true);
 
   /** Signal pour contrôler l'état d'erreur */
-  hasError = signal<boolean>(false);
+  readonly hasError = signal<boolean>(false);
 
   /** Signal pour contrôler l'état d'ouverture de la modal */
-  isModalOpen = signal<boolean>(false);
+  readonly isModalOpen = signal<boolean>(false);
 
   /** Souscription au service user opinions */
   private opinionsSubscription?: Subscription;
@@ -55,10 +55,14 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
     private toastService: ToastService
   ) {}
 
+  /** Initialise le composant en chargeant les avis */
   ngOnInit() {
     this.loadUserOpinions();
   }
 
+  /**
+   * Charge les avis utilisateurs depuis le service
+   */
   public loadUserOpinions() {
     this.isLoading.set(true);
     this.hasError.set(false);
@@ -67,7 +71,6 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
       .getUserOpinions()
       .subscribe({
         next: (opinions) => {
-          console.log('Opinions reçues:', opinions);
           this.userOpinions.set(opinions);
           this.updateCurrentRating();
           this.isLoading.set(false);
@@ -83,9 +86,7 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Nettoie la souscription à la modal lors de la destruction du composant
-   */
+  /** Nettoie la souscription lors de la destruction du composant */
   ngOnDestroy() {
     this.opinionsSubscription?.unsubscribe();
   }
@@ -98,39 +99,31 @@ export class UserOpinionsComponent implements OnInit, OnDestroy {
     const currentIndex = this.currentUserOpinionsIndex();
     if (opinions[currentIndex]) {
       this.currentRating.set(opinions[currentIndex].rating);
-    } else {
-      this.currentRating.set(0);
     }
   }
 
   /**
    * Change l'avis affiché en fonction de la direction
-   * @param direction 'previous' pour afficher l'avis précédent, 'next' pour le suivant
+   * @param direction 'previous' pour l'avis précédent, 'next' pour le suivant
    */
   changeUserOpinions(direction: 'previous' | 'next'): void {
-    const userOpinions = this.userOpinions();
-    if (direction === 'previous' && this.currentUserOpinionsIndex() > 0) {
-      this.currentUserOpinionsIndex.set(this.currentUserOpinionsIndex() - 1);
-      this.updateCurrentRating();
-    } else if (
-      direction === 'next' &&
-      this.currentUserOpinionsIndex() < userOpinions.length - 1
-    ) {
-      this.currentUserOpinionsIndex.set(this.currentUserOpinionsIndex() + 1);
-      this.updateCurrentRating();
+    const currentIndex = this.currentUserOpinionsIndex();
+    const maxIndex = this.userOpinions().length - 1;
+
+    if (direction === 'previous' && currentIndex > 0) {
+      this.currentUserOpinionsIndex.set(currentIndex - 1);
+    } else if (direction === 'next' && currentIndex < maxIndex) {
+      this.currentUserOpinionsIndex.set(currentIndex + 1);
     }
+    this.updateCurrentRating();
   }
 
-  /**
-   * Ouvre la modal d'ajout d'avis
-   */
+  /** Ouvre la modal d'ajout d'avis */
   openModal() {
     this.isModalOpen.set(true);
   }
 
-  /**
-   * Ferme la modal d'ajout d'avis
-   */
+  /** Ferme la modal d'ajout d'avis */
   closeModal() {
     this.isModalOpen.set(false);
   }
