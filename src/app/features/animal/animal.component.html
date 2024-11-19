@@ -40,30 +40,31 @@
       </div>
 
       <!-- Section des notes vétérinaires -->
-      @if (animal()?.vetNote) {
+      @if (animal()?.veterinary) {
       <div
         class="bg-primary rounded-lg w-full mt-6 text-left sm:w-3/4 md:w-1/2 px-4 py-2"
       >
         <h2 class="text-xl font-bold text-tertiary">Note du vétérinaire</h2>
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">État de l'animal :</span>
-          {{ animal()?.vetNote?.animalState }}
+          {{ animal()?.veterinary?.animal_state }}
         </p>
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Nourriture proposée :</span>
-          {{ animal()?.vetNote?.food }}
+          {{ animal()?.veterinary?.recommended_food_type }}
         </p>
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Grammage :</span>
-          {{ animal()?.vetNote?.foodWeight }} kg
+          {{ animal()?.veterinary?.recommended_food_quantity }}
+          {{ animal()?.veterinary?.food_unit }}
         </p>
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Date de passage :</span>
-          {{ animal()?.vetNote?.visitDate | date : "dd/MM/yyyy" }}
+          {{ animal()?.veterinary?.visit_date | date : "dd/MM/yyyy" }}
         </p>
         <p class="text-gray-600 text-sm mt-2 md:text-base">
           <span class="font-bold">Détails supplémentaires :</span>
-          {{ animal()?.vetNote?.additionalDetails }}
+          {{ animal()?.veterinary?.additional_details }}
         </p>
       </div>
       }

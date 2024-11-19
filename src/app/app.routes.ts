@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guard/auth.guard';
 import { LoginComponent } from './core/login/login.component';
+import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-dashboard/veterinary-dashboard.component';
 import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
@@ -108,8 +109,8 @@ export const routes: Routes = [
         path: 'vet-reports',
         loadComponent: () =>
           import(
-            './features/dashboard/admin-dashboard/reports-veterinaire-dashboard/reports-veterinaire-dashboard.component'
-          ).then((m) => m.ReportsVeterinaireDashboardComponent),
+            './features/dashboard/admin-dashboard/reports-veterinary-management/reports-veterinary-management.component'
+          ).then((m) => m.ReportsVeterinaryManagement),
         title: 'Comptes rendus des vétérinaires',
       },
       {
@@ -125,13 +126,20 @@ export const routes: Routes = [
 
   {
     path: 'veterinaire',
-    loadComponent: () =>
-      import(
-        './features/dashboard/veterinary-dashboard/veterinary-dashboard.component'
-      ).then((m) => m.VeterinaryDashboardComponent),
-    title: 'Vétérinaire',
+    component: VeterinaryDashboardComponent,
+    title: 'Dashboard Vétérinaire',
     canActivate: [authGuard],
     data: { roles: ['Veterinaire'] },
+    children: [
+      {
+        path: 'overview',
+        component: VeterinaryDashboardComponent,
+      },
+      {
+        path: 'history',
+        component: VeterinaryDashboardComponent,
+      },
+    ],
   },
 
   // Routes pour les employés
