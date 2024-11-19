@@ -6,15 +6,28 @@ import { environment } from 'environments/environment.development';
 import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
 import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-management/models/feeding-data.model';
 
+/**
+ * Service gérant les opérations liées aux animaux
+ * Fournit des méthodes pour interagir avec l'API des animaux
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AnimalService {
+  /** URL de base de l'API des animaux */
   private apiUrl = `${environment.apiUrl}/api/animals`;
-  private habitatUrl = `${environment.apiUrl}/api/habitats`; // URL de base pour les habitats
-  private imageBaseUrl = `${environment.apiUrl}/api`; // URL de base pour les images
-  private animalsCache$ = new ReplaySubject<Animal[]>(1); // Cache pour optimiser les requêtes
-  private cacheLoaded = false; // Drapeau pour indiquer si le cache est chargé
+
+  /** URL de base de l'API des habitats */
+  private habitatUrl = `${environment.apiUrl}/api/habitats`;
+
+  /** URL de base pour les images */
+  private imageBaseUrl = `${environment.apiUrl}/api`;
+
+  /** Cache pour stocker les données des animaux */
+  private animalsCache$ = new ReplaySubject<Animal[]>(1);
+
+  /** Indique si le cache est chargé */
+  private cacheLoaded = false;
 
   constructor(private http: HttpClient) {}
 
