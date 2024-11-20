@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
 import { Token } from '../models/token.model';
 
 /**
@@ -96,5 +97,14 @@ export class TokenService {
    */
   private deleteCookie(name: string): void {
     this.setCookie(name, '', -1);
+  }
+
+  getDecodedToken(token: string): Token | null {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Erreur de décodage du token:', error);
+      return null;
+    }
   }
 }
