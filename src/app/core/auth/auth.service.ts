@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -8,24 +8,37 @@ import { User } from '../../features/dashboard/admin-dashboard/account-managemen
 import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { TokenService } from '../token/token.service';
 
+/**
+ * Service d'authentification
+ * Gère l'authentification des utilisateurs, les sessions et les autorisations
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  currentUserSignal = signal<User | null>(null); // Signal pour l'utilisateur actuel
-  private apiUrl = `${environment.apiUrl}`; // URL de l'API d'authentification
+  /** URL de base pour les endpoints d'authentification */
+  private readonly apiUrl = `${environment.apiUrl}`;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private tokenService: TokenService,
-    private toastService: ToastService // Injection du service de notification
-  ) {
-    this.initializeCurrentUser(); // Initialisation de l'utilisateur actuel
+  /** Services injectés */
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly tokenService = inject(TokenService);
+  private readonly toastService = inject(ToastService);
+
+  /** Signal public pour l'utilisateur actuellement connecté */
+  readonly currentUserSignal = signal<User | null>(null);
+
+  /** Computed signals */
+  readonly isAuthenticated = computed(() => !!this.currentUserSignal());
+  readonly userRole = computed(() => this.currentUserSignal()?.role?.name);
+
+  constructor() {
+    this.initializeCurrentUser();
   }
 
   /**
-   * Initialise l'utilisateur actuel à partir du stockage local.
+   * Initialise l'utilisateur actuel à partir du stockage local
+   * Vérifie la validité des données stockées
    */
   private initializeCurrentUser(): void {
     const storedUser = localStorage.getItem('user');
@@ -34,30 +47,24 @@ export class AuthService {
     if (storedUser && token) {
       try {
         const user = JSON.parse(storedUser);
-
-        if (user && user.role) {
+        if (user?.role) {
           this.currentUserSignal.set(user);
         } else {
-          console.warn(
-            "Rôle manquant dans les données de l'utilisateur au démarrage"
-          );
+          console.warn('Rôle manquant dans les données utilisateur');
+          this.handleInvalidUserData();
         }
       } catch (error) {
-        console.error(
-          'Erreur lors du parsing des données utilisateur :',
-          error
-        );
-        localStorage.removeItem('user'); // Supprime les données utilisateur invalides du stockage local
-        this.tokenService.removeToken(); // Supprime le token
+        console.error('Erreur lors du parsing des données utilisateur:', error);
+        this.handleInvalidUserData();
       }
     }
   }
 
   /**
-   * Authentifie l'utilisateur avec les identifiants fournis.
-   * @param email L'adresse email de l'utilisateur.
-   * @param password Le mot de passe de l'utilisateur.
-   * @returns Un observable contenant l'utilisateur authentifié.
+   * Authentifie l'utilisateur avec les identifiants fournis
+   * @param email Email de l'utilisateur
+   * @param password Mot de passe de l'utilisateur
+   * @returns Observable<{user: User}> Données de l'utilisateur connecté
    */
   login(email: string, password: string): Observable<{ user: User }> {
     return this.http
@@ -66,38 +73,18 @@ export class AuthService {
         password,
       })
       .pipe(
-        tap((response: { user: User }) => {
-          const user = response.user;
-          if (user.role && user.token) {
-            this.currentUserSignal.set(user);
-            localStorage.setItem('user', JSON.stringify(user));
-            this.tokenService.setToken(user.token);
-            this.toastService.showSuccess('Connexion réussie. Bienvenue!');
-          } else {
-            console.error(
-              "Rôle ou token manquant dans les données de l'utilisateur"
-            );
-          }
-        }),
-        catchError((error) => {
-          console.error('Erreur de connexion', error);
-          this.toastService.showError(
-            'Erreur de connexion. Vérifiez vos identifiants.'
-          );
-          return throwError(() => new Error('Identifiants incorrects'));
-        })
+        tap((response) => this.handleSuccessfulLogin(response.user)),
+        catchError(this.handleLoginError.bind(this))
       );
   }
 
   /**
-   * Déconnecte l'utilisateur actuel.
+   * Déconnecte l'utilisateur et nettoie la session
    */
   logout(): void {
     this.currentUserSignal.set(null);
     localStorage.removeItem('user');
     this.tokenService.removeToken();
-
-    // Afficher le toast et rediriger après sa disparition
     this.toastService.showSuccess('Déconnexion réussie !', 2500);
 
     setTimeout(() => {
@@ -106,28 +93,50 @@ export class AuthService {
   }
 
   /**
-   * Vérifie si l'utilisateur est authentifié.
-   * @returns Vrai si l'utilisateur est authentifié, faux sinon.
+   * Vérifie si l'utilisateur a les rôles requis
+   * @param requiredRoles Rôles requis pour l'accès
+   * @returns boolean indiquant si l'utilisateur a les droits
    */
-  isAuthenticated(): boolean {
-    const token = this.tokenService.getToken();
-    return !!token; // Vérifie si le token existe
+  hasRole(requiredRoles: string[]): boolean {
+    const userRole = this.userRole()?.toLowerCase();
+    return requiredRoles.some((role) => role.toLowerCase() === userRole);
   }
 
   /**
-   * Vérifie si l'utilisateur a l'un des rôles requis.
-   * @param requiredRoles Les rôles requis à vérifier.
-   * @returns Vrai si l'utilisateur a l'un des rôles requis, faux sinon.
+   * Gère la connexion réussie
+   * @param user Utilisateur authentifié
    */
-  hasRole(requiredRoles: string[]): boolean {
-    const user = this.currentUserSignal();
-    const userRole = user?.role?.name?.toLowerCase();
-    console.log(
-      "Rôle de l'utilisateur:",
-      userRole,
-      'Rôles requis:',
-      requiredRoles.map((role) => role.toLowerCase())
+  private handleSuccessfulLogin(user: User): void {
+    if (user.role && user.token) {
+      this.currentUserSignal.set(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      this.tokenService.setToken(user.token);
+      this.toastService.showSuccess('Connexion réussie. Bienvenue!');
+    } else {
+      console.error('Données utilisateur invalides');
+      throw new Error('Données utilisateur invalides');
+    }
+  }
+
+  /**
+   * Gère les erreurs de connexion
+   * @param error Erreur HTTP reçue
+   * @returns Observable<never> Observable d'erreur
+   */
+  private handleLoginError(error: HttpErrorResponse): Observable<never> {
+    console.error('Erreur de connexion:', error);
+    this.toastService.showError(
+      'Erreur de connexion. Vérifiez vos identifiants.'
     );
-    return requiredRoles.some((role) => role.toLowerCase() === userRole);
+    return throwError(() => new Error('Identifiants incorrects'));
+  }
+
+  /**
+   * Nettoie les données utilisateur invalides
+   */
+  private handleInvalidUserData(): void {
+    localStorage.removeItem('user');
+    this.tokenService.removeToken();
+    this.currentUserSignal.set(null);
   }
 }
