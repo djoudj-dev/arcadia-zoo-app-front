@@ -19,5 +19,5 @@ export interface Animal {
   veterinary?: VeterinaryReports; // Note vétérinaire optionnelle
   showTime?: boolean; // Afficher les caractéristiques de l'animal
   created_at: Date; // Date de création
-  updated_at: Date; // Date de mise à jour
+  updated_at: Date; // Date de mise à jourAjout de la propriété vetNote comme optionnelle
 }

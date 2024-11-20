@@ -9,9 +9,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   const token = tokenService.getToken();
-  console.log('Token dans AuthGuard:', !!token);
-  console.log('Token value:', token);
-  console.log('User data:', localStorage.getItem('user'));
 
   if (!token) {
     console.warn('Aucun token trouvé');
