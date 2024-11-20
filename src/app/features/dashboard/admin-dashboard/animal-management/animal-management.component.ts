@@ -1,15 +1,17 @@
 import { SlicePipe } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
+import { FileUploadDirective } from 'app/shared/directives/file-upload.directive';
 import { environment } from '../../../../../environments/environment.development';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HabitatService } from '../../../habitats/service/habitat.service';
 import { Habitat } from '../habitat-management/model/habitat.model';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Animal } from './model/animal.model';
 import { AnimalManagementService } from './service/animal-management.service';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 /**
  * Composant de gestion des animaux
@@ -25,6 +27,7 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
     FormsModule,
     ToastComponent,
     ButtonComponent,
+    FileUploadDirective,
   ],
   templateUrl: './animal-management.component.html',
 })
@@ -52,7 +55,8 @@ export class AnimalManagementComponent implements OnInit {
     private animalManagement: AnimalManagementService,
     private habitatService: HabitatService,
     private countResourceService: CountResourceService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private fileSecurityService: FileSecurityService
   ) {}
 
   ngOnInit() {
@@ -231,14 +235,25 @@ export class AnimalManagementComponent implements OnInit {
     );
   }
 
-  /** Construit le FormData pour l'envoi */
+  /** Construit le FormData de manière sécurisée */
   private buildFormData(): FormData {
     const formData = new FormData();
-    Object.entries(this.newAnimalData()).forEach(([key, value]) => {
-      formData.append(key, value?.toString() || '');
+    const animalData = this.newAnimalData();
+
+    // Ajoute les données de base de l'animal de manière sécurisée
+    Object.entries(animalData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
+      }
     });
+
+    // Ajoute le fichier s'il existe avec un nom sécurisé
     const file = this.selectedFile();
-    if (file) formData.append('images', file);
+    if (file) {
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      formData.append('images', file, secureName);
+    }
+
     return formData;
   }
 
@@ -249,5 +264,26 @@ export class AnimalManagementComponent implements OnInit {
       return acc;
     }, {} as Record<number, Animal[]>);
     this.groupedAnimals.set(grouped);
+  }
+
+  /** Gère le fichier sélectionné de manière sécurisée */
+  async onFileSelected(file: File) {
+    try {
+      const validation = await this.fileSecurityService.validateFile(file);
+
+      if (!validation.isValid) {
+        this.toastService.showError(validation.errors.join('\n'));
+        return;
+      }
+
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      const secureFile = new File([file], secureName, { type: file.type });
+
+      this.selectedFile.set(secureFile);
+      this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
+    }
   }
 }

@@ -1,13 +1,14 @@
 import { SlicePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FileSecurityService } from 'app/core/services/file-security.service';
+import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
+import { ButtonComponent } from 'app/shared/components/button/button.component';
+import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { environment } from 'environments/environment.development';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
 import { ServiceManagementService } from './service/service.management.service';
@@ -20,14 +21,7 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    SlicePipe,
-    ModalComponent,
-    ToastComponent,
-    ButtonComponent,
-  ],
+  imports: [FormsModule, SlicePipe, ModalComponent, ButtonComponent],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -45,7 +39,9 @@ export class ServiceManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private serviceManagement: ServiceManagementService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private fileSecurityService: FileSecurityService,
+    private imageOptimizer: ImageOptimizerService
   ) {}
 
   ngOnInit() {
@@ -90,16 +86,64 @@ export class ServiceManagementComponent implements OnInit {
     });
   }
 
-  /** Gère le changement de fichier pour l'image */
-  onFileChange(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
+  /** Gère le changement de fichier sécurisé */
+  async onFileSelected(file: File) {
+    try {
+      const validation = await this.fileSecurityService.validateFile(file);
+
+      if (!validation.isValid) {
+        this.toastService.showError(validation.errors.join('\n'));
+        return;
+      }
+
       this.selectedFile.set(file);
       const reader = new FileReader();
-      reader.onload = () =>
-        (this.newServiceData.images = reader.result as string);
+      reader.onload = () => {
+        this.newServiceData.images = reader.result as string;
+        this.toastService.showSuccess('Image sélectionnée avec succès');
+      };
       reader.readAsDataURL(file);
-      this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
+    }
+  }
+
+  /**
+   * Gère le changement de fichier image
+   * @param event L'événement de changement de fichier
+   */
+  async onFileChange(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Vérification du type de fichier
+      if (!file.type.startsWith('image/')) {
+        console.error('Le fichier doit être une image');
+        return;
+      }
+
+      // Vérification de la taille du fichier (10MB max)
+      const maxSize = 10 * 1024 * 1024; // 10MB en octets
+      if (file.size > maxSize) {
+        console.error('Le fichier est trop volumineux (max 10MB)');
+        return;
+      }
+
+      try {
+        // Optimisation de l'image
+        const optimizedImage = await this.imageOptimizer.optimizeImage(file);
+
+        // Conversion en base64 pour l'aperçu
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.newServiceData.images = reader.result as string;
+        };
+        reader.readAsDataURL(optimizedImage);
+      } catch (error) {
+        console.error("Erreur lors du traitement de l'image:", error);
+      }
     }
   }
 
