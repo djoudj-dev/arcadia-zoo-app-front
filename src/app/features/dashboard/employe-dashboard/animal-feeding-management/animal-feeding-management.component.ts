@@ -3,17 +3,31 @@ import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { finalize, forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  finalize,
+  firstValueFrom,
+  forkJoin,
+  map,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { Habitat } from '../../../habitats/models/habitat.model';
 import { HabitatService } from '../../../habitats/service/habitat.service';
+import { User } from '../../admin-dashboard/account-management/model/user.model';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 import { FeedingHistoryComponent } from './feeding-history.component';
 import { FeedingData } from './models/feeding-data.model';
 import { AnimalFeedingManagementService } from './services/animal-feeding-management.service';
 
+/**
+ * Composant de gestion de l'alimentation des animaux
+ * Permet d'enregistrer les repas et de consulter l'historique
+ */
 @Component({
   selector: 'app-animal-feeding-management',
   standalone: true,
@@ -23,19 +37,23 @@ import { AnimalFeedingManagementService } from './services/animal-feeding-manage
     FormsModule,
     ToastComponent,
     FeedingHistoryComponent,
+    ButtonComponent,
   ],
   templateUrl: './animal-feeding-management.component.html',
 })
 export class FeedingDataComponent implements OnInit, OnDestroy {
-  // Signaux publics
+  /** Signaux pour la gestion d'état réactive */
   public readonly habitats = signal<Habitat[]>([]);
   public readonly animals = signal<Animal[]>([]);
   public readonly isLoading = signal<boolean>(false);
   public readonly error = signal<string | null>(null);
+  public readonly feedingInProgress = signal<Set<number>>(new Set());
+  public readonly modalToastVisible = signal(false);
+  public readonly isModalOpen = signal<boolean>(false);
+  public readonly selectedAnimalId = signal<number | null>(null);
   public readonly activeToasts = signal<Set<number>>(new Set());
 
-  isModalOpen = signal<boolean>(false);
-  selectedAnimalId = signal<number | null>(null);
+  /** Données du formulaire de repas */
   feedingData: FeedingData = {
     feedingTime: new Date(),
     foodType: '',
@@ -46,13 +64,8 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     notes: '',
   };
 
-  // Subject pour la gestion de la destruction
+  /** Subject pour la gestion de la destruction */
   private readonly destroy$ = new Subject<void>();
-
-  // Ajouter une nouvelle propriété pour gérer l'état du chargement par animal
-  public feedingInProgress = signal<Set<number>>(new Set());
-
-  modalToastVisible = signal(false);
 
   constructor(
     private readonly habitatService: HabitatService,
@@ -71,84 +84,51 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Méthode pour afficher un toast pour un animal spécifique
-  private showToastForAnimal(animalId: number) {
-    // Ajouter l'ID de l'animal aux toasts actifs
-    this.activeToasts.update((toasts) => {
-      const newToasts = new Set(toasts);
-      newToasts.add(animalId);
-      return newToasts;
-    });
+  /**
+   * Marque un animal comme nourri
+   * @param animalId ID de l'animal
+   * @returns Promise<void>
+   */
+  public async markAsFed(animalId: number): Promise<void> {
+    if (this.feedingInProgress().has(animalId)) {
+      this.toastService.showError('Opération déjà en cours');
+      return;
+    }
 
-    // Retirer le toast après 3 secondes
-    setTimeout(() => {
-      this.activeToasts.update((toasts) => {
-        const newToasts = new Set(toasts);
-        newToasts.delete(animalId);
-        return newToasts;
-      });
-    }, 3000);
+    const currentUser = this.authService.currentUserSignal();
+    if (!currentUser?.id) {
+      this.toastService.showError('ID utilisateur non disponible');
+      return;
+    }
+
+    const feedingDataToSend = this.prepareFeedingData(animalId, currentUser);
+    this.updateFeedingProgress(animalId, true);
+
+    try {
+      await firstValueFrom(
+        this.animalFeedingService
+          .markAnimalAsFed(animalId, feedingDataToSend)
+          .pipe(
+            takeUntil(this.destroy$),
+            finalize(() => this.updateFeedingProgress(animalId, false))
+          )
+      );
+
+      this.toastService.showSuccess('Animal nourri avec succès');
+      this.habitatService.clearCache();
+      this.loadHabitats();
+      this.showToastForAnimal(animalId);
+    } catch (error) {
+      console.error('Erreur complète:', error);
+      this.toastService.showError(
+        "Erreur lors du marquage de l'animal comme nourri"
+      );
+    }
   }
 
-  public markAsFed(animalId: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.feedingInProgress().has(animalId)) {
-        reject('Opération déjà en cours');
-        return;
-      }
-
-      const currentUser = this.authService.currentUserSignal();
-      if (!currentUser?.id) {
-        reject('ID utilisateur non disponible');
-        return;
-      }
-
-      const feedingDataToSend: FeedingData = {
-        feedingTime: new Date(),
-        animalId: animalId,
-        employeId: currentUser.id,
-        employeName: currentUser.name || 'Employé inconnu',
-        user_id: currentUser.id,
-        user_name: currentUser.name || 'Employé inconnu',
-        foodType: this.feedingData.foodType,
-        quantity: this.feedingData.quantity,
-        notes: this.feedingData.notes || '',
-      };
-
-      // Ajout de l'animal à la liste des opérations en cours
-      const updatedFeeding = new Set(this.feedingInProgress());
-      updatedFeeding.add(animalId);
-      this.feedingInProgress.set(updatedFeeding);
-
-      this.animalFeedingService
-        .markAnimalAsFed(animalId, feedingDataToSend)
-        .pipe(
-          takeUntil(this.destroy$),
-          finalize(() => {
-            // Retrait de l'animal de la liste des opérations en cours
-            const updatedFeeding = new Set(this.feedingInProgress());
-            updatedFeeding.delete(animalId);
-            this.feedingInProgress.set(updatedFeeding);
-          })
-        )
-        .subscribe({
-          next: () => {
-            this.showToastForAnimal(animalId);
-            this.habitatService.clearCache();
-            this.loadHabitats();
-            resolve();
-          },
-          error: (error) => {
-            console.error('Erreur complète:', error);
-            const errorMessage =
-              "Erreur lors du marquage de l'animal comme nourri.";
-            this.error.set(errorMessage);
-            reject(error);
-          },
-        });
-    });
-  }
-
+  /**
+   * Charge les habitats et leurs animaux
+   */
   private loadHabitats(): void {
     this.isLoading.set(true);
     this.error.set(null);
@@ -174,52 +154,47 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
         finalize(() => this.isLoading.set(false))
       )
       .subscribe({
-        next: (habitatsWithAnimals) => this.habitats.set(habitatsWithAnimals),
-        error: () => this.error.set('Erreur lors du chargement des habitats'),
+        next: (habitatsWithAnimals) => {
+          this.habitats.set(habitatsWithAnimals);
+        },
+        error: () => {
+          this.error.set('Erreur lors du chargement des habitats');
+          this.toastService.showError('Erreur lors du chargement des habitats');
+        },
       });
   }
 
+  /**
+   * Ouvre le modal d'alimentation pour un animal
+   * @param animalId ID de l'animal
+   */
   openFeedingModal(animalId: number): void {
-    // Validez l'animalId avant d'ouvrir le modal
     if (!animalId) {
-      console.error('animalId invalide:', animalId);
+      this.toastService.showError('ID animal invalide');
       return;
     }
 
-    this.selectedAnimalId.set(animalId); // Associez l'animal au modal
-    this.feedingData.animalId = animalId; // Mettez à jour feedingData
-    this.isModalOpen.set(true); // Ouvrez le modal
+    this.selectedAnimalId.set(animalId);
+    this.feedingData.animalId = animalId;
+    this.isModalOpen.set(true);
   }
 
+  /**
+   * Gère l'enregistrement d'un repas
+   */
   async handleFeedingSave() {
-    if (
-      !this.feedingData.animalId ||
-      !this.feedingData.foodType ||
-      this.feedingData.quantity <= 0
-    ) {
-      this.error.set('Veuillez remplir tous les champs correctement');
+    if (!this.validateFeedingData()) {
+      this.toastService.showError(
+        'Veuillez remplir tous les champs correctement'
+      );
       return;
     }
 
     try {
-      // Appeler markAsFed d'abord
       await this.markAsFed(this.feedingData.animalId);
-
-      // Activer le toast modal
       this.modalToastVisible.set(true);
+      this.resetFeedingData();
 
-      // Réinitialiser les données du formulaire
-      this.feedingData = {
-        feedingTime: new Date(),
-        foodType: '',
-        quantity: 0,
-        animalId: 0,
-        employeId: 0,
-        employeName: '',
-        notes: '',
-      };
-
-      // Attendre 3 secondes avant de fermer
       setTimeout(() => {
         this.modalToastVisible.set(false);
         this.isModalOpen.set(false);
@@ -232,12 +207,94 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Ferme le modal d'alimentation
+   */
   closeModal(): void {
     this.isModalOpen.set(false);
     this.modalToastVisible.set(false);
   }
 
+  /**
+   * Navigation vers la page d'accueil
+   */
   goBack() {
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Prépare les données d'alimentation pour l'envoi
+   */
+  private prepareFeedingData(animalId: number, currentUser: User): FeedingData {
+    return {
+      feedingTime: new Date(),
+      animalId: animalId,
+      employeId: currentUser.id,
+      employeName: currentUser.name || 'Employé inconnu',
+      user_id: currentUser.id,
+      user_name: currentUser.name || 'Employé inconnu',
+      foodType: this.feedingData.foodType,
+      quantity: this.feedingData.quantity,
+      notes: this.feedingData.notes || '',
+    };
+  }
+
+  /**
+   * Met à jour l'état de progression de l'alimentation
+   */
+  private updateFeedingProgress(animalId: number, inProgress: boolean): void {
+    const updatedFeeding = new Set(this.feedingInProgress());
+    if (inProgress) {
+      updatedFeeding.add(animalId);
+    } else {
+      updatedFeeding.delete(animalId);
+    }
+    this.feedingInProgress.set(updatedFeeding);
+  }
+
+  /**
+   * Valide les données du formulaire d'alimentation
+   */
+  private validateFeedingData(): boolean {
+    return !!(
+      this.feedingData.animalId &&
+      this.feedingData.foodType &&
+      this.feedingData.quantity > 0
+    );
+  }
+
+  /**
+   * Réinitialise le formulaire d'alimentation
+   */
+  private resetFeedingData(): void {
+    this.feedingData = {
+      feedingTime: new Date(),
+      foodType: '',
+      quantity: 0,
+      animalId: 0,
+      employeId: 0,
+      employeName: '',
+      notes: '',
+    };
+  }
+
+  /**
+   * Affiche un toast pour un animal spécifique
+   * @param animalId ID de l'animal
+   */
+  private showToastForAnimal(animalId: number): void {
+    this.activeToasts.update((toasts) => {
+      const newToasts = new Set(toasts);
+      newToasts.add(animalId);
+      return newToasts;
+    });
+
+    setTimeout(() => {
+      this.activeToasts.update((toasts) => {
+        const newToasts = new Set(toasts);
+        newToasts.delete(animalId);
+        return newToasts;
+      });
+    }, 3000);
   }
 }

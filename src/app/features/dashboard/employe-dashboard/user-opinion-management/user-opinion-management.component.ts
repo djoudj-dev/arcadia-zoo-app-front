@@ -8,12 +8,19 @@ import { RateComponent } from 'app/shared/components/rate/rate.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 
+/**
+ * Interface pour les options de filtrage
+ */
 interface FilterOption {
   type: 'pending' | 'validated' | 'rejected';
   label: string;
   badgeColor: string;
 }
 
+/**
+ * Composant de gestion des avis utilisateurs
+ * Permet de valider, rejeter et supprimer les avis
+ */
 @Component({
   selector: 'app-user-opinion-management',
   standalone: true,
@@ -21,10 +28,11 @@ interface FilterOption {
   templateUrl: './user-opinion-management.component.html',
 })
 export class UserOpinionManagementComponent implements OnInit {
-  // Liste de tous les avis
+  /** Signaux pour la gestion d'état réactive */
   private allOpinions = signal<UserOpinion[]>([]);
+  readOnlySignal = signal(true);
 
-  // Liste des avis filtrés (pour l'affichage)
+  /** Liste des avis filtrés (pour l'affichage) */
   public opinions = computed(() => {
     switch (this.currentFilter()) {
       case 'pending':
@@ -40,16 +48,18 @@ export class UserOpinionManagementComponent implements OnInit {
     }
   });
 
-  // Indicateur de chargement
+  /** État du composant */
   isLoading = signal<boolean>(true);
-
-  // Filtre actuel (par défaut : "en attente")
   currentFilter = signal<'pending' | 'validated' | 'rejected'>('pending');
 
-  // Signal pour le mode lecture seule
-  readOnlySignal = signal(true);
+  /** Options de filtrage */
+  filters: FilterOption[] = [
+    { type: 'pending', label: 'En attente', badgeColor: 'bg-yellow-500' },
+    { type: 'validated', label: 'Validés', badgeColor: 'bg-green-500' },
+    { type: 'rejected', label: 'Rejetés', badgeColor: 'bg-red-500' },
+  ];
 
-  // Création des compteurs réactifs avec computed()
+  /** Compteurs réactifs */
   public pendingCount = computed(
     () =>
       this.allOpinions().filter(
@@ -65,39 +75,22 @@ export class UserOpinionManagementComponent implements OnInit {
     () => this.allOpinions().filter((opinion) => opinion.rejected).length
   );
 
-  filters: FilterOption[] = [
-    {
-      type: 'pending',
-      label: 'En attente',
-      badgeColor: 'bg-yellow-500',
-    },
-    {
-      type: 'validated',
-      label: 'Validés',
-      badgeColor: 'bg-green-500',
-    },
-    {
-      type: 'rejected',
-      label: 'Rejetés',
-      badgeColor: 'bg-red-500',
-    },
-  ];
-
   constructor(
     private userOpinionsService: UserOpinionsService,
     private toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    // S'abonner aux mises à jour des avis
-    this.userOpinionsService.opinionsUpdated$.subscribe(() => {
-      this.loadAllOpinions();
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadAllOpinions();
-    // Initialiser le filtre en fonction de l'URL actuelle
+    this.initializeFilter();
+  }
+
+  /**
+   * Initialise le filtre en fonction de l'URL
+   */
+  private initializeFilter(): void {
     const currentPath = this.router.url.split('/').pop();
     if (
       currentPath &&
@@ -109,8 +102,10 @@ export class UserOpinionManagementComponent implements OnInit {
     }
   }
 
-  // Charger tous les avis
-  loadAllOpinions(): void {
+  /**
+   * Charge tous les avis
+   */
+  private loadAllOpinions(): void {
     this.isLoading.set(true);
     this.userOpinionsService.getAllUserOpinions().subscribe({
       next: (opinions) => {
@@ -125,80 +120,20 @@ export class UserOpinionManagementComponent implements OnInit {
     });
   }
 
-  // Mise à jour du filtre actuel
+  /**
+   * Change le filtre actuel
+   */
   changeFilter(filter: 'pending' | 'validated' | 'rejected'): void {
     this.currentFilter.set(filter);
-    // Mettre à jour l'URL sans recharger la page
     this.router.navigate([filter], {
       relativeTo: this.route,
       replaceUrl: true,
     });
   }
 
-  // Méthodes pour compter les avis par catégorie (utilisant allOpinions)
-  getPendingCount(): number {
-    return this.allOpinions().filter(
-      (opinion) => !opinion.validated && !opinion.rejected
-    ).length;
-  }
-
-  getValidatedCount(): number {
-    return this.allOpinions().filter((opinion) => opinion.validated).length;
-  }
-
-  getRejectedCount(): number {
-    return this.allOpinions().filter((opinion) => opinion.rejected).length;
-  }
-
-  // Après chaque action (validation, rejet, suppression), recharger tous les avis
-  validateOpinion(opinion: UserOpinion): void {
-    if (!opinion?._id) return;
-
-    this.userOpinionsService.validateUserOpinions(opinion._id).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Avis validé avec succès');
-        this.loadAllOpinions(); // Recharger tous les avis
-      },
-      error: (error) => {
-        console.error('Erreur lors de la validation:', error);
-        this.toastService.showError('Erreur lors de la validation');
-      },
-    });
-  }
-
-  rejectOpinion(id: string): void {
-    this.userOpinionsService.rejectUserOpinions(id).subscribe({
-      next: () => {
-        this.toastService.showSuccess('Avis rejeté avec succès');
-        this.loadAllOpinions(); // Recharger tous les avis après le rejet
-      },
-      error: (error) => {
-        console.error('Erreur lors du rejet:', error);
-        this.toastService.showError('Erreur lors du rejet');
-      },
-    });
-  }
-
-  deleteOpinion(id: string): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
-      this.userOpinionsService.deleteUserOpinions(id).subscribe({
-        next: () => {
-          this.toastService.showSuccess('Avis supprimé avec succès');
-          this.loadAllOpinions(); // Recharger tous les avis
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression:', error);
-          this.toastService.showError('Erreur lors de la suppression');
-        },
-      });
-    }
-  }
-
-  // Méthode pour créer un signal de rating
-  createRatingSignal(rating: number) {
-    return signal(rating);
-  }
-
+  /**
+   * Retourne le nombre d'avis pour un type donné
+   */
   getCount(filterType: 'pending' | 'validated' | 'rejected'): number {
     switch (filterType) {
       case 'pending':
@@ -210,5 +145,64 @@ export class UserOpinionManagementComponent implements OnInit {
       default:
         return 0;
     }
+  }
+
+  /**
+   * Valide un avis
+   */
+  validateOpinion(opinion: UserOpinion): void {
+    if (!opinion?._id) return;
+
+    this.userOpinionsService.validateUserOpinions(opinion._id).subscribe({
+      next: () => {
+        this.loadAllOpinions();
+        this.toastService.showSuccess('Avis validé avec succès');
+      },
+      error: (error) => {
+        console.error('Erreur lors de la validation:', error);
+        this.toastService.showError('Erreur lors de la validation');
+      },
+    });
+  }
+
+  /**
+   * Rejette un avis
+   */
+  rejectOpinion(id: string): void {
+    this.userOpinionsService.rejectUserOpinions(id).subscribe({
+      next: () => {
+        this.loadAllOpinions();
+        this.toastService.showSuccess('Avis rejeté avec succès');
+      },
+      error: (error) => {
+        console.error('Erreur lors du rejet:', error);
+        this.toastService.showError('Erreur lors du rejet');
+      },
+    });
+  }
+
+  /**
+   * Supprime un avis
+   */
+  deleteOpinion(id: string): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet avis ?')) {
+      this.userOpinionsService.deleteUserOpinions(id).subscribe({
+        next: () => {
+          this.loadAllOpinions();
+          this.toastService.showSuccess('Avis supprimé avec succès');
+        },
+        error: (error) => {
+          console.error('Erreur lors de la suppression:', error);
+          this.toastService.showError('Erreur lors de la suppression');
+        },
+      });
+    }
+  }
+
+  /**
+   * Crée un signal pour le composant Rate
+   */
+  createRatingSignal(rating: number) {
+    return signal(rating);
   }
 }
