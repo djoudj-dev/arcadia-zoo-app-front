@@ -2,42 +2,36 @@ import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { CountResourceComponent } from './stats-board/counts-resource/count-resource.component';
+
 /**
  * Interface définissant la structure des éléments de navigation
- * @property text - Le texte à afficher pour l'élément de navigation
- * @property route - Le chemin de route pour la navigation
  */
 interface NavigationItem {
+  /** Texte à afficher pour l'élément de navigation */
   text: string;
+  /** Chemin de route pour la navigation */
   route: string;
 }
 
 /**
- * Composant du tableau de bord administrateur
- * Gère la navigation vers les différentes sections d'administration
+ * Composant principal du tableau de bord administrateur
+ * Gère la navigation et l'affichage des différentes sections d'administration
  */
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [
-    ButtonComponent,
-    CountResourceComponent,
-    CountResourceComponent,
-    RouterOutlet,
-  ],
+  imports: [ButtonComponent, CountResourceComponent, RouterOutlet],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
-  /**
-   * Liste des éléments de navigation disponibles dans le tableau de bord
-   */
+  /** Liste des éléments de navigation disponibles */
   navigationItems: NavigationItem[] = [
-    { text: 'Gestion des animaux', route: 'animal-management' },
-    { text: 'Gestion des habitats', route: 'habitat-management' },
-    { text: 'Gestion des services', route: 'service-management' },
-    { text: 'Gestion des comptes', route: 'account-management' },
+    { text: 'Animaux', route: 'animal-management' },
+    { text: 'Habitats', route: 'habitat-management' },
+    { text: 'Services', route: 'service-management' },
+    { text: 'Comptes', route: 'account-management' },
     {
-      text: "Gestion des horaires d'ouverture",
+      text: "Horaires d'ouverture",
       route: 'opening-hours-management',
     },
     { text: 'Rapports vétérinaires', route: 'veterinary-reports' },
@@ -47,8 +41,8 @@ export class AdminDashboardComponent {
   constructor(private router: Router) {}
 
   /**
-   * Navigue vers la route spécifiée
-   * @param route - Le chemin de route vers lequel naviguer
+   * Navigue vers une section spécifique du tableau de bord
+   * @param route Chemin de route vers lequel naviguer
    */
   navigateTo(route: string): void {
     this.router.navigate(['/admin', route]);
@@ -59,5 +53,14 @@ export class AdminDashboardComponent {
    */
   goBack(): void {
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Vérifie si la route donnée est active
+   * @param route Route à vérifier
+   * @returns boolean indiquant si la route est active
+   */
+  isActiveRoute(route: string): boolean {
+    return this.router.url === `/admin/${route}`;
   }
 }
