@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/core/auth/auth.service';
+import { AuthService } from 'app/core/auth/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';

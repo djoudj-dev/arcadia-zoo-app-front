@@ -8,9 +8,9 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
-import { TokenResponse } from '../auth/token-response.interface';
-import { TokenSecurityService } from '../token/token-security.service';
+import { AuthService } from '../services/auth.service';
+import { TokenResponse } from '../models/token-response.interface';
+import { TokenSecurityService } from '../../token/token-security.service';
 
 @Injectable()
 export class SecurityInterceptor implements HttpInterceptor {

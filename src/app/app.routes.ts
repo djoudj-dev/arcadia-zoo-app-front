@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guard/auth.guard';
-import { LoginComponent } from './core/login/login.component';
 import { OpeningHoursManagementComponent } from './features/dashboard/admin-dashboard/opening-hours-management/opening-hours-management.component';
 import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-dashboard/veterinary-dashboard.component';
 import { HomeComponent } from './features/home/home.component';
+import { LoginComponent } from './features/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Accueil' },
