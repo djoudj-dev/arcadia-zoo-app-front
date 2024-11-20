@@ -1,9 +1,14 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ButtonComponent } from 'app/shared/components/button/button.component';
+import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { HabitatComment } from '../../veterinary-dashboard/habitat-comment/habitat-comment/model/habitat-comment.model';
 import { HabitatHistoryService } from './services/history-management.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
+/**
+ * Composant de gestion de l'historique des commentaires d'habitats
+ * Permet de consulter, résoudre et rouvrir les commentaires
+ */
 @Component({
   standalone: true,
   imports: [DatePipe, ButtonComponent],
@@ -11,64 +16,76 @@ import { HabitatHistoryService } from './services/history-management.service';
   templateUrl: './history-management.component.html',
 })
 export class HistoryManagementComponent implements OnInit {
+  /** Liste des commentaires d'habitats */
   commentHistory: HabitatComment[] = [];
+
   private historyService = inject(HabitatHistoryService);
+  private toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.loadCommentHistory();
   }
 
+  /**
+   * Charge l'historique des commentaires
+   * Affiche des toasts de succès ou d'erreur
+   */
   private loadCommentHistory(): void {
     this.historyService.getHabitatCommentHistory().subscribe({
       next: (history) => {
-        console.log('Commentaires reçus:', history);
-        history.forEach((comment) => {
-          if (!comment._id) {
-            console.warn('Commentaire sans ID:', comment);
-          }
-        });
         this.commentHistory = history;
+        this.toastService.showSuccess('Historique chargé avec succès');
       },
       error: (error) => {
         console.error("Erreur lors du chargement de l'historique:", error);
+        this.toastService.showError(
+          "Erreur lors du chargement de l'historique"
+        );
       },
     });
   }
 
+  /**
+   * Marque un commentaire comme résolu
+   * @param commentId Identifiant du commentaire
+   */
   async markAsResolved(commentId: string) {
-    console.log('markAsResolved appelé avec ID:', commentId);
-
     if (!commentId) {
-      console.error('ID du commentaire manquant');
+      this.toastService.showError('ID du commentaire manquant');
       return;
     }
 
     try {
-      const result = await this.historyService
-        .markCommentAsResolved(commentId)
-        .toPromise();
-      console.log('Résultat de la résolution:', result);
+      await this.historyService.markCommentAsResolved(commentId).toPromise();
       this.loadCommentHistory();
+      this.toastService.showSuccess('Commentaire marqué comme résolu');
     } catch (error) {
       console.error('Erreur lors du marquage comme résolu:', error);
+      this.toastService.showError(
+        'Erreur lors de la résolution du commentaire'
+      );
     }
   }
 
+  /**
+   * Rouvre un commentaire précédemment résolu
+   * @param commentId Identifiant du commentaire
+   */
   async reopenComment(commentId: string) {
-    console.log('Tentative de réouverture du commentaire:', commentId);
     if (!commentId) {
-      console.error('ID du commentaire manquant');
+      this.toastService.showError('ID du commentaire manquant');
       return;
     }
 
     try {
-      const result = await this.historyService
-        .reopenComment(commentId)
-        .toPromise();
-      console.log('Résultat de la réouverture:', result);
+      await this.historyService.reopenComment(commentId).toPromise();
       this.loadCommentHistory();
+      this.toastService.showSuccess('Commentaire rouvert avec succès');
     } catch (error) {
       console.error('Erreur lors de la réouverture du commentaire:', error);
+      this.toastService.showError(
+        'Erreur lors de la réouverture du commentaire'
+      );
     }
   }
 }
