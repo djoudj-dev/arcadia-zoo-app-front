@@ -1,21 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { UpdatePasswordComponent } from 'app/features/dashboard/admin-dashboard/account-management/update-password.component';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { ModalComponent } from '../../../components/modal/modal.component';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 import { BannerComponent } from '../banner/banner.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [
-    BannerComponent,
-    CommonModule,
-    RouterLink,
-    ModalComponent,
-    UpdatePasswordComponent,
-  ],
+  imports: [RouterLink, BannerComponent],
   templateUrl: './nav.component.html',
 })
 export class NavComponent implements OnInit {

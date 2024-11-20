@@ -217,18 +217,6 @@
         </a>
       </li>
       }
-
-      <!-- Lien Connexion si l'utilisateur n'est pas authentifié
-      @if (!(userAuthenticated$ | async)) {
-      <li class="hidden py-3 md:inline md:py-0">
-        <a
-          [routerLink]="['/login']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
-        >
-          Connexion
-        </a>
-      </li>
-      } -->
     </ul>
   </div>
 
@@ -318,18 +306,6 @@
       </a>
     </li>
     }
-
-    <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié
-    @if (!(userAuthenticated$ | async)) {
-    <li class="block py-3 md:mr-6">
-      <a
-        [routerLink]="['/login']"
-        class="text-sm uppercase font-semibold hover:text-quaternary"
-      >
-        Connexion
-      </a>
-    </li>
-    } -->
   </ul>
 </nav>
 <app-banner />

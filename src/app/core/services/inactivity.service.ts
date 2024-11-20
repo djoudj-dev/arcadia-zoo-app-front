@@ -1,9 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { fromEvent, merge, Subscription, timer } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
-import { ToastService } from 'app/shared/components/toast/services/toast.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root',

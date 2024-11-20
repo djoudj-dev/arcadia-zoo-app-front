@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from './core/auth/auth.service';
+import { AuthService } from './core/auth/services/auth.service';
 import { InactivityService } from './core/services/inactivity.service';
 import { TokenService } from './core/token/token.service';
 import { NotificationComponent } from './features/contact/notification.component';
