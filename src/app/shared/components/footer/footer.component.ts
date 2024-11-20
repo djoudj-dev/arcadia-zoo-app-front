@@ -24,7 +24,6 @@ export class FooterComponent {
   /** Récupère les horaires d'ouverture */
   openingHours = computed(() => {
     const hours = this.openingHoursService.openingHours();
-    console.log('Mise à jour des horaires dans le footer:', hours);
     return hours;
   });
 
