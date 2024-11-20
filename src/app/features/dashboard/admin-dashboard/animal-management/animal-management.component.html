@@ -76,19 +76,22 @@
           </div>
 
           <!-- Photo -->
-          <div>
+          <div class="form-group">
             <label
-              for="animal-image"
-              class="block text-lg font-medium text-tertiary mb-2"
+              for="animalImage"
+              class="block text-sm font-medium text-gray-700"
             >
-              Photo de l'animal
+              Image de l'animal
             </label>
             <input
               type="file"
-              id="animal-image"
-              (change)="onFileChange($event)"
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+              id="animalImage"
               accept="image/*"
+              class="mt-1 block w-full"
+              appFileUpload
+              [allowedTypes]="['image/jpeg', 'image/png', 'image/webp']"
+              [maxSize]="5 * 1024 * 1024"
+              (fileSelected)="onFileSelected($event)"
             />
           </div>
 
