@@ -7,6 +7,11 @@
     <h2 class="text-xl sm:text-2xl font-bold text-center mb-6 text-quinary">
       Connexion
     </h2>
+    @if (message) {
+    <div class="mb-4 p-4 bg-orange-100 text-quinary-700 rounded-lg">
+      {{ message }}
+    </div>
+    }
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="relative">

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InactivityService } from '../../core/services/inactivity.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ToastService } from '../../shared/components/toast/services/toast.service';
@@ -19,9 +19,10 @@ import { AuthService } from '../auth/auth.service';
   imports: [ReactiveFormsModule, ButtonComponent, CommonModule, ToastComponent],
   templateUrl: './login.component.html',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
+  message: string = '';
   private router = inject(Router);
   private inactivityService = inject(InactivityService);
   private toastService = inject(ToastService);
@@ -29,7 +30,11 @@ export class LoginComponent {
   private readonly EMAIL_PATTERN =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private route: ActivatedRoute
+  ) {
     this.loginForm = this.fb.group({
       email: [
         '',
@@ -40,6 +45,25 @@ export class LoginComponent {
         ],
       ],
       password: ['', [Validators.required, Validators.minLength(8)]],
+    });
+  }
+
+  ngOnInit() {
+    // Récupérer le message des queryParams s'il existe
+    this.route.queryParams.subscribe((params) => {
+      if (params['message']) {
+        this.message = params['message'];
+        // Faire disparaître le message après 3 secondes
+        setTimeout(() => {
+          this.message = '';
+          // Mettre à jour l'URL sans le paramètre message
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {},
+            replaceUrl: true,
+          });
+        }, 3000);
+      }
     });
   }
 
