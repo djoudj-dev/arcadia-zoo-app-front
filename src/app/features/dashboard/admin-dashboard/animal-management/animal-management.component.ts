@@ -129,31 +129,51 @@ export class AnimalManagementComponent implements OnInit {
   updateAnimal() {
     if (this.validateAnimalData(true)) {
       const formData = this.buildFormData();
-      this.animalManagement
-        .updateAnimal(this.newAnimalData().id_animal!.toString(), formData)
-        .subscribe({
-          next: (updatedAnimal) => {
-            this.animals.update((animals) =>
-              animals.map((a) =>
-                a.id_animal === updatedAnimal.id_animal
-                  ? {
-                      ...updatedAnimal,
-                      showTime: a.showTime,
-                      images: `${this.imageBaseUrl}/${updatedAnimal.images}`,
-                    }
-                  : a
-              )
+      const animalId = this.newAnimalData().id_animal!.toString();
+
+      // Vérification des données avant envoi
+      console.log('Données actuelles:', this.newAnimalData());
+
+      this.animalManagement.updateAnimal(animalId, formData).subscribe({
+        next: (updatedAnimal) => {
+          console.log('Comparaison des données:');
+          console.log('Données envoyées:', this.newAnimalData());
+          console.log('Données reçues:', updatedAnimal);
+
+          if (updatedAnimal.name !== this.newAnimalData().name) {
+            console.warn(
+              'Attention: Les données reçues ne correspondent pas aux données envoyées'
             );
-            this.resetForm();
-            this.toastService.showSuccess('Animal mis à jour avec succès');
-          },
-          error: (error) => {
-            console.error("Erreur de mise à jour de l'animal :", error);
-            this.toastService.showError(
-              "Erreur lors de la mise à jour de l'animal"
-            );
-          },
-        });
+          }
+
+          // Mise à jour immédiate du cache local
+          this.animals.update((animals) =>
+            animals.map((a) =>
+              a.id_animal === updatedAnimal.id_animal
+                ? {
+                    ...updatedAnimal,
+                    showTime: a.showTime,
+                    images: updatedAnimal.images
+                      ? `${this.imageBaseUrl}/${updatedAnimal.images}`
+                      : a.images,
+                  }
+                : a
+            )
+          );
+
+          // Forcer le rechargement des données
+          this.loadAnimals();
+
+          this.resetForm();
+          this.toastService.showSuccess('Animal mis à jour avec succès');
+        },
+        error: (error) => {
+          console.error('Erreur complète:', error);
+          this.toastService.showError(
+            `Erreur lors de la mise à jour de l'animal: ${error.message}`
+          );
+        },
+      });
     } else {
       this.toastService.showError('Veuillez remplir tous les champs requis');
     }
@@ -170,24 +190,89 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Supprime un animal */
   deleteAnimal(animalId: number) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet animal ?')) {
+    // Récupérer le nom de l'animal pour le message
+    const animal = this.animals().find((a) => a.id_animal === animalId);
+    if (!animal) return;
+
+    // Afficher le toast de confirmation
+    const confirmMessage = `Êtes-vous sûr de vouloir supprimer l'animal "${animal.name}" ?`;
+
+    // Créer un toast de confirmation personnalisé
+    const toast = document.createElement('div');
+    toast.className =
+      'fixed top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50 flex flex-col gap-4';
+    toast.innerHTML = `
+      <p class="text-gray-800">${confirmMessage}</p>
+      <div class="flex justify-end gap-2">
+        <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" id="confirmDelete">
+          Supprimer
+        </button>
+        <button class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" id="cancelDelete">
+          Annuler
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Gérer les actions de confirmation/annulation
+    const handleConfirm = () => {
       this.animalManagement.deleteAnimal(animalId.toString()).subscribe({
         next: () => {
+          // Mettre à jour le state local
           this.animals.update((animals) =>
             animals.filter((a) => a.id_animal !== animalId)
           );
+
+          // Mettre à jour les groupes
+          this.groupAnimals();
+
+          // Mettre à jour les compteurs
           this.countResourceService.decrementTotalAnimals();
+
+          // Recharger la liste complète des animaux
+          this.loadAnimals();
+
+          // Réinitialiser le formulaire si nécessaire
           this.resetForm();
+
+          // Nettoyer le toast et afficher le message de succès
+          document.body.removeChild(toast);
           this.toastService.showSuccess('Animal supprimé avec succès');
         },
         error: (error) => {
           console.error("Erreur de suppression de l'animal :", error);
+          document.body.removeChild(toast);
           this.toastService.showError(
             "Erreur lors de la suppression de l'animal"
           );
         },
+        complete: () => {
+          // S'assurer que l'interface est bien à jour
+          this.groupAnimals();
+        },
       });
-    }
+    };
+
+    const handleCancel = () => {
+      document.body.removeChild(toast);
+      this.toastService.showSuccess('Suppression annulée');
+    };
+
+    // Ajouter les écouteurs d'événements
+    document
+      .getElementById('confirmDelete')
+      ?.addEventListener('click', handleConfirm);
+    document
+      .getElementById('cancelDelete')
+      ?.addEventListener('click', handleCancel);
+
+    // Ajouter une animation d'entrée
+    requestAnimationFrame(() => {
+      toast.style.transition = 'opacity 0.3s, transform 0.3s';
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    });
   }
 
   /** Réinitialise le formulaire */
@@ -204,11 +289,30 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Gère l'affichage de la description */
   toggleAnimal(animalId: number) {
-    this.animals.update((animals) =>
-      animals.map((a) =>
-        a.id_animal === animalId ? { ...a, showTime: !a.showTime } : a
-      )
-    );
+    // Récuprer l'état actuel de l'animal
+    const currentAnimal = this.animals().find((a) => a.id_animal === animalId);
+
+    if (!currentAnimal) {
+      console.error('Animal non trouvé:', animalId);
+      return;
+    }
+
+    // Créer une nouvelle copie du tableau avec l'état mis à jour
+    const updatedAnimals = this.animals().map((animal) => {
+      if (animal.id_animal === animalId) {
+        return {
+          ...animal,
+          showTime: !animal.showTime,
+        };
+      }
+      return animal;
+    });
+
+    // Mettre à jour le signal avec le nouveau tableau
+    this.animals.set(updatedAnimals);
+
+    // Forcer le regroupement des animaux pour mettre à jour l'affichage
+    this.groupAnimals();
   }
 
   /** Gère la visibilité des animaux par habitat */
@@ -217,6 +321,18 @@ export class AnimalManagementComponent implements OnInit {
       ...visibility,
       [habitatId]: !visibility[habitatId],
     }));
+  }
+
+  /** Vérifie si un animal doit être affiché */
+  isAnimalVisible(animal: Animal): boolean {
+    return this.visibleAnimals()[animal.habitat_id] ?? false;
+  }
+
+  /** Vérifie si la description complète doit être affichée */
+  shouldShowFullDescription(animal: Animal): boolean {
+    const isShown = Boolean(animal.showTime);
+    console.log(`Vérification description pour ${animal.name}:`, isShown);
+    return isShown;
   }
 
   /** Valide les données avant soumission */
@@ -240,14 +356,32 @@ export class AnimalManagementComponent implements OnInit {
     const formData = new FormData();
     const animalData = this.newAnimalData();
 
-    // Ajoute les données de base de l'animal de manière sécurisée
-    Object.entries(animalData).forEach(([key, value]) => {
+    // Conversion des données en objet simple
+    const dataToSend = {
+      name: animalData.name || '',
+      species: animalData.species || '',
+      habitat_id: animalData.habitat_id?.toString() || '',
+      characteristics: animalData.characteristics || '',
+      weightRange: animalData.weightRange || '',
+      diet: animalData.diet || '',
+      vetNote: animalData.veterinary
+        ? JSON.stringify(animalData.veterinary)
+        : '',
+    };
+
+    // Ajout des données au FormData de manière sûre
+    Object.entries(dataToSend).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
     });
 
-    // Ajoute le fichier s'il existe avec un nom sécurisé
+    // Si on est en mode mise à jour, ajouter l'ID
+    if (animalData.id_animal) {
+      formData.append('id_animal', animalData.id_animal.toString());
+    }
+
+    // Gestion de l'image
     const file = this.selectedFile();
     if (file) {
       const secureName = this.fileSecurityService.sanitizeFileName(file.name);
@@ -260,9 +394,14 @@ export class AnimalManagementComponent implements OnInit {
   /** Groupe les animaux par habitat */
   private groupAnimals() {
     const grouped = this.animals().reduce((acc, animal) => {
-      (acc[animal.habitat_id] = acc[animal.habitat_id] || []).push(animal);
+      if (!acc[animal.habitat_id]) {
+        acc[animal.habitat_id] = [];
+      }
+      acc[animal.habitat_id].push({ ...animal }); // Créer une nouvelle copie de l'animal
       return acc;
     }, {} as Record<number, Animal[]>);
+
+    // Mettre à jour le signal avec les nouveaux groupes
     this.groupedAnimals.set(grouped);
   }
 

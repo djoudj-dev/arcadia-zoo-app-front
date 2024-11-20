@@ -31,13 +31,15 @@ export class CountResourceComponent implements OnInit {
   loadCountResource() {
     this.countResourceService.getStats().subscribe({
       next: () => {
-        console.log('Statistiques mises à jour:', {
-          animaux: this.countResourceService.totalAnimals(),
-          habitats: this.countResourceService.totalHabitats(),
-          services: this.countResourceService.totalServices(),
-          employes: this.countResourceService.totalEmploye(),
-          veterinaires: this.countResourceService.totalVet(),
-        });
+        console.table([
+          {
+            animaux: this.countResourceService.totalAnimals(),
+            habitats: this.countResourceService.totalHabitats(),
+            services: this.countResourceService.totalServices(),
+            employes: this.countResourceService.totalEmploye(),
+            veterinaires: this.countResourceService.totalVet(),
+          },
+        ]);
       },
       error: (error) => {
         console.error(
