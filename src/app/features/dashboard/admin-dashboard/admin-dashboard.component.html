@@ -1,45 +1,61 @@
-<div class="admin-dashboard min-h-screen p-4 sm:p-8 bg-primary">
-  <!-- En-tête -->
-  <h1
-    class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-center text-quinary"
-  >
-    Panneau d'administration du Zoo
-  </h1>
-
-  <!-- Menu de navigation -->
-  <nav class="bg-secondary rounded-lg shadow-lg shadow-tertiary/30 mb-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4">
-      <!-- Boutons de navigation -->
-      @for (item of navigationItems; track item.route) {
-      <app-button
-        [text]="item.text"
-        [type]="'button'"
-        [color]="'tertiary'"
-        [rounded]="true"
-        class="w-full transition-transform hover:scale-102"
-        (click)="navigateTo(item.route)"
-      ></app-button>
-      }
+<section class="w-full bg-gradient-to-b from-secondary to-primary min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- En-tête -->
+    <div class="text-center space-y-4 mb-12">
+      <h1
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
+      >
+        Tableau de Bord Administrateur
+      </h1>
+      <p
+        class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
+      >
+        Gérez l'ensemble des fonctionnalités du zoo
+      </p>
     </div>
-  </nav>
 
-  <!-- Contenu principal -->
-  <div class="bg-white rounded-lg shadow-lg p-4 mb-8">
-    <app-count-resource />
-    <router-outlet></router-outlet>
-  </div>
+    <!-- Navigation par onglets -->
+    <nav class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        @for (item of navigationItems; track item.route) {
+        <app-button
+          [text]="item.text"
+          [type]="'button'"
+          [color]="isActiveRoute(item.route) ? 'tertiary' : 'secondary'"
+          [rounded]="true"
+          [customClass]="'w-full font-medium transition-all duration-300'"
+          (click)="navigateTo(item.route)"
+        >
+          @if (item.description) {
+          <div
+            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-black/75 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none"
+          >
+            {{ item.description }}
+          </div>
+          }
+        </app-button>
+        }
+      </div>
+    </nav>
 
-  <!-- Bouton de retour -->
-  <div class="flex justify-center pt-4">
-    <div class="w-full sm:w-1/4 lg:w-1/5">
+    <!-- Contenu principal -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
+      <app-count-resource />
+      <router-outlet />
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="flex justify-center mt-8">
       <app-button
         [text]="'Retour accueil'"
         [type]="'button'"
         [color]="'tertiary'"
         [rounded]="true"
-        class="w-full font-bold py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
+        [customClass]="
+          'px-8 py-2 font-medium hover:shadow-lg transition-all duration-300'
+        "
         (click)="goBack()"
       ></app-button>
     </div>
   </div>
-</div>
+</section>
