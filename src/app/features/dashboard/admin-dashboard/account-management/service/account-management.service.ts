@@ -25,7 +25,7 @@ export class AccountManagementService {
   }
 
   /** Crée un nouvel utilisateur **/
-  createUser(user: User): Observable<User> {
+  createUser(user: Partial<User>): Observable<User> {
     return this.http
       .post<User>(this.apiUrl, user)
       .pipe(

@@ -10,12 +10,17 @@
     </h3>
   </div>
   <div class="flex justify-center mt-6">
-    <form class="w-full max-w-lg">
+    <form
+      [formGroup]="contactForm"
+      (ngSubmit)="onSubmit()"
+      class="w-full max-w-lg"
+    >
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
           Nom
         </label>
         <input
+          formControlName="name"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="name"
           type="text"
@@ -27,6 +32,7 @@
           Email
         </label>
         <input
+          formControlName="email"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="email"
           type="email"
@@ -38,6 +44,7 @@
           Message
         </label>
         <textarea
+          formControlName="message"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           id="message"
           rows="4"
@@ -47,7 +54,8 @@
       <div class="flex items-center justify-between">
         <button
           class="bg-tertiary hover:bg-primary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="button"
+          type="submit"
+          [disabled]="!contactForm.valid"
         >
           Envoyer
         </button>
