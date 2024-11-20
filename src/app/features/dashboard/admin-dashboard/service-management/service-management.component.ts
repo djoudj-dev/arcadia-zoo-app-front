@@ -77,7 +77,6 @@ export class ServiceManagementComponent implements OnInit {
     this.serviceManagement.getAllFeatures().subscribe({
       next: (features: Feature[]) => {
         this.allFeatures.set(features);
-        this.toastService.showSuccess('Caractéristiques chargées avec succès');
       },
       error: (error) => {
         console.error(
