@@ -69,37 +69,139 @@
 
       <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
       @if (userRoles().veterinaire) {
-      <li class="block py-3 md:inline md:py-0 md:mr-6">
-        <a
-          [routerLink]="['/veterinaire']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
+      <li class="block py-3 md:inline md:py-0 md:mr-6 relative group">
+        <button
+          class="text-sm uppercase font-semibold hover:text-quaternary flex items-center gap-2 focus:outline-none"
+          (click)="toggleDropdown('vet')"
         >
           Vétérinaire
-        </a>
+          <svg
+            class="w-4 h-4 transition-transform duration-200"
+            [class.rotate-180]="activeDropdown === 'vet'"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        <div
+          class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-200 ease-in-out transform origin-top-right"
+          [class.scale-0]="activeDropdown !== 'vet'"
+          [class.scale-100]="activeDropdown === 'vet'"
+        >
+          <a
+            [routerLink]="['/veterinaire']"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Dashboard
+          </a>
+          <button
+            [routerLink]="['/update-password']"
+            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Modifier mot de passe
+          </button>
+        </div>
       </li>
       }
 
       <!-- Employe visible si l'utilisateur a le role 'employe'-->
       @if (userRoles().employe) {
-      <li class="block py-3 md:inline md:py-0 md:mr-6">
-        <a
-          [routerLink]="['/employe']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
+      <li class="block py-3 md:inline md:py-0 md:mr-6 relative group">
+        <button
+          class="text-sm uppercase font-semibold hover:text-quaternary flex items-center gap-2 focus:outline-none"
+          (click)="toggleDropdown('employe')"
         >
-          Employe
-        </a>
+          Employé
+          <svg
+            class="w-4 h-4 transition-transform duration-200"
+            [class.rotate-180]="activeDropdown === 'employe'"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        <div
+          class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-200 ease-in-out transform origin-top-right"
+          [class.scale-0]="activeDropdown !== 'employe'"
+          [class.scale-100]="activeDropdown === 'employe'"
+        >
+          <a
+            [routerLink]="['/employe']"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Dashboard
+          </a>
+          <button
+            [routerLink]="['/update-password']"
+            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Modifier mot de passe
+          </button>
+        </div>
       </li>
       }
 
       <!-- Admin visible si l'utilisateur a le rôle 'admin' -->
       @if (userRoles().admin) {
-      <li class="block py-3 md:inline md:py-0 md:mr-6">
-        <a
-          [routerLink]="['/admin']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
+      <li class="block py-3 md:inline md:py-0 md:mr-6 relative group">
+        <button
+          class="text-sm uppercase font-semibold hover:text-quaternary flex items-center gap-2 focus:outline-none"
+          (click)="toggleDropdown('admin')"
         >
           Admin
-        </a>
+          <svg
+            class="w-4 h-4 transition-transform duration-200"
+            [class.rotate-180]="activeDropdown === 'admin'"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+
+        <div
+          class="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl transition-all duration-200 ease-in-out transform origin-top-right"
+          [class.scale-0]="activeDropdown !== 'admin'"
+          [class.scale-100]="activeDropdown === 'admin'"
+        >
+          <a
+            [routerLink]="['/admin']"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Dashboard
+          </a>
+          <button
+            [routerLink]="['/update-password']"
+            class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-quaternary transition-colors duration-200"
+          >
+            Modifier mot de passe
+          </button>
+        </div>
       </li>
       }
 

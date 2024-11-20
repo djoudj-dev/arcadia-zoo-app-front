@@ -66,4 +66,17 @@ export class AccountManagementService {
     console.error(`Erreur lors de ${action} :`, err.message);
     return throwError(() => new Error(`Erreur de ${action}.`));
   }
+
+  updatePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/update-password`,
+      {
+        currentPassword,
+        newPassword,
+      }
+    );
+  }
 }
