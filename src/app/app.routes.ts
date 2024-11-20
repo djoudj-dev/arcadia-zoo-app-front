@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guard/auth.guard';
 import { LoginComponent } from './core/login/login.component';
+import { OpeningHoursManagementComponent } from './features/dashboard/admin-dashboard/opening-hours-management/opening-hours-management.component';
 import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-dashboard/veterinary-dashboard.component';
 import { HomeComponent } from './features/home/home.component';
 
@@ -106,7 +107,7 @@ export const routes: Routes = [
         title: 'Gestion des animaux',
       },
       {
-        path: 'vet-reports',
+        path: 'veterinary-reports',
         loadComponent: () =>
           import(
             './features/dashboard/admin-dashboard/reports-veterinary-management/reports-veterinary-management.component'
@@ -120,6 +121,11 @@ export const routes: Routes = [
             './features/dashboard/admin-dashboard/history-management/history-management.component'
           ).then((m) => m.HistoryManagementComponent),
         title: 'Consultation des historiques',
+      },
+      {
+        path: 'opening-hours-management',
+        component: OpeningHoursManagementComponent,
+        title: "Gestion des horaires d'ouverture",
       },
     ],
   },

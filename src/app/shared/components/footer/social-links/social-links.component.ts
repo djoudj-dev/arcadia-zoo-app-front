@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
 
+interface SocialLink {
+  id: number;
+  icon: string;
+  url: string;
+  name: string;
+}
+
 /**
  * Composant gérant les liens vers les réseaux sociaux
  */
@@ -8,9 +15,10 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <div class="flex justify-center gap-4">
-      @for (link of socialLinks; track link.url) {
+      @for (link of socialLinks; track link.id) {
       <a
         [href]="link.url"
+        [title]="link.name"
         class="text-tertiary hover:text-primary transition-colors duration-300"
         target="_blank"
         rel="noopener noreferrer"
@@ -23,10 +31,10 @@ import { Component } from '@angular/core';
 })
 export class SocialLinksComponent {
   /** Liste des liens sociaux avec leurs icônes */
-  socialLinks = [
-    { icon: 'fab fa-facebook', url: '#' },
-    { icon: 'fab fa-instagram', url: '#' },
-    { icon: 'fab fa-tiktok', url: '#' },
-    { icon: 'fab fa-linkedin', url: '#' },
+  socialLinks: SocialLink[] = [
+    { id: 1, icon: 'fab fa-facebook', url: '#', name: 'Facebook' },
+    { id: 2, icon: 'fab fa-instagram', url: '#', name: 'Instagram' },
+    { id: 3, icon: 'fab fa-tiktok', url: '#', name: 'TikTok' },
+    { id: 4, icon: 'fab fa-linkedin', url: '#', name: 'LinkedIn' },
   ];
 }

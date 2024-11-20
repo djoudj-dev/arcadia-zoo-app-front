@@ -1,12 +1,13 @@
-<footer class="w-full bg-gradient-to-b bg-secondary shadow-lg py-3">
+<footer
+  class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-3"
+>
   <div class="container mx-auto px-4">
     <!-- Conteneur principal avec flex -->
     <div
-      class="flex flex-col md:flex-row justify-center items-start gap-64 mb-4"
+      class="flex flex-col md:flex-row justify-center items-start gap-16 mb-4"
     >
-      <!-- Colonne 1: À propos et Horaires -->
+      <!-- Colonne 1: À propos -->
       <div class="flex flex-col items-center space-y-3 w-full md:w-auto">
-        <!-- Section À propos -->
         <div class="w-full max-w-[280px] text-center">
           <h3 class="text-lg font-serif font-bold text-tertiary mb-1">
             <i class="fas fa-info-circle mr-2"></i>Zoo Arcadia
@@ -16,8 +17,10 @@
             situé au cœur de la légendaire forêt de Brocéliande.
           </p>
         </div>
+      </div>
 
-        <!-- Section Horaires -->
+      <!-- Colonne 2: Horaires -->
+      <div class="flex flex-col items-center space-y-3 w-full md:w-auto">
         <div class="w-full max-w-[280px]">
           <h3
             class="text-lg font-serif font-bold text-tertiary text-center mb-1"
@@ -26,22 +29,23 @@
           </h3>
           <div class="bg-white/10 backdrop-blur-sm rounded-lg p-1.5">
             <ul class="divide-y divide-tertiary/10">
-              @for (schedule of openingHours; track schedule.days) {
+              @if (openingHours() && openingHours().length > 0) { @for (schedule
+              of openingHours()[0].openingHours; track schedule.days) {
               <li
                 class="flex justify-between items-center text-sm text-quinary/80 px-2 py-1"
               >
-                <span>{{ schedule.days }}</span>
+                <span class="pr-2">{{ schedule.days }}</span>
                 <span class="bg-tertiary/10 px-2 py-0.5 rounded-md">{{
                   schedule.hours
                 }}</span>
               </li>
-              }
+              } }
             </ul>
           </div>
         </div>
       </div>
 
-      <!-- Colonne 2: Contact et Plan -->
+      <!-- Colonne 3: Contact et Plan -->
       <div class="flex flex-col items-center space-y-3 w-full md:w-auto">
         <div class="w-full max-w-[280px]">
           <h3

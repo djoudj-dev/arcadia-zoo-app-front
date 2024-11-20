@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { HabitatComment } from '../../features/dashboard/veterinary-dashboard/habitat-comment/habitat-comment/model/habitat-comment.model';
+import { HabitatComment } from '../../../veterinary-dashboard/habitat-comment/habitat-comment/model/habitat-comment.model';
 
 @Injectable({
   providedIn: 'root',

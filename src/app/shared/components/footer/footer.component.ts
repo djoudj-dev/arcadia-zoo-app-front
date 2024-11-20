@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
+import { OpeningHoursService } from '../../../features/dashboard/admin-dashboard/opening-hours-management/services/opening-hours.service';
 import { SocialLinksComponent } from './social-links/social-links.component';
 
 /**
@@ -15,9 +16,18 @@ export class FooterComponent {
   /** Année courante pour le copyright */
   currentYear = new Date().getFullYear();
 
-  /** Horaires d'ouverture */
-  openingHours = [
-    { days: 'Lundi - Vendredi', hours: '9h00 - 19h00' },
-    { days: 'Samedi - Dimanche', hours: '9h00 - 20h00' },
-  ];
+  constructor(private openingHoursService: OpeningHoursService) {}
+
+  /** Vérifie si le parc est actuellement ouvert */
+  isParkOpen = computed(() => this.openingHoursService.isParkOpen());
+
+  /** Récupère les horaires d'ouverture */
+  openingHours = computed(() => {
+    const hours = this.openingHoursService.openingHours();
+    console.log('Mise à jour des horaires dans le footer:', hours);
+    return hours;
+  });
+
+  /** Récupère le statut du parc */
+  parkStatus = computed(() => this.openingHoursService.parkStatus());
 }

@@ -1,0 +1,110 @@
+<div class="bg-white rounded-xl shadow-lg p-6">
+  <h2
+    class="text-2xl font-serif font-bold text-tertiary mb-6 flex items-center"
+  >
+    <i class="far fa-clock mr-3"></i>
+    Gestion des horaires d'ouverture
+  </h2>
+
+  <form [formGroup]="hoursForm" (ngSubmit)="updateHours()" class="space-y-6">
+    <!-- Horaires en semaine -->
+    <div class="bg-secondary/10 rounded-lg p-4 space-y-4">
+      <h3 class="text-lg font-serif font-semibold text-tertiary">
+        Horaires en semaine
+      </h3>
+      <div class="space-y-4">
+        <div class="flex flex-col space-y-2">
+          <input
+            type="text"
+            formControlName="weekdayHours"
+            placeholder="ex: 9h00 - 18h00"
+            class="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-tertiary"
+          />
+          <div class="flex items-center">
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="isWeekdayOpen"
+                class="sr-only peer"
+              />
+              <div
+                class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-tertiary/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"
+              ></div>
+              <span class="ms-3 text-sm font-medium text-quinary">Ouvert</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Horaires weekend -->
+    <div class="bg-secondary/10 rounded-lg p-4 space-y-4">
+      <h3 class="text-lg font-serif font-semibold text-tertiary">
+        Horaires weekend
+      </h3>
+      <div class="space-y-4">
+        <div class="flex flex-col space-y-2">
+          <input
+            type="text"
+            formControlName="weekendHours"
+            placeholder="ex: 10h00 - 19h00"
+            class="p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-tertiary"
+          />
+          <div class="flex items-center">
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="isWeekendOpen"
+                class="sr-only peer"
+              />
+              <div
+                class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-tertiary/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"
+              ></div>
+              <span class="ms-3 text-sm font-medium text-quinary">Ouvert</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statut général du parc -->
+    <div class="bg-secondary/10 rounded-lg p-4 space-y-4">
+      <h3 class="text-lg font-serif font-semibold text-tertiary">
+        Statut du parc
+      </h3>
+      <div class="space-y-4">
+        <div class="flex items-center">
+          <label class="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              formControlName="parkStatus"
+              class="sr-only peer"
+            />
+            <div
+              class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-tertiary/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"
+            ></div>
+            <span class="ms-3 text-sm font-medium text-quinary"
+              >Parc ouvert</span
+            >
+          </label>
+        </div>
+        <input
+          type="text"
+          formControlName="statusMessage"
+          placeholder="Message de statut (optionnel)"
+          class="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-tertiary"
+        />
+      </div>
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        class="px-6 py-2 bg-tertiary text-white rounded-lg hover:bg-tertiary/90 transition"
+      >
+        Enregistrer les modifications
+      </button>
+    </div>
+  </form>
+</div>

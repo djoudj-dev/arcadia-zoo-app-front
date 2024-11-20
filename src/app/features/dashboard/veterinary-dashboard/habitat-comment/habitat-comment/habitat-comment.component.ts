@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommentStatusService } from 'app/shared/services/comment-status.service';
+import { CommentStatusService } from 'app/features/dashboard/admin-dashboard/opening-hours-management/services/comment-status.service';
 import { Subscription } from 'rxjs';
 import { ButtonComponent } from '../../../../../shared/components/button/button.component';
 import { ToastComponent } from '../../../../../shared/components/toast/toast.component';

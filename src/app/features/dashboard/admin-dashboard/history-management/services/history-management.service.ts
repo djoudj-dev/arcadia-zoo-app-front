@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { CommentStatusService } from 'app/features/dashboard/admin-dashboard/opening-hours-management/services/comment-status.service';
 import { HabitatComment } from 'app/features/dashboard/veterinary-dashboard/habitat-comment/habitat-comment/model/habitat-comment.model';
-import { CommentStatusService } from 'app/shared/services/comment-status.service';
 import { environment } from 'environments/environment.development';
 import { Observable, tap } from 'rxjs';
 
