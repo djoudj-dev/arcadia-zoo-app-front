@@ -6,6 +6,7 @@ import { UserOpinionsService } from 'app/features/home/user-opinions/services/us
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { RateComponent } from 'app/shared/components/rate/rate.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
+import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 
 interface FilterOption {
   type: 'pending' | 'validated' | 'rejected';
@@ -16,7 +17,7 @@ interface FilterOption {
 @Component({
   selector: 'app-user-opinion-management',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RateComponent],
+  imports: [CommonModule, ButtonComponent, RateComponent, ToastComponent],
   templateUrl: './user-opinion-management.component.html',
 })
 export class UserOpinionManagementComponent implements OnInit {
