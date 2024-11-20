@@ -1,140 +1,187 @@
 <section
-  class="habitats-management mb-12 p-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
+  class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-8"
 >
-  <h2 class="text-2xl font-semibold mb-8 text-center">Gestion des habitats</h2>
-
-  <div class="flex flex-col lg:flex-row gap-8">
-    <div class="w-full lg:w-1/2 bg-gray-100 p-6 rounded-lg shadow-sm">
-      <h3 class="text-xl font-semibold mb-4">
-        {{
-          newHabitatData.id_habitat ? "Modifier l'habitat" : "Créer un habitat"
-        }}
-      </h3>
-      <form
-        class="space-y-3 sm:space-y-4"
-        (ngSubmit)="
-          newHabitatData.id_habitat ? updateHabitat() : createHabitat()
-        "
-        enctype="multipart/form-data"
+  <div class="container mx-auto px-4">
+    <div class="text-center space-y-4 mb-12">
+      <h1
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
       >
-        <div>
-          <label
-            for="habitat-name"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
-            >Nom de l'habitat:</label
-          >
-          <input
-            type="text"
-            id="name"
-            [(ngModel)]="newHabitatData.name"
-            name="name"
-            required
-            class="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Nom de l'habitat"
-          />
-        </div>
-        <div>
-          <label
-            for="description"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
-            >Description:</label
-          >
-          <textarea
-            id="description"
-            [(ngModel)]="newHabitatData.description"
-            name="description"
-            required
-            class="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Description de l'habitat"
-          ></textarea>
-        </div>
-        <div>
-          <label
-            for="habitat-image"
-            class="block text-base sm:text-lg font-medium mb-1 sm:mb-2"
-            >Images:</label
-          >
-          <input
-            type="file"
-            id="images"
-            name="images"
-            (change)="onFileChange($event)"
-            class="w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        <div class="flex space-x-2">
-          <app-button
-            [text]="newHabitatData.id_habitat ? 'Modifier' : 'Créer'"
-            [type]="'submit'"
-            [color]="'tertiary'"
-            [rounded]="true"
-            class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
-          ></app-button>
-          <app-button
-            [text]="'Annuler'"
-            [type]="'button'"
-            [color]="'secondary'"
-            [rounded]="true"
-            class="w-full sm:w-1/2 lg:w-1/4 font-bold px-4"
-            (click)="cancel()"
-          ></app-button>
-        </div>
-      </form>
+        Gestion des Habitats
+      </h1>
+      <p
+        class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
+      >
+        Créez et gérez les habitats du zoo
+      </p>
+      <app-toast />
     </div>
 
-    <div class="w-full lg:w-1/2 bg-gray-100 p-4 sm:p-6 rounded-lg shadow-sm">
-      <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
-        Liste des habitats
-      </h3>
-      <div class="space-y-4 sm:space-y-6">
-        @for (habitat of habitats(); track habitat.id_habitat) {
-        <div
-          class="p-4 bg-white rounded-lg shadow-md flex flex-col sm:flex-row items-center"
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="w-full lg:w-1/2 bg-white rounded-2xl shadow-lg p-6 space-y-6">
+        <h3 class="text-2xl font-serif font-semibold text-tertiary mb-6">
+          {{
+            newHabitatData.id_habitat
+              ? "Modifier l'habitat"
+              : "Créer un habitat"
+          }}
+        </h3>
+
+        <form
+          class="space-y-6"
+          (ngSubmit)="
+            newHabitatData.id_habitat ? updateHabitat() : createHabitat()
+          "
+          enctype="multipart/form-data"
         >
-          <img
-            [src]="habitat.images"
-            alt="Image de l'habitat"
-            class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md mb-4 sm:mb-0 sm:mr-4"
-          />
-          <div class="flex-1">
-            <h4 class="text-lg font-semibold">{{ habitat.name }}</h4>
-            <p class="text-sm sm:text-base">
-              <span class="font-semibold">Description:</span>
-              @if (!habitat.showDescription) {
-              <span>{{ habitat.description | slice : 0 : 30 }}...</span>
-              } @else {
-              <span>{{ habitat.description }}</span>
-              }
-              <button
-                class="text-blue-500 hover:underline mt-2"
-                (click)="toggleDescription(habitat.id_habitat)"
-              >
-                @if (!habitat.showDescription) { Lire la suite } @else { Voir
-                moins }
-              </button>
-            </p>
+          <div>
+            <label
+              for="name"
+              class="block text-lg font-medium text-tertiary mb-2"
+            >
+              Nom de l'habitat
+            </label>
+            <input
+              type="text"
+              id="name"
+              [(ngModel)]="newHabitatData.name"
+              name="name"
+              required
+              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+              placeholder="Nom de l'habitat"
+            />
           </div>
-          <div class="flex space-x-2 mt-4 sm:mt-0 sm:ml-4">
+
+          <div>
+            <label
+              for="description"
+              class="block text-lg font-medium text-tertiary mb-2"
+            >
+              Description
+            </label>
+            <textarea
+              id="description"
+              [(ngModel)]="newHabitatData.description"
+              name="description"
+              required
+              rows="4"
+              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+              placeholder="Description de l'habitat"
+            ></textarea>
+          </div>
+
+          <div>
+            <label
+              for="habitat-image"
+              class="block text-lg font-medium text-tertiary mb-2"
+            >
+              Image de l'habitat
+            </label>
+            <input
+              type="file"
+              id="habitat-image"
+              (change)="onFileChange($event)"
+              accept="image/*"
+              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            />
+          </div>
+
+          <div class="flex gap-4 pt-4">
             <app-button
-              [text]="'Modifier'"
-              [type]="'button'"
+              [text]="newHabitatData.id_habitat ? 'Modifier' : 'Créer'"
+              [type]="'submit'"
               [color]="'tertiary'"
               [rounded]="true"
-              [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="editHabitat(habitat.id_habitat)"
+              class="w-1/2"
             ></app-button>
             <app-button
-              [text]="'Supprimer'"
+              [text]="'Annuler'"
               [type]="'button'"
-              [color]="'red'"
+              [color]="'secondary'"
               [rounded]="true"
-              [customClass]="'text-xs px-2 py-1 font-bold'"
-              (click)="deleteHabitat(habitat.id_habitat)"
+              class="w-1/2"
+              (click)="cancel()"
             ></app-button>
           </div>
-        </div>
-        }
+        </form>
       </div>
+
+      <div class="w-full lg:w-1/2 space-y-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 class="text-2xl font-serif font-semibold text-tertiary mb-6">
+            Liste des habitats
+          </h3>
+
+          <div class="space-y-4">
+            @for (habitat of habitats(); track habitat.id_habitat) {
+            <div
+              class="bg-gray-50 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              <div class="flex flex-col sm:flex-row items-center gap-4">
+                <img
+                  [src]="habitat.images"
+                  [alt]="'Photo de ' + habitat.name"
+                  class="w-32 h-32 object-cover rounded-lg shadow-md"
+                />
+                <div class="flex-1 space-y-2">
+                  <h4 class="text-lg font-bold text-tertiary">
+                    {{ habitat.name }}
+                  </h4>
+                  <p class="text-sm text-gray-600">
+                    <span class="font-semibold">Description:</span>
+                    <span>
+                      @if (!habitat.showDescription) {
+                      {{ habitat.description | slice : 0 : 100 }}... } @else {
+                      {{ habitat.description }}
+                      }
+                    </span>
+                    <button
+                      class="text-tertiary hover:text-tertiary/80 ml-2 underline"
+                      (click)="toggleDescription(habitat.id_habitat)"
+                    >
+                      @if (!habitat.showDescription) { Lire la suite } @else {
+                      Voir moins }
+                    </button>
+                  </p>
+                </div>
+                <div class="flex gap-2">
+                  <app-button
+                    [text]="'Modifier'"
+                    [type]="'button'"
+                    [color]="'secondary'"
+                    [rounded]="true"
+                    [customClass]="'text-xs px-2 py-1'"
+                    (click)="editHabitat(habitat.id_habitat)"
+                  ></app-button>
+                  <app-button
+                    [text]="'Supprimer'"
+                    [type]="'button'"
+                    [color]="'red'"
+                    [rounded]="true"
+                    [customClass]="'text-xs px-2 py-1'"
+                    (click)="deleteHabitat(habitat.id_habitat)"
+                  ></app-button>
+                </div>
+              </div>
+            </div>
+            } @if (!habitats().length) {
+            <p class="text-center text-gray-500 italic">
+              Aucun habitat n'a été créé
+            </p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center pt-8">
+      <app-button
+        [text]="'Retour'"
+        [type]="'button'"
+        [color]="'tertiary'"
+        [rounded]="true"
+        class="w-full sm:w-1/3 lg:w-1/4 font-bold shadow-md hover:shadow-lg transition-all duration-300"
+        (click)="goBack()"
+      ></app-button>
     </div>
   </div>
 </section>
