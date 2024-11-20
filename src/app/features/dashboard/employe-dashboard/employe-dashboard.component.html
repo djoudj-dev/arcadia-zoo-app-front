@@ -1,53 +1,56 @@
-<div class="container mx-auto px-4 mt-4">
-  <div class="flex justify-center mb-6">
-    <div
-      class="flex flex-row w-full sm:inline-flex sm:w-auto rounded-lg border border-secondary"
-    >
-      <button
-        [ngClass]="[
-          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
-          'sm:first:rounded-l-lg first:rounded-t-lg sm:first:rounded-t-none',
-          activeTab === 'opinions'
-            ? 'bg-tertiary text-white shadow-sm'
-            : 'text-quinary hover:bg-secondary/10'
-        ]"
-        (click)="setActiveTab('opinions')"
+<section class="w-full bg-gradient-to-b from-secondary to-primary min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- En-tête -->
+    <div class="text-center space-y-4 mb-12">
+      <h1
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
       >
-        Gestion des avis
-      </button>
-      <button
-        [ngClass]="[
-          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
-          activeTab === 'services'
-            ? 'bg-tertiary text-white shadow-sm'
-            : 'text-quinary hover:bg-secondary/10'
-        ]"
-        (click)="setActiveTab('services')"
+        Tableau de Bord Employé
+      </h1>
+      <p
+        class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
       >
-        Gestion des services
-      </button>
-      <button
-        [ngClass]="[
-          'px-4 sm:px-6 py-3 text-sm font-medium transition-all duration-200',
-          'sm:last:rounded-r-lg last:rounded-b-lg sm:last:rounded-b-none',
-          activeTab === 'feeding'
-            ? 'bg-tertiary text-white shadow-sm'
-            : 'text-quinary hover:bg-secondary/10'
-        ]"
-        (click)="setActiveTab('feeding')"
-      >
-        Gestion de l'alimentation des animaux
-      </button>
+        Gérez les différentes fonctionnalités du zoo
+      </p>
+    </div>
+
+    <!-- Navigation par onglets -->
+    <nav class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 mb-8">
+      <div class="flex flex-wrap justify-center gap-4">
+        @for (item of navigationItems; track item.type) {
+        <button
+          (click)="setActiveTab(item.type)"
+          class="px-6 py-3 rounded-lg transition-all duration-300 relative group"
+          [class]="
+            activeTab() === item.type
+              ? 'bg-tertiary text-white shadow-md'
+              : 'text-tertiary hover:bg-tertiary/10'
+          "
+        >
+          <span class="font-medium">{{ item.text }}</span>
+
+          <!-- Infobulle au survol -->
+          @if (item.description) {
+          <div
+            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-black/75 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none"
+          >
+            {{ item.description }}
+          </div>
+          }
+        </button>
+        }
+      </div>
+    </nav>
+
+    <!-- Contenu dynamique -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6">
+      @switch (activeTab()) { @case ('opinions') {
+      <app-user-opinion-management />
+      } @case ('services') {
+      <app-service-management />
+      } @case ('feeding') {
+      <app-animal-feeding-management />
+      } }
     </div>
   </div>
-
-  <div class="w-full overflow-x-hidden">
-    @switch (activeTab) { @case ('opinions') {
-    <app-user-opinion-management />
-    } @case ('services') {
-    <app-service-management />
-    } @case ('feeding') {
-    <app-animal-feeding-management />
-    } }
-  </div>
-</div>
+</section>
