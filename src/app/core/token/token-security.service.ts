@@ -5,7 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
   providedIn: 'root',
 })
 export class TokenSecurityService {
-  private readonly TOKEN_KEY = 'auth_token';
+  private readonly TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly jwtHelper = new JwtHelperService();
   private readonly tokenBlacklist = new Set<string>();
@@ -13,13 +13,12 @@ export class TokenSecurityService {
   constructor() {}
 
   setTokens(accessToken: string, refreshToken: string): void {
-    // Stockage sécurisé dans sessionStorage au lieu de localStorage
-    sessionStorage.setItem(this.TOKEN_KEY, accessToken);
-    sessionStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+    localStorage.setItem(this.TOKEN_KEY, accessToken);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   getRefreshToken(): string | null {

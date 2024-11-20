@@ -8,4 +8,5 @@ export interface User {
   role?: Role;
   role_id?: number;
   token?: string;
+  refreshToken?: string;
 }
