@@ -182,6 +182,16 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'update-password',
+    loadComponent: () =>
+      import(
+        './features/dashboard/admin-dashboard/account-management/update-password.component'
+      ).then((m) => m.UpdatePasswordComponent),
+    title: 'Modification du mot de passe',
+    canActivate: [authGuard],
+    data: { roles: ['Admin', 'Veterinaire', 'Employe'] }, // Accessible à tous les utilisateurs connectés
+  },
 
   { path: '**', redirectTo: '' }, // Redirection pour les chemins non définis
 ];
