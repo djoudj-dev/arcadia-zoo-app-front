@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
@@ -40,8 +44,14 @@ export class AnimalManagementService {
    */
   createAnimal(formData: FormData): Observable<Animal> {
     return this.http.post<Animal>(this.apiUrl, formData).pipe(
-      tap(() => this.animalService.clearCache()), // Vide le cache après création
-      catchError((error) => this.handleError("'création de l'animal'", error))
+      tap((response) => {
+        console.log('Réponse du serveur (création):', response);
+        this.animalService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur détaillée (création):', error);
+        return this.handleError("création de l'animal", error);
+      })
     );
   }
 
@@ -53,12 +63,38 @@ export class AnimalManagementService {
    * @returns Observable<Animal> Animal mis à jour avec ses informations complètes
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
-    return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
-      tap(() => this.animalService.clearCache()), // Vide le cache après modification
-      catchError((error) =>
-        this.handleError("'mise à jour de l'animal'", error)
-      )
-    );
+    // Ajout des headers nécessaires
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+    });
+
+    // Conversion du FormData en objet pour le body
+    const animalData: Record<string, string | Blob> = {};
+    formData.forEach((value, key) => {
+      animalData[key] = value;
+    });
+
+    // Envoi de l'objet JSON au lieu du FormData
+    return this.http
+      .put<Animal>(`${this.apiUrl}/${id}`, animalData, { headers })
+      .pipe(
+        tap(() => {
+          this.animalService.clearCache();
+        }),
+        catchError((error) => {
+          console.error('Erreur détaillée (mise à jour):', error);
+          if (error.error instanceof ErrorEvent) {
+            console.error('Erreur client:', error.error.message);
+          } else {
+            console.error('Erreur serveur:', {
+              status: error.status,
+              message: error.message,
+              error: error.error,
+            });
+          }
+          return this.handleError("mise à jour de l'animal", error);
+        })
+      );
   }
 
   /**
@@ -69,10 +105,14 @@ export class AnimalManagementService {
    */
   deleteAnimal(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.animalService.clearCache()), // Vide le cache après suppression
-      catchError((error) =>
-        this.handleError("'suppression de l'animal'", error)
-      )
+      tap(() => {
+        console.log('Animal supprimé avec succès:', id);
+        this.animalService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur lors de la suppression:', error);
+        return this.handleError("suppression de l'animal", error);
+      })
     );
   }
 
@@ -87,7 +127,20 @@ export class AnimalManagementService {
     action: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    console.error(`Erreur lors de ${action} :`, error);
-    return throwError(() => new Error(`Erreur lors de ${action}.`));
+    let errorMessage = `Erreur lors de ${action}. `;
+
+    if (error.error instanceof ErrorEvent) {
+      // Erreur côté client
+      errorMessage += `Message d'erreur: ${error.error.message}`;
+    } else {
+      // Erreur côté serveur
+      errorMessage += `Code d'erreur: ${error.status}, `;
+      errorMessage += `Message: ${error.error?.message || error.message}`;
+    }
+
+    console.error(errorMessage);
+    console.error("Détails complets de l'erreur:", error);
+
+    return throwError(() => new Error(errorMessage));
   }
 }
