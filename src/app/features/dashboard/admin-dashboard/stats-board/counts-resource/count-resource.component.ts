@@ -1,8 +1,8 @@
 // src/app/admin-dashboard/stats/stats.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { CountResourceService } from './services/count-resource.service';
 import { ToastComponent } from '../../../../../shared/components/toast/toast.component';
+import { CountResourceService } from './services/count-resource.service';
 
 /**
  * Composant d'affichage des statistiques des ressources
@@ -38,7 +38,6 @@ export class CountResourceComponent implements OnInit {
           employes: this.countResourceService.totalEmploye(),
           veterinaires: this.countResourceService.totalVet(),
         });
-        this.toastService.showSuccess('Statistiques chargées avec succès');
       },
       error: (error) => {
         console.error(
