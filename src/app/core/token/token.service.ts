@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { Token } from '../models/token.model';
+import { Token } from '../auth/models/token.model';
 
 /**
  * Service de gestion des tokens

@@ -6,13 +6,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthService } from 'app/core/auth/auth.service';
+import { AuthService } from 'app/core/auth/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 import { AnimalState } from './model/veterinary-reports.model';
 import { VeterinaryReportsService } from './service/veterinary-reports.service';
-import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 
 @Component({
   selector: 'app-veterinary-reports',

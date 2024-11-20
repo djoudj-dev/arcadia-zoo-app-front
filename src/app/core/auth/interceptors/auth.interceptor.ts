@@ -4,7 +4,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastService } from '../../../shared/components/toast/services/toast.service';
 import { TokenService } from '../../token/token.service';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Injection des services nécessaires

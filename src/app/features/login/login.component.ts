@@ -15,11 +15,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../core/auth/services/auth.service';
 import { InactivityService } from '../../core/services/inactivity.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../shared/components/toast/toast.component';
-import { AuthService } from '../auth/auth.service';
 
 /**
  * Interface définissant la structure des erreurs du formulaire
