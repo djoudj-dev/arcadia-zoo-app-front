@@ -2,8 +2,10 @@ import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
+import { FileUploadDirective } from 'app/shared/directives/file-upload.directive';
 import { environment } from '../../../../../environments/environment.development';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
@@ -24,6 +26,7 @@ import { HabitatManagementService } from './service/habitat-management.service';
     SlicePipe,
     ToastComponent,
     ButtonComponent,
+    FileUploadDirective,
   ],
   templateUrl: './habitat-management.component.html',
 })
@@ -42,7 +45,8 @@ export class HabitatManagementComponent implements OnInit {
     private router: Router,
     private habitatManagement: HabitatManagementService,
     private countResourceService: CountResourceService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private fileSecurityService: FileSecurityService
   ) {}
 
   ngOnInit() {
@@ -68,12 +72,24 @@ export class HabitatManagementComponent implements OnInit {
     });
   }
 
-  /** Gère le changement de fichier pour l'image */
-  onFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile.set(input.files[0]);
+  /** Gère le fichier sélectionné de manière sécurisée */
+  async onFileSelected(file: File) {
+    try {
+      const validation = await this.fileSecurityService.validateFile(file);
+
+      if (!validation.isValid) {
+        this.toastService.showError(validation.errors.join('\n'));
+        return;
+      }
+
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      const secureFile = new File([file], secureName, { type: file.type });
+
+      this.selectedFile.set(secureFile);
       this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
     }
   }
 
@@ -209,16 +225,25 @@ export class HabitatManagementComponent implements OnInit {
     return !!(name && description && hasFile);
   }
 
-  /** Construit le FormData pour l'envoi */
+  /** Construit le FormData de manière sécurisée */
   private buildFormData(): FormData {
     const formData = new FormData();
-    Object.entries(this.newHabitatData).forEach(([key, value]) => {
+    const habitatData = this.newHabitatData;
+
+    // Ajoute les données de base de l'habitat
+    Object.entries(habitatData).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
     });
+
+    // Ajoute le fichier s'il existe
     const file = this.selectedFile();
-    if (file) formData.append('images', file);
+    if (file) {
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      formData.append('images', file, secureName);
+    }
+
     return formData;
   }
 }

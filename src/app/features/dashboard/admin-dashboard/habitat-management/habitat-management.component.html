@@ -69,19 +69,22 @@
             ></textarea>
           </div>
 
-          <div>
+          <div class="form-group">
             <label
-              for="habitat-image"
-              class="block text-lg font-medium text-tertiary mb-2"
+              for="habitatImage"
+              class="block text-sm font-medium text-gray-700"
             >
               Image de l'habitat
             </label>
             <input
               type="file"
-              id="habitat-image"
-              (change)="onFileChange($event)"
+              id="habitatImage"
               accept="image/*"
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+              class="mt-1 block w-full"
+              appFileUpload
+              [allowedTypes]="['image/jpeg', 'image/png', 'image/webp']"
+              [maxSize]="5 * 1024 * 1024"
+              (fileSelected)="onFileSelected($event)"
             />
           </div>
 
