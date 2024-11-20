@@ -13,6 +13,10 @@ import { ToastService } from '../../shared/components/toast/services/toast.servi
 import { ToastComponent } from '../../shared/components/toast/toast.component';
 import { AuthService } from '../auth/auth.service';
 
+/**
+ * Composant de connexion
+ * Gère l'authentification des utilisateurs avec validation et feedback
+ */
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,22 +24,37 @@ import { AuthService } from '../auth/auth.service';
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
+  /** Formulaire de connexion */
   loginForm: FormGroup;
-  errorMessage: string = '';
-  message: string = '';
+
+  /** Services injectés */
   private router = inject(Router);
   private inactivityService = inject(InactivityService);
   private toastService = inject(ToastService);
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
+  /** Regex pour la validation de l'email */
   private readonly EMAIL_PATTERN =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private route: ActivatedRoute
-  ) {
-    this.loginForm = this.fb.group({
+  constructor() {
+    this.loginForm = this.initLoginForm();
+  }
+
+  /**
+   * Initialise le composant et gère les messages de redirection
+   */
+  ngOnInit() {
+    this.handleRedirectMessage();
+  }
+
+  /**
+   * Initialise le formulaire avec les validations
+   */
+  private initLoginForm(): FormGroup {
+    return this.fb.group({
       email: [
         '',
         [
@@ -48,15 +67,14 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Récupérer le message des queryParams s'il existe
+  /**
+   * Gère les messages de redirection dans l'URL
+   */
+  private handleRedirectMessage(): void {
     this.route.queryParams.subscribe((params) => {
       if (params['message']) {
-        this.message = params['message'];
-        // Faire disparaître le message après 3 secondes
+        this.toastService.showSuccess(params['message']);
         setTimeout(() => {
-          this.message = '';
-          // Mettre à jour l'URL sans le paramètre message
           this.router.navigate([], {
             relativeTo: this.route,
             queryParams: {},
@@ -67,15 +85,16 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * Gère la soumission du formulaire
+   */
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
 
       this.authService.login(email, password).subscribe({
         next: () => {
-          this.errorMessage = '';
           this.inactivityService.startMonitoring();
-
           this.toastService.showSuccess(
             'Connexion réussie ! Redirection en cours...',
             500
@@ -99,6 +118,11 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+   * Vérifie si un champ est invalide et retourne le message d'erreur approprié
+   * @param field Nom du champ à vérifier
+   * @returns Message d'erreur ou chaîne vide
+   */
   getErrorMessage(field: string): string {
     const control = this.loginForm.get(field);
     if (!control) return '';
@@ -118,9 +142,6 @@ export class LoginComponent implements OnInit {
       }
       if (control.hasError('minlength')) {
         return 'Le mot de passe doit contenir au moins 8 caractères';
-      }
-      if (control.hasError('pattern')) {
-        return 'Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial';
       }
     }
 
