@@ -129,12 +129,22 @@ export class AuthService {
    */
   private handleSuccessfulLogin(user: User): void {
     if (user.role && user.token) {
+      this.tokenSecurityService.setTokens(user.token, user.refreshToken || '');
+
       this.currentUserSignal.set(user);
       localStorage.setItem('user', JSON.stringify(user));
-      this.tokenService.setToken(user.token);
+
+      const storedToken = this.tokenSecurityService.getToken();
+      if (!storedToken) {
+        console.error('Échec du stockage du token');
+        this.toastService.showError('Erreur lors de la connexion');
+        return;
+      }
+
       this.toastService.showSuccess('Connexion réussie. Bienvenue!');
     } else {
       console.error('Données utilisateur invalides');
+      this.toastService.showError('Données de connexion invalides');
       throw new Error('Données utilisateur invalides');
     }
   }
@@ -195,8 +205,15 @@ export class AuthService {
 
   private checkTokenExpiration(): void {
     const token = this.tokenService.getToken();
-    if (token && this.tokenSecurityService.isTokenExpiringSoon(token)) {
-      this.refreshToken().subscribe();
+    if (!token) return;
+
+    if (this.tokenSecurityService.isTokenExpiringSoon(token)) {
+      this.refreshToken().subscribe({
+        error: (error) => {
+          console.error('Erreur lors du rafraîchissement du token:', error);
+          this.logout(); // Déconnexion en cas d'échec du rafraîchissement
+        },
+      });
     }
   }
 
@@ -204,7 +221,7 @@ export class AuthService {
     const refreshToken = this.tokenSecurityService.getRefreshToken();
     if (!refreshToken) {
       this.logout();
-      throw new Error('Refresh token non trouvé');
+      return throwError(() => new Error('Refresh token non trouvé'));
     }
 
     return this.http
@@ -214,6 +231,11 @@ export class AuthService {
       .pipe(
         tap((response) => {
           this.tokenService.setToken(response.accessToken);
+        }),
+        catchError((error) => {
+          console.error('Erreur de rafraîchissement du token:', error);
+          this.logout();
+          return throwError(() => error);
         })
       );
   }

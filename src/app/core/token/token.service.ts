@@ -11,7 +11,7 @@ import { Token } from '../auth/models/token.model';
 })
 export class TokenService {
   /** Clé de stockage du token */
-  private readonly TOKEN_KEY = 'token';
+  private readonly TOKEN_KEY = 'access_token';
 
   /** Durée de validité du cookie en jours */
   private readonly COOKIE_DURATION = 1;
@@ -21,7 +21,12 @@ export class TokenService {
    * @returns string|null Token ou null si non trouvé
    */
   getToken(): string | null {
-    return this.getCookie(this.TOKEN_KEY);
+    try {
+      return localStorage.getItem(this.TOKEN_KEY);
+    } catch (error) {
+      console.error('Erreur lors de la récupération du token:', error);
+      return null;
+    }
   }
 
   /**
@@ -29,7 +34,11 @@ export class TokenService {
    * @param token Token à stocker
    */
   setToken(token: string): void {
-    this.setCookie(this.TOKEN_KEY, token, this.COOKIE_DURATION);
+    try {
+      localStorage.setItem(this.TOKEN_KEY, token);
+    } catch (error) {
+      console.error('Erreur lors du stockage du token:', error);
+    }
   }
 
   /**
