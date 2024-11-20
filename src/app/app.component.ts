@@ -4,22 +4,15 @@ import { Subscription } from 'rxjs';
 import { AuthService } from './core/auth/auth.service';
 import { InactivityService } from './core/services/inactivity.service';
 import { TokenService } from './core/token/token.service';
+import { NotificationComponent } from './features/contact/notification.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { NavComponent } from './shared/components/header/navbar/nav.component';
 import { ToastService } from './shared/components/toast/services/toast.service';
-import { ToastComponent } from './shared/components/toast/toast.component';
-import { NotificationComponent } from './features/contact/notification.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    NavComponent,
-    FooterComponent,
-    RouterOutlet,
-    ToastComponent,
-    NotificationComponent,
-  ],
+  imports: [NavComponent, FooterComponent, RouterOutlet, NotificationComponent],
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit, OnDestroy {

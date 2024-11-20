@@ -1,36 +1,27 @@
-import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { TokenService } from '../../token/token.service';
+import { TokenSecurityService } from 'app/core/token/token-security.service';
 
-export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
-  const tokenService = inject(TokenService);
+  const tokenService = inject(TokenSecurityService);
   const router = inject(Router);
 
-  // Vérifie si le token est présent et valide
-  if (!authService.isAuthenticated() || tokenService.isTokenExpired()) {
-    console.log(
-      'Token expiré ou utilisateur non authentifié, redirection vers la page de connexion.'
-    );
-    router.navigate(['/login']);
+  const token = tokenService.getToken();
+
+  if (!token || !tokenService.isTokenValid(token)) {
+    console.warn('Session invalide ou expirée');
+    authService.logout();
+    router.navigate(['/login'], {
+      queryParams: { returnUrl: route.url.join('/') },
+    });
     return false;
   }
 
-  // Récupère les rôles requis depuis les données de la route (si définis)
   const requiredRoles = route.data?.['roles'] as string[];
-
-  // Si des rôles sont requis, vérifie si l'utilisateur possède l'un de ces rôles
-  if (
-    requiredRoles &&
-    (!authService.currentUserSignal() || !authService.hasRole(requiredRoles))
-  ) {
-    console.log(
-      'Accès refusé. Rôles requis:',
-      requiredRoles,
-      ", Rôle de l'utilisateur:",
-      authService.currentUserSignal()?.role?.name
-    );
+  if (requiredRoles && !authService.hasRequiredRoles(requiredRoles)) {
+    console.warn('Accès non autorisé');
     router.navigate(['/unauthorized']);
     return false;
   }
