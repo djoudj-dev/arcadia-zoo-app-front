@@ -3,26 +3,22 @@ import { CanActivateFn, Router } from '@angular/router';
 import { TokenSecurityService } from 'app/core/token/token-security.service';
 import { AuthService } from '../services/auth.service';
 
-export const authGuard: CanActivateFn = (route) => {
+export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const tokenService = inject(TokenSecurityService);
   const router = inject(Router);
 
   const token = tokenService.getToken();
+  console.log('Token dans AuthGuard:', !!token);
+  console.log('Token value:', token);
+  console.log('User data:', localStorage.getItem('user'));
 
-  if (!token || !tokenService.isTokenValid(token)) {
-    console.warn('Session invalide ou expirée');
+  if (!token) {
+    console.warn('Aucun token trouvé');
     authService.logout();
     router.navigate(['/login'], {
-      queryParams: { returnUrl: route.url.join('/') },
+      queryParams: { returnUrl: state.url },
     });
-    return false;
-  }
-
-  const requiredRoles = route.data?.['roles'] as string[];
-  if (requiredRoles && !authService.hasRequiredRoles(requiredRoles)) {
-    console.warn('Accès non autorisé');
-    router.navigate(['/unauthorized']);
     return false;
   }
 
