@@ -40,24 +40,6 @@
           />
         </div>
         <div>
-          <label for="password" class="block text-lg font-medium mb-2"
-            >Mot de passe:</label
-          >
-          <input
-            type="password"
-            id="password"
-            [(ngModel)]="newUser().password"
-            name="password"
-            [required]="!newUser().id"
-            placeholder="{{
-              newUser().id
-                ? 'Laissez vide si non modifié'
-                : 'Mot de passe requis'
-            }}"
-            class="w-full p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-        <div>
           <label for="role" class="block text-lg font-medium mb-2">Rôle:</label>
           <select
             id="role"
@@ -72,6 +54,16 @@
             }
           </select>
         </div>
+
+        <!-- Message informatif -->
+        <div class="mt-4 p-4 bg-blue-50 text-blue-700 rounded-md">
+          <p class="text-sm">
+            Un email contenant les identifiants de connexion sera
+            automatiquement envoyé à l'utilisateur lors de la création du
+            compte.
+          </p>
+        </div>
+
         <div class="flex space-x-2">
           <app-button
             [text]="newUser().id ? 'Modifier' : 'Créer'"

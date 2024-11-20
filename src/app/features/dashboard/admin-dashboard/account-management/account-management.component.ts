@@ -6,6 +6,7 @@ import { CountResourceService } from '../stats-board/counts-resource/services/co
 import { Role } from './model/role.model';
 import { User } from './model/user.model';
 import { AccountManagementService } from './service/account-management.service';
+import { ToastService } from 'app/shared/components/toast/services/toast.service';
 
 @Component({
   selector: 'app-account-management',
@@ -24,7 +25,8 @@ export class AccountManagementComponent implements OnInit {
   constructor(
     private router: Router,
     private accountService: AccountManagementService,
-    private countResourceService: CountResourceService
+    private countResourceService: CountResourceService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -52,21 +54,33 @@ export class AccountManagementComponent implements OnInit {
 
   /** Crée un nouvel utilisateur si les champs sont remplis **/
   createAccount(): void {
-    const { name, password, role } = this.newUser();
-    if (name && password && role && role.id) {
-      this.accountService
-        .createUser({ ...this.newUser(), role_id: role.id } as User)
-        .subscribe({
-          next: (createdUser: User) => {
-            this.users.update((users) => [...users, createdUser]);
-            this.newUser.set({});
-            this.countResourceService.incrementTotalEmploye();
-          },
-          error: (err) =>
-            console.error("Erreur de création d'utilisateur :", err),
-        });
+    const { name, email, role } = this.newUser();
+    if (name && email && role && role.id) {
+      const newUser: Partial<User> = {
+        name,
+        email,
+        role_id: role.id,
+      };
+
+      this.accountService.createUser(newUser).subscribe({
+        next: (createdUser: User) => {
+          this.users.update((users) => [...users, createdUser]);
+          this.newUser.set({});
+          this.countResourceService.incrementTotalEmploye();
+          this.toastService.showSuccess(
+            'Utilisateur créé avec succès. Un email contenant les identifiants a été envoyé.',
+            3000
+          );
+        },
+        error: (err) => {
+          console.error("Erreur de création d'utilisateur :", err);
+          this.toastService.showError(
+            "Une erreur est survenue lors de la création de l'utilisateur"
+          );
+        },
+      });
     } else {
-      console.log('Champs requis manquants');
+      this.toastService.showError('Veuillez remplir tous les champs requis');
     }
   }
 
