@@ -232,7 +232,7 @@
     @if (selectedHabitatId()) {
     <app-habitat-comment-history
       [habitatId]="selectedHabitatId()!"
-      [habitatImage]="getSelectedHabitat()?.images"
+      [habitatImage]="getSelectedHabitat()?.images ?? ''"
       [habitatName]="getHabitatName(selectedHabitatId()!)"
       (close)="closeHabitatHistoryModal()"
     />
