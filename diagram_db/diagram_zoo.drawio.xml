@@ -1,0 +1,413 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram name="Use Case Diagram Zoo App" id="0">
+    <mxGraphModel dx="1508" dy="870" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-14" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="70" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-16" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="320" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-20" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="260" />
+              <mxPoint x="160" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-18" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-13" value="&lt;b&gt;Visiteur&lt;/b&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="200" width="50" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-14" value="Consulter la page d&#39;accueil" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="30" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-15" value="Naviguer dans l&#39;application" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="160" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-16" value="Voir les habitats" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="280" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-17" value="Voir les animaux" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="410" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-18" value="Consulter l&#39;avis du vétérinaire" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="410" y="90" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-19" value="Laisser un avis" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="410" y="350" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-20" value="Contacter le zoo" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="410" y="220" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.008;entryY=0.613;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-17" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="459" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.017;entryY=0.65;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-13" target="xcWw4OkHSPcrbBJMsIFy-19" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="260" />
+              <mxPoint x="140" y="400" />
+              <mxPoint x="408" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-38" target="xcWw4OkHSPcrbBJMsIFy-39" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-45" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-44" vertex="1" connectable="0">
+          <mxGeometry x="-0.0533" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-38" value="&lt;b&gt;Employe&lt;/b&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="810" width="50" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-39" target="xcWw4OkHSPcrbBJMsIFy-41" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-48" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-47" vertex="1" connectable="0">
+          <mxGeometry x="0.096" y="4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-39" target="xcWw4OkHSPcrbBJMsIFy-42" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-57" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-56" vertex="1" connectable="0">
+          <mxGeometry x="0.2267" y="-1" relative="1" as="geometry">
+            <mxPoint x="13" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-39" target="xcWw4OkHSPcrbBJMsIFy-43" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-59" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-58" vertex="1" connectable="0">
+          <mxGeometry x="-0.0833" y="-4" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-39" value="&lt;strong&gt;Se connecter&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="810" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-63" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-40" target="xcWw4OkHSPcrbBJMsIFy-62" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-65" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-40" target="xcWw4OkHSPcrbBJMsIFy-64" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-66" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-65" vertex="1" connectable="0">
+          <mxGeometry x="-0.35" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-40" value="&lt;b&gt;Valider les avis des visiteurs&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="490" y="1010" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-50" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-41" target="xcWw4OkHSPcrbBJMsIFy-49" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-55" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-50" vertex="1" connectable="0">
+          <mxGeometry x="-0.1143" y="-2" relative="1" as="geometry">
+            <mxPoint y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-41" value="&lt;strong&gt;Gérer les services&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="430" y="650" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-42" value="&lt;strong&gt;Gérer la consommation alimentaire des animaux&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="530" y="810" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-43" value="&lt;b&gt;Consulter les rapports vétérinaires&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="220" y="1010" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-52" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-49" target="xcWw4OkHSPcrbBJMsIFy-51" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-54" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-49" target="xcWw4OkHSPcrbBJMsIFy-53" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-49" value="&lt;strong&gt;Modifier un service&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="650" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-51" value="&lt;strong&gt;Ajouter un service&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="550" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-53" value="&lt;strong&gt;Supprimer un service&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="750" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.625;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="xcWw4OkHSPcrbBJMsIFy-39" target="xcWw4OkHSPcrbBJMsIFy-40" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-61" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="xcWw4OkHSPcrbBJMsIFy-60" vertex="1" connectable="0">
+          <mxGeometry x="-0.1167" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-62" value="&lt;b&gt;Valider l&#39;avis&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="770" y="910" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="xcWw4OkHSPcrbBJMsIFy-64" value="&lt;b&gt;Refuser l&#39;avis&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="770" y="1100" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-1" target="79bJeDeuE2nhWoB8ZuZn-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-5" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-4">
+          <mxGeometry x="-0.0462" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-1" value="&lt;div&gt;&lt;b&gt;Vétérinaire&lt;/b&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="1398" width="50" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-3" target="79bJeDeuE2nhWoB8ZuZn-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-8" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-7">
+          <mxGeometry y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-3" target="79bJeDeuE2nhWoB8ZuZn-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-3" target="79bJeDeuE2nhWoB8ZuZn-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="1438" />
+              <mxPoint x="450" y="1288" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-58" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-23">
+          <mxGeometry x="-0.6828" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-3" value="&lt;strong&gt;Se connecter&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="1398" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-6" value="&lt;b&gt;Consulter les animaux&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="1608" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-9" target="79bJeDeuE2nhWoB8ZuZn-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-64" value="&amp;lt;&amp;lt;include&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-17">
+          <mxGeometry x="0.7069" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-9" target="79bJeDeuE2nhWoB8ZuZn-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-60" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-18">
+          <mxGeometry x="0.6281" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-9" target="79bJeDeuE2nhWoB8ZuZn-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-61" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-19">
+          <mxGeometry x="0.5968" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-9" value="&lt;strong&gt;Gérer les rapports des animaux&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1398" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-11" value="&lt;strong&gt;Ajouter un rapport vétérinaire&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1346" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-14" value="&lt;strong&gt;Modifier un rapport vétérinaire&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1456" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-15" value="&lt;strong&gt;Supprimer un rapport vétérinaire&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1556" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-16" value="&lt;b&gt;Consulter les rapports d&#39;alimentation des animaux&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1240" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.65;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-9" target="79bJeDeuE2nhWoB8ZuZn-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-62" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-20">
+          <mxGeometry x="0.7333" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-22" value="&lt;b&gt;Ajouter un commentaire sur un habitat&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="1248" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-24" target="79bJeDeuE2nhWoB8ZuZn-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-27" value="&amp;lt;&amp;lt;include&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-26">
+          <mxGeometry x="-0.0533" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-24" value="&lt;div&gt;&lt;b&gt;Administrateur&lt;/b&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="30" y="2080" width="50" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-25" target="79bJeDeuE2nhWoB8ZuZn-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-68" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-32">
+          <mxGeometry x="0.0815" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-25" target="79bJeDeuE2nhWoB8ZuZn-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-70" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-37">
+          <mxGeometry x="-0.016" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-25" target="79bJeDeuE2nhWoB8ZuZn-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-54" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-52">
+          <mxGeometry x="0.4917" y="-1" relative="1" as="geometry">
+            <mxPoint x="11" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-25" target="79bJeDeuE2nhWoB8ZuZn-50">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-73" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-53">
+          <mxGeometry x="0.5167" y="3" relative="1" as="geometry">
+            <mxPoint x="8" y="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-25" value="&lt;strong&gt;Se connecter&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="2080" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-28" target="79bJeDeuE2nhWoB8ZuZn-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-43" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-33">
+          <mxGeometry x="0.6563" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-28" target="79bJeDeuE2nhWoB8ZuZn-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-44" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-34">
+          <mxGeometry x="0.5478" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-28" value="&lt;b&gt;Gérer les utilisateurs&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1860" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-29" value="&lt;strong&gt;Ajouter un utilisateur&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="1770" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-30" value="&lt;strong&gt;Modifier un utilisateur&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="1860" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-31" value="&lt;b&gt;Supprimer&lt;/b&gt;&lt;div&gt;&lt;b&gt;&amp;nbsp;un utilisateur&lt;/b&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="1950" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.625;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-28" target="79bJeDeuE2nhWoB8ZuZn-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-69" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-35">
+          <mxGeometry x="0.6606" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-36" target="79bJeDeuE2nhWoB8ZuZn-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-71" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-45">
+          <mxGeometry x="0.6424" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-36" target="79bJeDeuE2nhWoB8ZuZn-39">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-49" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-46">
+          <mxGeometry x="0.4957" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="79bJeDeuE2nhWoB8ZuZn-36" target="79bJeDeuE2nhWoB8ZuZn-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-72" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="79bJeDeuE2nhWoB8ZuZn-47">
+          <mxGeometry x="0.6121" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-36" value="&lt;strong&gt;Gérer les services du zoo&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="2280" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-38" value="&lt;b&gt;Ajouter un service&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="2180" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-39" value="&lt;strong&gt;Modifier un service&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="2280" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-40" value="Supprimer un service" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="2380" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-50" value="&lt;b&gt;Consulter les statistiques des consultations&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="2020" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-51" value="&lt;strong&gt;Valider ou refuser les avis&lt;/strong&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="2110" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-55" value="&lt;h4&gt;Cas d&#39;utilisation :&lt;/h4&gt;&lt;h4&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Se connecter&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Comme l&#39;Employé, le Vétérinaire doit d&#39;abord se connecter pour accéder aux fonctionnalités.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Gérer les rapports des animaux&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Le Vétérinaire doit gérer les rapports des animaux.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Ajouter un rapport vétérinaire&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Cette fonctionnalité s&#39;étend à la gestion des rapports.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Modifier un rapport vétérinaire&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Modification d’un rapport est une extension de la gestion des rapports.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Supprimer un rapport vétérinaire&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Supprimer un rapport est également une extension.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Consulter les rapports d&#39;alimentation des animaux&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Cette fonctionnalité est incluse dans la gestion des rapports.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/h4&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="950" y="1330" width="650" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-66" value="&lt;h4&gt;Cas d&#39;utilisation :&lt;/h4&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;ul style=&quot;font-size: 12px;&quot;&gt;&lt;li&gt;&lt;p&gt;&lt;strong&gt;Se connecter&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : L&#39;Employé doit toujours se connecter pour accéder à toutes les fonctionnalités.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Gérer les services&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Cette fonctionnalité inclut la gestion des services tels que la modification, l&#39;ajout, ou la suppression de services.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Ajouter un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : C’est une extension de la gestion des services.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Modifier un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Cette action peut être étendue depuis la gestion des services.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Supprimer un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Cette action est également une extension de la gestion des services.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;&lt;strong&gt;Valider les avis des visiteurs&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Cette fonctionnalité est liée à la validation ou au refus des avis laissés par les visiteurs.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Valider l&#39;avis&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Valider un avis est une extension de la gestion des avis.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Refuser l&#39;avis&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Refuser un avis est également une extension de la gestion des avis.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;p&gt;&lt;strong&gt;Gérer la consommation alimentaire des animaux&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : L’employé doit gérer les informations relatives à l’alimentation des animaux.&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="950" y="650" width="650" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="79bJeDeuE2nhWoB8ZuZn-67" value="&lt;h4&gt;Cas d&#39;utilisation :&lt;/h4&gt;&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;ul style=&quot;font-size: 12px;&quot;&gt;&lt;li&gt;&lt;strong&gt;Se connecter&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : L&#39;administrateur doit se connecter pour effectuer toute action.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Gérer les utilisateurs&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Inclut la gestion complète des utilisateurs.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Ajouter un utilisateur&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Cette fonctionnalité est une extension de la gestion des utilisateurs.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Modifier un utilisateur&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Modification d&#39;un utilisateur étend la gestion.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Supprimer un utilisateur&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Supprimer un utilisateur est une extension de la gestion des utilisateurs.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Gérer les services du zoo&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Permet la gestion des services dans le zoo.&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Ajouter un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Extension de la gestion des services.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Modifier un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Extension pour modifier un service.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Supprimer un service&lt;/strong&gt; (&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;) : Supprimer un service est une extension de la gestion.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Consulter les statistiques des consultations&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : L’administrateur peut consulter les statistiques des visites des animaux et services.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Valider ou refuser les avis&lt;/strong&gt; (&amp;lt;&amp;lt;include&amp;gt;&amp;gt;) : Il peut valider ou refuser les avis laissés par les visiteurs.&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="950" y="1940" width="550" height="360" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
