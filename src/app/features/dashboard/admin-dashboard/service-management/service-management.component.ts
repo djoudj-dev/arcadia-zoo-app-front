@@ -29,6 +29,7 @@ export class ServiceManagementComponent implements OnInit {
   services = signal<Service[]>([]);
   allFeatures = signal<Feature[]>([]);
   selectedFile = signal<File | null>(null);
+  serviceToDelete: number | null = null;
 
   /** État du composant */
   newServiceData: Partial<Service & { type?: string }> = {};
@@ -305,5 +306,20 @@ export class ServiceManagementComponent implements OnInit {
     const file = this.selectedFile();
     if (file) formData.append('image', file, file.name);
     return formData;
+  }
+
+  confirmDeleteService(serviceId: number) {
+    this.serviceToDelete = serviceId;
+  }
+
+  cancelDelete() {
+    this.serviceToDelete = null;
+  }
+
+  deleteServiceConfirmed() {
+    if (this.serviceToDelete !== null) {
+      this.deleteService(this.serviceToDelete);
+      this.serviceToDelete = null;
+    }
   }
 }

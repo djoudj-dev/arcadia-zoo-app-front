@@ -3,11 +3,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Role } from './model/role.model';
 import { User } from './model/user.model';
 import { AccountManagementService } from './service/account-management.service';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 /**
  * Composant de gestion des comptes utilisateurs
@@ -25,6 +25,7 @@ export class AccountManagementComponent implements OnInit {
   users = signal<User[]>([]); // Liste des utilisateurs
   roles = signal<Role[]>([]); // Liste des rôles disponibles
   newUser = signal<Partial<User>>({}); // Données du formulaire utilisateur
+  accountToDelete: number | null = null;
 
   constructor(
     private router: Router,
@@ -130,25 +131,27 @@ export class AccountManagementComponent implements OnInit {
     this.newUser.set({ ...user, password: '' });
   }
 
+  /** Prépare la confirmation de suppression d'un compte */
+  confirmDeleteAccount(accountId: number) {
+    this.accountToDelete = accountId;
+  }
+
   /** Supprime un utilisateur */
-  deleteAccount(userId: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce compte ?')) {
-      this.accountService.deleteUser(userId).subscribe({
-        next: () => {
-          this.users.update((users) =>
-            users.filter((user) => user.id !== userId)
-          );
-          this.countResourceService.decrementTotalEmploye();
-          this.toastService.showSuccess('Compte supprimé avec succès');
-        },
-        error: (err) => {
-          console.error("Erreur de suppression d'utilisateur :", err);
-          this.toastService.showError(
-            'Une erreur est survenue lors de la suppression du compte'
-          );
-        },
-      });
-    }
+  deleteAccount(accountId: number): void {
+    this.accountService.deleteUser(accountId).subscribe({
+      next: () => {
+        this.users.update((users) =>
+          users.filter((user) => user.id !== accountId)
+        );
+        this.toastService.showSuccess('Compte supprimé avec succès');
+        this.accountToDelete = null;
+      },
+      error: (err) => {
+        console.error("Erreur de suppression d'utilisateur :", err);
+        this.toastService.showError('Erreur lors de la suppression du compte');
+        this.accountToDelete = null;
+      },
+    });
   }
 
   /** Réinitialise le formulaire */

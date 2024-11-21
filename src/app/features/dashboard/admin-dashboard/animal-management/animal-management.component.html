@@ -213,7 +213,7 @@
             animal.id_animal) { @if (visibleAnimals()[habitat.id_habitat] ||
             groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
             <div
-              class="bg-gray-50 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300"
+              class="bg-gray-50 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 relative"
             >
               <div class="flex flex-col sm:flex-row items-center gap-4">
                 <img
@@ -258,10 +258,34 @@
                     [color]="'red'"
                     [rounded]="true"
                     [customClass]="'text-xs px-2 py-1'"
-                    (click)="deleteAnimal(animal.id_animal)"
+                    (click)="confirmDeleteAnimal(animal.id_animal)"
                   ></app-button>
                 </div>
               </div>
+              <!-- Confirmation de suppression -->
+              @if (animalToDelete === animal.id_animal) {
+              <div class="mt-4 p-4 bg-red-100 rounded-lg">
+                <p>
+                  Êtes-vous sûr de vouloir supprimer l'animal "{{
+                    animal.name
+                  }}" ?
+                </p>
+                <div class="flex justify-end gap-2 mt-2">
+                  <button
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    (click)="deleteAnimalConfirmed()"
+                  >
+                    Supprimer
+                  </button>
+                  <button
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                    (click)="cancelDelete()"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+              }
             </div>
             } } @if ((groupedAnimals()[habitat.id_habitat] || []).length > 1) {
             <div class="text-center mt-4">

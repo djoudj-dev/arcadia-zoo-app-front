@@ -31,7 +31,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (service of services(); track service.id_service) {
       <div
-        class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+        class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 relative"
       >
         <!-- Image du service -->
         <div class="relative h-48 overflow-hidden">
@@ -59,9 +59,7 @@
               {{ service.description | slice : 0 : 100 }}...
               <button
                 class="text-tertiary hover:text-quaternary font-medium ml-1"
-                (click)="
-                  service.id_service && toggleDescription(service.id_service)
-                "
+                (click)="toggleDescription(service.id_service!)"
               >
                 Lire la suite
               </button>
@@ -69,9 +67,7 @@
               {{ service.description }}
               <button
                 class="text-tertiary hover:text-quaternary font-medium ml-1"
-                (click)="
-                  service.id_service && toggleDescription(service.id_service)
-                "
+                (click)="toggleDescription(service.id_service!)"
               >
                 Voir moins
               </button>
@@ -87,7 +83,7 @@
               [color]="'secondary'"
               [rounded]="true"
               [customClass]="'text-sm px-4 py-2'"
-              (click)="service.id_service && editService(service.id_service)"
+              (click)="editService(service.id_service!)"
             ></app-button>
             <app-button
               [text]="'Supprimer'"
@@ -95,9 +91,33 @@
               [color]="'red'"
               [rounded]="true"
               [customClass]="'text-sm px-4 py-2'"
-              (click)="service.id_service && deleteService(service.id_service)"
+              (click)="confirmDeleteService(service.id_service!)"
             ></app-button>
           </div>
+
+          <!-- Confirmation de suppression -->
+          @if (serviceToDelete === service.id_service) {
+          <div class="mt-4 p-4 bg-red-100 rounded-lg">
+            <p>
+              Êtes-vous sûr de vouloir supprimer le service "{{ service.name }}"
+              ?
+            </p>
+            <div class="flex justify-end gap-2 mt-2">
+              <button
+                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                (click)="deleteServiceConfirmed()"
+              >
+                Supprimer
+              </button>
+              <button
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                (click)="cancelDelete()"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+          }
         </div>
       </div>
       }

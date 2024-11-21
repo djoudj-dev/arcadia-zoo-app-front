@@ -40,6 +40,7 @@ export class AnimalManagementComponent implements OnInit {
   groupedAnimals = signal<Record<number, Animal[]>>({});
   visibleAnimals = signal<Record<number, boolean>>({});
   newAnimalData = signal<Partial<Animal>>({});
+  animalToDelete: number | null = null;
 
   /** URL de base pour les images */
   imageBaseUrl = `${environment.apiUrl}/api`;
@@ -190,89 +191,32 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Supprime un animal */
   deleteAnimal(animalId: number) {
-    // Récupérer le nom de l'animal pour le message
     const animal = this.animals().find((a) => a.id_animal === animalId);
     if (!animal) return;
 
-    // Afficher le toast de confirmation
     const confirmMessage = `Êtes-vous sûr de vouloir supprimer l'animal "${animal.name}" ?`;
-
-    // Créer un toast de confirmation personnalisé
-    const toast = document.createElement('div');
-    toast.className =
-      'fixed top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50 flex flex-col gap-4';
-    toast.innerHTML = `
-      <p class="text-gray-800">${confirmMessage}</p>
-      <div class="flex justify-end gap-2">
-        <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" id="confirmDelete">
-          Supprimer
-        </button>
-        <button class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" id="cancelDelete">
-          Annuler
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Gérer les actions de confirmation/annulation
-    const handleConfirm = () => {
+    if (confirm(confirmMessage)) {
       this.animalManagement.deleteAnimal(animalId.toString()).subscribe({
         next: () => {
-          // Mettre à jour le state local
           this.animals.update((animals) =>
             animals.filter((a) => a.id_animal !== animalId)
           );
-
-          // Mettre à jour les groupes
           this.groupAnimals();
-
-          // Mettre à jour les compteurs
           this.countResourceService.decrementTotalAnimals();
-
-          // Recharger la liste complète des animaux
           this.loadAnimals();
-
-          // Réinitialiser le formulaire si nécessaire
           this.resetForm();
-
-          // Nettoyer le toast et afficher le message de succès
-          document.body.removeChild(toast);
           this.toastService.showSuccess('Animal supprimé avec succès');
         },
         error: (error) => {
           console.error("Erreur de suppression de l'animal :", error);
-          document.body.removeChild(toast);
           this.toastService.showError(
             "Erreur lors de la suppression de l'animal"
           );
         },
-        complete: () => {
-          // S'assurer que l'interface est bien à jour
-          this.groupAnimals();
-        },
       });
-    };
-
-    const handleCancel = () => {
-      document.body.removeChild(toast);
+    } else {
       this.toastService.showSuccess('Suppression annulée');
-    };
-
-    // Ajouter les écouteurs d'événements
-    document
-      .getElementById('confirmDelete')
-      ?.addEventListener('click', handleConfirm);
-    document
-      .getElementById('cancelDelete')
-      ?.addEventListener('click', handleCancel);
-
-    // Ajouter une animation d'entrée
-    requestAnimationFrame(() => {
-      toast.style.transition = 'opacity 0.3s, transform 0.3s';
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateY(0)';
-    });
+    }
   }
 
   /** Réinitialise le formulaire */
@@ -423,6 +367,21 @@ export class AnimalManagementComponent implements OnInit {
     } catch (error) {
       console.error('Erreur lors du traitement du fichier:', error);
       this.toastService.showError('Erreur lors du traitement du fichier');
+    }
+  }
+
+  confirmDeleteAnimal(animalId: number) {
+    this.animalToDelete = animalId;
+  }
+
+  cancelDelete() {
+    this.animalToDelete = null;
+  }
+
+  deleteAnimalConfirmed() {
+    if (this.animalToDelete !== null) {
+      this.deleteAnimal(this.animalToDelete);
+      this.animalToDelete = null;
     }
   }
 }
