@@ -193,4 +193,8 @@ export class VeterinaryDashboardComponent implements OnInit {
       },
     });
   }
+
+  getAnimals() {
+    return this.animalService.getAnimals();
+  }
 }

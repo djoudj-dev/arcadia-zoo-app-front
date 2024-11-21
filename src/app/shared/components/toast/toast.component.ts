@@ -13,16 +13,16 @@ import { ToastService } from './services/toast.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    @if (visible) {
+    @if(visible) {
     <div
-      class="fixed top-4 right-4 transition-opacity duration-300 z-50"
+      class="relative transition-opacity duration-300 z-50 mb-4"
       [class.opacity-0]="!visible"
       [class]="customClass"
       role="alert"
     >
       <div [class]="getTypeClass()">
         {{ message }}
-        @if (type === 'confirm') {
+        @if(type === 'confirm') {
         <div class="flex justify-end gap-2 mt-4">
           <button
             class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
@@ -78,7 +78,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     const typeClasses = {
       success: 'bg-green-100 text-green-800 border-l-4 border-green-500',
       error: 'bg-red-100 text-red-800 border-l-4 border-red-500',
-      confirm: 'bg-white text-gray-800 border-l-4 border-yellow-500',
+      confirm: 'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500',
     };
     return `${baseClasses} ${typeClasses[this.type]}`;
   }
