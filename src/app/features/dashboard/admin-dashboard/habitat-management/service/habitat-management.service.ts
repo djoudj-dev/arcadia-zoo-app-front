@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
@@ -28,13 +32,10 @@ export class HabitatManagementService {
    * @returns Observable<Habitat[]> Liste des habitats avec leurs informations complètes
    */
   getAllHabitats(): Observable<Habitat[]> {
-    return this.http
-      .get<Habitat[]>(this.apiUrl)
-      .pipe(
-        catchError((error) =>
-          this.handleError('chargement des habitats', error)
-        )
-      );
+    return this.http.get<Habitat[]>(this.apiUrl).pipe(
+      tap((response) => console.log('Habitats reçus:', response)),
+      catchError((error) => this.handleError('chargement des habitats', error))
+    );
   }
 
   /**
@@ -45,8 +46,14 @@ export class HabitatManagementService {
    */
   createHabitat(formData: FormData): Observable<Habitat> {
     return this.http.post<Habitat>(this.apiUrl, formData).pipe(
-      tap(() => this.habitatService.clearCache()), // Vide le cache après création
-      catchError((error) => this.handleError("création de l'habitat", error))
+      tap((response) => {
+        console.log('Réponse du serveur (création):', response);
+        this.habitatService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur détaillée (création):', error);
+        return this.handleError("création de l'habitat", error);
+      })
     );
   }
 
@@ -58,10 +65,44 @@ export class HabitatManagementService {
    * @returns Observable<Habitat> Habitat mis à jour avec ses informations complètes
    */
   updateHabitat(id: string, formData: FormData): Observable<Habitat> {
-    return this.http.put<Habitat>(`${this.apiUrl}/${id}`, formData).pipe(
-      tap(() => this.habitatService.clearCache()), // Vide le cache après modification
-      catchError((error) => this.handleError("mise à jour de l'habitat", error))
-    );
+    // Ajout des headers nécessaires
+    const headers = new HttpHeaders({
+      Accept: 'application/json',
+    });
+
+    // Conversion du FormData en objet pour le body
+    const habitatData: Record<string, string | Blob> = {};
+    formData.forEach((value, key) => {
+      habitatData[key] = value;
+    });
+
+    // Log des données avant envoi
+    console.log('Données envoyées pour mise à jour:', {
+      id,
+      data: habitatData,
+    });
+
+    return this.http
+      .put<Habitat>(`${this.apiUrl}/${id}`, habitatData, { headers })
+      .pipe(
+        tap((response) => {
+          console.log('Réponse du serveur (mise à jour):', response);
+          this.habitatService.clearCache();
+        }),
+        catchError((error) => {
+          console.error('Erreur détaillée (mise à jour):', error);
+          if (error.error instanceof ErrorEvent) {
+            console.error('Erreur client:', error.error.message);
+          } else {
+            console.error('Erreur serveur:', {
+              status: error.status,
+              message: error.message,
+              error: error.error,
+            });
+          }
+          return this.handleError("mise à jour de l'habitat", error);
+        })
+      );
   }
 
   /**
@@ -72,8 +113,14 @@ export class HabitatManagementService {
    */
   deleteHabitat(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.habitatService.clearCache()), // Vide le cache après suppression
-      catchError((error) => this.handleError("suppression de l'habitat", error))
+      tap(() => {
+        console.log('Habitat supprimé avec succès:', id);
+        this.habitatService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur lors de la suppression:', error);
+        return this.handleError("suppression de l'habitat", error);
+      })
     );
   }
 
@@ -88,7 +135,18 @@ export class HabitatManagementService {
     action: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    console.error(`Erreur lors de ${action} :`, error);
-    return throwError(() => new Error(`Erreur lors de ${action}.`));
+    let errorMessage = `Erreur lors de ${action}. `;
+
+    if (error.error instanceof ErrorEvent) {
+      errorMessage += `Message d'erreur: ${error.error.message}`;
+    } else {
+      errorMessage += `Code d'erreur: ${error.status}, `;
+      errorMessage += `Message: ${error.error?.message || error.message}`;
+    }
+
+    console.error(errorMessage);
+    console.error("Détails complets de l'erreur:", error);
+
+    return throwError(() => new Error(errorMessage));
   }
 }

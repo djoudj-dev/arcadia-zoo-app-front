@@ -61,7 +61,12 @@ export class HabitatManagementComponent implements OnInit {
           habitats.map((habitat) => ({
             ...habitat,
             showDescription: false,
-            images: `${this.imageBaseUrl}/${habitat.images}`,
+            showDeleteConfirmation: false,
+            images: habitat.images
+              ? habitat.images.startsWith('http')
+                ? habitat.images
+                : `${this.imageBaseUrl}/${habitat.images.replace(/^\/+/, '')}`
+              : null,
           }))
         );
       },
@@ -126,19 +131,30 @@ export class HabitatManagementComponent implements OnInit {
         .updateHabitat(this.newHabitatData.id_habitat!.toString(), formData)
         .subscribe({
           next: (updatedHabitat) => {
+            const imageUrl = updatedHabitat.images
+              ? updatedHabitat.images.startsWith('http')
+                ? updatedHabitat.images
+                : `${this.imageBaseUrl}/${updatedHabitat.images.replace(
+                    /^\/+/,
+                    ''
+                  )}`
+              : '';
+
             this.habitats.update((habitats) =>
               habitats.map((h) =>
                 h.id_habitat === updatedHabitat.id_habitat
                   ? {
                       ...updatedHabitat,
                       showDescription: h.showDescription,
-                      images: `${this.imageBaseUrl}/${updatedHabitat.images}`,
+                      images: imageUrl,
                     }
                   : h
               )
             );
             this.resetForm();
             this.toastService.showSuccess('Habitat mis à jour avec succès');
+
+            this.loadHabitats();
           },
           error: (error) => {
             console.error(
@@ -164,6 +180,28 @@ export class HabitatManagementComponent implements OnInit {
     }
   }
 
+  /** Prépare la confirmation de suppression */
+  confirmDeleteHabitat(id_habitat: number) {
+    this.habitats.update((habitats) =>
+      habitats.map((habitat) =>
+        habitat.id_habitat === id_habitat
+          ? { ...habitat, showDeleteConfirmation: true }
+          : habitat
+      )
+    );
+  }
+
+  /** Annule la confirmation de suppression */
+  cancelDeleteHabitat(id_habitat: number) {
+    this.habitats.update((habitats) =>
+      habitats.map((habitat) =>
+        habitat.id_habitat === id_habitat
+          ? { ...habitat, showDeleteConfirmation: false }
+          : habitat
+      )
+    );
+  }
+
   /** Supprime un habitat */
   deleteHabitat(id_habitat: number | undefined) {
     if (!id_habitat) {
@@ -171,23 +209,23 @@ export class HabitatManagementComponent implements OnInit {
       return;
     }
 
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet habitat ?')) {
-      this.habitatManagement.deleteHabitat(id_habitat.toString()).subscribe({
-        next: () => {
-          this.habitats.update((habitats) =>
-            habitats.filter((habitat) => habitat.id_habitat !== id_habitat)
-          );
-          this.countResourceService.decrementTotalHabitats();
-          this.toastService.showSuccess('Habitat supprimé avec succès');
-        },
-        error: (error) => {
-          console.error("Erreur lors de la suppression de l'habitat:", error);
-          this.toastService.showError(
-            "Erreur lors de la suppression de l'habitat"
-          );
-        },
-      });
-    }
+    this.habitatManagement.deleteHabitat(id_habitat.toString()).subscribe({
+      next: () => {
+        this.habitats.update((habitats) =>
+          habitats.filter((h) => h.id_habitat !== id_habitat)
+        );
+        this.countResourceService.decrementTotalHabitats();
+        this.loadHabitats();
+        this.resetForm();
+        this.toastService.showSuccess('Habitat supprimé avec succès');
+      },
+      error: (error) => {
+        console.error("Erreur lors de la suppression de l'habitat:", error);
+        this.toastService.showError(
+          "Erreur lors de la suppression de l'habitat"
+        );
+      },
+    });
   }
 
   /** Réinitialise le formulaire */
