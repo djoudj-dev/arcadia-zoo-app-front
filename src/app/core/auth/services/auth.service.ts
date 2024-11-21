@@ -47,8 +47,10 @@ export class AuthService {
 
   constructor() {
     this.initializeCurrentUser();
-    // Vérifie le token toutes les minutes
-    interval(60000).subscribe(() => this.checkTokenExpiration());
+    // Ne démarre la vérification que si l'utilisateur est authentifié
+    if (this.isAuthenticated()) {
+      interval(60000).subscribe(() => this.checkTokenExpiration());
+    }
   }
 
   /**
@@ -204,6 +206,11 @@ export class AuthService {
   }
 
   private checkTokenExpiration(): void {
+    // Vérifie d'abord si l'utilisateur est connecté
+    if (!this.isAuthenticated()) {
+      return;
+    }
+
     const token = this.tokenService.getToken();
     if (!token) return;
 
@@ -211,7 +218,7 @@ export class AuthService {
       this.refreshToken().subscribe({
         error: (error) => {
           console.error('Erreur lors du rafraîchissement du token:', error);
-          this.logout(); // Déconnexion en cas d'échec du rafraîchissement
+          this.logout();
         },
       });
     }
