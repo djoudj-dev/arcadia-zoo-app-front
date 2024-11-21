@@ -8,9 +8,6 @@ export class TokenSecurityService {
   private readonly TOKEN_KEY = 'access_token';
   private readonly REFRESH_TOKEN_KEY = 'refresh_token';
   private readonly jwtHelper = new JwtHelperService();
-  private readonly tokenBlacklist = new Set<string>();
-
-  constructor() {}
 
   setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(this.TOKEN_KEY, accessToken);
@@ -26,35 +23,15 @@ export class TokenSecurityService {
   }
 
   removeTokens(): void {
-    const currentToken = this.getToken();
-    if (currentToken) {
-      this.tokenBlacklist.add(currentToken);
-    }
-    sessionStorage.removeItem(this.TOKEN_KEY);
-    sessionStorage.removeItem(this.REFRESH_TOKEN_KEY);
-  }
-
-  isTokenValid(token: string): boolean {
-    if (!token || this.tokenBlacklist.has(token)) {
-      return false;
-    }
-    try {
-      return !this.jwtHelper.isTokenExpired(token);
-    } catch {
-      return false;
-    }
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
   isTokenExpiringSoon(token: string): boolean {
-    try {
-      const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
-      if (!expirationDate) return true;
+    const expirationDate = this.jwtHelper.getTokenExpirationDate(token);
+    if (!expirationDate) return true;
 
-      // Vérifie si le token expire dans moins de 5 minutes
-      const fiveMinutes = 5 * 60 * 1000;
-      return expirationDate.getTime() - Date.now() < fiveMinutes;
-    } catch {
-      return true;
-    }
+    const fiveMinutes = 5 * 60 * 1000;
+    return expirationDate.getTime() - Date.now() < fiveMinutes;
   }
 }
