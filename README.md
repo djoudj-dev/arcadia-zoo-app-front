@@ -1,27 +1,43 @@
-# ArcadiaZooAppFont
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.5.
+# Zoo Arcadia - Guide d'Installation
 
-## Development server
+Zoo Arcadia est une application web moderne développée avec Angular 18, conçue pour optimiser la gestion quotidienne d'un parc zoologique. Cette plateforme offre une interface intuitive et responsive permettant aux différents acteurs du zoo (vétérinaires, employés et administrateurs) de gérer efficacement leurs tâches respectives.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Prérequis
+- Node.js (version 18.x ou supérieure)
+- npm (version 9.x ou supérieure)
+- Angular CLI (version 18.x)
 
-## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+# 🏁 Pour l'installation suivre les consigne suivante
+ ### 1- Cloner le projet
+```bash 
+https://github.com/djoudj-dev/arcadia-zoo-app-front.git
+```
 
-## Build
+### 2- Installer les dépendances
+```bash
+npm install
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### 3 - Lancer le serveur de développement
+```bash
+ng serve
+```
 
-## Running unit tests
+L'application sera accessible à l'adresse : http://localhost:4200
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+# 🚀 Pour une liaison avec le backend
 
-## Running end-to-end tests
+- Variable d'environnement
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```bash
+environment.development.ts
+```
 
-## Further help
+# 🎯 Technologies Utilisées
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Angular 18
+- Tailwind CSS
+- TypeScript
+- RxJS
