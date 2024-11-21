@@ -3,8 +3,10 @@ import { Subject, timer } from 'rxjs';
 
 export interface Toast {
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'confirm';
   duration?: number;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
 @Injectable({
@@ -31,5 +33,18 @@ export class ToastService {
     timer(duration).subscribe(() => {
       this.hideToastSubject.next();
     });
+  }
+
+  showConfirm(message: string, onConfirm: () => void, onCancel: () => void) {
+    this.toastSubject.next({
+      message,
+      type: 'confirm',
+      onConfirm,
+      onCancel,
+    });
+  }
+
+  hideToast() {
+    this.hideToastSubject.next();
   }
 }

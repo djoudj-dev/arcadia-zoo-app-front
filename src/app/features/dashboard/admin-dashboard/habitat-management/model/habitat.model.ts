@@ -4,9 +4,10 @@ export interface Habitat {
   id_habitat: number;
   name: string;
   description: string;
-  images?: string;
+  images: string | undefined | null;
   created_at?: Date;
   updated_at?: Date;
   animals: Animal[];
   showDescription?: boolean;
+  showDeleteConfirmation?: boolean;
 }

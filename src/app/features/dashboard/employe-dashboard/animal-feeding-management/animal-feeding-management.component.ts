@@ -145,6 +145,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
                   map((animals) => ({
                     ...habitat,
                     animals,
+                    images: habitat.images || undefined,
                   }))
                 )
             )
