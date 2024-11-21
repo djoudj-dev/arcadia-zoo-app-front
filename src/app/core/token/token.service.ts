@@ -116,4 +116,20 @@ export class TokenService {
       return null;
     }
   }
+  getRefreshToken() {
+    // Vérifier d'abord localStorage
+    const token = localStorage.getItem('refreshToken');
+    if (!token) {
+      // Si pas de token, rediriger vers la page de connexion
+      this.redirectToLogin();
+      throw new Error('Refresh token non trouvé');
+    }
+    return token;
+  }
+
+  redirectToLogin() {
+    // Nettoyer le stockage
+    localStorage.clear();
+    window.location.href = '/login';
+  }
 }
