@@ -22,7 +22,7 @@ export class TokenSecurityService {
   }
 
   getRefreshToken(): string | null {
-    return sessionStorage.getItem(this.REFRESH_TOKEN_KEY);
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
 
   removeTokens(): void {
