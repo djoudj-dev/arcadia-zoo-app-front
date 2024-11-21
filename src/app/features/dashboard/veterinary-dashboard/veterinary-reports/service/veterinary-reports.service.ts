@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Observable } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
+import { TokenService } from 'app/core/token/token.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,19 @@ export class VeterinaryReportsService {
   private apiUrl = `${environment.apiUrl}/api/veterinary-reports`;
   private animalApiUrl = `${environment.apiUrl}/api/animals`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.tokenService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   getAllReports(): Observable<VeterinaryReports[]> {
-    return this.http.get<VeterinaryReports[]>(this.apiUrl);
+    const headers = this.getHeaders();
+    return this.http.get<VeterinaryReports[]>(this.apiUrl, { headers });
   }
 
   getReportById(id: string): Observable<VeterinaryReports> {
