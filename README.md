@@ -12,7 +12,7 @@ Zoo Arcadia est une application web moderne développée avec Angular 18, conçu
 # 🏁 Pour l'installation suivre les consigne suivante
  ### 1- Cloner le projet
 ```bash 
-https://github.com/djoudj-dev/arcadia-zoo-app-front.git
+git clone https://github.com/djoudj-dev/arcadia-zoo-app-front.git
 ```
 
 ### 2- Installer les dépendances
