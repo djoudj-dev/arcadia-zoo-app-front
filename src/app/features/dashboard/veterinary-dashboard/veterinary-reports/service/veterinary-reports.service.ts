@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
-import { Observable } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
 import { TokenService } from 'app/core/token/token.service';
@@ -26,22 +26,34 @@ export class VeterinaryReportsService {
 
   getAllReports(): Observable<VeterinaryReports[]> {
     const headers = this.getHeaders();
-    return this.http.get<VeterinaryReports[]>(this.apiUrl, { headers });
+    return this.http.get<VeterinaryReports[]>(this.apiUrl, { headers }).pipe(
+      catchError((error) => {
+        console.error('Erreur lors de la récupération des rapports:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getReportById(id: string): Observable<VeterinaryReports> {
-    return this.http.get<VeterinaryReports>(`${this.apiUrl}/${id}`);
+    const headers = this.getHeaders();
+    return this.http.get<VeterinaryReports>(`${this.apiUrl}/${id}`, {
+      headers,
+    });
   }
 
   createReport(report: VeterinaryReports): Observable<VeterinaryReports> {
-    return this.http.post<VeterinaryReports>(this.apiUrl, report);
+    const headers = this.getHeaders();
+    return this.http.post<VeterinaryReports>(this.apiUrl, report, { headers });
   }
 
   updateReport(
     id: string,
     report: VeterinaryReports
   ): Observable<VeterinaryReports> {
-    return this.http.put<VeterinaryReports>(`${this.apiUrl}/${id}`, report);
+    const headers = this.getHeaders();
+    return this.http.put<VeterinaryReports>(`${this.apiUrl}/${id}`, report, {
+      headers,
+    });
   }
 
   deleteReport(id: string): Observable<void> {
@@ -49,32 +61,28 @@ export class VeterinaryReportsService {
   }
 
   fetchAnimalDetails(animalId: number): Observable<Animal> {
-    return this.http.get<Animal>(`${this.animalApiUrl}/${animalId}`).pipe(
-      map((animal) => ({
-        ...animal,
-        images: animal.images
-          ? `${environment.apiUrl}/api/${animal.images}`
-          : '',
-      }))
-    );
+    const headers = this.getHeaders();
+    return this.http
+      .get<Animal>(`${this.animalApiUrl}/${animalId}`, { headers })
+      .pipe(
+        map((animal) => ({
+          ...animal,
+          images: animal.images
+            ? `${environment.apiUrl}/api/${animal.images}`
+            : '',
+        }))
+      );
   }
 
   updateReportStatus(
     id: string,
     is_processed: boolean
   ): Observable<VeterinaryReports> {
-    return this.http
-      .patch<VeterinaryReports>(`${this.apiUrl}/${id}/status`, {
-        is_treated: is_processed,
-      })
-      .pipe(
-        tap((response) =>
-          console.log('Statut du rapport mis à jour:', response)
-        ),
-        catchError((error) => {
-          console.error('Erreur lors de la mise à jour du statut:', error);
-          throw error;
-        })
-      );
+    const headers = this.getHeaders();
+    return this.http.patch<VeterinaryReports>(
+      `${this.apiUrl}/${id}/status`,
+      { is_treated: is_processed },
+      { headers }
+    );
   }
 }
