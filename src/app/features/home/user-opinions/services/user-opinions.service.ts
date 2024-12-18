@@ -10,20 +10,20 @@ import { UserOpinion } from '../models/user-opinions.model';
   providedIn: 'root',
 })
 export class UserOpinionsService {
-  private apiUrl = `${environment.apiUrl}/api/user-opinions`;
-  private opinionsUpdatedSource = new Subject<void>();
+  readonly apiUrl = `${environment.apiUrl}/api/user-opinions`;
+  readonly opinionsUpdatedSource = new Subject<void>();
   opinionsUpdated$ = this.opinionsUpdatedSource.asObservable();
 
-  constructor(private http: HttpClient, private toastService: ToastService) {}
+  constructor(readonly http: HttpClient, readonly toastService: ToastService) {}
 
   private transformOpinion(opinion: UserOpinion): UserOpinion {
     return {
       ...opinion,
       id_opinion: Number(opinion._id) || 0,
-      name: opinion.name || '',
-      message: opinion.message || opinion.content || '',
-      date: opinion.date || opinion.createdAt || new Date(),
-      rating: Number(opinion.rating) || 0,
+      name: opinion.name ?? '',
+      message: opinion.message ?? opinion.content ?? '',
+      date: opinion.date ?? opinion.createdAt ?? new Date(),
+      rating: opinion.rating ? Number(opinion.rating) : 0,
       validated: Boolean(opinion.validated),
       rejected: Boolean(opinion.rejected),
     };
@@ -39,9 +39,7 @@ export class UserOpinionsService {
       })
       .pipe(
         map((opinions) => opinions.map(this.transformOpinion)),
-        tap((opinions) => {
-          console.log('Avis validés récupérés:', opinions);
-        }),
+
         catchError((error) => {
           console.error('Erreur lors de la récupération des avis:', error);
           this.toastService.showError(
