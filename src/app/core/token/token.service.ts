@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'; // Vérifiez bien cette importation
-import { Token } from '../auth/models/token.model';
 import { jwtDecode } from 'jwt-decode';
+import { Token } from '../auth/models/token.model';
 
 /**
  * Service de gestion des tokens
@@ -20,7 +20,6 @@ export class TokenService {
   getToken(): string | null {
     try {
       const token = localStorage.getItem(this.TOKEN_KEY);
-      console.log('Token récupéré:', token);
       return token;
     } catch (error) {
       console.error('Erreur lors de la récupération du token:', error);
