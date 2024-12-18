@@ -1,7 +1,5 @@
 // src/app/admin-dashboard/stats/stats.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from '../../../../../shared/components/toast/toast.component';
 import { CountResourceService } from './services/count-resource.service';
 
 /**
@@ -11,14 +9,11 @@ import { CountResourceService } from './services/count-resource.service';
 @Component({
   standalone: true,
   selector: 'app-count-resource',
-  imports: [ToastComponent],
+  imports: [],
   templateUrl: './count-resource.component.html',
 })
 export class CountResourceComponent implements OnInit {
-  constructor(
-    public countResourceService: CountResourceService,
-    private toastService: ToastService
-  ) {}
+  constructor(public countResourceService: CountResourceService) {}
 
   ngOnInit() {
     this.loadCountResource();
@@ -45,9 +40,6 @@ export class CountResourceComponent implements OnInit {
         console.error(
           'Erreur lors de la récupération des statistiques:',
           error
-        );
-        this.toastService.showError(
-          'Erreur lors du chargement des statistiques'
         );
       },
     });
