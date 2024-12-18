@@ -63,9 +63,9 @@ export class AdminDashboardComponent {
   /** Signal pour l'onglet actif */
   activeRoute = signal<string>('');
 
-  constructor(private router: Router) {
+  constructor(readonly router: Router) {
     // Initialise l'onglet actif en fonction de la route courante
-    this.activeRoute.set(this.router.url.split('/').pop() || '');
+    this.activeRoute.set(this.router.url.split('/').pop() ?? '');
   }
 
   /**
