@@ -1,5 +1,4 @@
 import { SlicePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,9 +8,11 @@ import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment.development';
+import { firstValueFrom } from 'rxjs';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
 import { ServiceManagementService } from './service/service.management.service';
+import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 
 /**
  * Composant de gestion des services
@@ -21,7 +22,13 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [FormsModule, SlicePipe, ModalComponent, ButtonComponent],
+  imports: [
+    FormsModule,
+    SlicePipe,
+    ModalComponent,
+    ButtonComponent,
+    ToastComponent,
+  ],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -38,11 +45,11 @@ export class ServiceManagementComponent implements OnInit {
   isFeatureDropdownOpen = false;
 
   constructor(
-    private router: Router,
-    private serviceManagement: ServiceManagementService,
-    private toastService: ToastService,
-    private fileSecurityService: FileSecurityService,
-    private imageOptimizer: ImageOptimizerService
+    readonly router: Router,
+    readonly serviceManagement: ServiceManagementService,
+    readonly toastService: ToastService,
+    readonly fileSecurityService: FileSecurityService,
+    readonly imageOptimizer: ImageOptimizerService
   ) {}
 
   ngOnInit() {
@@ -149,24 +156,19 @@ export class ServiceManagementComponent implements OnInit {
   }
 
   /** Crée un nouveau service */
-  createService() {
-    if (!this.validateServiceData()) {
-      this.toastService.showError('Veuillez remplir tous les champs requis');
-      return;
-    }
+  async createService() {
+    try {
+      const formData = this.buildFormData();
+      await firstValueFrom(this.serviceManagement.createService(formData));
 
-    const formData = this.buildFormData();
-    this.serviceManagement.createService(formData).subscribe({
-      next: () => {
-        this.loadServices();
-        this.resetForm();
-        this.toastService.showSuccess('Service créé avec succès');
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('Erreur lors de la création du service:', error);
-        this.toastService.showError('Erreur lors de la création du service');
-      },
-    });
+      this.toastService.showSuccess('Service créé avec succès !');
+
+      this.toggleModal(); // Ferme le modal
+      this.resetForm(); // Reset le formulaire
+      this.loadServices(); // Recharge la liste des services
+    } catch {
+      this.toastService.showError('Erreur lors de la création du service');
+    }
   }
 
   /** Met à jour un service existant */
@@ -211,29 +213,29 @@ export class ServiceManagementComponent implements OnInit {
       return;
     }
 
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) {
-      this.serviceManagement.deleteService(id_service).subscribe({
-        next: () => {
-          this.services.update((services) =>
-            services.filter((service) => service.id_service !== id_service)
-          );
-          this.toastService.showSuccess('Service supprimé avec succès');
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression du service:', error);
-          this.toastService.showError(
-            'Erreur lors de la suppression du service'
-          );
-        },
-      });
-    }
+    this.serviceManagement.deleteService(id_service).subscribe({
+      next: () => {
+        this.services.update((services) =>
+          services.filter((service) => service.id_service !== id_service)
+        );
+        this.toastService.showSuccess('Service supprimé avec succès');
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression du service:', error);
+        this.toastService.showError('Erreur lors de la suppression du service');
+      },
+    });
   }
 
   /** Réinitialise le formulaire */
   resetForm() {
-    this.newServiceData = {};
+    this.newServiceData = {
+      name: '',
+      description: '',
+      features: [],
+      images: '',
+    };
     this.selectedFile.set(null);
-    this.isFeatureDropdownOpen = false;
   }
 
   /** Gère l'affichage de la description */
@@ -289,23 +291,58 @@ export class ServiceManagementComponent implements OnInit {
   /** Valide les données avant soumission */
   private validateServiceData(isUpdate = false): boolean {
     const { name, description, features } = this.newServiceData;
-    const hasFile = this.selectedFile() || isUpdate;
-    return !!(name && description && features && (hasFile || isUpdate));
+    const hasFile =
+      this.selectedFile() || isUpdate || this.newServiceData.images;
+    return !!(name && description && features && hasFile);
   }
 
   /** Construit le FormData pour l'envoi */
   private buildFormData(): FormData {
     const formData = new FormData();
-    Object.entries(this.newServiceData).forEach(([key, value]) => {
-      if (key === 'features') {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
-      }
-    });
+
+    // Ajout des données de base
+    formData.append('name', this.newServiceData.name ?? '');
+    formData.append('description', this.newServiceData.description ?? '');
+
+    // Conversion des features en JSON string
+    if (this.newServiceData.features) {
+      formData.append('features', JSON.stringify(this.newServiceData.features));
+    }
+
+    // Gestion de l'image
     const file = this.selectedFile();
-    if (file) formData.append('image', file, file.name);
+    if (file) {
+      formData.append('image', file, file.name);
+    } else if (this.newServiceData.images) {
+      // Si l'image vient d'une base64
+      const base64Data = this.newServiceData.images.split(',')[1];
+      const mimeType = this.newServiceData.images
+        .split(',')[0]
+        .split(':')[1]
+        .split(';')[0];
+      const blob = this.base64ToBlob(base64Data, mimeType);
+      formData.append('image', blob, `image.${mimeType.split('/')[1]}`);
+    }
+
     return formData;
+  }
+
+  private base64ToBlob(base64: string, type: string): Blob {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      byteArrays.push(new Uint8Array(byteNumbers));
+    }
+
+    return new Blob(byteArrays, { type });
   }
 
   confirmDeleteService(serviceId: number) {

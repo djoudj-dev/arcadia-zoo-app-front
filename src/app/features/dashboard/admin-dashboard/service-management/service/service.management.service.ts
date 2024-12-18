@@ -15,9 +15,9 @@ import { Service } from '../model/service.model';
 })
 export class ServiceManagementService {
   /** URL de base pour les endpoints de gestion des services */
-  private apiUrl = `${environment.apiUrl}/api/admin/service-management`;
+  readonly apiUrl = `${environment.apiUrl}/api/admin/service-management`;
 
-  constructor(private http: HttpClient) {}
+  constructor(readonly http: HttpClient) {}
 
   /**
    * Récupère la liste complète des services
@@ -34,21 +34,25 @@ export class ServiceManagementService {
    * @returns Observable<Feature[]> Liste des caractéristiques
    */
   getAllFeatures(): Observable<Feature[]> {
-    return this.http.get<Feature[]>(`${this.apiUrl}/features`).pipe(
-      tap((features) => console.log('Caractéristiques récupérées:', features)),
-      catchError(this.handleError('récupération des caractéristiques'))
-    );
+    return this.http
+      .get<Feature[]>(`${this.apiUrl}/features`)
+      .pipe(catchError(this.handleError('récupération des caractéristiques')));
   }
 
   /**
    * Crée un nouveau service
-   * @param formData FormData contenant les données du service et son image
+   * @param formData Données du service à créer
    * @returns Observable<Service> Service créé
    */
   createService(formData: FormData): Observable<Service> {
-    return this.http.post<Service>(this.apiUrl, formData).pipe(
-      tap((newService) => console.log('Service créé avec succès:', newService)),
-      catchError(this.handleError('création du service'))
+    console.log('Données envoyées au serveur:', formData);
+
+    return this.http.post<Service>(`${this.apiUrl}`, formData).pipe(
+      tap(() => console.log('Service créé avec succès')),
+      catchError((error) => {
+        console.log('Erreur détaillée:', error.error); // Pour voir le message d'erreur du serveur
+        return this.handleError('création du service')(error);
+      })
     );
   }
 
