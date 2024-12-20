@@ -19,9 +19,12 @@ import { Animal } from '../model/animal.model';
 })
 export class AnimalManagementService {
   /** URL de base pour les endpoints de gestion des animaux */
-  private apiUrl = `${environment.apiUrl}/api/admin/animal-management`;
+  readonly apiUrl = `${environment.apiUrl}/api/admin/animal-management`;
 
-  constructor(private http: HttpClient, private animalService: AnimalService) {}
+  constructor(
+    readonly http: HttpClient,
+    readonly animalService: AnimalService
+  ) {}
 
   /**
    * Récupère la liste complète des animaux

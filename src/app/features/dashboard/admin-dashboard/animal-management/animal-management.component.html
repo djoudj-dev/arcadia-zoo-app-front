@@ -79,20 +79,57 @@
           <div class="form-group">
             <label
               for="animalImage"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-sm font-medium text-gray-700 mb-2"
             >
               Image de l'animal
             </label>
-            <input
-              type="file"
-              id="animalImage"
-              accept="image/*"
-              class="mt-1 block w-full"
-              appFileUpload
-              [allowedTypes]="['image/jpeg', 'image/png', 'image/webp']"
-              [maxSize]="5 * 1024 * 1024"
-              (fileSelected)="onFileSelected($event)"
-            />
+            <div class="flex items-center justify-center w-full">
+              <label
+                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-300"
+              >
+                @if(!newAnimalData().images) {
+                <div
+                  class="flex flex-col items-center justify-center pt-5 pb-6"
+                >
+                  <svg
+                    class="w-8 h-8 mb-4 text-gray-500"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                    />
+                  </svg>
+                  <p class="mb-2 text-sm text-gray-500">
+                    <span class="font-semibold">Cliquez pour télécharger</span>
+                    ou glissez-déposez
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    PNG, JPG ou WEBP (MAX. 5MB)
+                  </p>
+                </div>
+                } @else {
+                <img
+                  [src]="newAnimalData().images"
+                  alt="Aperçu"
+                  class="w-full h-full object-cover rounded-lg"
+                />
+                }
+                <input
+                  id="animalImage"
+                  type="file"
+                  accept="image/*"
+                  class="hidden"
+                  (change)="onFileSelected($event)"
+                />
+              </label>
+            </div>
           </div>
 
           <!-- Habitat -->
@@ -193,6 +230,7 @@
               [rounded]="true"
               class="w-1/2"
               (click)="cancel()"
+              (keydown)="$event.key === 'Enter' && cancel()"
             ></app-button>
           </div>
         </form>
@@ -218,7 +256,7 @@
               <div class="flex flex-col sm:flex-row items-center gap-4">
                 <img
                   [src]="animal.images"
-                  [alt]="'Photo de ' + animal.name"
+                  [alt]="animal.name"
                   class="w-32 h-32 object-cover rounded-lg shadow-md"
                 />
                 <div class="flex-1 space-y-2">
@@ -251,6 +289,9 @@
                     [rounded]="true"
                     [customClass]="'text-xs px-2 py-1'"
                     (click)="editAnimal(animal.id_animal)"
+                    (keydown)="
+                      $event.key === 'Enter' && editAnimal(animal.id_animal)
+                    "
                   ></app-button>
                   <app-button
                     [text]="'Supprimer'"
@@ -259,6 +300,10 @@
                     [rounded]="true"
                     [customClass]="'text-xs px-2 py-1'"
                     (click)="confirmDeleteAnimal(animal.id_animal)"
+                    (keydown)="
+                      $event.key === 'Enter' &&
+                        confirmDeleteAnimal(animal.id_animal)
+                    "
                   ></app-button>
                 </div>
               </div>
@@ -299,6 +344,9 @@
                 [color]="'tertiary'"
                 [rounded]="true"
                 (click)="toggleVisibility(habitat.id_habitat)"
+                (keydown)="
+                  $event.key === 'Enter' && toggleVisibility(habitat.id_habitat)
+                "
                 [customClass]="'px-4 py-2'"
               ></app-button>
             </div>

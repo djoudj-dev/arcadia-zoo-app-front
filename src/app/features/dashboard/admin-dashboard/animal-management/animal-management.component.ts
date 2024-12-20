@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { FileUploadDirective } from 'app/shared/directives/file-upload.directive';
 import { environment } from '../../../../../environments/environment.development';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HabitatService } from '../../../habitats/service/habitat.service';
@@ -27,7 +26,6 @@ import { AnimalManagementService } from './service/animal-management.service';
     FormsModule,
     ToastComponent,
     ButtonComponent,
-    FileUploadDirective,
   ],
   templateUrl: './animal-management.component.html',
 })
@@ -53,11 +51,11 @@ export class AnimalManagementComponent implements OnInit {
   );
 
   constructor(
-    private animalManagement: AnimalManagementService,
-    private habitatService: HabitatService,
-    private countResourceService: CountResourceService,
-    private toastService: ToastService,
-    private fileSecurityService: FileSecurityService
+    readonly animalManagement: AnimalManagementService,
+    readonly habitatService: HabitatService,
+    readonly countResourceService: CountResourceService,
+    readonly toastService: ToastService,
+    readonly fileSecurityService: FileSecurityService
   ) {}
 
   ngOnInit() {
@@ -300,32 +298,18 @@ export class AnimalManagementComponent implements OnInit {
     const formData = new FormData();
     const animalData = this.newAnimalData();
 
-    // Conversion des données en objet simple
-    const dataToSend = {
-      name: animalData.name || '',
-      species: animalData.species || '',
-      habitat_id: animalData.habitat_id?.toString() || '',
-      characteristics: animalData.characteristics || '',
-      weightRange: animalData.weightRange || '',
-      diet: animalData.diet || '',
-      vetNote: animalData.veterinary
-        ? JSON.stringify(animalData.veterinary)
-        : '',
-    };
-
-    // Ajout des données au FormData de manière sûre
-    Object.entries(dataToSend).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
+    // Ajoute les données de base de l'animal
+    Object.entries(animalData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && key !== 'images') {
+        if (typeof value === 'object') {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value.toString());
+        }
       }
     });
 
-    // Si on est en mode mise à jour, ajouter l'ID
-    if (animalData.id_animal) {
-      formData.append('id_animal', animalData.id_animal.toString());
-    }
-
-    // Gestion de l'image
+    // Ajoute le fichier s'il existe
     const file = this.selectedFile();
     if (file) {
       const secureName = this.fileSecurityService.sanitizeFileName(file.name);
@@ -350,19 +334,30 @@ export class AnimalManagementComponent implements OnInit {
   }
 
   /** Gère le fichier sélectionné de manière sécurisée */
-  async onFileSelected(file: File) {
+  async onFileSelected(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
     try {
       const validation = await this.fileSecurityService.validateFile(file);
-
       if (!validation.isValid) {
         this.toastService.showError(validation.errors.join('\n'));
         return;
       }
 
-      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
-      const secureFile = new File([file], secureName, { type: file.type });
+      // Définir le selectedFile pour le FormData
+      this.selectedFile.set(file);
 
-      this.selectedFile.set(secureFile);
+      // Créer l'aperçu
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.newAnimalData.update((current) => ({
+          ...current,
+          images: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+
       this.toastService.showSuccess('Image sélectionnée avec succès');
     } catch (error) {
       console.error('Erreur lors du traitement du fichier:', error);
