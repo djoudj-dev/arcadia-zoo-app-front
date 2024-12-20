@@ -9,10 +9,10 @@ import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment.development';
 import { firstValueFrom } from 'rxjs';
+import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
 import { ServiceManagementService } from './service/service.management.service';
-import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 
 /**
  * Composant de gestion des services
@@ -117,41 +117,32 @@ export class ServiceManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Gère le changement de fichier image
-   * @param event L'événement de changement de fichier
-   */
+  /** Gère le changement de fichier image */
   async onFileChange(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
 
-      // Vérification du type de fichier
-      if (!file.type.startsWith('image/')) {
-        console.error('Le fichier doit être une image');
+    try {
+      const validation = await this.fileSecurityService.validateFile(file);
+      if (!validation.isValid) {
+        this.toastService.showError(validation.errors.join('\n'));
         return;
       }
 
-      // Vérification de la taille du fichier (10MB max)
-      const maxSize = 10 * 1024 * 1024; // 10MB en octets
-      if (file.size > maxSize) {
-        console.error('Le fichier est trop volumineux (max 10MB)');
-        return;
-      }
+      // Définir le selectedFile pour le FormData
+      this.selectedFile.set(file);
 
-      try {
-        // Optimisation de l'image
-        const optimizedImage = await this.imageOptimizer.optimizeImage(file);
+      // Créer l'aperçu
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.newServiceData.images = reader.result as string;
+      };
+      reader.readAsDataURL(file);
 
-        // Conversion en base64 pour l'aperçu
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.newServiceData.images = reader.result as string;
-        };
-        reader.readAsDataURL(optimizedImage);
-      } catch (error) {
-        console.error("Erreur lors du traitement de l'image:", error);
-      }
+      this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
     }
   }
 
@@ -296,53 +287,30 @@ export class ServiceManagementComponent implements OnInit {
     return !!(name && description && features && hasFile);
   }
 
-  /** Construit le FormData pour l'envoi */
+  /** Construit le FormData de manière sécurisée */
   private buildFormData(): FormData {
     const formData = new FormData();
+    const serviceData = this.newServiceData;
 
-    // Ajout des données de base
-    formData.append('name', this.newServiceData.name ?? '');
-    formData.append('description', this.newServiceData.description ?? '');
+    // Ajoute les données de base du service
+    Object.entries(serviceData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (key === 'features') {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value.toString());
+        }
+      }
+    });
 
-    // Conversion des features en JSON string
-    if (this.newServiceData.features) {
-      formData.append('features', JSON.stringify(this.newServiceData.features));
-    }
-
-    // Gestion de l'image
+    // Ajoute le fichier s'il existe
     const file = this.selectedFile();
     if (file) {
-      formData.append('image', file, file.name);
-    } else if (this.newServiceData.images) {
-      // Si l'image vient d'une base64
-      const base64Data = this.newServiceData.images.split(',')[1];
-      const mimeType = this.newServiceData.images
-        .split(',')[0]
-        .split(':')[1]
-        .split(';')[0];
-      const blob = this.base64ToBlob(base64Data, mimeType);
-      formData.append('image', blob, `image.${mimeType.split('/')[1]}`);
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      formData.append('image', file, secureName);
     }
 
     return formData;
-  }
-
-  private base64ToBlob(base64: string, type: string): Blob {
-    const byteCharacters = atob(base64);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-      const byteNumbers = new Array(slice.length);
-
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      byteArrays.push(new Uint8Array(byteNumbers));
-    }
-
-    return new Blob(byteArrays, { type });
   }
 
   confirmDeleteService(serviceId: number) {
