@@ -1,8 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ToastService } from '../../../shared/components/toast/services/toast.service';
+import { catchError, switchMap } from 'rxjs/operators';
 import { TokenService } from '../../token/token.service';
 import { AuthService } from '../services/auth.service';
 
@@ -10,12 +9,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Injection des services nécessaires
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
-  const toastService = inject(ToastService);
 
-  // Récupération du token d'authentification à partir du TokenService
+  // Récupération du token
   const token = tokenService.getToken();
 
-  // Clone de la requête avec en-tête Authorization si le token existe
+  // Clone de la requête avec l'en-tête Authorization si le token existe
   const authReq = token
     ? req.clone({
         setHeaders: {
@@ -25,16 +23,32 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       })
     : req.clone({ withCredentials: true });
 
-  // Gestion de la requête suivante et traitement des erreurs
+  // Gestion des erreurs
   return next(authReq).pipe(
     catchError((error) => {
-      console.error("Erreur dans l'intercepteur:", error);
+      console.error('Erreur dans l’intercepteur:', error);
 
+      // Gestion des erreurs 401 ou 403
       if (error.status === 401 || error.status === 403) {
-        toastService.showError(
-          'Votre session a expiré. Vous avez été déconnecté.'
-        );
-        authService.logout();
+        if (!req.url.includes('auth/token/refresh')) {
+          return authService.refreshToken().pipe(
+            switchMap((newToken) => {
+              console.log('Nouveau token récupéré:', newToken);
+              tokenService.setToken(newToken.accessToken);
+              const retryReq = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newToken.accessToken}`,
+                },
+              });
+              return next(retryReq);
+            }),
+            catchError((refreshError) => {
+              console.error('Échec du rafraîchissement:', refreshError);
+              authService.logout();
+              return throwError(() => refreshError);
+            })
+          );
+        }
       }
 
       return throwError(() => error);

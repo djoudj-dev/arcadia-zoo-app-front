@@ -1,0 +1,100 @@
+// Collection: veterinary_reports
+{
+  "_id": ObjectId(),
+  "id_veterinary_reports": String,
+  "id_animal": Number,
+  "animal_name": String,
+  "id_user": Number,
+  "user_name": String,
+  "visit_date": Date,
+  "animal_state": {
+    type: String,
+    enum: ["Bonne santé", "Blessé", "Malade"]
+  },
+  "recommended_food_type": String,
+  "recommended_food_quantity": Number,
+  "food_unit": {
+    type: String,
+    enum: ["g", "kg"]
+  },
+  "additional_details": String,
+  "is_processed": Boolean,
+  "is_treated": Boolean,
+  "createdAt": Date,
+  "updatedAt": Date
+}
+
+// Collection: user_opinions
+{
+  "_id": ObjectId(),
+  "id_opinion": Number,
+  "name": String,
+  "date": String,
+  "message": String,
+  "rating": {
+    type: Number,
+    min: 0,
+    max: 5
+  },
+  "accepted": Boolean,
+  "validated": Boolean,
+  "rejected": Boolean,
+  "published_at": Date,
+  "created_at": Date,
+  "updated_at": Date
+}
+
+// Collection: habitat_comment
+{
+  "_id": ObjectId(),
+  "id_habitat_comment": String,
+  "id_habitat": Number,
+  "habitat_name": String,
+  "id_user": Number,
+  "user_name": String,
+  "comment": String,
+  "habitat_status": {
+    type: String,
+    enum: ["Optimal", "Acceptable", "Nécessite des améliorations"]
+  },
+  "is_resolved": Boolean,
+  "resolved_at": Date,
+  "resolved_by": String,
+  "createdAt": Date,
+  "updatedAt": Date
+}
+
+// Collection: animal_feeding_management
+{
+  "_id": ObjectId(),
+  "id_feeding": Number,
+  "animal_id": Number,
+  "feeding_date": Date,
+  "food_type": String,
+  "quantity": Number,
+  "unit": String,
+  "notes": String,
+  "user_id": Number,
+  "user_name": String,
+  "employe_id": Number,
+  "status": {
+    type: String,
+    enum: ["planned", "completed", "cancelled"]
+  },
+  "created_at": Date,
+  "updated_at": Date
+}
+
+// Collection: opening_hours
+{
+  "_id": ObjectId(),
+  "openingHours": [{
+    "days": String,
+    "hours": String,
+    "isOpen": Boolean
+  }],
+  "parkStatus": Boolean,
+  "statusMessage": String,
+  "updatedAt": Date,
+  "isCurrent": Boolean
+}

@@ -25,6 +25,7 @@
           [rounded]="true"
           [customClass]="'w-full font-medium transition-all duration-300'"
           (click)="navigateTo(item.route)"
+          (keydown)="$event.key === 'Enter' && navigateTo(item.route)"
         >
           @if (item.description) {
           <div
@@ -55,6 +56,7 @@
           'px-8 py-2 font-medium hover:shadow-lg transition-all duration-300'
         "
         (click)="goBack()"
+        (keydown)="$event.key === 'Enter' && goBack()"
       ></app-button>
     </div>
   </div>

@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { FileUploadDirective } from 'app/shared/directives/file-upload.directive';
 import { environment } from '../../../../../environments/environment.development';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
@@ -26,7 +25,6 @@ import { HabitatManagementService } from './service/habitat-management.service';
     SlicePipe,
     ToastComponent,
     ButtonComponent,
-    FileUploadDirective,
   ],
   templateUrl: './habitat-management.component.html',
 })
@@ -42,11 +40,11 @@ export class HabitatManagementComponent implements OnInit {
   imageBaseUrl = `${environment.apiUrl}/api`;
 
   constructor(
-    private router: Router,
-    private habitatManagement: HabitatManagementService,
-    private countResourceService: CountResourceService,
-    private toastService: ToastService,
-    private fileSecurityService: FileSecurityService
+    readonly router: Router,
+    readonly habitatManagement: HabitatManagementService,
+    readonly countResourceService: CountResourceService,
+    readonly toastService: ToastService,
+    readonly fileSecurityService: FileSecurityService
   ) {}
 
   ngOnInit() {
@@ -57,16 +55,19 @@ export class HabitatManagementComponent implements OnInit {
   loadHabitats() {
     this.habitatManagement.getAllHabitats().subscribe({
       next: (habitats) => {
+        const getImageUrl = (imagePath: string | null | undefined) => {
+          if (!imagePath) return null;
+          return imagePath.startsWith('http')
+            ? imagePath
+            : `${this.imageBaseUrl}/${imagePath.replace(/^\/+/, '')}`;
+        };
+
         this.habitats.set(
           habitats.map((habitat) => ({
             ...habitat,
             showDescription: false,
             showDeleteConfirmation: false,
-            images: habitat.images
-              ? habitat.images.startsWith('http')
-                ? habitat.images
-                : `${this.imageBaseUrl}/${habitat.images.replace(/^\/+/, '')}`
-              : null,
+            images: getImageUrl(habitat.images),
           }))
         );
       },
@@ -78,23 +79,18 @@ export class HabitatManagementComponent implements OnInit {
   }
 
   /** Gère le fichier sélectionné de manière sécurisée */
-  async onFileSelected(file: File) {
-    try {
-      const validation = await this.fileSecurityService.validateFile(file);
+  async onFileSelected(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      // Définir le selectedFile pour le FormData
+      this.selectedFile.set(file);
 
-      if (!validation.isValid) {
-        this.toastService.showError(validation.errors.join('\n'));
-        return;
-      }
-
-      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
-      const secureFile = new File([file], secureName, { type: file.type });
-
-      this.selectedFile.set(secureFile);
-      this.toastService.showSuccess('Image sélectionnée avec succès');
-    } catch (error) {
-      console.error('Erreur lors du traitement du fichier:', error);
-      this.toastService.showError('Erreur lors du traitement du fichier');
+      // Créer l'aperçu
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.newHabitatData.images = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -131,15 +127,16 @@ export class HabitatManagementComponent implements OnInit {
         .updateHabitat(this.newHabitatData.id_habitat!.toString(), formData)
         .subscribe({
           next: (updatedHabitat) => {
-            const imageUrl = updatedHabitat.images
-              ? updatedHabitat.images.startsWith('http')
-                ? updatedHabitat.images
-                : `${this.imageBaseUrl}/${updatedHabitat.images.replace(
-                    /^\/+/,
-                    ''
-                  )}`
-              : '';
+            const getUpdatedImageUrl = (
+              imagePath: string | null | undefined
+            ) => {
+              if (!imagePath) return '';
+              return imagePath.startsWith('http')
+                ? imagePath
+                : `${this.imageBaseUrl}/${imagePath.replace(/^\/+/, '')}`;
+            };
 
+            const imageUrl = getUpdatedImageUrl(updatedHabitat.images);
             this.habitats.update((habitats) =>
               habitats.map((h) =>
                 h.id_habitat === updatedHabitat.id_habitat
@@ -259,8 +256,18 @@ export class HabitatManagementComponent implements OnInit {
   /** Valide les données avant soumission */
   private validateHabitatData(isUpdate = false): boolean {
     const { name, description } = this.newHabitatData;
-    const hasFile = this.selectedFile() || isUpdate;
-    return !!(name && description && hasFile);
+    const hasImage =
+      isUpdate || this.newHabitatData.images || this.selectedFile();
+
+    console.log('Validation des données:', {
+      name,
+      description,
+      hasImage,
+      newHabitatData: this.newHabitatData,
+      selectedFile: this.selectedFile(),
+    });
+
+    return !!(name && description && hasImage);
   }
 
   /** Construit le FormData de manière sécurisée */

@@ -1,5 +1,4 @@
 import { SlicePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,6 +8,8 @@ import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment.development';
+import { firstValueFrom } from 'rxjs';
+import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
 import { ServiceManagementService } from './service/service.management.service';
@@ -21,7 +22,13 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [FormsModule, SlicePipe, ModalComponent, ButtonComponent],
+  imports: [
+    FormsModule,
+    SlicePipe,
+    ModalComponent,
+    ButtonComponent,
+    ToastComponent,
+  ],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -38,11 +45,11 @@ export class ServiceManagementComponent implements OnInit {
   isFeatureDropdownOpen = false;
 
   constructor(
-    private router: Router,
-    private serviceManagement: ServiceManagementService,
-    private toastService: ToastService,
-    private fileSecurityService: FileSecurityService,
-    private imageOptimizer: ImageOptimizerService
+    readonly router: Router,
+    readonly serviceManagement: ServiceManagementService,
+    readonly toastService: ToastService,
+    readonly fileSecurityService: FileSecurityService,
+    readonly imageOptimizer: ImageOptimizerService
   ) {}
 
   ngOnInit() {
@@ -110,63 +117,49 @@ export class ServiceManagementComponent implements OnInit {
     }
   }
 
-  /**
-   * Gère le changement de fichier image
-   * @param event L'événement de changement de fichier
-   */
+  /** Gère le changement de fichier image */
   async onFileChange(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
 
-      // Vérification du type de fichier
-      if (!file.type.startsWith('image/')) {
-        console.error('Le fichier doit être une image');
+    try {
+      const validation = await this.fileSecurityService.validateFile(file);
+      if (!validation.isValid) {
+        this.toastService.showError(validation.errors.join('\n'));
         return;
       }
 
-      // Vérification de la taille du fichier (10MB max)
-      const maxSize = 10 * 1024 * 1024; // 10MB en octets
-      if (file.size > maxSize) {
-        console.error('Le fichier est trop volumineux (max 10MB)');
-        return;
-      }
+      // Définir le selectedFile pour le FormData
+      this.selectedFile.set(file);
 
-      try {
-        // Optimisation de l'image
-        const optimizedImage = await this.imageOptimizer.optimizeImage(file);
+      // Créer l'aperçu
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.newServiceData.images = reader.result as string;
+      };
+      reader.readAsDataURL(file);
 
-        // Conversion en base64 pour l'aperçu
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.newServiceData.images = reader.result as string;
-        };
-        reader.readAsDataURL(optimizedImage);
-      } catch (error) {
-        console.error("Erreur lors du traitement de l'image:", error);
-      }
+      this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
     }
   }
 
   /** Crée un nouveau service */
-  createService() {
-    if (!this.validateServiceData()) {
-      this.toastService.showError('Veuillez remplir tous les champs requis');
-      return;
-    }
+  async createService() {
+    try {
+      const formData = this.buildFormData();
+      await firstValueFrom(this.serviceManagement.createService(formData));
 
-    const formData = this.buildFormData();
-    this.serviceManagement.createService(formData).subscribe({
-      next: () => {
-        this.loadServices();
-        this.resetForm();
-        this.toastService.showSuccess('Service créé avec succès');
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('Erreur lors de la création du service:', error);
-        this.toastService.showError('Erreur lors de la création du service');
-      },
-    });
+      this.toastService.showSuccess('Service créé avec succès !');
+
+      this.toggleModal(); // Ferme le modal
+      this.resetForm(); // Reset le formulaire
+      this.loadServices(); // Recharge la liste des services
+    } catch {
+      this.toastService.showError('Erreur lors de la création du service');
+    }
   }
 
   /** Met à jour un service existant */
@@ -211,29 +204,29 @@ export class ServiceManagementComponent implements OnInit {
       return;
     }
 
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) {
-      this.serviceManagement.deleteService(id_service).subscribe({
-        next: () => {
-          this.services.update((services) =>
-            services.filter((service) => service.id_service !== id_service)
-          );
-          this.toastService.showSuccess('Service supprimé avec succès');
-        },
-        error: (error) => {
-          console.error('Erreur lors de la suppression du service:', error);
-          this.toastService.showError(
-            'Erreur lors de la suppression du service'
-          );
-        },
-      });
-    }
+    this.serviceManagement.deleteService(id_service).subscribe({
+      next: () => {
+        this.services.update((services) =>
+          services.filter((service) => service.id_service !== id_service)
+        );
+        this.toastService.showSuccess('Service supprimé avec succès');
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression du service:', error);
+        this.toastService.showError('Erreur lors de la suppression du service');
+      },
+    });
   }
 
   /** Réinitialise le formulaire */
   resetForm() {
-    this.newServiceData = {};
+    this.newServiceData = {
+      name: '',
+      description: '',
+      features: [],
+      images: '',
+    };
     this.selectedFile.set(null);
-    this.isFeatureDropdownOpen = false;
   }
 
   /** Gère l'affichage de la description */
@@ -289,22 +282,34 @@ export class ServiceManagementComponent implements OnInit {
   /** Valide les données avant soumission */
   private validateServiceData(isUpdate = false): boolean {
     const { name, description, features } = this.newServiceData;
-    const hasFile = this.selectedFile() || isUpdate;
-    return !!(name && description && features && (hasFile || isUpdate));
+    const hasFile =
+      this.selectedFile() || isUpdate || this.newServiceData.images;
+    return !!(name && description && features && hasFile);
   }
 
-  /** Construit le FormData pour l'envoi */
+  /** Construit le FormData de manière sécurisée */
   private buildFormData(): FormData {
     const formData = new FormData();
-    Object.entries(this.newServiceData).forEach(([key, value]) => {
-      if (key === 'features') {
-        formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
-        formData.append(key, value.toString());
+    const serviceData = this.newServiceData;
+
+    // Ajoute les données de base du service
+    Object.entries(serviceData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (key === 'features') {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value.toString());
+        }
       }
     });
+
+    // Ajoute le fichier s'il existe
     const file = this.selectedFile();
-    if (file) formData.append('image', file, file.name);
+    if (file) {
+      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      formData.append('image', file, secureName);
+    }
+
     return formData;
   }
 

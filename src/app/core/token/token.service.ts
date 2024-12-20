@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'; // Vérifiez bien cette importation
 import { jwtDecode } from 'jwt-decode';
 import { Token } from '../auth/models/token.model';
 
@@ -13,18 +13,25 @@ export class TokenService {
   /** Clé de stockage du token */
   private readonly TOKEN_KEY = 'access_token';
 
-  /** Durée de validité du cookie en jours */
-  private readonly COOKIE_DURATION = 1;
-
   /**
    * Récupère le token stocké
    * @returns string|null Token ou null si non trouvé
    */
   getToken(): string | null {
     try {
-      return localStorage.getItem(this.TOKEN_KEY);
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      return token;
     } catch (error) {
       console.error('Erreur lors de la récupération du token:', error);
+      return null;
+    }
+  }
+
+  getDecodedToken(token: string): Token | null {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Erreur de décodage du token:', error);
       return null;
     }
   }
@@ -36,6 +43,7 @@ export class TokenService {
   setToken(token: string): void {
     try {
       localStorage.setItem(this.TOKEN_KEY, token);
+      console.log('Token stocké avec succès');
     } catch (error) {
       console.error('Erreur lors du stockage du token:', error);
     }
@@ -45,7 +53,12 @@ export class TokenService {
    * Supprime le token stocké
    */
   removeToken(): void {
-    this.deleteCookie(this.TOKEN_KEY);
+    try {
+      localStorage.removeItem(this.TOKEN_KEY);
+      console.log('Token supprimé avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la suppression du token:', error);
+    }
   }
 
   /**
@@ -54,12 +67,22 @@ export class TokenService {
    */
   isTokenExpired(): boolean {
     const token = this.getToken();
-    if (!token) return true;
+    if (!token) {
+      console.warn('Aucun token trouvé, considéré comme expiré.');
+      return true;
+    }
 
     const tokenPayload = this.decodeToken(token);
-    if (!tokenPayload?.exp) return true;
+    if (!tokenPayload?.exp) {
+      console.warn('Token invalide ou sans date d’expiration.');
+      return true;
+    }
 
-    return tokenPayload.exp * 1000 <= Date.now();
+    const isExpired = tokenPayload.exp * 1000 <= Date.now();
+    if (isExpired) {
+      console.warn('Token expiré.');
+    }
+    return isExpired;
   }
 
   /**
@@ -69,8 +92,7 @@ export class TokenService {
    */
   private decodeToken(token: string): Token | null {
     try {
-      const payload = token.split('.')[1];
-      return JSON.parse(atob(payload));
+      return jwtDecode<Token>(token);
     } catch (error) {
       console.error('Erreur lors du décodage du token:', error);
       return null;
@@ -78,43 +100,11 @@ export class TokenService {
   }
 
   /**
-   * Crée un cookie avec une durée de vie
-   * @param name Nom du cookie
-   * @param value Valeur du cookie
-   * @param days Durée de vie en jours
+   * (Optionnel) Préparez une méthode de rafraîchissement du token
    */
-  private setCookie(name: string, value: string, days: number): void {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString();
-    document.cookie = `${name}=${encodeURIComponent(
-      value
-    )}; expires=${expires}; path=/; SameSite=Strict`;
-  }
-
-  /**
-   * Récupère la valeur d'un cookie
-   * @param name Nom du cookie
-   * @returns string|null Valeur du cookie ou null si non trouvé
-   */
-  private getCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
-    return match ? decodeURIComponent(match[2]) : null;
-  }
-
-  /**
-   * Supprime un cookie
-   * @param name Nom du cookie à supprimer
-   */
-  private deleteCookie(name: string): void {
-    this.setCookie(name, '', -1);
-  }
-
-  getDecodedToken(token: string): Token | null {
-    try {
-      return jwtDecode(token);
-    } catch (error) {
-      console.error('Erreur de décodage du token:', error);
-      return null;
-    }
+  refreshToken(): void {
+    console.log('Préparez une logique pour rafraîchir le token.');
+    // Implémentez ici une requête vers votre backend pour renouveler le token.
   }
   getRefreshToken() {
     // Vérifier d'abord localStorage

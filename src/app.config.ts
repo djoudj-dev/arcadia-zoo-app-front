@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from 'app/app.routes';
-import { authInterceptor } from 'app/core/auth/interceptor/auth.interceptor';
+import { authInterceptor } from 'app/core/auth/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

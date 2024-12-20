@@ -51,9 +51,9 @@ export class ToastComponent implements OnInit, OnDestroy {
   visible = false;
   private onConfirm?: () => void;
   private onCancel?: () => void;
-  private subscription: Subscription = new Subscription();
+  readonly subscription: Subscription = new Subscription();
 
-  constructor(private toastService: ToastService) {}
+  constructor(readonly toastService: ToastService) {}
 
   ngOnInit() {
     this.subscription.add(

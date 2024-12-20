@@ -18,7 +18,7 @@ import {
 })
 export class OpeningHoursService {
   /** URL de base pour les endpoints des horaires */
-  private apiUrl = `${environment.apiUrl}/api/opening-hours`;
+  readonly apiUrl = `${environment.apiUrl}/api/opening-hours`;
 
   /** Signaux pour la gestion d'état réactive */
   public readonly openingHours = signal<OpeningHours[]>([]);
@@ -27,7 +27,7 @@ export class OpeningHoursService {
     message: '',
   });
 
-  constructor(private http: HttpClient) {
+  constructor(readonly http: HttpClient) {
     this.loadOpeningHours();
   }
 
@@ -99,7 +99,7 @@ export class OpeningHoursService {
         },
       ],
       parkStatus: data.parkStatus,
-      statusMessage: data.statusMessage || '',
+      statusMessage: data.statusMessage ?? '',
     };
 
     return this.http.put<OpeningHours>(`${this.apiUrl}/${id}`, payload).pipe(
@@ -147,7 +147,7 @@ export class OpeningHoursService {
       }
     });
 
-    if (!schedule || !schedule.isOpen) return false;
+    if (!schedule?.isOpen) return false;
 
     const [openHour, closeHour] = schedule.hours
       .split(' - ')
