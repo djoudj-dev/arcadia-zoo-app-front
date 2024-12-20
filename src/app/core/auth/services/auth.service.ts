@@ -82,7 +82,7 @@ export class AuthService {
     }
 
     return this.http
-      .post<TokenResponse>(`${this.apiUrl}/api/auth/refresh-token`, {
+      .post<TokenResponse>(`${this.apiUrl}/auth/token/refresh`, {
         refreshToken,
       })
       .pipe(
@@ -93,6 +93,7 @@ export class AuthService {
           );
         }),
         catchError((error) => {
+          console.error('Erreur de rafraîchissement du token:', error);
           this.logout();
           return throwError(() => error);
         })
@@ -125,7 +126,7 @@ export class AuthService {
    */
   private handleSuccessfulLogin(user: User): void {
     if (user.role && user.token) {
-      this.tokenSecurityService.setTokens(user.token, user.refreshToken || '');
+      this.tokenSecurityService.setTokens(user.token, user.refreshToken ?? '');
       this.currentUserSignal.set(user);
       localStorage.setItem('user', JSON.stringify(user));
       this.toastService.showSuccess('Connexion réussie. Bienvenue!');

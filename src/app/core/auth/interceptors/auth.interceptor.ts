@@ -2,7 +2,6 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { ToastService } from '../../../shared/components/toast/services/toast.service';
 import { TokenService } from '../../token/token.service';
 import { AuthService } from '../services/auth.service';
 
@@ -10,7 +9,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Injection des services nécessaires
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
-  const toastService = inject(ToastService);
 
   // Récupération du token
   const token = tokenService.getToken();
@@ -32,8 +30,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Gestion des erreurs 401 ou 403
       if (error.status === 401 || error.status === 403) {
-        if (tokenService.isTokenExpired()) {
-          console.warn('Le token est expiré. Tentative de rafraîchissement...');
+        if (!req.url.includes('auth/token/refresh')) {
           return authService.refreshToken().pipe(
             switchMap((newToken) => {
               console.log('Nouveau token récupéré:', newToken);
@@ -46,24 +43,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               return next(retryReq);
             }),
             catchError((refreshError) => {
-              console.error(
-                'Échec du rafraîchissement du token:',
-                refreshError
-              );
-              toastService.showError(
-                'Votre session a expiré. Vous avez été déconnecté.'
-              );
+              console.error('Échec du rafraîchissement:', refreshError);
               authService.logout();
               return throwError(() => refreshError);
             })
           );
         }
-
-        console.warn('Erreur non liée à un token expiré.');
-        toastService.showError(
-          'Votre session a expiré. Vous avez été déconnecté.'
-        );
-        authService.logout();
       }
 
       return throwError(() => error);
