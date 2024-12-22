@@ -28,6 +28,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       console.error('Erreur dans l’intercepteur:', error);
 
+      // Ignorer les erreurs pour les statuts 201
+      if (error.status === 201) {
+        console.warn('Statut 201 ignoré');
+        return next(authReq); // Continuer sans échec
+      }
+
       // Gestion des erreurs 401 ou 403
       if (error.status === 401 || error.status === 403) {
         if (!req.url.includes('auth/token/refresh')) {
