@@ -59,7 +59,23 @@ export class AnimalManagementService {
       formData: '[FormData]',
     });
 
-    return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
+    // Préparation des données pour correspondre au format attendu par le backend
+    const preparedFormData = new FormData();
+    formData.forEach((value, key) => {
+      // Conversion des clés pour correspondre au format du backend
+      switch (key) {
+        case 'weightRange':
+          preparedFormData.append('weight_range', value);
+          break;
+        case 'veterinary':
+          preparedFormData.append('vet_note', value);
+          break;
+        default:
+          preparedFormData.append(key, value);
+      }
+    });
+
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, preparedFormData).pipe(
       tap((response) => {
         console.log('Réponse brute du serveur:', response);
       }),
@@ -83,7 +99,6 @@ export class AnimalManagementService {
       tap(() => {
         console.log('=== FIN UPDATE ===');
         this.animalService.clearCache();
-        this.getAllAnimals().subscribe();
       }),
       catchError((error) => {
         console.error('=== ERREUR UPDATE ===');
