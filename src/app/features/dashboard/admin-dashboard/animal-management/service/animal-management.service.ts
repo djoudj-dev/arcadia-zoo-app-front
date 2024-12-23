@@ -64,11 +64,19 @@ export class AnimalManagementService {
           formData.forEach((value, key) => {
             if (key === 'id_animal') {
               animal[key] = parseInt(value as string);
+            } else {
+              (animal as Record<string, unknown>)[key] = value;
             }
           });
-          return animal as Animal;
+          return {
+            ...(animal as Animal),
+            images: this.formatImageUrl(animal.images as string),
+          };
         }
-        return response;
+        return {
+          ...response,
+          images: this.formatImageUrl(response.images),
+        };
       }),
       tap(() => this.animalService.clearCache()),
       catchError((error) => {
@@ -97,9 +105,21 @@ export class AnimalManagementService {
    */
   private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
-    return imagePath.startsWith('http') || imagePath.startsWith('https')
-      ? imagePath
-      : `${environment.apiUrl}/api/${imagePath.replace(/^\/+/, '')}`;
+
+    // Si l'URL contient déjà le domaine complet, la retourner telle quelle
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+    // Nettoyer le chemin en enlevant les préfixes en double
+    const cleanPath = imagePath
+      .replace(/^\/+/, '') // Enlève les slashes au début
+      .replace(/^api\/+/, '') // Enlève 'api/' au début
+      .replace(/^uploads\/+/, '') // Enlève 'uploads/' au début
+      .replace(/\/+/g, '/'); // Remplace les slashes multiples par un seul
+
+    // Construire l'URL complète
+    return `${environment.apiUrl}/api/uploads/animals/${cleanPath}`;
   }
 
   /**
