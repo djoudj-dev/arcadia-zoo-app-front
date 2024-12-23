@@ -212,7 +212,6 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Gère l'affichage de la description */
   toggleAnimal(animalId: number) {
-    // Récuprer l'état actuel de l'animal
     const currentAnimal = this.animals().find((a) => a.id_animal === animalId);
 
     if (!currentAnimal) {
@@ -220,7 +219,6 @@ export class AnimalManagementComponent implements OnInit {
       return;
     }
 
-    // Créer une nouvelle copie du tableau avec l'état mis à jour
     const updatedAnimals = this.animals().map((animal) => {
       if (animal.id_animal === animalId) {
         return {
@@ -231,10 +229,7 @@ export class AnimalManagementComponent implements OnInit {
       return animal;
     });
 
-    // Mettre à jour le signal avec le nouveau tableau
     this.animals.set(updatedAnimals);
-
-    // Forcer le regroupement des animaux pour mettre à jour l'affichage
     this.groupAnimals();
   }
 
@@ -279,7 +274,6 @@ export class AnimalManagementComponent implements OnInit {
     const formData = new FormData();
     const animalData = this.newAnimalData();
 
-    // Ajoute les données de base de l'animal
     Object.entries(animalData).forEach(([key, value]) => {
       if (value !== undefined && value !== null && key !== 'images') {
         if (typeof value === 'object') {
@@ -290,7 +284,6 @@ export class AnimalManagementComponent implements OnInit {
       }
     });
 
-    // Ajoute le fichier s'il existe
     const file = this.selectedFile();
     if (file) {
       const secureName = this.fileSecurityService.sanitizeFileName(file.name);
@@ -306,11 +299,10 @@ export class AnimalManagementComponent implements OnInit {
       if (!acc[animal.habitat_id]) {
         acc[animal.habitat_id] = [];
       }
-      acc[animal.habitat_id].push({ ...animal }); // Créer une nouvelle copie de l'animal
+      acc[animal.habitat_id].push({ ...animal });
       return acc;
     }, {} as Record<number, Animal[]>);
 
-    // Mettre à jour le signal avec les nouveaux groupes
     this.groupedAnimals.set(grouped);
   }
 
@@ -326,10 +318,8 @@ export class AnimalManagementComponent implements OnInit {
         return;
       }
 
-      // Définir le selectedFile pour le FormData
       this.selectedFile.set(file);
 
-      // Créer l'aperçu
       const reader = new FileReader();
       reader.onload = () => {
         this.newAnimalData.update((current) => ({
