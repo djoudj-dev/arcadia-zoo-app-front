@@ -140,12 +140,4 @@ export class AnimalService {
       animalId: animalId,
     });
   }
-
-  private formatImageUrl(imagePath: string | null): string {
-    if (!imagePath) return '';
-    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
-      return imagePath;
-    }
-    return `${environment.apiUrl}/api/${imagePath.replace(/^\/+/, '')}`;
-  }
 }

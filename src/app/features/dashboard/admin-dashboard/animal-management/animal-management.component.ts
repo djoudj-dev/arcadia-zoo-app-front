@@ -130,21 +130,20 @@ export class AnimalManagementComponent implements OnInit {
       const formData = this.buildFormData();
       const animalId = this.newAnimalData().id_animal!.toString();
 
+      // Log des données avant envoi
+      console.log('Données envoyées:', Object.fromEntries(formData.entries()));
+
       this.animalManagement.updateAnimal(animalId, formData).subscribe({
         next: (updatedAnimal) => {
+          // Mise à jour immédiate de l'animal dans la liste
           this.animals.update((animals) =>
             animals.map((a) =>
-              a.id_animal === updatedAnimal.id_animal
-                ? {
-                    ...updatedAnimal,
-                    showTime: a.showTime,
-                    images: updatedAnimal.images,
-                  }
-                : a
+              a.id_animal === updatedAnimal.id_animal ? updatedAnimal : a
             )
           );
+
           this.resetForm();
-          this.loadAnimals();
+          this.loadAnimals(); // Recharge la liste complète
           this.toastService.showSuccess('Animal mis à jour avec succès');
         },
         error: (error) => {
@@ -154,8 +153,6 @@ export class AnimalManagementComponent implements OnInit {
           );
         },
       });
-    } else {
-      this.toastService.showError('Veuillez remplir tous les champs requis');
     }
   }
 
