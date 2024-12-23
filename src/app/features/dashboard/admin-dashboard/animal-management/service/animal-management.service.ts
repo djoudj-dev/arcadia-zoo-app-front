@@ -83,6 +83,7 @@ export class AnimalManagementService {
       tap(() => {
         console.log('=== FIN UPDATE ===');
         this.animalService.clearCache();
+        this.getAllAnimals().subscribe();
       }),
       catchError((error) => {
         console.error('=== ERREUR UPDATE ===');
