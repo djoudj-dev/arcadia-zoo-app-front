@@ -64,25 +64,21 @@ export class AnimalManagementService {
         console.log('Réponse brute du serveur:', response);
       }),
       map((response) => {
-        if (!response || typeof response === 'string') {
-          // Reconstruire l'objet animal à partir du FormData
-          const animal: Partial<Animal> = {};
-          formData.forEach((value, key) => {
-            if (key === 'id_animal') {
-              animal[key] = parseInt(value as string);
-            } else {
-              (animal as Record<string, unknown>)[key] = value;
-            }
-          });
+        if (response && typeof response === 'object') {
           return {
-            ...(animal as Animal),
-            images: this.formatImageUrl(animal.images as string),
+            ...response,
+            images: this.formatImageUrl(response.images),
           };
         }
-        return {
-          ...response,
-          images: this.formatImageUrl(response.images),
-        };
+        const animal: Partial<Animal> = {};
+        formData.forEach((value, key) => {
+          if (key === 'id_animal') {
+            animal[key] = parseInt(value as string);
+          } else {
+            (animal as Record<string, unknown>)[key] = value;
+          }
+        });
+        return animal as Animal;
       }),
       tap(() => {
         console.log('=== FIN UPDATE ===');
