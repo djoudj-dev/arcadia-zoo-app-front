@@ -63,19 +63,23 @@ export class AnimalManagementService {
       tap((response) => {
         console.log('Réponse brute du serveur:', response);
       }),
-      map((response: Animal) => ({
-        id_animal: response.id_animal,
-        name: response.name,
-        species: response.species,
-        characteristics: response.characteristics,
-        diet: response.diet,
-        weightRange: response.weightRange,
-        habitat_id: response.habitat_id,
-        vetNote: response.veterinary,
-        images: this.formatImageUrl(response.images),
-        created_at: response.created_at,
-        updated_at: response.updated_at,
-      })),
+      map((response: Animal) => {
+        const mappedAnimal = {
+          id_animal: response.id_animal,
+          name: response.name,
+          species: response.species,
+          characteristics: response.characteristics,
+          diet: response.diet,
+          weightRange: response.weightRange,
+          habitat_id: response.habitat_id,
+          veterinary: response.veterinary,
+          images: this.formatImageUrl(response.images),
+          created_at: response.created_at,
+          updated_at: response.updated_at,
+        };
+        console.log('Animal après mapping:', mappedAnimal);
+        return mappedAnimal;
+      }),
       tap(() => {
         console.log('=== FIN UPDATE ===');
         this.animalService.clearCache();
