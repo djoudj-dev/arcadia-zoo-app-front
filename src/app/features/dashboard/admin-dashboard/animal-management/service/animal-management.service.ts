@@ -53,6 +53,11 @@ export class AnimalManagementService {
    * @returns Observable<Animal> Animal mis à jour avec ses informations complètes
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
+    console.log('=== DÉBUT UPDATE ===');
+    console.log('Données envoyées:', {
+      url: `${this.apiUrl}/${id}`,
+    });
+
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
       tap((response) => {
         console.log('Réponse brute du serveur:', response);
@@ -78,9 +83,13 @@ export class AnimalManagementService {
           images: this.formatImageUrl(response.images),
         };
       }),
-      tap(() => this.animalService.clearCache()),
+      tap(() => {
+        console.log('=== FIN UPDATE ===');
+        this.animalService.clearCache();
+      }),
       catchError((error) => {
-        console.error('Erreur de mise à jour:', error);
+        console.error('=== ERREUR UPDATE ===');
+        console.error('Détails:', error);
         return this.handleError("mise à jour de l'animal", error);
       })
     );
