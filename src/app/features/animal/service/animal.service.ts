@@ -15,21 +15,21 @@ import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-ma
 })
 export class AnimalService {
   /** URL de base de l'API des animaux */
-  private apiUrl = `${environment.apiUrl}/api/animals`;
+  readonly apiUrl = `${environment.apiUrl}/api/animals`;
 
   /** URL de base de l'API des habitats */
-  private habitatUrl = `${environment.apiUrl}/api/habitats`;
+  readonly habitatUrl = `${environment.apiUrl}/api/habitats`;
 
   /** URL de base pour les images */
-  private imageBaseUrl = `${environment.apiUrl}/api`;
+  readonly imageBaseUrl = `${environment.apiUrl}/api`;
 
   /** Cache pour stocker les données des animaux */
-  private animalsCache$ = new ReplaySubject<Animal[]>(1);
+  readonly animalsCache$ = new ReplaySubject<Animal[]>(1);
 
   /** Indique si le cache est chargé */
   private cacheLoaded = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(readonly http: HttpClient) {}
 
   /**
    * Récupère la liste de tous les animaux.
@@ -66,7 +66,7 @@ export class AnimalService {
         const animal = animals.find((animal) => animal.id_animal === id);
 
         // Vérifie si l'animal existe et formate l'URL de l'image si nécessaire
-        if (animal && animal.images) {
+        if (animal?.images) {
           animal.images = animal.images.startsWith('http')
             ? animal.images
             : `${environment.apiUrl}/api/${animal.images}`;
@@ -139,5 +139,13 @@ export class AnimalService {
       feedingTime: new Date(),
       animalId: animalId,
     });
+  }
+
+  private formatImageUrl(imagePath: string | null): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
+    return `${environment.apiUrl}/api/${imagePath.replace(/^\/+/, '')}`;
   }
 }

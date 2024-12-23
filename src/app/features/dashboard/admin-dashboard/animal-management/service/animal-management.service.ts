@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, Observable, tap, throwError, map } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
 import { AnimalService } from '../../../../animal/service/animal.service';
 import { Animal } from '../model/animal.model';
@@ -63,9 +63,16 @@ export class AnimalManagementService {
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
-      tap(() => {
+      tap((response) => {
+        console.log('Réponse de mise à jour:', response);
         this.animalService.clearCache();
       }),
+      map((animal) => ({
+        ...animal,
+        images: animal.images
+          ? `${environment.apiUrl}/api/${animal.images}`
+          : '',
+      })),
       catchError((error) => {
         console.error('Erreur détaillée (mise à jour):', error);
         return this.handleError("mise à jour de l'animal", error);
