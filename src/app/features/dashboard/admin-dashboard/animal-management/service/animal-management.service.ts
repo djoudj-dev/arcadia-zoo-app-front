@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, tap, throwError, map } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
 import { AnimalService } from '../../../../animal/service/animal.service';
 import { Animal } from '../model/animal.model';
@@ -69,15 +69,21 @@ export class AnimalManagementService {
       }),
       map((animal) => ({
         ...animal,
-        images: animal.images
-          ? `${environment.apiUrl}/api/${animal.images}`
-          : '',
+        images: this.formatImageUrl(animal.images),
       })),
       catchError((error) => {
         console.error('Erreur détaillée (mise à jour):', error);
         return this.handleError("mise à jour de l'animal", error);
       })
     );
+  }
+
+  private formatImageUrl(imagePath: string | null): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
+    return `${environment.apiUrl}/api/${imagePath.replace(/^\/+/, '')}`;
   }
 
   /**
