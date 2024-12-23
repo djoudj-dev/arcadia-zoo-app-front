@@ -53,22 +53,24 @@ export class AnimalManagementService {
    * @returns Observable<Animal> Animal mis à jour avec ses informations complètes
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
-    // Log simple des données
-    console.log('ID:', id);
-    console.log('FormData contenu:');
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
-
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
       tap((response) => {
-        console.log('Réponse du serveur:', response);
-        this.animalService.clearCache();
+        console.log('Réponse brute du serveur:', response);
       }),
-      map((animal) => ({
-        ...animal,
-        images: this.formatImageUrl(animal.images),
-      })),
+      map((response) => {
+        if (!response || typeof response === 'string') {
+          // Reconstruire l'objet animal à partir du FormData
+          const animal: Partial<Animal> = {};
+          formData.forEach((value, key) => {
+            if (key === 'id_animal') {
+              animal[key] = parseInt(value as string);
+            }
+          });
+          return animal as Animal;
+        }
+        return response;
+      }),
+      tap(() => this.animalService.clearCache()),
       catchError((error) => {
         console.error('Erreur de mise à jour:', error);
         return this.handleError("mise à jour de l'animal", error);
