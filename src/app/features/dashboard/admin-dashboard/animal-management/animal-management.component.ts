@@ -130,46 +130,31 @@ export class AnimalManagementComponent implements OnInit {
       const formData = this.buildFormData();
       const animalId = this.newAnimalData().id_animal!.toString();
 
-      // Vérification des données avant envoi
-      console.log('Données actuelles:', this.newAnimalData());
-
       this.animalManagement.updateAnimal(animalId, formData).subscribe({
         next: (updatedAnimal) => {
-          console.log('Comparaison des données:');
-          console.log('Données envoyées:', this.newAnimalData());
-          console.log('Données reçues:', updatedAnimal);
+          console.log('Animal mis à jour:', updatedAnimal);
 
-          if (updatedAnimal.name !== this.newAnimalData().name) {
-            console.warn(
-              'Attention: Les données reçues ne correspondent pas aux données envoyées'
-            );
-          }
-
-          // Mise à jour immédiate du cache local
+          // Mise à jour de l'animal dans la liste
           this.animals.update((animals) =>
             animals.map((a) =>
               a.id_animal === updatedAnimal.id_animal
                 ? {
                     ...updatedAnimal,
                     showTime: a.showTime,
-                    images: updatedAnimal.images
-                      ? `${this.imageBaseUrl}/${updatedAnimal.images}`
-                      : a.images,
+                    images: updatedAnimal.images ?? a.images,
                   }
                 : a
             )
           );
 
-          // Forcer le rechargement des données
-          this.loadAnimals();
-
           this.resetForm();
+          this.loadAnimals(); // Recharge la liste complète
           this.toastService.showSuccess('Animal mis à jour avec succès');
         },
         error: (error) => {
-          console.error('Erreur complète:', error);
+          console.error("Erreur lors de la mise à jour de l'animal:", error);
           this.toastService.showError(
-            `Erreur lors de la mise à jour de l'animal: ${error.message}`
+            "Erreur lors de la mise à jour de l'animal"
           );
         },
       });
