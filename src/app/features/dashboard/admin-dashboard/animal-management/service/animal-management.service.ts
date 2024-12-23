@@ -56,6 +56,7 @@ export class AnimalManagementService {
     console.log('=== DÉBUT UPDATE ===');
     console.log('Données envoyées:', {
       url: `${this.apiUrl}/${id}`,
+      formData: '[FormData]',
     });
 
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
