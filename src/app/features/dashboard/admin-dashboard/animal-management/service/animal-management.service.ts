@@ -1,8 +1,4 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
@@ -66,38 +62,15 @@ export class AnimalManagementService {
    * @returns Observable<Animal> Animal mis à jour avec ses informations complètes
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
-    // Ajout des headers nécessaires
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-    });
-
-    // Conversion du FormData en objet pour le body
-    const animalData: Record<string, string | Blob> = {};
-    formData.forEach((value, key) => {
-      animalData[key] = value;
-    });
-
-    // Envoi de l'objet JSON au lieu du FormData
-    return this.http
-      .put<Animal>(`${this.apiUrl}/${id}`, animalData, { headers })
-      .pipe(
-        tap(() => {
-          this.animalService.clearCache();
-        }),
-        catchError((error) => {
-          console.error('Erreur détaillée (mise à jour):', error);
-          if (error.error instanceof ErrorEvent) {
-            console.error('Erreur client:', error.error.message);
-          } else {
-            console.error('Erreur serveur:', {
-              status: error.status,
-              message: error.message,
-              error: error.error,
-            });
-          }
-          return this.handleError("mise à jour de l'animal", error);
-        })
-      );
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
+      tap(() => {
+        this.animalService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur détaillée (mise à jour):', error);
+        return this.handleError("mise à jour de l'animal", error);
+      })
+    );
   }
 
   /**
