@@ -132,23 +132,19 @@ export class AnimalManagementComponent implements OnInit {
 
       this.animalManagement.updateAnimal(animalId, formData).subscribe({
         next: (updatedAnimal) => {
-          console.log('Animal mis à jour:', updatedAnimal);
-
-          // Mise à jour de l'animal dans la liste
           this.animals.update((animals) =>
             animals.map((a) =>
               a.id_animal === updatedAnimal.id_animal
                 ? {
                     ...updatedAnimal,
                     showTime: a.showTime,
-                    images: updatedAnimal.images ?? a.images,
+                    images: updatedAnimal.images,
                   }
                 : a
             )
           );
-
           this.resetForm();
-          this.loadAnimals(); // Recharge la liste complète
+          this.loadAnimals();
           this.toastService.showSuccess('Animal mis à jour avec succès');
         },
         error: (error) => {
