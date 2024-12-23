@@ -53,6 +53,13 @@ export class AnimalManagementService {
    * @returns Observable<Animal> Animal mis à jour avec ses informations complètes
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
+    // Log simple des données
+    console.log('ID:', id);
+    console.log('FormData contenu:');
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, formData).pipe(
       tap((response) => {
         console.log('Réponse du serveur:', response);

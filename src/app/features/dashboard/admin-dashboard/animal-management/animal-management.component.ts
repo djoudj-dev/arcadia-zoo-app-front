@@ -284,21 +284,34 @@ export class AnimalManagementComponent implements OnInit {
     const formData = new FormData();
     const animalData = this.newAnimalData();
 
-    Object.entries(animalData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && key !== 'images') {
-        if (typeof value === 'object') {
-          formData.append(key, JSON.stringify(value));
-        } else {
-          formData.append(key, value.toString());
-        }
-      }
+    // Ajout forcé de tous les champs requis
+    const requiredFields = [
+      'name',
+      'species',
+      'characteristics',
+      'weightRange',
+      'diet',
+      'habitat_id',
+      'vetNote',
+    ];
+
+    requiredFields.forEach((field) => {
+      const value = animalData[field as keyof Animal];
+      formData.append(field, value?.toString() ?? '');
     });
 
+    // Gestion de l'image
     const file = this.selectedFile();
     if (file) {
-      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
-      formData.append('images', file, secureName);
+      formData.append('images', file);
+    } else if (animalData.images) {
+      formData.append('images', animalData.images);
     }
+
+    // Log pour debug
+    formData.forEach((value, key) => {
+      console.log(`FormData - ${key}:`, value);
+    });
 
     return formData;
   }
