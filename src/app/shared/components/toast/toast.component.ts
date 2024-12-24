@@ -45,7 +45,7 @@ import { ToastService } from './services/toast.service';
 })
 export class ToastComponent implements OnInit, OnDestroy {
   @Input() message!: string;
-  @Input() type: 'success' | 'error' | 'confirm' = 'success';
+  @Input() type: 'success' | 'error' | 'warning' | 'confirm' = 'success';
   @Input() customClass = '';
 
   visible = false;
@@ -78,6 +78,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     const typeClasses = {
       success: 'bg-green-100 text-green-800 border-l-4 border-green-500',
       error: 'bg-red-100 text-red-800 border-l-4 border-red-500',
+      warning: 'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500',
       confirm: 'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500',
     };
     return `${baseClasses} ${typeClasses[this.type]}`;

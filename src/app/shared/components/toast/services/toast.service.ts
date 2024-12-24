@@ -3,7 +3,7 @@ import { Subject, timer } from 'rxjs';
 
 export interface Toast {
   message: string;
-  type: 'success' | 'error' | 'confirm';
+  type: 'success' | 'error' | 'confirm' | 'warning';
   duration?: number;
   onConfirm?: () => void;
   onCancel?: () => void;
@@ -13,14 +13,22 @@ export interface Toast {
   providedIn: 'root',
 })
 export class ToastService {
-  private toastSubject = new Subject<Toast>();
-  private hideToastSubject = new Subject<void>();
+  private readonly toastSubject = new Subject<Toast>();
+  private readonly hideToastSubject = new Subject<void>();
 
   toast$ = this.toastSubject.asObservable();
   hideToast$ = this.hideToastSubject.asObservable();
 
   showSuccess(message: string, duration: number = 3000) {
     this.toastSubject.next({ message, type: 'success', duration });
+
+    timer(duration).subscribe(() => {
+      this.hideToastSubject.next();
+    });
+  }
+
+  showWarning(message: string, duration: number = 3000) {
+    this.toastSubject.next({ message, type: 'warning', duration });
 
     timer(duration).subscribe(() => {
       this.hideToastSubject.next();
