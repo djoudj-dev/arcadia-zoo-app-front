@@ -54,25 +54,32 @@ export class AnimalManagementService {
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
     console.log('=== DÉBUT UPDATE ===');
-    console.log('Données envoyées:', {
-      url: `${this.apiUrl}/${id}`,
-      formData: '[FormData]',
-    });
 
     // Préparation des données pour correspondre au format attendu par le backend
     const preparedFormData = new FormData();
     formData.forEach((value, key) => {
+      // Log de chaque paire clé-valeur
+      console.log(`Donnée originale - ${key}:`, value);
+
       // Conversion des clés pour correspondre au format du backend
       switch (key) {
         case 'weightRange':
+          console.log('Conversion weightRange → weight_range');
           preparedFormData.append('weight_range', value);
           break;
         case 'veterinary':
+          console.log('Conversion veterinary → vet_note');
           preparedFormData.append('vet_note', value);
           break;
         default:
+          console.log(`Pas de conversion pour ${key}`);
           preparedFormData.append(key, value);
       }
+    });
+    // Log du FormData préparé
+    console.log('FormData préparé:');
+    preparedFormData.forEach((value, key) => {
+      console.log(`${key}:`, value);
     });
 
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, preparedFormData).pipe(
@@ -80,6 +87,12 @@ export class AnimalManagementService {
         console.log('Réponse brute du serveur:', response);
       }),
       map((response: Animal) => {
+        // Vérification de la réponse
+        if (!response) {
+          console.error('Réponse vide du serveur');
+          throw new Error('Réponse vide du serveur');
+        }
+
         const mappedAnimal = {
           id_animal: response.id_animal,
           name: response.name,
@@ -138,6 +151,7 @@ export class AnimalManagementService {
       .replace(/^\/+/, '') // Enlève les slashes au début
       .replace(/^api\/+/, '') // Enlève 'api/' au début
       .replace(/^uploads\/+/, '') // Enlève 'uploads/' au début
+      .replace(/^animals\/+/, '') // Enlève 'animals/' au début
       .replace(/\/+/g, '/'); // Remplace les slashes multiples par un seul
 
     // Construire l'URL complète

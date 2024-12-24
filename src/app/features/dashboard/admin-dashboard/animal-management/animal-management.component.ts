@@ -130,29 +130,23 @@ export class AnimalManagementComponent implements OnInit {
       const formData = this.buildFormData();
       const animalId = this.newAnimalData().id_animal!.toString();
 
-      // Log pour débogger
-      formData.forEach((value, key) => {
-        console.log(`${key}:`, value);
-      });
-
       this.animalManagement.updateAnimal(animalId, formData).subscribe({
         next: (updatedAnimal) => {
-          // Mise à jour locale avec l'URL d'image correcte
+          // Mise à jour locale immédiate
           const formattedAnimal = {
             ...updatedAnimal,
-            images: updatedAnimal.images
-              ? `${this.imageBaseUrl}/${updatedAnimal.images}`.replace(
-                  /\/+/g,
-                  '/'
-                )
-              : '',
+            images: updatedAnimal.images ?? '',
           };
 
+          // Mise à jour de l'animal dans la liste
           this.animals.update((animals) =>
             animals.map((a) =>
               a.id_animal === formattedAnimal.id_animal ? formattedAnimal : a
             )
           );
+
+          // Regrouper les animaux mis à jour
+          this.groupAnimals();
 
           this.resetForm();
           this.toastService.showSuccess('Animal mis à jour avec succès');
