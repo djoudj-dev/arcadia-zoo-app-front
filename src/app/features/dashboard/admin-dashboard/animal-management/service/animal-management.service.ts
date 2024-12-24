@@ -76,7 +76,6 @@ export class AnimalManagementService {
           preparedFormData.append(key, value);
       }
     });
-
     // Log du FormData préparé
     console.log('FormData préparé:');
     preparedFormData.forEach((value, key) => {
@@ -152,6 +151,7 @@ export class AnimalManagementService {
       .replace(/^\/+/, '') // Enlève les slashes au début
       .replace(/^api\/+/, '') // Enlève 'api/' au début
       .replace(/^uploads\/+/, '') // Enlève 'uploads/' au début
+      .replace(/^animals\/+/, '') // Enlève 'animals/' au début
       .replace(/\/+/g, '/'); // Remplace les slashes multiples par un seul
 
     // Construire l'URL complète
