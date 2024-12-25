@@ -107,12 +107,24 @@ export class AnimalManagementService {
           console.log('Status: Success');
           console.log('Données reçues:', JSON.stringify(response, null, 2));
 
-          // Vérification des différences
-          console.log('=== VÉRIFICATION DES DIFFÉRENCES ===');
-          console.log('Nom envoyé:', formData.get('name'));
-          console.log('Nom reçu:', response.name);
-          if (formData.get('name') !== response.name) {
-            console.warn('⚠️ Différence détectée dans le nom!');
+          // Vérification détaillée des différences
+          const originalData: Record<string, string> = {};
+          formData.forEach((value, key) => {
+            originalData[key] =
+              typeof value === 'string' ? value : String(value);
+          });
+          const differences = Object.keys(originalData).filter(
+            (key) => originalData[key] !== response[key as keyof Animal]
+          );
+
+          if (differences.length > 0) {
+            console.warn('=== DIFFÉRENCES DÉTECTÉES ===');
+            differences.forEach((key) => {
+              console.warn(`${key}:`, {
+                envoyé: originalData[key],
+                reçu: response[key as keyof Animal],
+              });
+            });
           }
         },
         error: (error) => {
