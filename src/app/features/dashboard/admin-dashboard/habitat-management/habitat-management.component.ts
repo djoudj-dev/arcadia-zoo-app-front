@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Habitat } from './model/habitat.model';

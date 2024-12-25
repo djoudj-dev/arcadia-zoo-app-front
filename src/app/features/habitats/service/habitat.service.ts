@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { Animal } from '../../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 
@@ -11,12 +11,12 @@ import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/mode
 })
 export class HabitatService {
   /** URL de base pour toutes les images **/
-  private imageBaseUrl = `${environment.apiUrl}/api`;
+  private readonly imageBaseUrl = `${environment.apiUrl}/api`;
 
-  private apiUrl = `${environment.apiUrl}/api/habitats`;
-  private habitatsCache = signal<Habitat[]>([]);
+  private readonly apiUrl = `${environment.apiUrl}/api/habitats`;
+  private readonly habitatsCache = signal<Habitat[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   /**
    * Récupère tous les habitats et construit les URLs complètes des images.
@@ -48,11 +48,11 @@ export class HabitatService {
   getHabitatById(id: number): Observable<Habitat | undefined> {
     return this.getHabitats().pipe(
       map((habitats) => habitats.find((habitat) => habitat.id_habitat === id)),
-      tap((habitat) => {
-        if (habitat && habitat.images) {
-          habitat.images = this.formatImageUrl('habitats', habitat.images);
-        }
-      })
+      tap(
+        (habitat) =>
+          habitat?.images &&
+          (habitat.images = this.formatImageUrl('habitats', habitat.images))
+      )
     );
   }
 

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileSecurityService } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HabitatService } from '../../../habitats/service/habitat.service';
 import { Habitat } from '../habitat-management/model/habitat.model';

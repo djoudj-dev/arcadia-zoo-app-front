@@ -2,19 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
 import { map, Observable, of, tap } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServiceService {
   /** URL de base pour toutes les images **/
-  private imageBaseUrl = `${environment.apiUrl}/api`;
+  private readonly imageBaseUrl = `${environment.apiUrl}/api`;
 
-  private apiUrl = `${environment.apiUrl}/api/services`; // Base URL pour les services
-  private servicesCache = signal<Service[]>([]); // Cache pour les services
+  private readonly apiUrl = `${environment.apiUrl}/api/services`; // Base URL pour les services
+  private readonly servicesCache = signal<Service[]>([]); // Cache pour les services
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   /**
    * Récupère tous les services et construit les URLs complètes des images.

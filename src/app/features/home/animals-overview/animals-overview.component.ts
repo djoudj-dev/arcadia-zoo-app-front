@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
 import { Animal } from '../../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { AnimalOverviewService } from './service/animal-overview.service';
@@ -29,8 +29,8 @@ export class AnimalsOverviewComponent implements OnInit {
   imageBaseUrl = `${environment.apiUrl}`;
 
   constructor(
-    private animalOverviewService: AnimalOverviewService,
-    private route: ActivatedRoute
+    private readonly animalOverviewService: AnimalOverviewService,
+    private readonly route: ActivatedRoute
   ) {}
 
   /** Initialise le composant en chargeant les animaux */
@@ -59,7 +59,7 @@ export class AnimalsOverviewComponent implements OnInit {
    * @returns Liste aléatoire d'animaux
    */
   getRandomAnimals(animals: Animal[], count: number): Animal[] {
-    return animals.sort(() => 0.5 - Math.random()).slice(0, count);
+    return [...animals].sort(() => 0.5 - Math.random()).slice(0, count);
   }
 
   /**
