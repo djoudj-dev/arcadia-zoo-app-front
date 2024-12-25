@@ -1,8 +1,4 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
@@ -58,7 +54,13 @@ export class AnimalManagementService {
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
     console.log('=== DÉBUT UPDATE ===');
-    console.log('URL appelée:', `${this.apiUrl}/${id}`);
+    console.log('ID:', id);
+
+    // Log des données originales
+    console.log('=== DONNÉES ORIGINALES ===');
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
 
     // Validation des données d'entrée
     if (!id || !formData) {
@@ -67,87 +69,92 @@ export class AnimalManagementService {
     }
 
     const preparedFormData = new FormData();
-    formData.forEach((value, key) => {
-      console.log(`Donnée originale - ${key}:`, value);
 
-      // Conversion et nettoyage des données
+    // Log de la transformation des données
+    console.log('=== TRANSFORMATION DES DONNÉES ===');
+    formData.forEach((value, key) => {
       switch (key) {
         case 'weightRange':
-          console.log('Conversion weightRange → weight_range');
+          console.log(`Conversion ${key} → weight_range:`, value);
           preparedFormData.append('weight_range', value);
           break;
-        case 'images':
-          if (typeof value === 'string' && value.includes(environment.apiUrl)) {
-            const cleanImagePath = value.split('/').pop() ?? '';
-            console.log('Image path nettoyé:', cleanImagePath);
-            preparedFormData.append('images', cleanImagePath);
-          } else {
-            preparedFormData.append('images', value);
-          }
+        case 'images': {
+          const cleanImagePath =
+            (typeof value === 'string' ? value : String(value))
+              .split('/')
+              .pop() ?? '';
+          console.log(`Nettoyage image - Original:`, value);
+          console.log(`Nettoyage image - Final:`, cleanImagePath);
+          preparedFormData.append('images', cleanImagePath);
           break;
+        }
         default:
+          console.log(`Copie directe - ${key}:`, value);
           preparedFormData.append(key, value);
       }
     });
 
-    // Vérification finale du FormData
-    console.log('=== FormData Final ===');
+    // Log final avant envoi
+    console.log('=== DONNÉES PRÉPARÉES POUR ENVOI ===');
     preparedFormData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
 
-    // Ajout des headers appropriés
-    const headers = new HttpHeaders();
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, preparedFormData).pipe(
+      tap({
+        next: (response) => {
+          console.log('=== RÉPONSE DU SERVEUR ===');
+          console.log('Status: Success');
+          console.log('Données reçues:', JSON.stringify(response, null, 2));
 
-    return this.http
-      .put<Animal>(`${this.apiUrl}/${id}`, preparedFormData, { headers })
-      .pipe(
-        tap({
-          next: (response) => {
-            console.log('Succès - Réponse du serveur:', response);
-          },
-          error: (error) => {
-            console.error('Erreur détaillée:', {
-              status: error.status,
-              statusText: error.statusText,
-              error: error.error,
-              message: error.message,
-            });
-          },
-        }),
-        map((response: Animal) => {
-          if (!response) {
-            throw new Error('Réponse vide du serveur');
+          // Vérification des différences
+          console.log('=== VÉRIFICATION DES DIFFÉRENCES ===');
+          console.log('Nom envoyé:', formData.get('name'));
+          console.log('Nom reçu:', response.name);
+          if (formData.get('name') !== response.name) {
+            console.warn('⚠️ Différence détectée dans le nom!');
           }
+        },
+        error: (error) => {
+          console.error('=== ERREUR DE REQUÊTE ===');
+          console.error('Status:', error.status);
+          console.error('Message:', error.message);
+          console.error('Erreur complète:', error);
+        },
+      }),
+      map((response: Animal) => {
+        if (!response) {
+          throw new Error('Réponse vide du serveur');
+        }
 
-          const mappedAnimal = {
-            id_animal: response.id_animal,
-            name: response.name,
-            species: response.species,
-            characteristics: response.characteristics,
-            diet: response.diet,
-            weightRange: response.weightRange,
-            habitat_id: response.habitat_id,
-            veterinary: response.veterinary,
-            images: this.formatImageUrl(response.images),
-            created_at: response.created_at,
-            updated_at: response.updated_at,
-          };
-          console.log('Animal mappé:', mappedAnimal);
-          return mappedAnimal;
-        }),
-        tap(() => {
-          console.log('=== FIN UPDATE ===');
-          this.animalService.clearCache();
-        }),
-        catchError((error) => {
-          console.error('=== ERREUR UPDATE ===', error);
-          if (error.status === 413) {
-            return throwError(() => new Error('Fichier trop volumineux'));
-          }
-          return this.handleError("mise à jour de l'animal", error);
-        })
-      );
+        const mappedAnimal = {
+          id_animal: response.id_animal,
+          name: response.name,
+          species: response.species,
+          characteristics: response.characteristics,
+          diet: response.diet,
+          weightRange: response.weightRange,
+          habitat_id: response.habitat_id,
+          veterinary: response.veterinary,
+          images: this.formatImageUrl(response.images),
+          created_at: response.created_at,
+          updated_at: response.updated_at,
+        };
+        console.log('Animal mappé:', mappedAnimal);
+        return mappedAnimal;
+      }),
+      tap(() => {
+        console.log('=== FIN UPDATE ===');
+        this.animalService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('=== ERREUR UPDATE ===', error);
+        if (error.status === 413) {
+          return throwError(() => new Error('Fichier trop volumineux'));
+        }
+        return this.handleError("mise à jour de l'animal", error);
+      })
+    );
   }
 
   /**
