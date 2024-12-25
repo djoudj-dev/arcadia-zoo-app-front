@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment.development';
@@ -54,6 +58,7 @@ export class AnimalManagementService {
    */
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
     console.log('=== DÉBUT UPDATE ===');
+    console.log('URL appelée:', `${this.apiUrl}/${id}`);
 
     // Validation des données d'entrée
     if (!id || !formData) {
@@ -72,52 +77,69 @@ export class AnimalManagementService {
           preparedFormData.append('weight_range', value);
           break;
         case 'images':
-          if (typeof value === 'string') {
-            const cleanImagePath = value
-              .replace(`${environment.apiUrl}/api/uploads/animals/`, '')
-              .replace(`${environment.apiUrl}/api/`, '')
-              .replace('uploads/animals/', '');
+          if (typeof value === 'string' && value.includes(environment.apiUrl)) {
+            const cleanImagePath = value.split('/').pop() ?? '';
+            console.log('Image path nettoyé:', cleanImagePath);
             preparedFormData.append('images', cleanImagePath);
           } else {
             preparedFormData.append('images', value);
           }
           break;
         default:
-          console.log(`Pas de conversion pour ${key}`);
           preparedFormData.append(key, value);
       }
     });
 
-    // Log du FormData préparé
-    console.log('FormData préparé:');
+    // Vérification finale du FormData
+    console.log('=== FormData Final ===');
     preparedFormData.forEach((value, key) => {
       console.log(`${key}:`, value);
     });
 
-    return this.http.put<Animal>(`${this.apiUrl}/${id}`, preparedFormData).pipe(
-      tap((response) => {
-        console.log('Réponse brute du serveur:', response);
-      }),
-      map((response: Animal) => {
-        if (!response) {
-          throw new Error('Réponse vide du serveur');
-        }
+    // Ajout des headers appropriés
+    const headers = new HttpHeaders();
 
-        return {
-          ...response,
-          images: this.formatImageUrl(response.images),
-          weightRange: response.weightRange ?? response.weightRange,
-        };
-      }),
-      tap(() => {
-        console.log('=== FIN UPDATE ===');
-        this.animalService.clearCache();
-      }),
-      catchError((error) => {
-        console.error('=== ERREUR UPDATE ===', error);
-        return this.handleError("mise à jour de l'animal", error);
-      })
-    );
+    return this.http
+      .put<Animal>(`${this.apiUrl}/${id}`, preparedFormData, { headers })
+      .pipe(
+        tap({
+          next: (response) => {
+            console.log('Succès - Réponse du serveur:', response);
+          },
+          error: (error) => {
+            console.error('Erreur détaillée:', {
+              status: error.status,
+              statusText: error.statusText,
+              error: error.error,
+              message: error.message,
+            });
+          },
+        }),
+        map((response: Animal) => {
+          if (!response) {
+            throw new Error('Réponse vide du serveur');
+          }
+
+          const mappedAnimal = {
+            ...response,
+            images: this.formatImageUrl(response.images),
+            weightRange: response.weightRange ?? response.weightRange,
+          };
+          console.log('Animal mappé:', mappedAnimal);
+          return mappedAnimal;
+        }),
+        tap(() => {
+          console.log('=== FIN UPDATE ===');
+          this.animalService.clearCache();
+        }),
+        catchError((error) => {
+          console.error('=== ERREUR UPDATE ===', error);
+          if (error.status === 413) {
+            return throwError(() => new Error('Fichier trop volumineux'));
+          }
+          return this.handleError("mise à jour de l'animal", error);
+        })
+      );
   }
 
   /**
@@ -163,12 +185,19 @@ export class AnimalManagementService {
     action: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    const errorMessage =
-      error.error instanceof ErrorEvent
-        ? `Erreur client lors de ${action}: ${error.error.message}`
-        : `Erreur serveur lors de ${action}: Code ${error.status}, ${
-            error.error?.message || error.message
-          }`;
+    let errorMessage = `Erreur lors de ${action}: `;
+
+    if (error.error instanceof ErrorEvent) {
+      // Erreur côté client
+      errorMessage += `Une erreur est survenue: ${error.error.message}`;
+    } else {
+      // Erreur côté serveur
+      errorMessage += `Le serveur a retourné: ${error.status} - ${error.statusText}`;
+      if (error.error?.message) {
+        errorMessage += `\nDétail: ${error.error.message}`;
+      }
+    }
+
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
