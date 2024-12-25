@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import { ServiceService } from '../../zoo-services/service/service.service';
 
 /**

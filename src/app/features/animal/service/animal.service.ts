@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
 import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-management/models/feeding-data.model';
 
