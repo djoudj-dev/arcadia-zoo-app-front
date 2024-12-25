@@ -3,7 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, interval, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { User } from '../../../features/dashboard/admin-dashboard/account-management/model/user.model';
 import { ToastService } from '../../../shared/components/toast/services/toast.service';
 import { TokenSecurityService } from '../../token/token-security.service';

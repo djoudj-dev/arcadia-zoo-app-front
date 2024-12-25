@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
 
@@ -17,12 +17,12 @@ import { HabitatService } from '../../habitats/service/habitat.service';
 })
 export class HabitatsOverviewComponent implements OnInit {
   /** Injection du DestroyRef pour la gestion des souscriptions */
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Signal contenant la liste des habitats */
   habitats = signal<Habitat[]>([]);
 
-  constructor(private habitatService: HabitatService) {}
+  constructor(private readonly habitatService: HabitatService) {}
 
   /** Initialise le composant en chargeant la liste des habitats */
   ngOnInit() {
@@ -52,13 +52,16 @@ export class HabitatsOverviewComponent implements OnInit {
    * @returns L'habitat avec l'URL de l'image formatée
    */
   private formatHabitatImage(habitat: Habitat): Habitat {
+    let formattedImage = '';
+    if (habitat.images) {
+      formattedImage = habitat.images.startsWith('http')
+        ? habitat.images
+        : `${environment.apiUrl}/uploads/${habitat.images}`;
+    }
+
     return {
       ...habitat,
-      images: habitat.images
-        ? habitat.images.startsWith('http')
-          ? habitat.images
-          : `${environment.apiUrl}/uploads/${habitat.images}`
-        : '',
+      images: formattedImage,
     };
   }
 }
