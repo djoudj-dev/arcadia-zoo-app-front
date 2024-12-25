@@ -121,9 +121,17 @@ export class AnimalManagementService {
           }
 
           const mappedAnimal = {
-            ...response,
+            id_animal: response.id_animal,
+            name: response.name,
+            species: response.species,
+            characteristics: response.characteristics,
+            diet: response.diet,
+            weightRange: response.weightRange,
+            habitat_id: response.habitat_id,
+            veterinary: response.veterinary,
             images: this.formatImageUrl(response.images),
-            weightRange: response.weightRange ?? response.weightRange,
+            created_at: response.created_at,
+            updated_at: response.updated_at,
           };
           console.log('Animal mappé:', mappedAnimal);
           return mappedAnimal;
