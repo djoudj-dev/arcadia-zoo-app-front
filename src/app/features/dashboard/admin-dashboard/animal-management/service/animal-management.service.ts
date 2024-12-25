@@ -55,27 +55,39 @@ export class AnimalManagementService {
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
     console.log('=== DÉBUT UPDATE ===');
 
-    // Préparation des données pour correspondre au format attendu par le backend
+    // Validation des données d'entrée
+    if (!id || !formData) {
+      console.error('ID ou FormData manquant');
+      return throwError(() => new Error('Données invalides'));
+    }
+
     const preparedFormData = new FormData();
     formData.forEach((value, key) => {
-      // Log de chaque paire clé-valeur
       console.log(`Donnée originale - ${key}:`, value);
 
-      // Conversion des clés pour correspondre au format du backend
+      // Conversion et nettoyage des données
       switch (key) {
         case 'weightRange':
           console.log('Conversion weightRange → weight_range');
           preparedFormData.append('weight_range', value);
           break;
-        case 'veterinary':
-          console.log('Conversion veterinary → vet_note');
-          preparedFormData.append('vet_note', value);
+        case 'images':
+          if (typeof value === 'string') {
+            const cleanImagePath = value
+              .replace(`${environment.apiUrl}/api/uploads/animals/`, '')
+              .replace(`${environment.apiUrl}/api/`, '')
+              .replace('uploads/animals/', '');
+            preparedFormData.append('images', cleanImagePath);
+          } else {
+            preparedFormData.append('images', value);
+          }
           break;
         default:
           console.log(`Pas de conversion pour ${key}`);
           preparedFormData.append(key, value);
       }
     });
+
     // Log du FormData préparé
     console.log('FormData préparé:');
     preparedFormData.forEach((value, key) => {
@@ -87,35 +99,22 @@ export class AnimalManagementService {
         console.log('Réponse brute du serveur:', response);
       }),
       map((response: Animal) => {
-        // Vérification de la réponse
         if (!response) {
-          console.error('Réponse vide du serveur');
           throw new Error('Réponse vide du serveur');
         }
 
-        const mappedAnimal = {
-          id_animal: response.id_animal,
-          name: response.name,
-          species: response.species,
-          characteristics: response.characteristics,
-          diet: response.diet,
-          weightRange: response.weightRange,
-          habitat_id: response.habitat_id,
-          veterinary: response.veterinary,
+        return {
+          ...response,
           images: this.formatImageUrl(response.images),
-          created_at: response.created_at,
-          updated_at: response.updated_at,
+          weightRange: response.weightRange ?? response.weightRange,
         };
-        console.log('Animal après mapping:', mappedAnimal);
-        return mappedAnimal;
       }),
       tap(() => {
         console.log('=== FIN UPDATE ===');
         this.animalService.clearCache();
       }),
       catchError((error) => {
-        console.error('=== ERREUR UPDATE ===');
-        console.error('Détails:', error);
+        console.error('=== ERREUR UPDATE ===', error);
         return this.handleError("mise à jour de l'animal", error);
       })
     );
@@ -141,20 +140,16 @@ export class AnimalManagementService {
   private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
 
-    // Si l'URL contient déjà le domaine complet, la retourner telle quelle
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
+    // Si l'URL est déjà complète, la retourner
+    if (imagePath.startsWith('http')) return imagePath;
 
-    // Nettoyer le chemin en enlevant les préfixes en double
+    // Nettoyer le chemin
     const cleanPath = imagePath
-      .replace(/^\/+/, '') // Enlève les slashes au début
-      .replace(/^api\/+/, '') // Enlève 'api/' au début
-      .replace(/^uploads\/+/, '') // Enlève 'uploads/' au début
-      .replace(/^animals\/+/, '') // Enlève 'animals/' au début
-      .replace(/\/+/g, '/'); // Remplace les slashes multiples par un seul
+      .replace(/^\/+/, '')
+      .replace(/^api\/+/, '')
+      .replace(/^uploads\/+animals\/+/, '')
+      .replace(/\/+/g, '/');
 
-    // Construire l'URL complète
     return `${environment.apiUrl}/api/uploads/animals/${cleanPath}`;
   }
 
