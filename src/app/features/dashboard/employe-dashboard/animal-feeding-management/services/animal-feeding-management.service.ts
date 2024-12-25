@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/services/auth.service';
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
   Observable,

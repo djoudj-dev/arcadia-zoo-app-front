@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Service } from '../dashboard/admin-dashboard/service-management/model/service.model';
 import { ServiceService } from './service/service.service';

@@ -7,7 +7,7 @@ import { ImageOptimizerService } from 'app/core/services/image-optimizer.service
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { Feature } from './model/feature.model';

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
-import { environment } from 'environments/environment.development';
+import { environment } from 'environments/environment';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
 
