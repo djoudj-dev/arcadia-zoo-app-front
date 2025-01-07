@@ -182,7 +182,9 @@ export class AnimalManagementComponent implements OnInit {
     }
   }
 
-  /** Supprime un animal */
+  /** Supprime un animal
+   * @param animalId Identifiant de l'animal à supprimer
+   */
   deleteAnimal(animalId: number) {
     const animal = this.animals().find((a) => a.id_animal === animalId);
     if (!animal) return;
