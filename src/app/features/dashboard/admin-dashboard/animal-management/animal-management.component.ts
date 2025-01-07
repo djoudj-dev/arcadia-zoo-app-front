@@ -173,7 +173,9 @@ export class AnimalManagementComponent implements OnInit {
     }
   }
 
-  /** Prépare le formulaire pour la modification */
+  /** Prépare le formulaire pour la modification
+   * @param animalId Identifiant de l'animal à modifier
+   */
   editAnimal(animalId: number) {
     const animal = this.animals().find((a) => a.id_animal === animalId);
     if (animal) {
