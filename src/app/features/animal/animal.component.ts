@@ -21,20 +21,16 @@ import { AnimalService } from './service/animal.service';
   styles: [],
 })
 export class AnimalComponent implements OnInit {
-  /** Signal contenant les données de l'animal */
+  /** Utilisation de signaux pour la réactivité */
   animal = signal<Animal | undefined>(undefined);
-
-  /** Signal contenant les données de l'habitat de l'animal */
   habitat = signal<Habitat | undefined>(undefined);
-
-  /** Signal contenant le dernier rapport vétérinaire de l'animal */
   latestVeterinaryReport = signal<VeterinaryReports | undefined>(undefined);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private animalService: AnimalService,
-    private veterinaryReportsService: VeterinaryReportsService
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly animalService: AnimalService,
+    private readonly veterinaryReportsService: VeterinaryReportsService
   ) {}
 
   /** Initialise le composant en chargeant les données de l'animal */

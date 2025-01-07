@@ -39,7 +39,7 @@
           id="name"
           formControlName="name"
           class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
-          [class.border-red-500]="opinionForm.get('name')?.errors?.['required'] && 
+          [class.border-red-500]="opinionForm.get('name')?.errors?.['required'] &&
                                  opinionForm.get('name')?.touched"
           placeholder="Votre nom"
         />
@@ -71,7 +71,7 @@
           formControlName="message"
           rows="4"
           class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans resize-none transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
-          [class.border-red-500]="opinionForm.get('message')?.errors?.['required'] && 
+          [class.border-red-500]="opinionForm.get('message')?.errors?.['required'] &&
                                  opinionForm.get('message')?.touched"
           placeholder="Partagez votre expérience..."
         ></textarea>
@@ -123,7 +123,7 @@
           formControlName="date"
           [max]="currentDate"
           class="w-full p-3.5 border-2 border-tertiary/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-tertiary/30 focus:border-tertiary font-sans transition-all duration-300 ease-in-out bg-white hover:border-tertiary/50"
-          [class.border-red-500]="opinionForm.get('date')?.errors?.['required'] && 
+          [class.border-red-500]="opinionForm.get('date')?.errors?.['required'] &&
                                  opinionForm.get('date')?.touched"
         />
         <!-- Messages d'erreur pour la date -->
@@ -152,6 +152,8 @@
       [rounded]="true"
       [color]="'tertiary'"
       class="w-full sm:w-1/2 md:w-1/3 font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+      (keyup)="onSubmit()"
+      (keyup.enter)="onSubmit()"
       (click)="onSubmit()"
     ></app-button>
   </div>

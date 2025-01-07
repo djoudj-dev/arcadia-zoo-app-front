@@ -47,9 +47,9 @@ export class AddUserOpinionsComponent implements OnInit {
   @Output() closeModal = new EventEmitter<void>();
 
   constructor(
-    private fb: FormBuilder,
-    private userOpinionsService: UserOpinionsService,
-    private toastService: ToastService
+    private readonly fb: FormBuilder,
+    private readonly userOpinionsService: UserOpinionsService,
+    private readonly toastService: ToastService
   ) {
     this.currentDate = new Date().toISOString().split('T')[0];
     this.opinionForm = this.fb.group({}); // Initialisation requise
@@ -80,7 +80,7 @@ export class AddUserOpinionsComponent implements OnInit {
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(500),
-          Validators.pattern(/^[a-zA-ZÀ-ÿ0-9\s.,!?'"()\-]*$/),
+          Validators.pattern(/^[a-zA-ZÀ-ÿ0-9\s.,!?'"()-]*$/),
         ],
       ],
       rating: [0, [Validators.required, Validators.min(1), Validators.max(5)]],
