@@ -47,7 +47,7 @@ export class AnimalManagementService {
       }
     });
 
-    return this.http.post<Animal>(this.apiUrl, animalData, { headers }).pipe(
+    return this.http.post<Animal>(this.apiUrl, formData, { headers }).pipe(
       tap(() => this.animalService.clearCache()),
       catchError((error) => this.handleError("création de l'animal", error))
     );

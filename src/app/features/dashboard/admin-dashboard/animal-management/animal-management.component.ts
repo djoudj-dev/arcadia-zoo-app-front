@@ -173,7 +173,9 @@ export class AnimalManagementComponent implements OnInit {
     }
   }
 
-  /** Prépare le formulaire pour la modification */
+  /** Prépare le formulaire pour la modification
+   * @param animalId Identifiant de l'animal à modifier
+   */
   editAnimal(animalId: number) {
     const animal = this.animals().find((a) => a.id_animal === animalId);
     if (animal) {
@@ -182,7 +184,9 @@ export class AnimalManagementComponent implements OnInit {
     }
   }
 
-  /** Supprime un animal */
+  /** Supprime un animal
+   * @param animalId Identifiant de l'animal à supprimer
+   */
   deleteAnimal(animalId: number) {
     const animal = this.animals().find((a) => a.id_animal === animalId);
     if (!animal) return;
@@ -302,6 +306,13 @@ export class AnimalManagementComponent implements OnInit {
       formData.append('images', file);
     }
 
+    formData.forEach((value, key) => {
+      console.log(
+        `Contenu du FormData : ${key} = ${
+          typeof value === 'object' ? JSON.stringify(value) : value
+        }`
+      ); // Log pour vérifier
+    });
     return formData;
   }
 
