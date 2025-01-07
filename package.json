@@ -4,11 +4,11 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
-    "start": "nx serve --host 0.0.0.0 --port 4200",
-    "build": "nx build",
-    "watch": "nx build --watch --configuration development",
-    "test": "nx test",
-    "e2e": "nx e2e"
+    "start": "ng serve --host 0.0.0.0 --port 4200",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
