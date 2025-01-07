@@ -26,7 +26,7 @@ jobs:
           node-version: "18.19" # Assurez-vous que c'est la bonne version pour votre projet
 
       - name: Install dependencies
-        run: npm ci # Utiliser npm ci pour une installation plus rapide et reproductible
+        run: npm ci --legacy-peer-deps # Utiliser npm ci pour une installation plus rapide et reproductible
 
       - name: Build project
         run: npm run build -- --configuration production
