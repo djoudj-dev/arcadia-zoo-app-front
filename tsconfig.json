@@ -1,8 +1,7 @@
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "src", // définit 'src' comme base pour les chemins de fichiers
+    "baseUrl": "src",
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
@@ -26,7 +25,8 @@
     "paths": {
       "@shared/*": ["./src/app/shared/*"],
       "@core/*": ["./src/app/core/*"]
-    }
+    },
+    "types": ["node", "jasmine", "json-schema", "estree", "bonjour"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
