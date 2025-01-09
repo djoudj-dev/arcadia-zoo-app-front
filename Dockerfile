@@ -19,8 +19,11 @@ RUN npm run build -- --configuration production
 # Utiliser une image Nginx pour servir l'application
 FROM nginx:alpine
 
-# Copier les fichiers de build vers le répertoire Nginx
-COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
+# Copier les fichiers de build dans le répertoire Nginx
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
+
+# Copier la configuration NGINX personnalisée
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
 EXPOSE 80
