@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Deploy to Docker
 
 on:
   push:
@@ -15,26 +15,20 @@ jobs:
         with:
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
         with:
-          node-version: "18.19" # Assurez-vous que c'est la bonne version pour votre projet
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps # Utiliser npm ci pour une installation plus rapide et reproductible
-
-      - name: Build project
-        run: npm run build -- --configuration production
-
-      - name: Deploy to VPS
-        run: |
-          # Copier les fichiers de build vers le VPS
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 49999" --rsync-path="sudo rsync" dist/arcadia-zoo-app-front/ ubuntu@${{ secrets.VPS_HOST }}:/var/www/nedellec-julien.fr/html/
-
-          # Vérifier si le fichier index.html est bien présent sur le VPS
-          ssh -o StrictHostKeyChecking=no -p 49999 ubuntu@${{ secrets.VPS_HOST }} "ls -l /var/www/nedellec-julien.fr/html/"
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:latest
+            ${{ secrets.DOCKER_USERNAME }}/arcadia-zoo-app-front:${{ github.sha }}
