@@ -1,12 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { catchError, EMPTY, firstValueFrom, switchMap, tap } from 'rxjs';
+import { firstValueFrom, from } from 'rxjs';
 import { ToastService } from '../../../../shared/components/toast/services/toast.service';
 import {
   OpeningHours,
@@ -15,10 +14,6 @@ import {
 } from './models/opening-hours.model';
 import { OpeningHoursService } from './services/opening-hours.service';
 
-/**
- * Composant de gestion des horaires d'ouverture
- * Permet à l'administrateur de modifier les horaires et le statut du parc
- */
 @Component({
   selector: 'app-opening-hours-management',
   standalone: true,
@@ -36,54 +31,28 @@ export class OpeningHoursManagementComponent implements OnInit {
   });
 
   /** Formulaire pour les horaires */
-  hoursForm = new FormGroup({
-    weekdayHours: new FormControl('', Validators.required),
-    weekendHours: new FormControl('', Validators.required),
-    isWeekdayOpen: new FormControl(true),
-    isWeekendOpen: new FormControl(true),
-    parkStatus: new FormControl(true),
-    statusMessage: new FormControl(''),
-  });
+  hoursForm: FormGroup;
 
   /** ID des horaires */
-  openingHoursId = signal<string>('1');
+  openingHoursId = signal<string | null>(null);
 
   constructor(
-    private fb: FormBuilder,
-    private openingHoursService: OpeningHoursService,
-    private toastService: ToastService
+    private readonly fb: FormBuilder,
+    private readonly openingHoursService: OpeningHoursService,
+    private readonly toastService: ToastService
   ) {
-    this.initForm();
+    this.hoursForm = this.createForm();
   }
 
   ngOnInit(): void {
-    // Charger les horaires initiaux
-    this.openingHoursService.getCurrentOpeningHours().subscribe({
-      next: (hours) => {
-        if (hours) {
-          this.openingHours.set([hours]);
-          this.parkStatus.set({
-            isOpen: hours.parkStatus,
-            message: hours.statusMessage || '',
-          });
-          if (hours._id) {
-            this.openingHoursId.set(hours._id);
-          }
-          this.loadCurrentHours();
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des horaires:', error);
-        this.toastService.showError('Erreur lors du chargement des horaires');
-      },
-    });
+    this.loadInitialData();
   }
 
   /**
-   * Crée le formulaire pour les horaires
+   * Initialise le formulaire avec les valeurs par défaut
    */
-  private initForm(): void {
-    this.hoursForm = this.fb.group({
+  private createForm(): FormGroup {
+    return this.fb.group({
       weekdayHours: ['', Validators.required],
       weekendHours: ['', Validators.required],
       isWeekdayOpen: [true],
@@ -94,70 +63,92 @@ export class OpeningHoursManagementComponent implements OnInit {
   }
 
   /**
-   * Charge les horaires actuels
+   * Charge les données initiales des horaires
    */
-  private loadCurrentHours(): void {
-    console.log('Début de loadCurrentHours');
-    const currentHours = this.openingHoursService.openingHours();
-    console.log('Horaires actuels récupérés:', currentHours);
+  private loadInitialData(): void {
+    this.openingHoursService.getCurrentOpeningHours().subscribe({
+      next: (hours) => {
+        if (hours) {
+          this.openingHours.set([hours]);
+          this.parkStatus.set({
+            isOpen: hours.parkStatus,
+            message: hours.statusMessage || '',
+          });
 
-    if (currentHours && currentHours.length > 0) {
-      const hours = currentHours[0];
+          if (hours._id) {
+            this.openingHoursId.set(hours._id);
+          } else {
+            console.warn("L'ID des horaires n'a pas été retourné par l'API.");
+          }
 
-      const weekdaySchedule = hours.openingHours.find((h) =>
-        h.days.includes('Lundi')
-      );
-      const weekendSchedule = hours.openingHours.find((h) =>
-        h.days.includes('Samedi')
-      );
+          this.patchForm(hours);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des horaires:', error);
+        this.toastService.showError('Erreur lors du chargement des horaires');
+      },
+    });
+  }
 
-      this.hoursForm.patchValue({
-        weekdayHours: weekdaySchedule?.hours || '',
-        weekendHours: weekendSchedule?.hours || '',
-        isWeekdayOpen: weekdaySchedule?.isOpen ?? true,
-        isWeekendOpen: weekendSchedule?.isOpen ?? true,
-        parkStatus: hours.parkStatus,
-        statusMessage: hours.statusMessage || '',
-      });
-    }
+  /**
+   * Met à jour le formulaire avec les données actuelles
+   * @param hours Les horaires actuels
+   */
+  private patchForm(hours: OpeningHours): void {
+    const weekdaySchedule = hours.openingHours.find((h) =>
+      h.days.includes('Lundi')
+    );
+    const weekendSchedule = hours.openingHours.find((h) =>
+      h.days.includes('Samedi')
+    );
+
+    this.hoursForm.patchValue({
+      weekdayHours: weekdaySchedule?.hours ?? '',
+      weekendHours: weekendSchedule?.hours ?? '',
+      isWeekdayOpen: weekdaySchedule?.isOpen ?? true,
+      isWeekendOpen: weekendSchedule?.isOpen ?? true,
+      parkStatus: hours.parkStatus,
+      statusMessage: hours.statusMessage || '',
+    });
   }
 
   /**
    * Met à jour les horaires
    */
-  async updateHours() {
+  async updateHours(): Promise<void> {
     console.log('Début de updateHours');
+
     try {
-      let correctId: string;
-      try {
-        correctId = await this.openingHoursService.getOpeningHoursId();
-        console.log('ID récupéré:', correctId);
-      } catch {
-        correctId = '1';
-        console.log("Utilisation de l'ID par défaut:", correctId);
+      // Tenter de récupérer l'ID depuis le service
+      const id = await this.openingHoursService.getOpeningHoursId();
+
+      if (!id) {
+        console.error("L'ID des horaires est manquant.");
+        this.toastService.showError('ID des horaires non défini');
+        return;
       }
 
-      const formData: OpeningHoursFormData = {
-        weekdayHours: this.hoursForm.get('weekdayHours')?.value ?? '',
-        weekendHours: this.hoursForm.get('weekendHours')?.value ?? '',
-        isWeekdayOpen: this.hoursForm.get('isWeekdayOpen')?.value ?? true,
-        isWeekendOpen: this.hoursForm.get('isWeekendOpen')?.value ?? true,
-        parkStatus: this.hoursForm.get('parkStatus')?.value ?? true,
-        statusMessage: this.hoursForm.get('statusMessage')?.value ?? '',
-      };
+      if (this.hoursForm.invalid) {
+        console.error('Formulaire invalide:', this.hoursForm.errors);
+        this.toastService.showError(
+          'Veuillez corriger les erreurs du formulaire'
+        );
+        return;
+      }
 
-      console.log('FormData préparé:', formData);
+      const formData = this.prepareFormData();
+      console.log('Données du formulaire:', formData);
 
       const response = await firstValueFrom(
-        this.openingHoursService.updateOpeningHours(correctId, formData)
+        this.openingHoursService.updateOpeningHours(id, formData)
       );
 
-      console.log('Résultat de la mise à jour:', response);
+      console.log("Réponse de l'API:", response);
 
       if (response) {
-        const updatedHours = Array.isArray(response) ? response : [response];
-        this.openingHours.set(updatedHours);
-        this.loadCurrentHours();
+        this.openingHours.set([response]);
+        this.patchForm(response);
         this.toastService.showSuccess('Horaires mis à jour avec succès');
       }
     } catch (error) {
@@ -167,66 +158,126 @@ export class OpeningHoursManagementComponent implements OnInit {
   }
 
   /**
-   * Sauvegarde les modifications des horaires
+   * Prépare les données à partir du formulaire
+   * @returns Les données formatées pour l'API
    */
-  saveChanges(): void {
-    console.log('Méthode saveChanges() appelée');
-    console.log('État du formulaire:', this.hoursForm.value);
-    console.log('ID des horaires:', this.openingHoursId());
+  private prepareFormData(): OpeningHoursFormData {
+    return {
+      weekdayHours: this.hoursForm.get('weekdayHours')?.value || '',
+      weekendHours: this.hoursForm.get('weekendHours')?.value || '',
+      isWeekdayOpen: this.hoursForm.get('isWeekdayOpen')?.value ?? true,
+      isWeekendOpen: this.hoursForm.get('isWeekendOpen')?.value ?? true,
+      parkStatus: this.hoursForm.get('parkStatus')?.value ?? true,
+      statusMessage: this.hoursForm.get('statusMessage')?.value || '',
+    };
+  }
 
-    if (!this.openingHoursId()) {
-      this.toastService.showError('ID des horaires non défini');
-      return;
+  /**
+   * Crée de nouveaux horaires
+   */
+  async createNewHours(): Promise<void> {
+    const formData = this.prepareFormData(); // Prépare les données
+    console.log('Données préparées pour création:', formData);
+
+    try {
+      const response = await firstValueFrom(
+        from(this.openingHoursService.createOpeningHours(formData))
+      );
+
+      if (response?._id) {
+        console.log('Réponse de création:', response);
+        this.openingHoursId.set(response._id); // Définit le nouvel ID
+        this.openingHours.set([response]);
+        this.patchForm(response); // Met à jour le formulaire avec la nouvelle réponse
+        this.toastService.showSuccess('Horaires créés avec succès');
+      } else {
+        throw new Error("La création n'a pas retourné d'ID valide.");
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création des horaires:', error);
+      this.toastService.showError('Erreur lors de la création des horaires');
     }
+  }
 
-    if (this.hoursForm.valid) {
-      const formData: OpeningHoursFormData = {
-        weekdayHours: this.hoursForm.get('weekdayHours')?.value ?? '',
-        weekendHours: this.hoursForm.get('weekendHours')?.value ?? '',
-        isWeekdayOpen: this.hoursForm.get('isWeekdayOpen')?.value ?? true,
-        isWeekendOpen: this.hoursForm.get('isWeekendOpen')?.value ?? true,
-        parkStatus: this.hoursForm.get('parkStatus')?.value ?? true,
-        statusMessage: this.hoursForm.get('statusMessage')?.value ?? '',
+  /**
+   * Sauvegarde les modifications ou crée de nouveaux horaires
+   */
+  async saveChanges(): Promise<void> {
+    try {
+      if (!this.hoursForm.valid) {
+        this.toastService.showError(
+          'Veuillez remplir correctement tous les champs requis'
+        );
+        return;
+      }
+
+      const openingHoursId = this.openingHoursId();
+
+      if (!openingHoursId) {
+        console.log('Aucun ID trouvé, création de nouveaux horaires.');
+        await this.createNewHours(); // Appelle createNewHours si aucun ID
+      } else {
+        console.log('ID trouvé, mise à jour des horaires.');
+        await this.updateHours(); // Appelle updateHours si un ID est défini
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      this.toastService.showError('Erreur lors de la sauvegarde des horaires');
+    }
+  }
+
+  async ensureOpeningHoursExist(): Promise<string> {
+    try {
+      const id = await this.openingHoursService.getOpeningHoursId();
+      return id;
+    } catch {
+      // Si aucun horaire n'existe, en créer un nouveau
+      const defaultData: OpeningHoursFormData = {
+        weekdayHours: '9h00 - 18h00',
+        weekendHours: '10h00 - 19h00',
+        isWeekdayOpen: true,
+        isWeekendOpen: true,
+        parkStatus: true,
+        statusMessage: '',
       };
 
-      this.openingHoursService
-        .updateOpeningHours(this.openingHoursId(), formData)
-        .pipe(
-          tap(() => console.log('Mise à jour des horaires réussie')),
-          catchError((error) => {
-            console.error('Erreur détaillée:', error);
-            this.toastService.showError(
-              `Erreur lors de la mise à jour des horaires: ${error.message}`
-            );
-            return EMPTY;
-          }),
-          switchMap(() => {
-            const parkStatus: ParkStatus = {
-              isOpen: formData.parkStatus,
-              message: formData.statusMessage || '',
-            };
-            return this.openingHoursService.updateParkStatus(parkStatus);
-          })
-        )
-        .subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              'Modifications enregistrées avec succès'
-            );
-            this.loadCurrentHours();
-          },
-          error: (error) => {
-            console.error('Erreur lors de la sauvegarde:', error);
-            this.toastService.showError(
-              'Erreur lors de la sauvegarde des modifications'
-            );
-          },
-        });
-    } else {
-      console.log('Formulaire invalide:', this.hoursForm.errors);
-      this.toastService.showError(
-        'Veuillez corriger les erreurs du formulaire'
+      const newHours = await firstValueFrom(
+        from(this.openingHoursService.createOpeningHours(defaultData))
       );
+      if (!newHours._id) {
+        throw new Error("L'ID des nouveaux horaires est manquant.");
+      }
+      return newHours._id;
+    }
+  }
+
+  async getOpeningHoursId(): Promise<string> {
+    try {
+      const currentHours = this.openingHours();
+      if (currentHours && currentHours.length > 0 && currentHours[0]._id) {
+        return currentHours[0]._id;
+      } else {
+        // Si aucun horaire n'existe, en créer un nouveau
+        const defaultData: OpeningHoursFormData = {
+          weekdayHours: '9h00 - 18h00',
+          weekendHours: '10h00 - 19h00',
+          isWeekdayOpen: true,
+          isWeekendOpen: true,
+          parkStatus: true,
+          statusMessage: '',
+        };
+
+        const newHours = await firstValueFrom(
+          from(this.openingHoursService.createOpeningHours(defaultData))
+        );
+        return newHours._id as string;
+      }
+    } catch (error) {
+      console.error(
+        'Erreur lors de la récupération ou de la création des horaires:',
+        error
+      );
+      throw new Error('Aucun ID trouvé pour les horaires');
     }
   }
 }
