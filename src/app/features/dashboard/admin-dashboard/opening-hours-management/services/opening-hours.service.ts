@@ -76,6 +76,48 @@ export class OpeningHoursService {
   }
 
   /**
+   * Crée une nouvelle configuration d'horaires
+   * @param data Données des nouveaux horaires
+   * @returns Observable<OpeningHours>
+   */
+  createOpeningHours(data: OpeningHoursFormData): Observable<OpeningHours> {
+    const payload: OpeningHoursUpdatePayload = {
+      openingHours: [
+        {
+          days: 'Lundi - Vendredi',
+          hours: data.weekdayHours,
+          isOpen: data.isWeekdayOpen,
+        },
+        {
+          days: 'Samedi - Dimanche',
+          hours: data.weekendHours,
+          isOpen: data.isWeekendOpen,
+        },
+      ],
+      parkStatus: data.parkStatus,
+      statusMessage: data.statusMessage ?? '',
+    };
+
+    console.log('Payload envoyé pour création:', payload);
+
+    return this.http.post<OpeningHours>(this.apiUrl, payload).pipe(
+      tap((response) => console.log("Réponse de l'API (création) :", response)),
+      catchError((error) => {
+        console.error('Erreur API lors de la création :', error);
+        if (error.error) {
+          console.error(
+            "Détails de l'erreur renvoyée par l'API :",
+            error.error
+          );
+        }
+        return throwError(
+          () => new Error('Erreur lors de la création des horaires.')
+        );
+      })
+    );
+  }
+
+  /**
    * Met à jour les horaires d'ouverture
    * @param id Identifiant des horaires
    * @param data Nouvelles données horaires

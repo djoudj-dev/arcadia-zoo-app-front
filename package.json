@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --port 4200",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -24,7 +24,7 @@
     "@auth0/angular-jwt": "^5.2.0",
     "@types/jwt-decode": "^2.2.1",
     "bcrypt": "^5.1.1",
-    "chokidar": "^4.0.1",
+    "chokidar": "^3.5.2",
     "jwt-decode": "^4.0.0",
     "readdirp": "^4.0.2",
     "rxjs": "~7.8.0",

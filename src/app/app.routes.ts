@@ -6,7 +6,7 @@ import { HomeComponent } from './features/home/home.component';
 import { LoginComponent } from './features/login/login.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'Accueil' },
+  { path: '', component: HomeComponent, title: 'Accueil - Zoo Arcadia' },
 
   {
     path: 'animal/:id',
