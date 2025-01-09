@@ -1,1 +1,0 @@
-import{a}from"./chunk-DIROH6QY.js";import"./chunk-OLXAPHNS.js";import"./chunk-5VXZOEXZ.js";import"./chunk-3PZTUIRH.js";import"./chunk-XTDWMBHN.js";import"./chunk-63Q2HYMA.js";import"./chunk-D7JCWFOM.js";import"./chunk-OS3QXM5S.js";export{a as UserOpinionManagementComponent};
