@@ -6,7 +6,7 @@
     Gestion des horaires d'ouverture
   </h2>
 
-  <form [formGroup]="hoursForm" (ngSubmit)="updateHours()" class="space-y-6">
+  <form [formGroup]="hoursForm" (ngSubmit)="saveChanges()" class="space-y-6">
     <!-- Horaires en semaine -->
     <div class="bg-secondary/10 rounded-lg p-4 space-y-4">
       <h3 class="text-lg font-serif font-semibold text-tertiary">
