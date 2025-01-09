@@ -1,4 +1,4 @@
-# Utiliser une image Node.js comme base
+# Utiliser une image Node.js pour le build
 FROM node:18-alpine AS build
 
 # Définir le répertoire de travail
