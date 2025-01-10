@@ -1,7 +1,5 @@
-# Utiliser une image Node.js pour le build
+# Étape de construction
 FROM node:18-alpine AS build
-
-# Définir le répertoire de travail
 WORKDIR /app
 
 # Copier les fichiers package.json et package-lock.json
@@ -16,14 +14,11 @@ COPY . .
 # Construire l'application Angular
 RUN npm run build -- --configuration production
 
-# Utiliser une image Nginx pour servir l'application
+# Étape de déploiement
 FROM nginx:alpine
 
 # Copier les fichiers de build dans le répertoire Nginx
-COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
-
-# Copier la configuration NGINX personnalisée
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 80
