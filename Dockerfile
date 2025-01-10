@@ -8,7 +8,7 @@ COPY package*.json ./
 # Installer les dépendances
 RUN npm install
 
-# Copier le reste des fichiers de l'application
+# Copie le reste des fichiers de l'application
 COPY . .
 
 # Construire l'application Angular
@@ -17,11 +17,21 @@ RUN npm run build -- --configuration production
 # Étape de déploiement
 FROM nginx:alpine
 
-# Copier les fichiers de build dans le répertoire Nginx
-COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html
+# Copie les fichiers du build Angular dans le répertoire NGINX
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
+
+# Sauvegarde de la configuration originale
+RUN cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.original
+
+# Copie la configuration personnalisée de NGINX
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+# Copie du script entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Exposer le port 80
 EXPOSE 80
 
-# Démarrer Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Utiliser l'entrypoint personnalisé
+ENTRYPOINT ["/entrypoint.sh"]
