@@ -4,46 +4,75 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ImageOptimizerService {
-  private readonly MAX_DIMENSION = 2048;
-  private readonly QUALITY = 0.8;
+  private readonly CONFIG = {
+    MAX_DIMENSION: 2048,
+    QUALITY: 0.8,
+    MIN_DIMENSION: 100,
+  };
 
   async optimizeImage(file: File): Promise<File> {
     if (!file.type.startsWith('image/')) {
-      throw new Error("Le fichier n'est pas une image");
+      throw new Error('Format de fichier invalide');
     }
 
     try {
-      // Charge l'image
       const image = await this.loadImage(file);
+      const optimizedBlob = await this.processImage(image, file.type);
 
-      // Redimensionne si nécessaire
-      const { width, height } = this.calculateDimensions(image);
-
-      // Crée un canvas pour l'optimisation
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-
-      // Dessine l'image redimensionnée
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Impossible de créer le contexte 2D');
-
-      ctx.drawImage(image, 0, 0, width, height);
-
-      // Convertit en blob avec compression
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob!), file.type, this.QUALITY);
-      });
-
-      // Crée un nouveau fichier optimisé
-      return new File([blob], file.name, {
+      return new File([optimizedBlob], this.sanitizeFileName(file.name), {
         type: file.type,
         lastModified: Date.now(),
       });
-    } catch (error) {
-      console.error("Erreur lors de l'optimisation de l'image:", error);
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(
+        `Échec de l'optimisation: ${
+          error instanceof Error ? error.message : 'Erreur inconnue'
+        }`
+      );
     }
+  }
+
+  private async processImage(
+    image: HTMLImageElement,
+    fileType: string
+  ): Promise<Blob> {
+    const { width, height } = this.calculateDimensions(image);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) throw new Error('Contexte 2D non disponible');
+
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(image, 0, 0, width, height);
+
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) =>
+          blob ? resolve(blob) : reject(new Error('Échec de conversion')),
+        fileType,
+        this.CONFIG.QUALITY
+      );
+    });
+  }
+
+  /** Nettoie le nom de fichier pour le rendre sûr */
+  public sanitizeFileName(fileName: string): string {
+    // Supprime les caractères spéciaux et les espaces
+    const cleanName = fileName
+      .toLowerCase()
+      .replace(/[^a-z0-9.]/g, '-')
+      .replace(/-+/g, '-');
+
+    // Extrait l'extension
+    const extension = cleanName.split('.').pop();
+
+    // Génère un nom unique avec l'extension d'origine
+    const uniqueName = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`;
+
+    return `${uniqueName}.${extension}`;
   }
 
   private loadImage(file: File): Promise<HTMLImageElement> {
@@ -61,13 +90,16 @@ export class ImageOptimizerService {
   } {
     let { width, height } = image;
 
-    if (width > this.MAX_DIMENSION || height > this.MAX_DIMENSION) {
+    if (
+      width > this.CONFIG.MAX_DIMENSION ||
+      height > this.CONFIG.MAX_DIMENSION
+    ) {
       if (width > height) {
-        height = Math.round((height * this.MAX_DIMENSION) / width);
-        width = this.MAX_DIMENSION;
+        height = Math.round((height * this.CONFIG.MAX_DIMENSION) / width);
+        width = this.CONFIG.MAX_DIMENSION;
       } else {
-        width = Math.round((width * this.MAX_DIMENSION) / height);
-        height = this.MAX_DIMENSION;
+        width = Math.round((width * this.CONFIG.MAX_DIMENSION) / height);
+        height = this.CONFIG.MAX_DIMENSION;
       }
     }
 
