@@ -17,11 +17,11 @@ RUN npm run build -- --configuration production
 # Étape de déploiement
 FROM nginx:alpine
 
-# Copier les fichiers de build Angular dans le répertoire NGINX
-COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
-
 # Copier la configuration personnalisée de NGINX
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copier les fichiers de build Angular dans le répertoire NGINX
+COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
 
 # Exposer le port 80
 EXPOSE 80
