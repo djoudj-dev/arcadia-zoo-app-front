@@ -5,9 +5,10 @@ import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-da
 import { HomeComponent } from './features/home/home.component';
 import { LoginComponent } from './features/login/login.component';
 
-export const routes: Routes = [
+// Routes publiques
+const publicRoutes: Routes = [
   { path: '', component: HomeComponent, title: 'Accueil - Zoo Arcadia' },
-
+  { path: 'login', component: LoginComponent, title: 'Connexion' },
   {
     path: 'animal/:id',
     loadComponent: () =>
@@ -16,7 +17,6 @@ export const routes: Routes = [
       ),
     title: 'Animal',
   },
-
   {
     path: 'habitat/:id',
     loadComponent: () =>
@@ -25,7 +25,6 @@ export const routes: Routes = [
       ),
     title: 'Habitat',
   },
-
   {
     path: 'habitats',
     loadComponent: () =>
@@ -34,7 +33,6 @@ export const routes: Routes = [
       ),
     title: 'Habitats',
   },
-
   {
     path: 'services',
     loadComponent: () =>
@@ -43,7 +41,6 @@ export const routes: Routes = [
       ),
     title: 'Services',
   },
-
   {
     path: 'service/:id',
     loadComponent: () =>
@@ -52,7 +49,6 @@ export const routes: Routes = [
       ),
     title: 'Service',
   },
-
   {
     path: 'contact',
     loadComponent: () =>
@@ -61,9 +57,10 @@ export const routes: Routes = [
       ),
     title: 'Contact',
   },
+];
 
-  { path: 'login', component: LoginComponent, title: 'Connexion' },
-
+// Routes administrateur
+const adminRoutes: Routes = [
   {
     path: 'admin',
     loadComponent: () =>
@@ -74,6 +71,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['Admin'] },
     children: [
+      {
+        path: '',
+        redirectTo: 'account-management',
+        pathMatch: 'full',
+      },
       {
         path: 'account-management',
         loadComponent: () =>
@@ -129,7 +131,10 @@ export const routes: Routes = [
       },
     ],
   },
+];
 
+// Routes vétérinaire
+const veterinaryRoutes: Routes = [
   {
     path: 'veterinaire',
     component: VeterinaryDashboardComponent,
@@ -137,6 +142,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['Veterinaire'] },
     children: [
+      {
+        path: '',
+        redirectTo: 'overview',
+        pathMatch: 'full',
+      },
       {
         path: 'overview',
         component: VeterinaryDashboardComponent,
@@ -147,8 +157,10 @@ export const routes: Routes = [
       },
     ],
   },
+];
 
-  // Routes pour les employés
+// Routes employé
+const employeeRoutes: Routes = [
   {
     path: 'employe',
     loadComponent: () =>
@@ -159,6 +171,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['Employe'] },
     children: [
+      {
+        path: '',
+        redirectTo: 'pending',
+        pathMatch: 'full',
+      },
       {
         path: 'pending',
         loadComponent: () =>
@@ -182,6 +199,10 @@ export const routes: Routes = [
       },
     ],
   },
+];
+
+// Routes communes aux utilisateurs authentifiés
+const authenticatedRoutes: Routes = [
   {
     path: 'update-password',
     loadComponent: () =>
@@ -190,8 +211,15 @@ export const routes: Routes = [
       ).then((m) => m.UpdatePasswordComponent),
     title: 'Modification du mot de passe',
     canActivate: [authGuard],
-    data: { roles: ['Admin', 'Veterinaire', 'Employe'] }, // Accessible à tous les utilisateurs connectés
+    data: { roles: ['Admin', 'Veterinaire', 'Employe'] },
   },
+];
 
-  { path: '**', redirectTo: '' }, // Redirection pour les chemins non définis
+export const routes: Routes = [
+  ...publicRoutes,
+  ...adminRoutes,
+  ...veterinaryRoutes,
+  ...employeeRoutes,
+  ...authenticatedRoutes,
+  { path: '**', redirectTo: '' },
 ];
