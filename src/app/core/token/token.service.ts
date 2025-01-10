@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'; // Vérifiez bien cette importation
+import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Token } from '../auth/models/token.model';
 
@@ -10,79 +10,59 @@ import { Token } from '../auth/models/token.model';
   providedIn: 'root',
 })
 export class TokenService {
-  /** Clé de stockage du token */
-  private readonly TOKEN_KEY = 'access_token';
+  private readonly STORAGE_PREFIX = 'app_secure_';
+  private readonly TOKEN_KEY = `${this.STORAGE_PREFIX}token`;
+  private readonly REFRESH_TOKEN_KEY = `${this.STORAGE_PREFIX}refresh_token`;
 
   /**
    * Récupère le token stocké
    * @returns string|null Token ou null si non trouvé
    */
   getToken(): string | null {
-    try {
-      const token = localStorage.getItem(this.TOKEN_KEY);
-      return token;
-    } catch (error) {
-      console.error('Erreur lors de la récupération du token:', error);
-      return null;
-    }
+    return this.decryptToken(sessionStorage.getItem(this.TOKEN_KEY));
   }
 
-  getDecodedToken(token: string): Token | null {
-    try {
-      return jwtDecode(token);
-    } catch (error) {
-      console.error('Erreur de décodage du token:', error);
-      return null;
-    }
+  getRefreshToken(): string | null {
+    return this.decryptToken(sessionStorage.getItem(this.REFRESH_TOKEN_KEY));
   }
 
-  /**
-   * Stocke un nouveau token
-   * @param token Token à stocker
-   */
-  setToken(token: string): void {
-    try {
-      localStorage.setItem(this.TOKEN_KEY, token);
-      console.log('Token stocké avec succès');
-    } catch (error) {
-      console.error('Erreur lors du stockage du token:', error);
-    }
+  setTokens(accessToken: string, refreshToken: string): void {
+    sessionStorage.setItem(this.TOKEN_KEY, this.encryptToken(accessToken));
+    sessionStorage.setItem(
+      this.REFRESH_TOKEN_KEY,
+      this.encryptToken(refreshToken)
+    );
   }
 
-  /**
-   * Supprime le token stocké
-   */
-  removeToken(): void {
-    try {
-      localStorage.removeItem(this.TOKEN_KEY);
-      console.log('Token supprimé avec succès');
-    } catch (error) {
-      console.error('Erreur lors de la suppression du token:', error);
-    }
+  removeTokens(): void {
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
   /**
    * Vérifie si le token est expiré
    * @returns boolean indiquant si le token est expiré
    */
-  isTokenExpired(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      console.warn('Aucun token trouvé, considéré comme expiré.');
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = this.decodeToken(token);
+      if (!payload) return true;
+      return payload.exp * 1000 <= Date.now();
+    } catch {
       return true;
     }
+  }
 
-    const tokenPayload = this.decodeToken(token);
-    if (!tokenPayload?.exp) {
-      console.warn('Token invalide ou sans date d’expiration.');
+  isTokenExpiringSoon(token: string, thresholdMinutes = 5): boolean {
+    try {
+      const payload = this.decodeToken(token);
+      if (!payload) return true;
+      const expirationTime = payload.exp * 1000;
+      const thresholdMs = thresholdMinutes * 60 * 1000;
+      return expirationTime - Date.now() <= thresholdMs;
+    } catch {
       return true;
     }
-
-    const isExpired = tokenPayload.exp * 1000 <= Date.now();
-    if (isExpired) {
-      console.warn('Token expiré.');
-    }
-    return isExpired;
   }
 
   /**
@@ -106,20 +86,14 @@ export class TokenService {
     console.log('Préparez une logique pour rafraîchir le token.');
     // Implémentez ici une requête vers votre backend pour renouveler le token.
   }
-  getRefreshToken() {
-    // Vérifier d'abord localStorage
-    const token = localStorage.getItem('refreshToken');
-    if (!token) {
-      // Si pas de token, rediriger vers la page de connexion
-      this.redirectToLogin();
-      throw new Error('Refresh token non trouvé');
-    }
-    return token;
+
+  private decryptToken(encryptedToken: string | null): string | null {
+    // Implémentation de la décryptage
+    return encryptedToken;
   }
 
-  redirectToLogin() {
-    // Nettoyer le stockage
-    localStorage.clear();
-    window.location.href = '/login';
+  private encryptToken(token: string): string {
+    // Implémentation de l'encryptage
+    return token;
   }
 }
