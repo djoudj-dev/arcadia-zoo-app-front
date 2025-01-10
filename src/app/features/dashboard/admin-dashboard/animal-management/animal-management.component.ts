@@ -1,7 +1,7 @@
 import { SlicePipe } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FileSecurityService } from 'app/core/services/file-security.service';
+import { FileScanner } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { environment } from '../../../../../environments/environment';
@@ -55,7 +55,7 @@ export class AnimalManagementComponent implements OnInit {
     readonly habitatService: HabitatService,
     readonly countResourceService: CountResourceService,
     readonly toastService: ToastService,
-    readonly fileSecurityService: FileSecurityService
+    readonly fileSecurityService: FileScanner
   ) {}
 
   ngOnInit() {
@@ -335,9 +335,9 @@ export class AnimalManagementComponent implements OnInit {
     if (!file) return;
 
     try {
-      const validation = await this.fileSecurityService.validateFile(file);
-      if (!validation.isValid) {
-        this.toastService.showError(validation.errors.join('\n'));
+      const validation = await this.fileSecurityService.scan(file);
+      if (!validation.isSafe) {
+        this.toastService.showError(validation.threats.join('\n'));
         return;
       }
 

@@ -2,7 +2,7 @@ import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FileSecurityService } from 'app/core/services/file-security.service';
+import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ModalComponent } from 'app/shared/components/modal/modal.component';
@@ -48,8 +48,8 @@ export class ServiceManagementComponent implements OnInit {
     readonly router: Router,
     readonly serviceManagement: ServiceManagementService,
     readonly toastService: ToastService,
-    readonly fileSecurityService: FileSecurityService,
-    readonly imageOptimizer: ImageOptimizerService
+    readonly imageOptimizer: ImageOptimizerService,
+    readonly fileSecurityService: FileScanner
   ) {}
 
   ngOnInit() {
@@ -97,10 +97,10 @@ export class ServiceManagementComponent implements OnInit {
   /** Gère le changement de fichier sécurisé */
   async onFileSelected(file: File) {
     try {
-      const validation = await this.fileSecurityService.validateFile(file);
+      const validation = await this.fileSecurityService.scan(file);
 
-      if (!validation.isValid) {
-        this.toastService.showError(validation.errors.join('\n'));
+      if (!validation.isSafe) {
+        this.toastService.showError(validation.threats.join('\n'));
         return;
       }
 
@@ -123,9 +123,9 @@ export class ServiceManagementComponent implements OnInit {
     if (!file) return;
 
     try {
-      const validation = await this.fileSecurityService.validateFile(file);
-      if (!validation.isValid) {
-        this.toastService.showError(validation.errors.join('\n'));
+      const validation = await this.fileSecurityService.scan(file);
+      if (!validation.isSafe) {
+        this.toastService.showError(validation.threats.join('\n'));
         return;
       }
 
@@ -306,7 +306,7 @@ export class ServiceManagementComponent implements OnInit {
     // Ajoute le fichier s'il existe
     const file = this.selectedFile();
     if (file) {
-      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      const secureName = this.imageOptimizer.sanitizeFileName(file.name);
       formData.append('image', file, secureName);
     }
 

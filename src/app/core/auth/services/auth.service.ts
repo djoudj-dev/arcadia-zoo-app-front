@@ -1,12 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { TokenService } from 'app/core/token/token.service';
 import { Observable, interval, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { User } from '../../../features/dashboard/admin-dashboard/account-management/model/user.model';
 import { ToastService } from '../../../shared/components/toast/services/toast.service';
-import { TokenSecurityService } from '../../token/token-security.service';
 
 /**
  * Service d'authentification pour gérer la session utilisateur
@@ -14,6 +14,10 @@ import { TokenSecurityService } from '../../token/token-security.service';
 interface TokenResponse {
   accessToken: string;
   refreshToken: string;
+}
+
+interface ApiError {
+  message: string;
 }
 
 @Injectable({
@@ -24,11 +28,17 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
-  private readonly tokenSecurityService = inject(TokenSecurityService);
+  private readonly tokenService = inject(TokenService);
 
-  readonly currentUserSignal = signal<User | null>(null);
-  readonly isAuthenticated = computed(() => !!this.currentUserSignal());
-  readonly userRole = computed(() => this.currentUserSignal()?.role?.name);
+  private readonly authState = signal<{
+    user: User | null;
+    isAuthenticated: boolean;
+    role: string | null;
+  }>({ user: null, isAuthenticated: false, role: null });
+
+  readonly user = computed(() => this.authState().user);
+  readonly isAuthenticated = computed(() => this.authState().isAuthenticated);
+  readonly userRole = computed(() => this.authState().role);
 
   constructor() {
     this.initializeCurrentUser();
@@ -42,12 +52,16 @@ export class AuthService {
    */
   private initializeCurrentUser(): void {
     const storedUser = localStorage.getItem('user');
-    const token = this.tokenSecurityService.getToken();
+    const token = this.tokenService.getToken();
 
     if (storedUser && token) {
       try {
         const user = JSON.parse(storedUser) as User;
-        this.currentUserSignal.set(user);
+        this.authState.set({
+          user: user,
+          isAuthenticated: true,
+          role: user.role?.name ?? null,
+        });
       } catch {
         this.handleInvalidUserData();
       }
@@ -75,7 +89,7 @@ export class AuthService {
    * Rafraîchit le token d'accès
    */
   refreshToken(): Observable<TokenResponse> {
-    const refreshToken = this.tokenSecurityService.getRefreshToken();
+    const refreshToken = this.tokenService.getRefreshToken();
     if (!refreshToken) {
       this.logout();
       return throwError(() => new Error('Refresh token non trouvé'));
@@ -87,7 +101,7 @@ export class AuthService {
       })
       .pipe(
         tap((response) => {
-          this.tokenSecurityService.setTokens(
+          this.tokenService.setTokens(
             response.accessToken,
             response.refreshToken
           );
@@ -104,9 +118,9 @@ export class AuthService {
    * Déconnecte l'utilisateur
    */
   logout(): void {
-    this.currentUserSignal.set(null);
+    this.authState.set({ user: null, isAuthenticated: false, role: null });
     localStorage.removeItem('user');
-    this.tokenSecurityService.removeTokens();
+    this.tokenService.removeTokens();
     this.toastService.showSuccess('Déconnexion réussie !', 2500);
     setTimeout(() => this.router.navigate(['/login']), 2500);
   }
@@ -115,8 +129,8 @@ export class AuthService {
    * Vérifie si un token doit être rafraîchi
    */
   private checkTokenExpiration(): void {
-    const token = this.tokenSecurityService.getToken();
-    if (token && this.tokenSecurityService.isTokenExpiringSoon(token)) {
+    const token = this.tokenService.getToken();
+    if (token && this.tokenService.isTokenExpiringSoon(token)) {
       this.refreshToken().subscribe();
     }
   }
@@ -126,8 +140,12 @@ export class AuthService {
    */
   private handleSuccessfulLogin(user: User): void {
     if (user.role && user.token) {
-      this.tokenSecurityService.setTokens(user.token, user.refreshToken ?? '');
-      this.currentUserSignal.set(user);
+      this.tokenService.setTokens(user.token, user.refreshToken ?? '');
+      this.authState.set({
+        user: user,
+        isAuthenticated: true,
+        role: user.role?.name,
+      });
       localStorage.setItem('user', JSON.stringify(user));
       this.toastService.showSuccess('Connexion réussie. Bienvenue!');
     } else {
@@ -139,9 +157,10 @@ export class AuthService {
    * Gère les erreurs de connexion
    */
   private handleLoginError(error: HttpErrorResponse): Observable<never> {
-    this.toastService.showError(
-      error.error?.message || 'Erreur de connexion. Vérifiez vos identifiants.'
-    );
+    const errorMessage =
+      (error.error as ApiError)?.message ||
+      'Erreur de connexion. Vérifiez vos identifiants.';
+    this.toastService.showError(errorMessage);
     return throwError(() => error);
   }
 

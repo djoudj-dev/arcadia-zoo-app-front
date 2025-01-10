@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -33,12 +40,10 @@ export class VeterinaryReportsComponent implements OnInit {
   // Unités de nourriture possibles
   foodUnits = ['kg', 'g'];
 
-  constructor(
-    private fb: FormBuilder,
-    private veterinaryReportsService: VeterinaryReportsService,
-    private authService: AuthService,
-    private toastService: ToastService
-  ) {}
+  private readonly fb = inject(FormBuilder);
+  private readonly veterinaryReportsService = inject(VeterinaryReportsService);
+  private readonly authService = inject(AuthService);
+  private readonly toastService = inject(ToastService);
 
   ngOnInit() {
     console.log('VeterinaryReportsComponent initialized');
@@ -84,7 +89,7 @@ export class VeterinaryReportsComponent implements OnInit {
 
   onSubmit() {
     if (this.reportForm.valid) {
-      const currentUser = this.authService.currentUserSignal();
+      const currentUser = this.authService.user();
 
       if (!currentUser?.id) {
         console.error('Utilisateur non connecté');

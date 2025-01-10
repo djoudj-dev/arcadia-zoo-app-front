@@ -1,4 +1,4 @@
-import { Component, computed, HostListener, OnInit } from '@angular/core';
+import { Component, computed, HostListener, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { BannerComponent } from '../banner/banner.component';
@@ -9,24 +9,23 @@ import { BannerComponent } from '../banner/banner.component';
   imports: [RouterLink, BannerComponent],
   templateUrl: './nav.component.html',
 })
-export class NavComponent implements OnInit {
+export class NavComponent {
   isMenuOpen = false;
   activeDropdown: string | null = null;
   isPasswordModalOpen = false;
 
-  userAuthenticated = computed(() => !!this.authService.currentUserSignal());
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  userAuthenticated = computed(() => !!this.authService.user());
   userRoles = computed(() => {
-    const user = this.authService.currentUserSignal();
+    const user = this.authService.user();
     return {
-      admin: !!(user && user.role && user.role.name === 'Admin'),
-      veterinaire: !!(user && user.role && user.role.name === 'Veterinaire'),
-      employe: !!(user && user.role && user.role.name === 'Employe'),
+      admin: user?.role?.name === 'Admin',
+      veterinaire: user?.role?.name === 'Veterinaire',
+      employe: user?.role?.name === 'Employe',
     };
   });
-
-  constructor(public authService: AuthService, private router: Router) {}
-
-  ngOnInit(): void {}
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
