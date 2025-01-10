@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { AuthService } from './core/auth/services/auth.service';
 import { InactivityService } from './core/services/inactivity.service';
 import { TokenService } from './core/token/token.service';
@@ -16,20 +15,18 @@ import { ToastService } from './shared/components/toast/services/toast.service';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  private inactivitySubscription!: Subscription;
-
   constructor(
-    private tokenService: TokenService,
-    private authService: AuthService,
-    private inactivityService: InactivityService,
-    private toastService: ToastService
+    private readonly tokenService: TokenService,
+    private readonly authService: AuthService,
+    private readonly inactivityService: InactivityService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     const token = this.tokenService.getToken();
 
     if (token) {
-      if (this.tokenService.isTokenExpired()) {
+      if (this.tokenService.isTokenExpired(token)) {
         this.authService.logout();
         this.toastService.showError(
           'Votre session a expiré, vous avez été déconnecté.'
