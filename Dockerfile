@@ -20,19 +20,11 @@ FROM nginx:alpine
 # Copie les fichiers du build Angular dans le répertoire NGINX
 COPY --from=build /app/dist/arcadia-zoo-app-front /usr/share/nginx/html/browser
 
-# Sauvegarde de la configuration originale
-RUN cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.original
-
-# Copie de VOTRE configuration personnalisée depuis la racine du projet
+# Copie la configuration personnalisée de NGINX
 COPY default.conf /etc/nginx/conf.d/default.conf
-
-# Copie du script entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # Exposer le port 80
 EXPOSE 80
 
-# Utiliser l'entrypoint personnalisé
-ENTRYPOINT ["/entrypoint.sh"]
-
+# Démarrer NGINX
+CMD ["nginx", "-g", "daemon off;"]
