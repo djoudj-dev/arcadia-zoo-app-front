@@ -1,63 +1,86 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpStatusCode,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { TokenService } from '../../token/token.service';
 import { AuthService } from '../services/auth.service';
 
+export const WHITELISTED_URLS = [
+  '/api/auth/login',
+  '/api/auth/refresh',
+  '/api/public',
+] as const;
+
+/**
+ * Intercepteur HTTP pour gérer l'authentification automatique des requêtes
+ */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // Injection des services nécessaires
   const tokenService = inject(TokenService);
   const authService = inject(AuthService);
 
-  // Récupération du token
-  const token = tokenService.getToken();
+  if (WHITELISTED_URLS.some((url) => req.url.includes(url))) {
+    return next(req);
+  }
 
-  // Clone de la requête avec l'en-tête Authorization si le token existe
-  const authReq = token
+  return next(addTokenToRequest(req, tokenService)).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === HttpStatusCode.Unauthorized) {
+        return handleUnauthorizedError(error, authService, req, next);
+      }
+      return throwError(() => ({
+        ...error,
+        message: `Erreur lors de la requête: ${error.message}`,
+        timestamp: new Date().toISOString(),
+      }));
+    })
+  );
+};
+
+/**
+ * Gère les erreurs 401 en tentant de rafraîchir le token
+ * Déconnecte l'utilisateur si le rafraîchissement échoue
+ */
+function handleUnauthorizedError(
+  error: HttpErrorResponse,
+  authService: AuthService,
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+) {
+  const tokenService = inject(TokenService);
+  return authService.refreshToken().pipe(
+    switchMap(() => next(addTokenToRequest(req, tokenService))),
+    catchError((refreshError) => {
+      authService.logout();
+      return throwError(() => ({
+        ...refreshError,
+        message: 'Session expirée. Veuillez vous reconnecter.',
+        timestamp: new Date().toISOString(),
+      }));
+    })
+  );
+}
+
+/**
+ * Ajoute le token d'authentification à la requête
+ */
+function addTokenToRequest(
+  req: HttpRequest<unknown>,
+  tokenService: TokenService
+): HttpRequest<unknown> {
+  const token = tokenService.getToken();
+  return token
     ? req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
+          'X-Request-ID': crypto.randomUUID(),
         },
         withCredentials: true,
       })
     : req.clone({ withCredentials: true });
-
-  // Gestion des erreurs
-  return next(authReq).pipe(
-    catchError((error) => {
-      console.error('Erreur dans l’intercepteur:', error);
-
-      // Ignorer les erreurs pour les statuts 201
-      if (error.status === 201) {
-        console.warn('Statut 201 ignoré');
-        return next(authReq); // Continuer sans échec
-      }
-
-      // Gestion des erreurs 401 ou 403
-      if (error.status === 401 || error.status === 403) {
-        if (!req.url.includes('auth/token/refresh')) {
-          return authService.refreshToken().pipe(
-            switchMap((newToken) => {
-              console.log('Nouveau token récupéré:', newToken);
-              tokenService.setToken(newToken.accessToken);
-              const retryReq = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken.accessToken}`,
-                },
-              });
-              return next(retryReq);
-            }),
-            catchError((refreshError) => {
-              console.error('Échec du rafraîchissement:', refreshError);
-              authService.logout();
-              return throwError(() => refreshError);
-            })
-          );
-        }
-      }
-
-      return throwError(() => error);
-    })
-  );
-};
+}
