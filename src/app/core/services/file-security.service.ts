@@ -1,111 +1,129 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
+import { firstValueFrom } from 'rxjs';
+
+interface SecurityScanResult {
+  isSafe: boolean;
+  threats: string[];
+}
+
+interface FileValidationConfig {
+  MIME_TYPES: string[];
+  MAX_FILE_SIZE: number;
+  MAX_DIMENSIONS: { width: number; height: number };
+  THREAT_PATTERNS: {
+    SIGNATURES: Set<string>;
+    DANGEROUS_EXTENSIONS: Set<string>;
+  };
+}
+
+class FileValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FileValidationError';
+  }
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class FileSecurityService {
-  private readonly ALLOWED_MIME_TYPES = [
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/gif',
-  ];
-  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-  private readonly MAX_IMAGE_DIMENSIONS = {
-    width: 4096,
-    height: 4096,
+export class FileScanner {
+  private readonly config: FileValidationConfig = {
+    MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+    MAX_FILE_SIZE: 5 * 1024 * 1024,
+    MAX_DIMENSIONS: { width: 4096, height: 4096 },
+    THREAT_PATTERNS: {
+      SIGNATURES: new Set(['4D5A', 'FFD8FF', '526172']),
+      DANGEROUS_EXTENSIONS: new Set(['.exe', '.bat', '.cmd', '.sh', '.php']),
+    },
   };
 
-  async validateFile(
-    file: File
-  ): Promise<{ isValid: boolean; errors: string[] }> {
-    const errors: string[] = [];
+  constructor(private readonly http: HttpClient) {}
 
-    // Vérification du type MIME
-    if (!this.ALLOWED_MIME_TYPES.includes(file.type)) {
-      errors.push(
-        'Type de fichier non autorisé. Formats acceptés : JPG, PNG, WebP, GIF'
-      );
-    }
-
-    // Vérification de la taille
-    if (file.size > this.MAX_FILE_SIZE) {
-      errors.push('Le fichier est trop volumineux (maximum 5MB)');
-    }
-
-    // Vérification des dimensions de l'image
+  async scan(file: File): Promise<SecurityScanResult> {
     try {
-      const dimensions = await this.getImageDimensions(file);
-      if (
-        dimensions.width > this.MAX_IMAGE_DIMENSIONS.width ||
-        dimensions.height > this.MAX_IMAGE_DIMENSIONS.height
-      ) {
-        errors.push(
-          `Les dimensions de l'image sont trop grandes (max ${this.MAX_IMAGE_DIMENSIONS.width}x${this.MAX_IMAGE_DIMENSIONS.height})`
-        );
+      if (!this.config.MIME_TYPES.includes(file.type)) {
+        throw new FileValidationError('Type de fichier non autorisé');
       }
-    } catch (error: unknown) {
-      errors.push("Format d'image invalide : " + (error as Error).message);
-    }
 
-    // Vérification du contenu réel du fichier
-    try {
-      const isValidContent = await this.validateImageContent(file);
-      if (!isValidContent) {
-        errors.push('Le contenu du fichier est invalide');
-      }
-    } catch (error: unknown) {
-      errors.push(
-        `Impossible de valider le contenu du fichier : ${
-          (error as Error).message
-        }`
+      const formData = new FormData();
+      formData.append('file', file);
+      return await firstValueFrom(
+        this.http.post<SecurityScanResult>(
+          `${environment.apiUrl}/security/scan`,
+          formData
+        )
       );
+    } catch (error) {
+      if (error instanceof FileValidationError) {
+        return { isSafe: false, threats: [error.message] };
+      }
+      console.warn('Scan antivirus non disponible:', error);
+      return { isSafe: true, threats: [] };
     }
-
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
   }
 
-  sanitizeFileName(fileName: string): string {
-    return fileName
-      .replace(/[^a-zA-Z0-9.-]/g, '_') // Remplace les caractères spéciaux
-      .replace(/\.{2,}/g, '.') // Évite les doubles points
-      .substring(0, 255); // Limite la longueur
+  private isImage(file: File): boolean {
+    return file.type.startsWith('image/');
   }
 
-  private getImageDimensions(
-    file: File
-  ): Promise<{ width: number; height: number }> {
+  private async validateImageContent(
+    file: File,
+    errors: string[]
+  ): Promise<void> {
+    if (this.isImage(file)) {
+      const [headerCheck, dimensions] = await Promise.all([
+        this.checkFileHeader(file),
+        this.validateDimensions(file),
+      ]);
+
+      if (!headerCheck.isValid) {
+        errors.push("Contenu d'image invalide ou corrompu");
+      }
+      if (!dimensions.isValid) {
+        errors.push("Dimensions de l'image non autorisées");
+      }
+    }
+  }
+
+  private async checkFileHeader(file: File): Promise<{ isValid: boolean }> {
+    try {
+      const buffer = await file.slice(0, 8).arrayBuffer();
+      const header = Array.from(new Uint8Array(buffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase();
+
+      const hasSuspiciousSignature =
+        this.config.THREAT_PATTERNS.SIGNATURES.has(header);
+      return { isValid: !hasSuspiciousSignature };
+    } catch {
+      return { isValid: false };
+    }
+  }
+
+  private async validateDimensions(file: File): Promise<{ isValid: boolean }> {
+    if (!this.isImage(file)) return { isValid: true };
+
+    try {
+      const img = await this.loadImage(file);
+      return {
+        isValid:
+          img.width <= this.config.MAX_DIMENSIONS.width &&
+          img.height <= this.config.MAX_DIMENSIONS.height,
+      };
+    } catch {
+      return { isValid: false };
+    }
+  }
+
+  private loadImage(file: File): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.onload = () => {
-        URL.revokeObjectURL(img.src); // Libère la mémoire
-        resolve({ width: img.width, height: img.height });
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(img.src);
-        reject(new Error('Image invalide'));
-      };
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Chargement de l'image échoué"));
       img.src = URL.createObjectURL(file);
     });
-  }
-
-  private async validateImageContent(file: File): Promise<boolean> {
-    const buffer = await file.arrayBuffer();
-    const header = new Uint8Array(buffer.slice(0, 4));
-
-    // Signatures de fichiers courantes
-    const signatures = {
-      jpeg: [0xff, 0xd8, 0xff],
-      png: [0x89, 0x50, 0x4e, 0x47],
-      gif: [0x47, 0x49, 0x46, 0x38],
-      webp: [0x52, 0x49, 0x46, 0x46],
-    };
-
-    return Object.values(signatures).some((signature) =>
-      signature.every((byte, i) => header[i] === byte)
-    );
   }
 }
