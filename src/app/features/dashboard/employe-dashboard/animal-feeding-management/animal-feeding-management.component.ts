@@ -95,7 +95,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const currentUser = this.authService.currentUserSignal();
+    const currentUser = this.authService.user();
     if (!currentUser?.id) {
       this.toastService.showError('ID utilisateur non disponible');
       return;
@@ -145,7 +145,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
                   map((animals) => ({
                     ...habitat,
                     animals,
-                    images: habitat.images || undefined,
+                    images: habitat.images ?? undefined,
                   }))
                 )
             )

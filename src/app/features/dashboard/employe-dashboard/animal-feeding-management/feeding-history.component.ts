@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -110,7 +111,7 @@ export class FeedingHistoryComponent implements OnInit, OnDestroy {
   @Input() animalId!: number;
   @Input() animalName?: string;
 
-  private destroy$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   // Signaux
   feedingHistory = signal<FeedingHistory[]>([]);
@@ -125,10 +126,8 @@ export class FeedingHistoryComponent implements OnInit, OnDestroy {
     )
   );
 
-  constructor(
-    private animalFeeding: AnimalFeedingManagementService,
-    private toastService: ToastService
-  ) {}
+  private readonly animalFeeding = inject(AnimalFeedingManagementService);
+  private readonly toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.loadFeedingHistory();

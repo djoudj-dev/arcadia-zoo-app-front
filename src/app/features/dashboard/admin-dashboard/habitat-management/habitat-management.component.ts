@@ -2,7 +2,8 @@ import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FileSecurityService } from 'app/core/services/file-security.service';
+import { FileScanner } from 'app/core/services/file-security.service';
+import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { environment } from '../../../../../environments/environment';
@@ -44,7 +45,8 @@ export class HabitatManagementComponent implements OnInit {
     readonly habitatManagement: HabitatManagementService,
     readonly countResourceService: CountResourceService,
     readonly toastService: ToastService,
-    readonly fileSecurityService: FileSecurityService
+    readonly fileSecurityService: FileScanner,
+    readonly imageOptimizer: ImageOptimizerService
   ) {}
 
   ngOnInit() {
@@ -81,16 +83,27 @@ export class HabitatManagementComponent implements OnInit {
   /** Gère le fichier sélectionné de manière sécurisée */
   async onFileSelected(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      // Définir le selectedFile pour le FormData
+    if (!file) return;
+
+    try {
+      const validation = await this.fileSecurityService.scan(file);
+      if (!validation.isSafe) {
+        this.toastService.showError(validation.threats.join('\n'));
+        return;
+      }
+
       this.selectedFile.set(file);
 
-      // Créer l'aperçu
       const reader = new FileReader();
       reader.onload = () => {
         this.newHabitatData.images = reader.result as string;
       };
       reader.readAsDataURL(file);
+
+      this.toastService.showSuccess('Image sélectionnée avec succès');
+    } catch (error) {
+      console.error('Erreur lors du traitement du fichier:', error);
+      this.toastService.showError('Erreur lors du traitement du fichier');
     }
   }
 
@@ -285,7 +298,7 @@ export class HabitatManagementComponent implements OnInit {
     // Ajoute le fichier s'il existe
     const file = this.selectedFile();
     if (file) {
-      const secureName = this.fileSecurityService.sanitizeFileName(file.name);
+      const secureName = this.imageOptimizer.sanitizeFileName(file.name);
       formData.append('images', file, secureName);
     }
 
