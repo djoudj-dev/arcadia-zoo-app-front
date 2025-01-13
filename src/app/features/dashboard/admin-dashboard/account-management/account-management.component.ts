@@ -28,10 +28,10 @@ export class AccountManagementComponent implements OnInit {
   accountToDelete: number | null = null;
 
   constructor(
-    private router: Router,
-    private accountService: AccountManagementService,
-    private countResourceService: CountResourceService,
-    private toastService: ToastService
+    private readonly router: Router,
+    private readonly accountService: AccountManagementService,
+    private readonly countResourceService: CountResourceService,
+    private readonly toastService: ToastService
   ) {}
 
   /** Initialisation du composant */
