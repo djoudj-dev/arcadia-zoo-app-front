@@ -117,8 +117,6 @@ export class OpeningHoursManagementComponent implements OnInit {
    * Met à jour les horaires
    */
   async updateHours(): Promise<void> {
-    console.log('Début de updateHours');
-
     try {
       // Tenter de récupérer l'ID depuis le service
       const id = await this.openingHoursService.getOpeningHoursId();
@@ -138,13 +136,10 @@ export class OpeningHoursManagementComponent implements OnInit {
       }
 
       const formData = this.prepareFormData();
-      console.log('Données du formulaire:', formData);
 
       const response = await firstValueFrom(
         this.openingHoursService.updateOpeningHours(id, formData)
       );
-
-      console.log("Réponse de l'API:", response);
 
       if (response) {
         this.openingHours.set([response]);
@@ -217,7 +212,6 @@ export class OpeningHoursManagementComponent implements OnInit {
         console.log('Aucun ID trouvé, création de nouveaux horaires.');
         await this.createNewHours(); // Appelle createNewHours si aucun ID
       } else {
-        console.log('ID trouvé, mise à jour des horaires.');
         await this.updateHours(); // Appelle updateHours si un ID est défini
       }
     } catch (error) {
