@@ -9,10 +9,10 @@ import { Animal } from '../../../dashboard/admin-dashboard/animal-management/mod
   providedIn: 'root',
 })
 export class AnimalOverviewService {
-  private apiUrl = `${environment.apiUrl}/api/animals`;
-  private uploadsUrl = `${environment.apiUrl}/api`; // Base URL pour les images
+  readonly apiUrl = `${environment.apiUrl}/api/animals`;
+  readonly uploadsUrl = `${environment.apiUrl}/api/uploads/animals`; // Base URL pour les images
 
-  constructor(private http: HttpClient) {}
+  constructor(readonly http: HttpClient) {}
 
   /**
    * Récupère la liste des animaux depuis l'API.

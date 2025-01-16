@@ -26,7 +26,7 @@ export class AnimalsOverviewComponent implements OnInit {
   displayedAnimals = signal<Animal[]>([]);
 
   /** URL de base pour les images */
-  imageBaseUrl = `${environment.apiUrl}`;
+  imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
 
   constructor(
     private readonly animalOverviewService: AnimalOverviewService,
