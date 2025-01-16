@@ -18,7 +18,7 @@ import { Animal } from '../model/animal.model';
   providedIn: 'root',
 })
 export class AnimalManagementService {
-  private readonly apiUrl = `${environment.apiUrl}/api/admin/animal-management`;
+  private readonly apiUrl = `${environment.apiUrl}/api/admin/animals`;
 
   constructor(
     private readonly http: HttpClient,
