@@ -272,14 +272,6 @@ export class HabitatManagementComponent implements OnInit {
     const hasImage =
       isUpdate || this.newHabitatData.images || this.selectedFile();
 
-    console.log('Validation des données:', {
-      name,
-      description,
-      hasImage,
-      newHabitatData: this.newHabitatData,
-      selectedFile: this.selectedFile(),
-    });
-
     return !!(name && description && hasImage);
   }
 
