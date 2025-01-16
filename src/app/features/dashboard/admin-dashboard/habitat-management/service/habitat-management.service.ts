@@ -19,7 +19,7 @@ import { Habitat } from '../model/habitat.model';
 })
 export class HabitatManagementService {
   /** URL de base pour les endpoints de gestion des habitats */
-  readonly apiUrl = `${environment.apiUrl}/api/admin/habitat-management`;
+  readonly apiUrl = `${environment.apiUrl}/api/admin/habitats`;
 
   constructor(
     readonly http: HttpClient,
