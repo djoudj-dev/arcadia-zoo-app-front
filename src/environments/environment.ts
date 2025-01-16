@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.nedellec-julien.fr',
+  apiUrl: process.env['API_URL'] ?? 'https://api.nedellec-julien.fr',
 };
