@@ -21,7 +21,7 @@ export class AnimalService {
   readonly habitatUrl = `${environment.apiUrl}/api/habitats`;
 
   /** URL de base pour les images */
-  readonly imageBaseUrl = `${environment.apiUrl}/api`;
+  readonly imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
 
   /** Cache pour stocker les données des animaux */
   readonly animalsCache$ = new ReplaySubject<Animal[]>(1);
@@ -43,16 +43,15 @@ export class AnimalService {
           map((animals) =>
             animals.map((animal) => ({
               ...animal,
-              // Correction pour ajouter le préfixe uploads/animals
               images: animal.images
                 ? `${this.imageBaseUrl}/${animal.images}`
                 : '',
             }))
           ),
-          shareReplay(1), // Partage les données entre tous les abonnés pour une seule requête
+          shareReplay(1),
           tap((animals) => {
-            this.animalsCache$.next(animals); // Met à jour le cache
-            this.cacheLoaded = true; // Indique que le cache est chargé
+            this.animalsCache$.next(animals);
+            this.cacheLoaded = true;
           })
         )
         .subscribe();
@@ -64,14 +63,11 @@ export class AnimalService {
     return this.getAnimals().pipe(
       map((animals) => {
         const animal = animals.find((animal) => animal.id_animal === id);
-
-        // Vérifie si l'animal existe et formate l'URL de l'image si nécessaire
         if (animal?.images) {
           animal.images = animal.images.startsWith('http')
             ? animal.images
-            : `${environment.apiUrl}/api/${animal.images}`;
+            : `${this.imageBaseUrl}/${animal.images}`;
         }
-
         return animal;
       })
     );

@@ -41,7 +41,7 @@ export class AnimalManagementComponent implements OnInit {
   animalToDelete: number | null = null;
 
   /** URL de base pour les images */
-  imageBaseUrl = `${environment.apiUrl}/api`;
+  imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
 
   /** Animaux filtrés par habitat sélectionné */
   filteredAnimals = computed(() =>
