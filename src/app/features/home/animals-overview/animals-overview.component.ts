@@ -44,14 +44,8 @@ export class AnimalsOverviewComponent implements OnInit {
   private loadAnimals(): void {
     this.animalOverviewService.getAnimals().subscribe({
       next: (data) => {
-        const formattedAnimals = data.map((animal) => ({
-          ...animal,
-          images: animal.images
-            ? `${this.imageBaseUrl}/${animal.images}`
-            : null,
-        }));
-        this.animals.set(formattedAnimals);
-        this.displayedAnimals.set(this.getRandomAnimals(formattedAnimals, 3));
+        this.animals.set(data);
+        this.displayedAnimals.set(this.getRandomAnimals(data, 3));
       },
       error: (error) =>
         console.error('Erreur lors du chargement des animaux:', error),
