@@ -22,9 +22,15 @@ export class AnimalOverviewService {
       map((animals) =>
         animals.map((animal) => ({
           ...animal,
-          images: animal.images ? `${this.uploadsUrl}/${animal.images}` : null,
+          images: this.formatImageUrl(animal.images),
         }))
       )
     );
+  }
+
+  private formatImageUrl(imagePath: string | null): string | null {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${this.uploadsUrl}/${imagePath.replace(/^uploads\/animals\//, '')}`;
   }
 }
