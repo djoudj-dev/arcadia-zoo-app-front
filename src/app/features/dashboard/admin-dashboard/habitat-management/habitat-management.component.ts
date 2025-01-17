@@ -135,53 +135,42 @@ export class HabitatManagementComponent implements OnInit {
   updateHabitat() {
     if (this.validateHabitatData(true)) {
       const habitatId = this.newHabitatData.id_habitat!.toString();
-      const formData = new FormData();
 
-      // Ajout des données de base
-      formData.append('name', this.newHabitatData.name!);
-      formData.append('description', this.newHabitatData.description!);
-      formData.append('id_habitat', habitatId);
+      // Préparation des données de l'habitat
+      const habitatData: Partial<Habitat> = {
+        name: this.newHabitatData.name,
+        description: this.newHabitatData.description,
+        id_habitat: this.newHabitatData.id_habitat,
+      };
 
-      // Gestion spécifique de l'image
-      if (this.selectedFile()) {
-        formData.append('images', this.selectedFile()!);
-      }
+      // Appel du service avec les données et l'image séparément
+      this.habitatManagement
+        .updateHabitat(habitatId, habitatData, this.selectedFile())
+        .subscribe({
+          next: (updatedHabitat) => {
+            const imageUrl = this.formatImageUrl(updatedHabitat.images);
+            this.habitats.update((habitats) =>
+              habitats.map((h) =>
+                h.id_habitat === updatedHabitat.id_habitat
+                  ? {
+                      ...updatedHabitat,
+                      showDescription: h.showDescription,
+                      images: imageUrl,
+                    }
+                  : h
+              )
+            );
 
-      // Conversion en objet pour l'envoi
-      const habitatData: Record<string, string | Blob> = {};
-      formData.forEach((value, key) => {
-        if (value instanceof File) {
-          habitatData[key] = value;
-        } else {
-          habitatData[key] = value.toString();
-        }
-      });
-
-      this.habitatManagement.updateHabitat(habitatId, habitatData).subscribe({
-        next: (updatedHabitat) => {
-          const imageUrl = this.formatImageUrl(updatedHabitat.images);
-          this.habitats.update((habitats) =>
-            habitats.map((h) =>
-              h.id_habitat === updatedHabitat.id_habitat
-                ? {
-                    ...updatedHabitat,
-                    showDescription: h.showDescription,
-                    images: imageUrl,
-                  }
-                : h
-            )
-          );
-
-          this.resetForm();
-          this.toastService.showSuccess('Habitat mis à jour avec succès');
-        },
-        error: (error) => {
-          console.error("Erreur lors de la mise à jour de l'habitat:", error);
-          this.toastService.showError(
-            "Erreur lors de la mise à jour de l'habitat"
-          );
-        },
-      });
+            this.resetForm();
+            this.toastService.showSuccess('Habitat mis à jour avec succès');
+          },
+          error: (error) => {
+            console.error("Erreur lors de la mise à jour de l'habitat:", error);
+            this.toastService.showError(
+              "Erreur lors de la mise à jour de l'habitat"
+            );
+          },
+        });
     } else {
       this.toastService.showError('Veuillez remplir tous les champs requis');
     }

@@ -1,8 +1,4 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
@@ -66,42 +62,35 @@ export class HabitatManagementService {
    */
   updateHabitat(
     id: string,
-    data: Record<string, string | Blob>
+    data: Partial<Habitat>,
+    image?: File | null
   ): Observable<Habitat> {
-    if (!id || !data) {
-      return throwError(() => new Error('Données invalides'));
+    if (!id) {
+      return throwError(() => new Error('ID invalide'));
     }
 
     const formData = new FormData();
+
     Object.entries(data).forEach(([key, value]) => {
-      if (value instanceof File) {
-        formData.append('images', value, value.name);
-      } else if (typeof value === 'object') {
-        formData.append(key, JSON.stringify(value));
-      } else {
+      if (value !== undefined && value !== null && key !== 'images') {
         formData.append(key, String(value));
       }
     });
 
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-    });
+    if (image) {
+      formData.append('images', image);
+    }
 
-    return this.http
-      .put<Habitat>(`${this.apiUrl}/${id}`, formData, { headers })
-      .pipe(
-        tap((response) => {
-          console.log('Réponse du serveur (mise à jour):', response);
-          this.habitatService.clearCache();
-        }),
-        catchError((error) => {
-          console.error('Erreur détaillée (mise à jour):', error);
-          if (error.status === 413) {
-            return throwError(() => new Error('Fichier trop volumineux'));
-          }
-          return this.handleError("mise à jour de l'habitat", error);
-        })
-      );
+    return this.http.put<Habitat>(`${this.apiUrl}/${id}`, formData).pipe(
+      tap((response) => {
+        console.log('Réponse du serveur (mise à jour):', response);
+        this.habitatService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur détaillée (mise à jour):', error);
+        return this.handleError("mise à jour de l'habitat", error);
+      })
+    );
   }
 
   /**
