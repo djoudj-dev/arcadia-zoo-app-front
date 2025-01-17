@@ -31,6 +31,13 @@ export class AnimalService {
 
   constructor(readonly http: HttpClient) {}
 
+  private formatImageUrl(imagePath: string | null): string {
+    if (!imagePath) return '';
+    return imagePath.startsWith('http')
+      ? imagePath
+      : `${this.imageBaseUrl}/${imagePath.replace(/^.*\//, '')}`;
+  }
+
   /**
    * Récupère la liste de tous les animaux.
    * Utilise un cache pour éviter les appels réseau répétés.
@@ -43,9 +50,7 @@ export class AnimalService {
           map((animals) =>
             animals.map((animal) => ({
               ...animal,
-              images: animal.images
-                ? `${this.imageBaseUrl}/${animal.images}`
-                : '',
+              images: this.formatImageUrl(animal.images),
             }))
           ),
           shareReplay(1),
