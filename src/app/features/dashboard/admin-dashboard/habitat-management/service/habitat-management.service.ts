@@ -73,7 +73,10 @@ export class HabitatManagementService {
 
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null && key !== 'images') {
-        formData.append(key, String(value));
+        formData.append(
+          key,
+          typeof value === 'object' ? JSON.stringify(value) : String(value)
+        );
       }
     });
 

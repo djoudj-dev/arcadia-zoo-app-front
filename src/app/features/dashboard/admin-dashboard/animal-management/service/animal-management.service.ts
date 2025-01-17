@@ -1,8 +1,4 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
@@ -34,63 +30,51 @@ export class AnimalManagementService {
   }
 
   createAnimal(formData: FormData): Observable<Animal> {
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-    });
-
-    const animalData: Record<string, string | Blob> = {};
-    formData.forEach((value, key) => {
-      if (key === 'weightRange') {
-        animalData['weight_range'] = value;
-      } else {
-        animalData[key] = value;
-      }
-    });
-
-    return this.http.post<Animal>(this.apiUrl, formData, { headers }).pipe(
+    return this.http.post<Animal>(this.apiUrl, formData).pipe(
       tap(() => this.animalService.clearCache()),
       catchError((error) => this.handleError("création de l'animal", error))
     );
   }
 
   updateAnimal(id: string, formData: FormData): Observable<Animal> {
-    if (!id || !formData) {
-      return throwError(() => new Error('Données invalides'));
+    if (!id) {
+      return throwError(() => new Error('ID invalide'));
     }
 
-    const headers = new HttpHeaders({
-      Accept: 'application/json',
-    });
+    // Créer un nouvel objet FormData pour les données à envoyer
+    const dataToSend = new FormData();
 
-    const animalData: Record<string, string | Blob> = {};
+    // Ajouter les champs de base
     formData.forEach((value, key) => {
-      if (key === 'weightRange') {
-        animalData['weight_range'] = value;
-      } else {
-        animalData[key] = value;
+      if (key === 'images' && value instanceof File) {
+        dataToSend.append('images', value);
+      } else if (key !== 'showTime' && value !== null && value !== undefined) {
+        dataToSend.append(
+          key,
+          typeof value === 'object' ? JSON.stringify(value) : String(value)
+        );
       }
     });
 
-    console.log('Données envoyées pour mise à jour:', {
+    console.log('Données à envoyer:', {
       id,
-      data: animalData,
+      name: dataToSend.get('name'),
+      species: dataToSend.get('species'),
     });
 
-    return this.http
-      .put<Animal>(`${this.apiUrl}/${id}`, animalData, { headers })
-      .pipe(
-        tap((response) => {
-          console.log('Réponse du serveur (mise à jour):', response);
-          this.animalService.clearCache();
-        }),
-        catchError((error) => {
-          console.error('Erreur détaillée (mise à jour):', error);
-          if (error.status === 413) {
-            return throwError(() => new Error('Fichier trop volumineux'));
-          }
-          return this.handleError("mise à jour de l'animal", error);
-        })
-      );
+    return this.http.put<Animal>(`${this.apiUrl}/${id}`, dataToSend).pipe(
+      tap((response) => {
+        console.log('Réponse du serveur (mise à jour):', response);
+        this.animalService.clearCache();
+      }),
+      catchError((error) => {
+        console.error('Erreur détaillée (mise à jour):', error);
+        if (error.status === 413) {
+          return throwError(() => new Error('Fichier trop volumineux'));
+        }
+        return this.handleError("mise à jour de l'animal", error);
+      })
+    );
   }
 
   deleteAnimal(id: string): Observable<void> {
