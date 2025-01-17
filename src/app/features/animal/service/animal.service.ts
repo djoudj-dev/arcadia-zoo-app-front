@@ -33,9 +33,11 @@ export class AnimalService {
 
   private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
-    return imagePath.startsWith('http')
-      ? imagePath
-      : `${this.imageBaseUrl}/${imagePath.replace(/^.*\//, '')}`;
+    if (imagePath.startsWith('http')) return imagePath;
+
+    // Supprimer le préfixe 'uploads/animals' s'il existe
+    const cleanPath = imagePath.replace(/^uploads\/animals\//, '');
+    return `${this.imageBaseUrl}/${cleanPath}`;
   }
 
   /**
