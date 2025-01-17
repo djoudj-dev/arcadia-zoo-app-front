@@ -5,8 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { FileSecurityService } from 'app/core/services/file-security.service';
-import { FileScanService } from 'app/core/services/file-scan.service';
+import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
 import { ToastService } from '../components/toast/services/toast.service';
 
@@ -28,10 +27,9 @@ export class FileUploadDirective {
   @Output() processingStatus = new EventEmitter<string>();
 
   constructor(
-    private fileSecurityService: FileSecurityService,
-    private fileScanService: FileScanService,
-    private imageOptimizerService: ImageOptimizerService,
-    private toastService: ToastService
+    private readonly fileScanner: FileScanner,
+    private readonly imageOptimizerService: ImageOptimizerService,
+    private readonly toastService: ToastService
   ) {}
 
   @HostListener('change', ['$event'])
@@ -44,21 +42,14 @@ export class FileUploadDirective {
     try {
       this.processingStatus.emit('Validation du fichier...');
 
-      // Validation de base
-      const validation = await this.fileSecurityService.validateFile(file);
-      if (!validation.isValid) {
-        this.toastService.showError(validation.errors.join('\n'));
-        this.resetInput(input);
-        return;
-      }
-
-      // Scan antivirus si activé
+      // Validation et scan de sécurité
       if (this.scanFile) {
         this.processingStatus.emit('Scan de sécurité...');
-        const scanResult = await this.fileScanService.scanFile(file);
+        const scanResult = await this.fileScanner.scan(file);
         if (!scanResult.isSafe) {
           this.toastService.showError(
-            'Fichier potentiellement dangereux détecté'
+            'Fichier potentiellement dangereux détecté: ' +
+              scanResult.threats.join(', ')
           );
           this.resetInput(input);
           return;
@@ -73,7 +64,7 @@ export class FileUploadDirective {
       }
 
       // Sécurisation finale du nom de fichier
-      const secureName = this.fileSecurityService.sanitizeFileName(
+      const secureName = this.imageOptimizerService.sanitizeFileName(
         processedFile.name
       );
       const finalFile = new File([processedFile], secureName, {
