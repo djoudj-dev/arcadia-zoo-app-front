@@ -22,7 +22,7 @@ export class AnimalOverviewService {
       map((animals) =>
         animals.map((animal) => ({
           ...animal,
-          images: animal.images ? `${this.uploadsUrl}/${animal.images}` : '',
+          images: animal.images ? `${this.uploadsUrl}/${animal.images}` : null,
         }))
       )
     );
