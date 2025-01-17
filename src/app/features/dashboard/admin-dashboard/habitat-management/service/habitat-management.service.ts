@@ -64,26 +64,25 @@ export class HabitatManagementService {
    * @param formData FormData contenant les données mises à jour et la nouvelle image éventuelle
    * @returns Observable<Habitat> Habitat mis à jour avec ses informations complètes
    */
-  updateHabitat(id: string, formData: FormData): Observable<Habitat> {
-    // Ajout des headers nécessaires
+  updateHabitat(
+    id: string,
+    data: Record<string, string | Blob>
+  ): Observable<Habitat> {
+    if (!id || !data) {
+      return throwError(() => new Error('Données invalides'));
+    }
+
     const headers = new HttpHeaders({
       Accept: 'application/json',
     });
 
-    // Conversion du FormData en objet pour le body
-    const habitatData: Record<string, string | Blob> = {};
-    formData.forEach((value, key) => {
-      habitatData[key] = value;
-    });
-
-    // Log des données avant envoi
     console.log('Données envoyées pour mise à jour:', {
       id,
-      data: habitatData,
+      data,
     });
 
     return this.http
-      .put<Habitat>(`${this.apiUrl}/${id}`, habitatData, { headers })
+      .put<Habitat>(`${this.apiUrl}/${id}`, data, { headers })
       .pipe(
         tap((response) => {
           console.log('Réponse du serveur (mise à jour):', response);
@@ -91,14 +90,8 @@ export class HabitatManagementService {
         }),
         catchError((error) => {
           console.error('Erreur détaillée (mise à jour):', error);
-          if (error.error instanceof ErrorEvent) {
-            console.error('Erreur client:', error.error.message);
-          } else {
-            console.error('Erreur serveur:', {
-              status: error.status,
-              message: error.message,
-              error: error.error,
-            });
+          if (error.status === 413) {
+            return throwError(() => new Error('Fichier trop volumineux'));
           }
           return this.handleError("mise à jour de l'habitat", error);
         })
