@@ -35,11 +35,9 @@
                 "output": "/assets"
               }
             ],
-            "styles": [
-              "src/styles.css",
-              "src/assets/fontawesome/css/all.min.css"
-            ],
-            "scripts": []
+            "styles": ["src/styles.css"],
+            "scripts": [],
+            "allowedCommonJsDependencies": ["@fortawesome/fontawesome-free"]
           },
           "configurations": {
             "production": {
