@@ -22,8 +22,8 @@ export class HabitatManagementService {
   readonly apiUrl = `${environment.apiUrl}/api/admin/habitats`;
 
   constructor(
-    readonly http: HttpClient,
-    readonly habitatService: HabitatService
+    private readonly http: HttpClient,
+    private readonly habitatService: HabitatService
   ) {}
 
   /**
@@ -61,7 +61,7 @@ export class HabitatManagementService {
    * Met à jour un habitat existant
    * Gère l'upload d'image et la mise à jour du cache
    * @param id Identifiant de l'habitat à modifier
-   * @param formData FormData contenant les données mises à jour et la nouvelle image éventuelle
+   * @param data FormData contenant les données mises à jour et la nouvelle image éventuelle
    * @returns Observable<Habitat> Habitat mis à jour avec ses informations complètes
    */
   updateHabitat(
@@ -72,17 +72,23 @@ export class HabitatManagementService {
       return throwError(() => new Error('Données invalides'));
     }
 
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        formData.append('images', value, value.name);
+      } else if (typeof value === 'object') {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, String(value));
+      }
+    });
+
     const headers = new HttpHeaders({
       Accept: 'application/json',
     });
 
-    console.log('Données envoyées pour mise à jour:', {
-      id,
-      data,
-    });
-
     return this.http
-      .put<Habitat>(`${this.apiUrl}/${id}`, data, { headers })
+      .put<Habitat>(`${this.apiUrl}/${id}`, formData, { headers })
       .pipe(
         tap((response) => {
           console.log('Réponse du serveur (mise à jour):', response);
@@ -120,26 +126,15 @@ export class HabitatManagementService {
   /**
    * Gestion centralisée des erreurs HTTP
    * Formate les messages d'erreur et les log pour le debugging
-   * @param action Description de l'action qui a échoué
+   * @param operation Description de l'opération qui a échoué
    * @param error Erreur HTTP reçue
    * @returns Observable<never> Observable d'erreur formatée
    */
   private handleError(
-    action: string,
+    operation: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    let errorMessage = `Erreur lors de ${action}. `;
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage += `Message d'erreur: ${error.error.message}`;
-    } else {
-      errorMessage += `Code d'erreur: ${error.status}, `;
-      errorMessage += `Message: ${error.error?.message || error.message}`;
-    }
-
-    console.error(errorMessage);
-    console.error("Détails complets de l'erreur:", error);
-
-    return throwError(() => new Error(errorMessage));
+    console.error(`Erreur lors de ${operation}:`, error);
+    return throwError(() => new Error(`Erreur lors de ${operation}`));
   }
 }

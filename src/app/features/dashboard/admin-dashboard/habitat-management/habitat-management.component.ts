@@ -134,13 +134,27 @@ export class HabitatManagementComponent implements OnInit {
   /** Met à jour un habitat existant */
   updateHabitat() {
     if (this.validateHabitatData(true)) {
-      const formData = this.buildFormData();
       const habitatId = this.newHabitatData.id_habitat!.toString();
+      const formData = new FormData();
 
-      // Conversion du FormData en objet
+      // Ajout des données de base
+      formData.append('name', this.newHabitatData.name!);
+      formData.append('description', this.newHabitatData.description!);
+      formData.append('id_habitat', habitatId);
+
+      // Gestion spécifique de l'image
+      if (this.selectedFile()) {
+        formData.append('images', this.selectedFile()!);
+      }
+
+      // Conversion en objet pour l'envoi
       const habitatData: Record<string, string | Blob> = {};
       formData.forEach((value, key) => {
-        habitatData[key] = value;
+        if (value instanceof File) {
+          habitatData[key] = value;
+        } else {
+          habitatData[key] = value.toString();
+        }
       });
 
       this.habitatManagement.updateHabitat(habitatId, habitatData).subscribe({
@@ -173,11 +187,15 @@ export class HabitatManagementComponent implements OnInit {
     }
   }
 
-  private formatImageUrl(imagePath: string | null | undefined): string {
+  private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
-    return imagePath.startsWith('http')
-      ? imagePath
-      : `${this.imageBaseUrl}/${imagePath.replace(/^\/+/, '')}`;
+    if (imagePath.startsWith('http')) return imagePath;
+    // Suppression des doublons potentiels dans le chemin
+    const cleanPath = imagePath.replace(
+      /uploads\/habitats\/uploads\/habitats\//,
+      'uploads/habitats/'
+    );
+    return `${this.imageBaseUrl}/${cleanPath}`;
   }
 
   /** Prépare le formulaire pour la modification */
