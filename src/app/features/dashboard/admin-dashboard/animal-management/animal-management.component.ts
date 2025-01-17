@@ -75,14 +75,14 @@ export class AnimalManagementComponent implements OnInit {
   }
 
   /** Charge la liste des animaux */
-  loadAnimals() {
+  loadAnimals(): void {
     this.animalManagement.getAllAnimals().subscribe({
       next: (animals) => {
         this.animals.set(
           animals.map((animal) => ({
             ...animal,
             showTime: false,
-            images: `${this.imageBaseUrl}/${animal.images}`,
+            images: animal.images,
           }))
         );
         this.groupAnimals();
