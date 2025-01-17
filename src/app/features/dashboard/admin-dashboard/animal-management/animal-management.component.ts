@@ -305,14 +305,6 @@ export class AnimalManagementComponent implements OnInit {
     if (file) {
       formData.append('images', file);
     }
-
-    formData.forEach((value, key) => {
-      console.log(
-        `Contenu du FormData : ${key} = ${
-          typeof value === 'object' ? JSON.stringify(value) : value
-        }`
-      ); // Log pour vérifier
-    });
     return formData;
   }
 
