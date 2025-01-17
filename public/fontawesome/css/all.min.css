@@ -1,0 +1,189 @@
+/*!
+ * Font Awesome Free 6.0.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
+.fa,
+.fa-brands,
+.fa-classic,
+.fa-regular,
+.fa-sharp,
+.fa-solid,
+.fab,
+.far,
+.fas {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-rendering: auto;
+}
+.fa-classic,
+.fa-regular,
+.fa-solid,
+.far,
+.fas {
+  font-family: "Font Awesome 6 Free";
+}
+.fa,
+.fa-brands,
+.fab {
+  font-family: "Font Awesome 6 Brands";
+}
+.fa-solid,
+.fas {
+  font-weight: 900;
+}
+.fa-regular,
+.far {
+  font-weight: 400;
+}
+
+.fa-drumstick-bite:before {
+  content: "\f6d7";
+}
+.fa-quote-left:before {
+  content: "\f10d";
+}
+.fa-stethoscope:before {
+  content: "\f0f1";
+}
+.fa-paw:before {
+  content: "\f1b0";
+}
+.fa-user:before {
+  content: "\f007";
+}
+.fa-sign-out:before {
+  content: "\f08b";
+}
+.fa-plus:before {
+  content: "\f067";
+}
+.fa-minus:before {
+  content: "\f068";
+}
+.fa-pen:before {
+  content: "\f304";
+}
+.fa-trash:before {
+  content: "\f1f8";
+}
+.fa-check:before {
+  content: "\f00c";
+}
+.fa-times:before {
+  content: "\f00d";
+}
+.fa-info-circle:before {
+  content: "\f05a";
+}
+.fa-exclamation-circle:before {
+  content: "\f06a";
+}
+.fa-calendar:before {
+  content: "\f133";
+}
+.fa-clock:before {
+  content: "\f017";
+}
+.fa-envelope:before {
+  content: "\f0e0";
+}
+.fa-phone:before {
+  content: "\f095";
+}
+.fa-location-dot:before {
+  content: "\f3c5";
+}
+.fa-chart-line:before {
+  content: "\f201";
+}
+.fa-users:before {
+  content: "\f0c0";
+}
+.fa-building:before {
+  content: "\f1ad";
+}
+.fa-clipboard:before {
+  content: "\f328";
+}
+.fa-file-medical:before {
+  content: "\f477";
+}
+.fa-history:before {
+  content: "\f1da";
+}
+.fa-gear:before {
+  content: "\f013";
+}
+.fa-arrow-right:before {
+  content: "\f061";
+}
+.fa-arrow-left:before {
+  content: "\f060";
+}
+.fa-chevron-right:before {
+  content: "\f054";
+}
+.fa-chevron-left:before {
+  content: "\f053";
+}
+.fa-chevron-up:before {
+  content: "\f077";
+}
+.fa-chevron-down:before {
+  content: "\f078";
+}
+.fa-eye:before {
+  content: "\f06e";
+}
+.fa-eye-slash:before {
+  content: "\f070";
+}
+.fa-image:before {
+  content: "\f03e";
+}
+.fa-upload:before {
+  content: "\f093";
+}
+.fa-download:before {
+  content: "\f019";
+}
+.fa-search:before {
+  content: "\f002";
+}
+.fa-filter:before {
+  content: "\f0b0";
+}
+.fa-sort:before {
+  content: "\f0dc";
+}
+.fa-sort-up:before {
+  content: "\f0de";
+}
+.fa-sort-down:before {
+  content: "\f0dd";
+}
+.fa-bars:before {
+  content: "\f0c9";
+}
+.fa-home:before {
+  content: "\f015";
+}
+.fa-ticket:before {
+  content: "\f145";
+}
+.fa-camera:before {
+  content: "\f030";
+}
+.fa-map:before {
+  content: "\f279";
+}
+.fa-calendar-check:before {
+  content: "\f274";
+}
+.fa-bell:before {
+  content: "\f0f3";
+}
