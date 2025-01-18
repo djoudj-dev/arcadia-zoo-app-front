@@ -332,11 +332,11 @@
     }
   </ul>
 </nav>
-<app-banner />
 
-<button
-  (click)="openLoginModal()"
-  class="text-sm uppercase font-semibold hover:text-quaternary"
+<app-modal
+  [isOpen]="isLoginModalOpen()"
+  (closeModal)="closeLoginModal()"
+  title="Connexion"
 >
-  Connexion
-</button>
+  <app-login-form (loginSuccess)="closeLoginModal()"></app-login-form>
+</app-modal>

@@ -7,12 +7,13 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { BannerComponent } from '../banner/banner.component';
+import { LoginFormComponent } from '../../../../features/login/login-form/login-form.component';
+import { ModalComponent } from '../../../components/modal/modal.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterLink, BannerComponent],
+  imports: [RouterLink, ModalComponent, LoginFormComponent],
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
