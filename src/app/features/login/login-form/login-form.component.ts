@@ -12,41 +12,53 @@ import { AuthService } from '../../../core/auth/services/auth.service';
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="p-6">
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700"
-          >Email</label
-        >
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-          placeholder="votre@email.com"
-        />
-      </div>
+    <div class="w-full max-w-md mx-auto p-6">
+      <h2 class="text-center text-xl font-semibold mb-6 text-gray-900">
+        Connectez-vous à votre compte
+      </h2>
 
-      <div class="mb-6">
-        <label for="password" class="block text-sm font-medium text-gray-700"
-          >Mot de passe</label
-        >
-        <input
-          type="password"
-          id="password"
-          formControlName="password"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-          placeholder="••••••••"
-        />
-      </div>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Adresse email
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            placeholder="vous@exemple.com"
+          />
+        </div>
 
-      <button
-        type="submit"
-        [disabled]="!loginForm.valid"
-        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
-      >
-        Se connecter
-      </button>
-    </form>
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Mot de passe
+          </label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="!loginForm.valid"
+          class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+        >
+          Se connecter
+        </button>
+      </form>
+    </div>
   `,
 })
 export class LoginFormComponent {
