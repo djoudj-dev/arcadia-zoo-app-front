@@ -96,7 +96,7 @@ export class AuthService {
     }
 
     return this.http
-      .post<TokenResponse>(`${this.apiUrl}/auth/token/refresh`, {
+      .post<TokenResponse>(`${this.apiUrl}/api/auth/token/refresh`, {
         refreshToken,
       })
       .pipe(
