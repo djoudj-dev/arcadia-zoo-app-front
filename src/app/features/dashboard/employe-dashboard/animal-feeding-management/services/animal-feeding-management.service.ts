@@ -94,7 +94,6 @@ export class AnimalFeedingManagementService {
     return this.http
       .get<FeedingHistoryResponse[]>(`${this.BASE_URL}/history/${animalId}`)
       .pipe(
-        tap((data) => console.log("Données brutes de l'historique:", data)),
         map((data) =>
           data.map((item) => ({
             ...item,
@@ -102,8 +101,7 @@ export class AnimalFeedingManagementService {
               item.user_name || `Employé #${item.employe_id || item.user_id}`,
             employe_id: item.employe_id || item.user_id || 0,
           }))
-        ),
-        tap((data) => console.log('Données après transformation:', data))
+        )
       );
   }
 
