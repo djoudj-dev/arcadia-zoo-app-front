@@ -70,7 +70,6 @@ export class AnimalFeedingManagementService {
         enrichedData
       )
       .pipe(
-        tap((response) => console.log('Réponse du serveur:', response)),
         catchError((error) => {
           // Gestion des erreurs
           console.error(
