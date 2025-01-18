@@ -20,6 +20,10 @@ interface ApiError {
   message: string;
 }
 
+interface PasswordResetResponse {
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -118,11 +122,15 @@ export class AuthService {
    * Déconnecte l'utilisateur
    */
   logout(): void {
-    this.authState.set({ user: null, isAuthenticated: false, role: null });
-    localStorage.removeItem('user');
     this.tokenService.removeTokens();
-    this.toastService.showSuccess('Déconnexion réussie !', 2500);
-    setTimeout(() => this.router.navigate(['/login']), 2500);
+    localStorage.removeItem('user');
+    this.authState.set({
+      user: null,
+      isAuthenticated: false,
+      role: null,
+    });
+    this.router.navigate(['/']);
+    this.toastService.showAuthLogout('Déconnexion réussie !');
   }
 
   /**
@@ -139,18 +147,17 @@ export class AuthService {
    * Gère la connexion réussie
    */
   private handleSuccessfulLogin(user: User): void {
-    if (user.role && user.token) {
-      this.tokenService.setTokens(user.token, user.refreshToken ?? '');
-      this.authState.set({
-        user: user,
-        isAuthenticated: true,
-        role: user.role?.name,
-      });
-      localStorage.setItem('user', JSON.stringify(user));
-      this.toastService.showSuccess('Connexion réussie. Bienvenue!');
-    } else {
-      throw new Error('Données utilisateur invalides');
-    }
+    const token = user.token ?? '';
+    const refreshToken = user.refreshToken ?? '';
+    this.tokenService.setTokens(token, refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+    this.authState.set({
+      user: user,
+      isAuthenticated: true,
+      role: user.role?.name ?? null,
+    });
+    this.router.navigate(['/']);
+    this.toastService.showAuthLogin('Connexion réussie !');
   }
 
   /**
@@ -169,5 +176,64 @@ export class AuthService {
    */
   private handleInvalidUserData(): void {
     this.logout();
+  }
+
+  /**
+   * Initie le processus de réinitialisation de mot de passe
+   */
+  initiatePasswordReset(email: string): Observable<PasswordResetResponse> {
+    return this.http
+      .post<PasswordResetResponse>(
+        `${this.apiUrl}/api/password-reset/initiate`,
+        { email }
+      )
+      .pipe(
+        catchError((error) => {
+          console.error("Erreur d'initiation de réinitialisation:", error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  /**
+   * Vérifie le code de réinitialisation
+   */
+  verifyResetCode(
+    email: string,
+    code: string
+  ): Observable<{ isValid: boolean }> {
+    return this.http
+      .post<{ isValid: boolean }>(`${this.apiUrl}/api/password-reset/verify`, {
+        email,
+        code,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur de vérification du code:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  /**
+   * Réinitialise le mot de passe
+   */
+  resetPassword(
+    email: string,
+    code: string,
+    newPassword: string
+  ): Observable<PasswordResetResponse> {
+    return this.http
+      .post<PasswordResetResponse>(`${this.apiUrl}/api/password-reset/reset`, {
+        email,
+        code,
+        newPassword,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur de réinitialisation du mot de passe:', error);
+          return throwError(() => error);
+        })
+      );
   }
 }
