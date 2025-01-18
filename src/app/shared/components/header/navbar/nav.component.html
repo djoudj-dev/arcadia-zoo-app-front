@@ -340,5 +340,17 @@
   (closeModal)="closeLoginModal()"
   title="Connexion"
 >
-  <app-login-form (loginSuccess)="closeLoginModal()"></app-login-form>
+  <app-login-form
+    (loginSuccess)="closeLoginModal()"
+    (forgotPasswordClick)="openPasswordResetModal()"
+  ></app-login-form>
+</app-modal>
+
+<app-modal
+  [isOpen]="isPasswordResetModalOpen()"
+  (close)="closePasswordResetModal()"
+>
+  <app-password-reset
+    (closeModal)="closePasswordResetModal()"
+  ></app-password-reset>
 </app-modal>
