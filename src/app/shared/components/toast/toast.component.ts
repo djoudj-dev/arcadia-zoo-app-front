@@ -14,12 +14,7 @@ import { ToastService } from './services/toast.service';
   imports: [CommonModule],
   template: `
     @if(visible) {
-    <div
-      class="relative transition-opacity duration-300 z-50 mb-4"
-      [class.opacity-0]="!visible"
-      [class]="customClass"
-      role="alert"
-    >
+    <div [class]="customClass" role="alert">
       <div [class]="getTypeClass()">
         {{ message }}
         @if(type === 'confirm') {
@@ -45,7 +40,13 @@ import { ToastService } from './services/toast.service';
 })
 export class ToastComponent implements OnInit, OnDestroy {
   @Input() message!: string;
-  @Input() type: 'success' | 'error' | 'warning' | 'confirm' = 'success';
+  @Input() type:
+    | 'success'
+    | 'error'
+    | 'warning'
+    | 'confirm'
+    | 'auth-login'
+    | 'auth-logout' = 'success';
   @Input() customClass = '';
 
   visible = false;
@@ -74,14 +75,23 @@ export class ToastComponent implements OnInit, OnDestroy {
   }
 
   getTypeClass() {
-    const baseClasses = 'p-4 rounded-lg shadow-lg';
-    const typeClasses = {
-      success: 'bg-green-100 text-green-800 border-l-4 border-green-500',
-      error: 'bg-red-100 text-red-800 border-l-4 border-red-500',
-      warning: 'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500',
-      confirm: 'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500',
-    };
-    return `${baseClasses} ${typeClasses[this.type]}`;
+    const baseClasses = 'p-4 shadow-lg border-l-8';
+    switch (this.type) {
+      case 'success':
+        return `${baseClasses} bg-white text-green-800 border-green-500`;
+      case 'error':
+        return `${baseClasses} bg-white text-red-800 border-red-500`;
+      case 'warning':
+        return `${baseClasses} bg-white text-yellow-800 border-yellow-500`;
+      case 'confirm':
+        return `${baseClasses} bg-white text-blue-800 border-blue-500`;
+      case 'auth-login':
+        return `${baseClasses} bg-white text-gray-800 border-green-500`;
+      case 'auth-logout':
+        return `${baseClasses} bg-white text-gray-800 border-green-500`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800 border-gray-500`;
+    }
   }
 
   onConfirmClick() {
