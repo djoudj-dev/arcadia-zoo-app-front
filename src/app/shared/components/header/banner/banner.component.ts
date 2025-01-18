@@ -10,7 +10,7 @@ import { LogoutToastComponent } from './logout-toast.component';
   templateUrl: './banner.component.html',
 })
 export class BannerComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
