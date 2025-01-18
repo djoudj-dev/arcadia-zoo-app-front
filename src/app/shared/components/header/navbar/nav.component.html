@@ -309,3 +309,15 @@
   </ul>
 </nav>
 <app-banner />
+
+<button
+  (click)="openLoginModal()"
+  class="text-sm uppercase font-semibold hover:text-quaternary"
+>
+  Connexion
+</button>
+
+<app-login
+  [isOpen]="isLoginModalOpen()"
+  (closed)="closeLoginModal()"
+></app-login>

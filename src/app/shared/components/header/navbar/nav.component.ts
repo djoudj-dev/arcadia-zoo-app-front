@@ -1,18 +1,26 @@
-import { Component, computed, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { BannerComponent } from '../banner/banner.component';
+import { LoginComponent } from '../../../../features/login/login.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterLink, BannerComponent],
+  imports: [RouterLink, BannerComponent, LoginComponent],
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
   isMenuOpen = false;
   activeDropdown: string | null = null;
   isPasswordModalOpen = false;
+  readonly isLoginModalOpen = signal(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -47,6 +55,14 @@ export class NavComponent {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/']);
+  }
+
+  openLoginModal(): void {
+    this.isLoginModalOpen.set(true);
+  }
+
+  closeLoginModal(): void {
+    this.isLoginModalOpen.set(false);
   }
 
   // Ferme le dropdown quand on clique en dehors
