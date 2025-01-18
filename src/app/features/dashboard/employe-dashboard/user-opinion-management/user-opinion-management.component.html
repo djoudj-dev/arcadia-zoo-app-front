@@ -33,6 +33,7 @@
               'font-semibold transition-all duration-300 min-w-[120px]'
             "
             (click)="changeFilter(filter.type)"
+            (keydown.enter)="changeFilter(filter.type)"
           ></app-button>
           <span
             class="absolute -top-2 -right-2 {{
@@ -106,6 +107,7 @@
               [rounded]="true"
               [customClass]="'text-sm px-4 py-2'"
               (click)="validateOpinion(opinion)"
+              (keydown.enter)="validateOpinion(opinion)"
             ></app-button>
             <app-button
               [text]="'Rejeter'"
@@ -114,6 +116,7 @@
               [rounded]="true"
               [customClass]="'text-sm px-4 py-2'"
               (click)="rejectOpinion(opinion._id ?? '')"
+              (keydown.enter)="rejectOpinion(opinion._id ?? '')"
             ></app-button>
             } @else {
             <app-button
@@ -123,6 +126,7 @@
               [rounded]="true"
               [customClass]="'text-sm px-4 py-2'"
               (click)="deleteOpinion(opinion._id ?? '')"
+              (keydown.enter)="deleteOpinion(opinion._id ?? '')"
             ></app-button>
             }
           </div>

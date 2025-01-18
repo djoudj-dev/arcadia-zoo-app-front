@@ -8,14 +8,8 @@ import { RateComponent } from 'app/shared/components/rate/rate.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 
-/**
- * Interface pour les options de filtrage
- */
-interface FilterOption {
-  type: 'pending' | 'validated' | 'rejected';
-  label: string;
-  badgeColor: string;
-}
+/** Type pour les statuts de filtre */
+type FilterStatus = 'pending' | 'validated' | 'rejected';
 
 /**
  * Composant de gestion des avis utilisateurs
@@ -29,57 +23,74 @@ interface FilterOption {
 })
 export class UserOpinionManagementComponent implements OnInit {
   /** Signaux pour la gestion d'état réactive */
-  private allOpinions = signal<UserOpinion[]>([]);
-  readOnlySignal = signal(true);
+  private readonly allOpinions = signal<UserOpinion[]>([]);
+  public readonly readOnlySignal = signal(true);
+  public readonly currentFilter = signal<FilterStatus>('pending');
+  public readonly isLoading = signal(false);
+
+  /** Options de filtrage */
+  public readonly filters = [
+    {
+      type: 'pending' as FilterStatus,
+      label: 'En attente',
+      badgeColor: 'bg-yellow-500',
+    },
+    {
+      type: 'validated' as FilterStatus,
+      label: 'Validés',
+      badgeColor: 'bg-green-500',
+    },
+    {
+      type: 'rejected' as FilterStatus,
+      label: 'Rejetés',
+      badgeColor: 'bg-red-500',
+    },
+  ];
 
   /** Liste des avis filtrés (pour l'affichage) */
   public opinions = computed(() => {
     switch (this.currentFilter()) {
       case 'pending':
         return this.allOpinions().filter(
-          (opinion) => !opinion.validated && !opinion.rejected
+          (opinion) => opinion.status === 'pending'
         );
       case 'validated':
-        return this.allOpinions().filter((opinion) => opinion.validated);
+        return this.allOpinions().filter(
+          (opinion) => opinion.status === 'approved'
+        );
       case 'rejected':
-        return this.allOpinions().filter((opinion) => opinion.rejected);
+        return this.allOpinions().filter(
+          (opinion) => opinion.status === 'rejected'
+        );
       default:
         return this.allOpinions();
     }
   });
 
-  /** État du composant */
-  isLoading = signal<boolean>(true);
-  currentFilter = signal<'pending' | 'validated' | 'rejected'>('pending');
-
-  /** Options de filtrage */
-  filters: FilterOption[] = [
-    { type: 'pending', label: 'En attente', badgeColor: 'bg-yellow-500' },
-    { type: 'validated', label: 'Validés', badgeColor: 'bg-green-500' },
-    { type: 'rejected', label: 'Rejetés', badgeColor: 'bg-red-500' },
-  ];
-
-  /** Compteurs réactifs */
+  /** Compteurs */
   public pendingCount = computed(
     () =>
-      this.allOpinions().filter(
-        (opinion) => !opinion.validated && !opinion.rejected
-      ).length
+      this.allOpinions().filter((opinion) => opinion.status === 'pending')
+        .length
   );
 
   public validatedCount = computed(
-    () => this.allOpinions().filter((opinion) => opinion.validated).length
+    () =>
+      this.allOpinions().filter((opinion) => opinion.status === 'approved')
+        .length
   );
 
   public rejectedCount = computed(
-    () => this.allOpinions().filter((opinion) => opinion.rejected).length
+    () =>
+      this.allOpinions().filter((opinion) => opinion.status === 'rejected')
+        .length
   );
 
   constructor(
-    private userOpinionsService: UserOpinionsService,
-    private toastService: ToastService,
-    private router: Router,
-    private route: ActivatedRoute
+    private readonly userOpinionsService: UserOpinionsService,
+    private readonly toastService: ToastService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -96,9 +107,7 @@ export class UserOpinionManagementComponent implements OnInit {
       currentPath &&
       ['pending', 'validated', 'rejected'].includes(currentPath)
     ) {
-      this.currentFilter.set(
-        currentPath as 'pending' | 'validated' | 'rejected'
-      );
+      this.currentFilter.set(currentPath as FilterStatus);
     }
   }
 
@@ -123,7 +132,7 @@ export class UserOpinionManagementComponent implements OnInit {
   /**
    * Change le filtre actuel
    */
-  changeFilter(filter: 'pending' | 'validated' | 'rejected'): void {
+  changeFilter(filter: FilterStatus): void {
     this.currentFilter.set(filter);
     this.router.navigate([filter], {
       relativeTo: this.route,
@@ -134,7 +143,7 @@ export class UserOpinionManagementComponent implements OnInit {
   /**
    * Retourne le nombre d'avis pour un type donné
    */
-  getCount(filterType: 'pending' | 'validated' | 'rejected'): number {
+  getCount(filterType: FilterStatus): number {
     switch (filterType) {
       case 'pending':
         return this.pendingCount();
