@@ -3,12 +3,10 @@ import { authGuard } from './core/auth/guard/auth.guard';
 import { OpeningHoursManagementComponent } from './features/dashboard/admin-dashboard/opening-hours-management/opening-hours-management.component';
 import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-dashboard/veterinary-dashboard.component';
 import { HomeComponent } from './features/home/home.component';
-import { LoginComponent } from './features/login/login.component';
 
 // Routes publiques
 const publicRoutes: Routes = [
   { path: '', component: HomeComponent, title: 'Accueil - Zoo Arcadia' },
-  { path: 'login', component: LoginComponent, title: 'Connexion' },
   {
     path: 'animal/:id',
     loadComponent: () =>
