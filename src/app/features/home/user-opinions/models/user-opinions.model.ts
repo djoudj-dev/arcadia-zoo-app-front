@@ -7,6 +7,7 @@ export interface UserOpinion {
   date?: Date;
   createdAt?: Date;
   rating: number;
+  status: 'pending' | 'approved' | 'rejected';
   validated: boolean;
   rejected: boolean;
 }
