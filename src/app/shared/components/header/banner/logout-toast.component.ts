@@ -17,7 +17,7 @@ import { ToastService } from '../../../components/toast/services/toast.service';
       role="alert"
     >
       <div
-        class="p-4 rounded-lg shadow-lg bg-green-100 text-green-800 border-l-4 border-green-500"
+        class="p-4 rounded-lg shadow-lg bg-primary text-green-800 border-l-4 border-green-500"
       >
         {{ currentMessage }}
       </div>
