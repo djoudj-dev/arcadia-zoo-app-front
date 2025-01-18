@@ -7,20 +7,28 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { LoginFormComponent } from '../../../../features/login/login-form/login-form.component';
+import { LoginFormComponent } from '../../../components/login-form/login-form.component';
 import { ModalComponent } from '../../../components/modal/modal.component';
+import { PasswordResetComponent } from '../../../components/password-reset/password-reset.component';
 import { BannerComponent } from '../banner/banner.component';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterLink, ModalComponent, LoginFormComponent, BannerComponent],
+  imports: [
+    RouterLink,
+    ModalComponent,
+    LoginFormComponent,
+    BannerComponent,
+    PasswordResetComponent,
+  ],
   templateUrl: './nav.component.html',
 })
 export class NavComponent {
   isMenuOpen = false;
   activeDropdown: string | null = null;
   readonly isLoginModalOpen = signal(false);
+  readonly isPasswordResetModalOpen = signal(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -49,6 +57,15 @@ export class NavComponent {
 
   closeLoginModal(): void {
     this.isLoginModalOpen.set(false);
+  }
+
+  openPasswordResetModal(): void {
+    this.isLoginModalOpen.set(false);
+    this.isPasswordResetModalOpen.set(true);
+  }
+
+  closePasswordResetModal(): void {
+    this.isPasswordResetModalOpen.set(false);
   }
 
   logout(): void {

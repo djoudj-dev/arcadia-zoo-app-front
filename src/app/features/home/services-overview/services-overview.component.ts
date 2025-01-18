@@ -17,12 +17,12 @@ import { ServiceService } from '../../zoo-services/service/service.service';
 })
 export class ServicesOverviewComponent implements OnInit {
   /** Injection du DestroyRef pour la gestion des souscriptions */
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** Signal contenant la liste des services */
   services = signal<Service[]>([]);
 
-  constructor(private serviceService: ServiceService) {}
+  constructor(private readonly serviceService: ServiceService) {}
 
   /** Initialise le composant en chargeant la liste des services */
   ngOnInit() {
@@ -54,10 +54,9 @@ export class ServicesOverviewComponent implements OnInit {
   private formatServiceImage(service: Service): Service {
     return {
       ...service,
-      images:
-        service.images?.startsWith('http') || false
-          ? service.images
-          : `${environment.apiUrl}/api/${service.images}`,
+      images: service.images?.startsWith('http')
+        ? service.images
+        : `${environment.apiUrl}/api/${service.images}`,
     };
   }
 }

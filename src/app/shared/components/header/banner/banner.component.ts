@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthService } from '../../../../core/auth/services/auth.service';
-import { LogoutToastComponent } from './logout-toast.component';
+import { ToastComponent } from '../../../components/toast/toast.component';
 
 @Component({
   selector: 'app-banner',
   standalone: true,
-  imports: [CommonModule, LogoutToastComponent],
+  imports: [CommonModule, ToastComponent],
   templateUrl: './banner.component.html',
 })
 export class BannerComponent {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, signal } from '@angular/core';
 import {
   AbstractControl,
   AbstractControlOptions,
@@ -27,15 +27,18 @@ import { AccountManagementService } from './service/account-management.service';
   templateUrl: './update-password.component.html',
 })
 export class UpdatePasswordComponent implements OnInit {
+  @Output() closeModal = new EventEmitter<void>();
+
   /** Formulaire de modification du mot de passe */
   passwordForm!: FormGroup;
+  isSubmitting = signal(false);
 
   constructor(
-    private fb: FormBuilder,
-    private accountService: AccountManagementService,
-    private authService: AuthService,
-    private router: Router,
-    private toastService: ToastService
+    private readonly fb: FormBuilder,
+    private readonly accountService: AccountManagementService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -93,7 +96,8 @@ export class UpdatePasswordComponent implements OnInit {
    * Gère la soumission du formulaire
    */
   onSubmit() {
-    if (this.passwordForm.valid) {
+    if (this.passwordForm.valid && !this.isSubmitting()) {
+      this.isSubmitting.set(true);
       const { currentPassword, newPassword } = this.passwordForm.value;
 
       this.accountService
@@ -103,7 +107,12 @@ export class UpdatePasswordComponent implements OnInit {
             this.toastService.showSuccess(
               'Mot de passe modifié avec succès. Vous allez être déconnecté.'
             );
-            this.passwordForm.reset();
+            this.passwordForm.disable();
+
+            // Fermer le modal après 1 seconde
+            setTimeout(() => {
+              this.closeModal.emit();
+            }, 1000);
 
             // Déconnexion et redirection après 3 secondes
             setTimeout(() => {
@@ -117,10 +126,15 @@ export class UpdatePasswordComponent implements OnInit {
             }, 3000);
           },
           error: (error) => {
+            this.isSubmitting.set(false);
             this.toastService.showError(
               error.error.message ||
                 'Une erreur est survenue lors de la modification du mot de passe'
             );
+            this.passwordForm.enable();
+          },
+          complete: () => {
+            this.isSubmitting.set(false);
           },
         });
     } else {
