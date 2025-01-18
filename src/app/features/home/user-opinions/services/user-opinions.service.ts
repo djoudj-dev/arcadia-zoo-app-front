@@ -95,9 +95,6 @@ export class UserOpinionsService {
       })
       .pipe(
         map((opinions) => opinions.map(this.transformOpinion)),
-        tap((opinions) => {
-          console.log('Tous les avis récupérés:', opinions);
-        }),
         catchError((error) => {
           console.error('Erreur lors de la récupération des avis:', error);
           this.toastService.showError('Impossible de charger les avis');

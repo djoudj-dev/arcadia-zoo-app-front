@@ -10,7 +10,7 @@ import { ToastService } from '../../../components/toast/services/toast.service';
   template: `
     @if (visible && isLogoutMessage) {
     <div
-      class="fixed top-4 right-4 z-50 transition-opacity duration-300"
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity duration-300"
       [class.opacity-0]="!visible"
       role="alert"
     >
@@ -27,9 +27,9 @@ export class LogoutToastComponent implements OnInit, OnDestroy {
   visible = false;
   currentMessage = '';
   isLogoutMessage = false;
-  private subscription: Subscription = new Subscription();
+  private readonly subscription: Subscription = new Subscription();
 
-  constructor(private toastService: ToastService) {}
+  constructor(private readonly toastService: ToastService) {}
 
   ngOnInit() {
     this.subscription.add(
