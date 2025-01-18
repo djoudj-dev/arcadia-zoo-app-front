@@ -10,7 +10,7 @@ import { ToastService } from '../../../components/toast/services/toast.service';
   template: `
     @if (visible && isLogoutMessage) {
     <div
-      class="absolute top-4 right-4 z-50 transition-all duration-300 ease-in-out"
+      class="absolute top-0 right-4 z-50 transition-all duration-300 ease-in-out"
       [class]="
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
       "
