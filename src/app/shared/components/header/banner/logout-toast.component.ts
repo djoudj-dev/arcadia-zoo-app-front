@@ -10,12 +10,14 @@ import { ToastService } from '../../../components/toast/services/toast.service';
   template: `
     @if (visible && isLogoutMessage) {
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-opacity duration-300"
-      [class.opacity-0]="!visible"
+      class="absolute top-4 right-4 z-50 transition-all duration-300 ease-in-out"
+      [class]="
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+      "
       role="alert"
     >
       <div
-        class="p-4 rounded-lg shadow-lg min-w-[300px] bg-red-100 text-red-800 border-l-4 border-red-500"
+        class="p-3 rounded-lg shadow-lg bg-secondary/95 text-primary border-l-4 border-tertiary backdrop-blur-sm"
       >
         {{ currentMessage }}
       </div>
@@ -35,12 +37,14 @@ export class LogoutToastComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.toastService.toast$.subscribe((toast) => {
         this.currentMessage = toast.message;
-        // Vérifie si c'est un message de déconnexion
         this.isLogoutMessage = toast.message
           .toLowerCase()
           .includes('déconnexion');
         if (this.isLogoutMessage) {
           this.visible = true;
+          setTimeout(() => {
+            this.visible = false;
+          }, 2500);
         }
       })
     );
