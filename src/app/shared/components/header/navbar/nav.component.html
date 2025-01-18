@@ -71,8 +71,8 @@
       @if (!userAuthenticated()) {
       <li class="block py-3 md:inline md:py-0 md:mr-6">
         <a
-          [routerLink]="['/login']"
-          class="text-sm uppercase font-semibold hover:text-quaternary"
+          (click)="openLoginModal()"
+          class="text-sm uppercase font-semibold hover:text-quaternary cursor-pointer"
         >
           Connexion
         </a>
@@ -275,8 +275,8 @@
     @if (!userAuthenticated()) {
     <li class="block py-3 md:mr-6">
       <a
-        [routerLink]="['/login']"
-        class="text-sm uppercase font-semibold hover:text-quaternary"
+        (click)="openLoginModal()"
+        class="text-sm uppercase font-semibold hover:text-quaternary cursor-pointer"
       >
         Connexion
       </a>
@@ -340,8 +340,3 @@
 >
   Connexion
 </button>
-
-<app-login
-  [isOpen]="isLoginModalOpen()"
-  (closed)="closeLoginModal()"
-></app-login>
