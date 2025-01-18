@@ -67,6 +67,18 @@
         </a>
       </li>
 
+      <!-- Lien Connexion si l'utilisateur n'est pas authentifié -->
+      @if (!userAuthenticated()) {
+      <li class="block py-3 md:inline md:py-0 md:mr-6">
+        <a
+          [routerLink]="['/login']"
+          class="text-sm uppercase font-semibold hover:text-quaternary"
+        >
+          Connexion
+        </a>
+      </li>
+      }
+
       <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' -->
       @if (userRoles().veterinaire) {
       <li class="block py-3 md:inline md:py-0 md:mr-6 relative group">
@@ -258,6 +270,18 @@
         Contact
       </a>
     </li>
+
+    <!-- Lien Connexion sur mobile si l'utilisateur n'est pas authentifié -->
+    @if (!userAuthenticated()) {
+    <li class="block py-3 md:mr-6">
+      <a
+        [routerLink]="['/login']"
+        class="text-sm uppercase font-semibold hover:text-quaternary"
+      >
+        Connexion
+      </a>
+    </li>
+    }
 
     <!-- Vétérinaire visible si l'utilisateur a le rôle 'vet' sur mobile -->
     @if (userRoles().veterinaire) {
