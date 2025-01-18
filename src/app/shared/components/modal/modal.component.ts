@@ -46,13 +46,26 @@ import {
   exportAs: 'modal',
 })
 export class ModalComponent {
-  @Input() set isOpen(value: boolean) {
-    if (value && this.modalTemplate) {
+  private _isOpen = false;
+
+  @Input()
+  set isOpen(value: boolean) {
+    this._isOpen = value;
+    this.handleModalState();
+  }
+
+  get isOpen(): boolean {
+    return this._isOpen;
+  }
+
+  private handleModalState(): void {
+    if (this._isOpen && this.modalTemplate) {
       this.openModal();
     } else {
       this.closeOverlay();
     }
   }
+
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('modalTemplate') modalTemplate!: TemplateRef<unknown>;
@@ -60,9 +73,9 @@ export class ModalComponent {
   private overlayRef: OverlayRef | null = null;
 
   constructor(
-    private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef,
-    @Inject(PLATFORM_ID) private platformId: object
+    private readonly overlay: Overlay,
+    private readonly viewContainerRef: ViewContainerRef,
+    @Inject(PLATFORM_ID) private readonly platformId: object
   ) {}
 
   private openModal(): void {

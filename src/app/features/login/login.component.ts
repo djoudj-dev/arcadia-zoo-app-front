@@ -2,9 +2,12 @@ import { CommonModule } from '@angular/common';
 import {
   Component,
   computed,
+  EventEmitter,
   inject,
+  Input,
   OnDestroy,
   OnInit,
+  Output,
   signal,
 } from '@angular/core';
 import {
@@ -18,6 +21,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../core/auth/services/auth.service';
 import { InactivityService } from '../../core/services/inactivity.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { ToastComponent } from '../../shared/components/toast/toast.component';
 
@@ -39,8 +43,102 @@ interface FormErrors {
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonComponent, CommonModule, ToastComponent],
-  templateUrl: './login.component.html',
+  imports: [
+    ReactiveFormsModule,
+    ButtonComponent,
+    CommonModule,
+    ToastComponent,
+    ModalComponent,
+  ],
+  template: `
+    <app-modal [isOpen]="isOpen" (close)="closeModal()">
+      <div
+        class="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-xl w-full max-w-md space-y-8"
+      >
+        <!-- En-tête -->
+        <div class="flex justify-between items-center">
+          <div class="text-center space-y-2">
+            <h2 class="text-3xl font-serif font-bold text-tertiary">
+              Connexion
+            </h2>
+            <p class="text-lg text-gray-600 font-serif italic">
+              Accédez à votre espace personnel
+            </p>
+          </div>
+          <button
+            (click)="closeModal()"
+            class="p-2 hover:bg-tertiary/10 rounded-full transition-all duration-300"
+          >
+            <i class="fas fa-times text-tertiary"></i>
+          </button>
+        </div>
+
+        <!-- Composant Toast -->
+        <app-toast />
+
+        <!-- Formulaire -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+          <!-- Email -->
+          <div>
+            <label
+              for="email"
+              class="block text-lg font-medium text-tertiary mb-2"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent transition-all duration-300"
+              [ngClass]="{
+                'border-red-300 ring-red-300':
+                  loginForm.get('email')?.invalid &&
+                  loginForm.get('email')?.touched
+              }"
+              placeholder="exemple@domaine.com"
+            />
+          </div>
+
+          <!-- Mot de passe -->
+          <div>
+            <label
+              for="password"
+              class="block text-lg font-medium text-tertiary mb-2"
+            >
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent transition-all duration-300"
+              [ngClass]="{
+                'border-red-300 ring-red-300':
+                  loginForm.get('password')?.invalid &&
+                  loginForm.get('password')?.touched
+              }"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <!-- Bouton de connexion -->
+          <div class="pt-6">
+            <app-button
+              [text]="'Se connecter'"
+              [type]="'submit'"
+              [color]="'tertiary'"
+              [rounded]="true"
+              [disabled]="!isFormValid()"
+              [customClass]="
+                'w-full font-bold shadow-md hover:shadow-lg transition-all duration-300 py-3'
+              "
+            ></app-button>
+          </div>
+        </form>
+      </div>
+    </app-modal>
+  `,
 })
 export class LoginComponent implements OnInit, OnDestroy {
   /** Expression régulière pour la validation de l'email */
@@ -69,6 +167,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   readonly isFormValid = computed(
     () => this.loginForm.valid && !this.isLoading()
   );
+
+  @Input() isOpen = false;
+  @Output() closed = new EventEmitter<void>();
 
   /**
    * Initialise le composant
@@ -214,5 +315,9 @@ export class LoginComponent implements OnInit, OnDestroy {
    */
   getErrorMessage(field: string): string[] {
     return this.formErrors()[field as keyof FormErrors] || [];
+  }
+
+  closeModal(): void {
+    this.closed.emit();
   }
 }
