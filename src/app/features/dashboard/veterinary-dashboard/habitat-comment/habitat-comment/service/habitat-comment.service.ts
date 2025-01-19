@@ -12,7 +12,7 @@ import { HabitatComment } from '../model/habitat-comment.model';
 })
 export class HabitatCommentService {
   private readonly apiUrl = `${environment.apiUrl}/api/veterinary/habitat-comments`;
-  private readonly habitatApiUrl = `${environment.apiUrl}/api/veterinary/habitats`;
+  private readonly habitatApiUrl = `${environment.apiUrl}/api/habitats`;
 
   constructor(
     private readonly http: HttpClient,
