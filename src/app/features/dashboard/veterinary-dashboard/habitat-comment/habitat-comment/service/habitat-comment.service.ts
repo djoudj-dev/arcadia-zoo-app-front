@@ -9,9 +9,9 @@ import { HabitatComment } from '../model/habitat-comment.model';
   providedIn: 'root',
 })
 export class HabitatCommentService {
-  private apiUrl = `${environment.apiUrl}/api/habitat-comment`;
+  private readonly apiUrl = `${environment.apiUrl}/api/habitat-comments`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getCommentsByHabitatId(habitatId: number): Observable<HabitatComment[]> {
     console.log('Récupération des commentaires pour habitat:', habitatId);
