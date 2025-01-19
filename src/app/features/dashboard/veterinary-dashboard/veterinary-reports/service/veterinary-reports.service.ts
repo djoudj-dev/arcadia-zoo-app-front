@@ -1,17 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
-import { TokenService } from 'app/core/token/token.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private readonly apiUrl = `${environment.apiUrl}/api/veterinary-reports`;
+  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
   private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
 
   constructor(
