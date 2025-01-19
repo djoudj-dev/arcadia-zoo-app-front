@@ -36,6 +36,7 @@
           [rounded]="true"
           class="w-auto mx-auto font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
           (click)="loadUserOpinions()"
+          (keydown)="loadUserOpinions()"
         ></app-button>
       </div>
       } @else if (userOpinions().length > 0) {
@@ -88,10 +89,11 @@
             [rounded]="true"
             [disabled]="currentUserOpinionsIndex() === 0"
             [customClass]="
-              '!w-10 !h-10 flex items-center justify-center !p-0 
+              '!w-10 !h-10 flex items-center justify-center !p-0
                            transition-all duration-300 transform hover:-translate-x-1'
             "
             (click)="changeUserOpinions('previous')"
+            (keydown)="changeUserOpinions('previous')"
           >
             <i class="fas fa-chevron-left"></i>
           </app-button>
@@ -118,10 +120,11 @@
               currentUserOpinionsIndex() === userOpinions().length - 1
             "
             [customClass]="
-              '!w-10 !h-10 flex items-center justify-center !p-0 
+              '!w-10 !h-10 flex items-center justify-center !p-0
                            transition-all duration-300 transform hover:translate-x-1'
             "
             (click)="changeUserOpinions('next')"
+            (keydown)="changeUserOpinions('next')"
           >
             <i class="fas fa-chevron-right"></i>
           </app-button>
@@ -141,10 +144,11 @@
           [color]="'tertiary'"
           [rounded]="true"
           [customClass]="
-            '!w-auto !px-8 !py-4 font-bold shadow-md hover:shadow-lg 
+            '!w-auto !px-8 !py-4 font-bold shadow-md hover:shadow-lg
                          transition-all duration-300 transform hover:-translate-y-1'
           "
           (click)="openModal()"
+          (keydown)="openModal()"
         ></app-button>
       </div>
     </div>
