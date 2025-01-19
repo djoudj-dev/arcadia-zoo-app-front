@@ -9,7 +9,7 @@ import { HabitatComment } from '../model/habitat-comment.model';
   providedIn: 'root',
 })
 export class HabitatCommentService {
-  private readonly apiUrl = `${environment.apiUrl}/api/habitat-comments`;
+  private readonly apiUrl = `${environment.apiUrl}/veterinary/habitat-comments`;
 
   constructor(private readonly http: HttpClient) {}
 
