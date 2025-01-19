@@ -52,6 +52,14 @@
 
         <div class="p-6">
           <table class="w-full text-sm">
+            <thead>
+              <tr>
+                <th class="text-left text-tertiary font-medium pr-2">
+                  Caractéristique
+                </th>
+                <th class="text-left text-tertiary font-medium">Détail</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
                 <td class="text-tertiary font-medium pr-2">Espèce:</td>
@@ -76,6 +84,7 @@
               [color]="'tertiary'"
               [rounded]="true"
               (click)="openVetReportsHistory(animal.id_animal)"
+              (keydown)="openVetReportsHistory(animal.id_animal)"
               class="transform hover:-translate-y-0.5 transition-all duration-300"
             />
             <app-button
@@ -83,6 +92,7 @@
               [color]="'secondary'"
               [rounded]="true"
               (click)="openFeedingHistory(animal.id_animal)"
+              (keydown)="openFeedingHistory(animal.id_animal)"
               class="transform hover:-translate-y-0.5 transition-all duration-300"
             />
           </div>
@@ -126,6 +136,7 @@
             [color]="'tertiary'"
             [rounded]="true"
             (click)="selectHabitat(habitat.id_habitat)"
+            (keydown)="selectHabitat(habitat.id_habitat)"
             class="transform hover:-translate-y-0.5 transition-all duration-300"
           />
           <app-button
@@ -133,6 +144,7 @@
             [color]="'secondary'"
             [rounded]="true"
             (click)="viewHabitatComments(habitat.id_habitat)"
+            (keydown)="viewHabitatComments(habitat.id_habitat)"
             class="transform hover:-translate-y-0.5 transition-all duration-300"
           />
         </div>
@@ -153,6 +165,7 @@
             [color]="!showVetReports() ? 'tertiary' : 'secondary'"
             [rounded]="true"
             (click)="toggleHistoryView(false)"
+            (keydown)="toggleHistoryView(false)"
             [customClass]="
               'transform hover:-translate-y-0.5 transition-all duration-300'
             "
@@ -162,6 +175,7 @@
             [color]="showVetReports() ? 'tertiary' : 'secondary'"
             [rounded]="true"
             (click)="toggleHistoryView(true)"
+            (keydown)="toggleHistoryView(true)"
             [customClass]="
               'transform hover:-translate-y-0.5 transition-all duration-300'
             "
@@ -195,7 +209,7 @@
       <div class="min-h-[400px]">
         <app-veterinary-reports-list
           [animalId]="selectedAnimalId()!"
-          [showReportForm]="false"
+          [showReportForm]="true"
         />
       </div>
       } }
@@ -220,6 +234,7 @@
           [rounded]="true"
           class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
           (click)="closeHabitatModal()"
+          (keydown)="closeHabitatModal()"
         />
       </div>
     </div>
@@ -246,7 +261,7 @@
       @if (selectedAnimalId()) {
       <app-veterinary-reports-list
         [animalId]="selectedAnimalId()!"
-        [showReportForm]="false"
+        [showReportForm]="true"
       />
       }
       <div class="flex justify-center mt-6">
@@ -257,6 +272,7 @@
           [rounded]="true"
           class="w-32 shadow-sm hover:shadow-md transition-all duration-300"
           (click)="closeReportModal()"
+          (keydown)="closeReportModal()"
         />
       </div>
     </div>

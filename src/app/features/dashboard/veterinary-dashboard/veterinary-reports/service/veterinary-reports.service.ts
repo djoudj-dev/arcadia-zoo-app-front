@@ -11,10 +11,13 @@ import { TokenService } from 'app/core/token/token.service';
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private apiUrl = `${environment.apiUrl}/api/veterinary-reports`;
-  private animalApiUrl = `${environment.apiUrl}/api/animals`;
+  private readonly apiUrl = `${environment.apiUrl}/api/veterinary-reports`;
+  private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
 
-  constructor(private http: HttpClient, private tokenService: TokenService) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly tokenService: TokenService
+  ) {}
 
   private getHeaders(): HttpHeaders {
     const token = this.tokenService.getToken();

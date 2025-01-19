@@ -27,10 +27,13 @@
   <form [formGroup]="reportForm" (ngSubmit)="onSubmit()" class="space-y-6">
     <!-- Information de l'animal -->
     <div class="mb-6">
-      <label class="block text-sm font-medium text-quinary/60 mb-2"
+      <label
+        class="block text-sm font-medium text-quinary/60 mb-2"
+        for="animal-name"
         >Animal</label
       >
       <input
+        id="animal-name"
         type="text"
         [formControl]="$any(reportForm.get('animal_name'))"
         readonly
@@ -41,10 +44,13 @@
     <!-- Date et État -->
     <div class="grid grid-cols-2 gap-6 mb-6">
       <div>
-        <label class="block text-sm font-medium text-quinary/60 mb-2"
+        <label
+          class="block text-sm font-medium text-quinary/60 mb-2"
+          for="visit-date"
           >Date de visite</label
         >
         <input
+          id="visit-date"
           type="date"
           [formControl]="$any(reportForm.get('visit_date'))"
           class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
@@ -52,10 +58,13 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-quinary/60 mb-2"
+        <label
+          class="block text-sm font-medium text-quinary/60 mb-2"
+          for="animal-state"
           >État de santé</label
         >
         <select
+          id="animal-state"
           [formControl]="$any(reportForm.get('animal_state'))"
           class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none appearance-none cursor-pointer"
         >
@@ -74,10 +83,13 @@
       </h3>
 
       <div>
-        <label class="block text-sm font-medium text-quinary/60 mb-2"
+        <label
+          class="block text-sm font-medium text-quinary/60 mb-2"
+          for="food-type"
           >Type d'alimentation</label
         >
         <input
+          id="food-type"
           type="text"
           [formControl]="$any(reportForm.get('recommended_food_type'))"
           class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
@@ -87,10 +99,13 @@
 
       <div class="grid grid-cols-2 gap-6">
         <div>
-          <label class="block text-sm font-medium text-quinary/60 mb-2"
+          <label
+            class="block text-sm font-medium text-quinary/60 mb-2"
+            for="food-quantity"
             >Quantité</label
           >
           <input
+            id="food-quantity"
             type="number"
             [formControl]="$any(reportForm.get('recommended_food_quantity'))"
             class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none"
@@ -99,10 +114,13 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-quinary/60 mb-2"
+          <label
+            class="block text-sm font-medium text-quinary/60 mb-2"
+            for="food-unit"
             >Unité</label
           >
           <select
+            id="food-unit"
             [formControl]="$any(reportForm.get('food_unit'))"
             class="w-full p-2 bg-transparent border-b-2 border-tertiary/20 focus:border-tertiary transition-colors focus:outline-none appearance-none cursor-pointer"
           >
@@ -117,10 +135,13 @@
 
     <!-- Observations -->
     <div>
-      <label class="block text-sm font-medium text-quinary/60 mb-2"
+      <label
+        class="block text-sm font-medium text-quinary/60 mb-2"
+        for="observations"
         >Observations</label
       >
       <textarea
+        id="observations"
         [formControl]="$any(reportForm.get('additional_details'))"
         rows="4"
         class="w-full p-4 bg-tertiary/5 rounded-lg focus:outline-none focus:ring-1 focus:ring-tertiary/30 transition-all resize-none"
@@ -136,6 +157,7 @@
         [color]="'secondary'"
         [customClass]="'px-6 py-2 rounded-lg hover:bg-gray-100'"
         (click)="closeModal()"
+        (keydown)="closeModal()"
       />
       <app-button
         [text]="'Enregistrer'"
@@ -143,6 +165,7 @@
         [color]="'tertiary'"
         [disabled]="!reportForm.valid"
         [customClass]="'px-6 py-2 rounded-lg'"
+        (keydown)="onSubmit()"
       />
     </div>
   </form>
