@@ -12,8 +12,7 @@ import { HabitatCommentHistoryComponent } from './habitat-comment/habitat-commen
 import { HabitatCommentComponent } from './habitat-comment/habitat-comment/habitat-comment.component';
 import { HabitatComment } from './habitat-comment/habitat-comment/model/habitat-comment.model';
 import { HabitatCommentService } from './habitat-comment/habitat-comment/service/habitat-comment.service';
-import { VeterinaryReportsListComponent } from './veterinary-reports-list/veterinary-reports-list.component';
-import { VeterinaryReportsService } from './veterinary-reports/service/veterinary-reports.service';
+import { VeterinaryReportsComponent } from './veterinary-reports/veterinary-reports.component';
 
 @Component({
   selector: 'app-veterinary-dashboard',
@@ -25,7 +24,7 @@ import { VeterinaryReportsService } from './veterinary-reports/service/veterinar
     HabitatCommentComponent,
     ButtonComponent,
     HabitatCommentHistoryComponent,
-    VeterinaryReportsListComponent,
+    VeterinaryReportsComponent,
   ],
   templateUrl: './veterinary-dashboard.component.html',
 })
@@ -35,23 +34,22 @@ export class VeterinaryDashboardComponent implements OnInit {
   activeTab = signal<'overview' | 'history'>('overview');
   selectedAnimalId = signal<number | null>(null);
   selectedHabitatId = signal<number | null>(null);
-  private _isHistoryModalOpen = signal(false);
-  private _isHabitatModalOpen = signal(false);
-  private _isHabitatHistoryModalOpen = signal(false);
+  private readonly _isHistoryModalOpen = signal(false);
+  private readonly _isHabitatModalOpen = signal(false);
+  private readonly _isHabitatHistoryModalOpen = signal(false);
   habitatComments = signal<HabitatComment[]>([]);
   activeHistoryTab: 'meals' | 'habitats' | 'consultations' = 'meals';
   habitatCommentsMap = signal<Map<number, HabitatComment[]>>(new Map());
-  private _isReportModalOpen = signal(false);
-  private _showVetReports = signal(false);
-  showVetReports = computed(() => this._showVetReports());
-  hasHistory = signal(false);
+  private readonly _isReportModalOpen = signal(false);
+  private readonly _showVetReports = signal(false);
+  readonly showVetReports = computed(() => this._showVetReports());
+  readonly hasHistory = signal(false);
 
   constructor(
-    private habitatService: HabitatService,
-    private animalService: AnimalService,
-    private habitatCommentService: HabitatCommentService,
-    private reportsService: VeterinaryReportsService,
-    private animalFeedingService: AnimalFeedingManagementService
+    private readonly habitatService: HabitatService,
+    private readonly animalService: AnimalService,
+    private readonly habitatCommentService: HabitatCommentService,
+    private readonly animalFeedingService: AnimalFeedingManagementService
   ) {}
 
   ngOnInit(): void {
