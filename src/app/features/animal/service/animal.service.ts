@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { environment } from 'environments/environment';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-management/models/feeding-data.model';
 
 /**
@@ -43,27 +43,18 @@ export class AnimalService {
    * Utilise un cache pour éviter les appels réseau répétés.
    */
   getAnimals(): Observable<Animal[]> {
-    if (!this.cacheLoadedSignal()) {
-      this.http
-        .get<Animal[]>(this.apiUrl)
-        .pipe(
-          map((animals) =>
-            animals.map((animal) => ({
-              ...animal,
-              images: this.formatImageUrl(animal.images),
-            }))
-          )
-        )
-        .subscribe({
-          next: (animals) => {
-            this.animalsSignal.set(animals);
-            this.cacheLoadedSignal.set(true);
-          },
-          error: (error) => console.error('Erreur de chargement:', error),
-        });
-    }
-
-    return of(this.animalsSignal());
+    return this.http.get<Animal[]>(this.apiUrl).pipe(
+      map((animals) =>
+        animals.map((animal) => ({
+          ...animal,
+          images: this.formatImageUrl(animal.images),
+        }))
+      ),
+      tap((animals) => {
+        this.animalsSignal.set(animals);
+        this.cacheLoadedSignal.set(true);
+      })
+    );
   }
 
   getAnimalById(id: number): Observable<Animal | undefined> {
