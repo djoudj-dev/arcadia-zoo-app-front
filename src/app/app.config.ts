@@ -10,6 +10,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
+import { VisitTrackingService } from './features/dashboard/admin-dashboard/stats-board/visit-stats/services/visit-tracking.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +22,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: LOCALE_ID, useValue: 'fr-FR' },
     importProvidersFrom(OverlayModule),
+    VisitTrackingService,
   ],
 };
