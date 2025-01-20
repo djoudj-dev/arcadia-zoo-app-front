@@ -17,8 +17,6 @@ import {
 } from '@angular/forms';
 import { AuthService } from 'app/core/auth/services/auth.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from 'app/shared/components/toast/toast.component';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
 import { FeedingHistory } from './model/feeding-history.model';
 import {
@@ -31,13 +29,7 @@ import { AnimalHealthService } from './services/animal-health.service';
 @Component({
   selector: 'app-veterinary-reports',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ToastComponent,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './veterinary-reports.component.html',
 })
 export class VeterinaryReportsComponent implements OnInit {
