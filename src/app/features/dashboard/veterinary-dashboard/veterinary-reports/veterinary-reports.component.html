@@ -1,52 +1,39 @@
 <div class="max-w-xl mx-auto">
   <!-- Navigation -->
   <div class="flex gap-2 mb-6">
-    <button
+    <app-button
+      [text]="'Historique des repas'"
+      [color]="activeTab() === 'feeding' ? 'tertiary' : 'secondary'"
       (click)="activeTab.set('feeding')"
-      [class]="
-        activeTab() === 'feeding'
-          ? 'bg-green-600 text-white'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-      "
-      class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors"
-    >
-      Historique des repas
-    </button>
-    <button
+      (keydown)="activeTab.set('feeding')"
+      [customClass]="'flex-1 py-2 px-4 rounded-lg text-sm font-medium'"
+    />
+    <app-button
+      [text]="'Rapports vétérinaires'"
+      [color]="activeTab() === 'veterinary' ? 'tertiary' : 'secondary'"
       (click)="activeTab.set('veterinary')"
-      [class]="
-        activeTab() === 'veterinary'
-          ? 'bg-green-600 text-white'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-      "
-      class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors"
-    >
-      Rapports vétérinaires
-    </button>
-    <button
+      (keydown)="activeTab.set('veterinary')"
+      [customClass]="'flex-1 py-2 px-4 rounded-lg text-sm font-medium'"
+    />
+    <app-button
+      [text]="'Nouveau Rapport'"
+      [color]="activeTab() === 'new' ? 'tertiary' : 'secondary'"
       (click)="activeTab.set('new')"
-      [class]="
-        activeTab() === 'new'
-          ? 'bg-green-600 text-white'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-      "
-      class="flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors"
-    >
-      Nouveau Rapport
-    </button>
+      (keydown)="activeTab.set('new')"
+      [customClass]="'flex-1 py-2 px-4 rounded-lg text-sm font-medium'"
+    />
   </div>
 
   <!-- Contenu -->
   <div class="bg-white p-4 rounded-lg shadow-sm">
     <!-- Historique des repas -->
-    <div *ngIf="activeTab() === 'feeding'" class="space-y-3">
+    @if (activeTab() === 'feeding') {
+    <div class="space-y-3">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">
         Historique des repas
       </h2>
-      <div
-        *ngFor="let meal of feedingHistory()"
-        class="p-3 bg-gray-50 rounded-lg"
-      >
+      @for (meal of feedingHistory(); track meal.id) {
+      <div class="p-3 bg-gray-50 rounded-lg">
         <div class="flex justify-between items-start">
           <div>
             <p class="text-sm text-gray-600">
@@ -57,21 +44,22 @@
             </p>
           </div>
         </div>
-        <p *ngIf="meal.notes" class="mt-1 text-sm text-gray-600">
-          {{ meal.notes }}
-        </p>
+        @if (meal.notes) {
+        <p class="mt-1 text-sm text-gray-600">{{ meal.notes }}</p>
+        }
       </div>
+      }
     </div>
+    }
 
     <!-- Rapports vétérinaires -->
-    <div *ngIf="activeTab() === 'veterinary'" class="space-y-3">
+    @if (activeTab() === 'veterinary') {
+    <div class="space-y-3">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">
         Rapports vétérinaires
       </h2>
-      <div
-        *ngFor="let report of veterinaryReports()"
-        class="p-3 bg-gray-50 rounded-lg"
-      >
+      @for (report of veterinaryReports(); track report._id) {
+      <div class="p-3 bg-gray-50 rounded-lg">
         <div class="flex justify-between items-start">
           <div>
             <p class="text-sm text-gray-600">
@@ -79,25 +67,27 @@
             </p>
             <p class="font-medium">Dr. {{ report.user_name }}</p>
           </div>
-          <span [class]="getStateClass(report.animal_state)">{{
-            report.animal_state
-          }}</span>
+          <span [class]="getStateClass(report.animal_state)">
+            {{ report.animal_state }}
+          </span>
         </div>
         <p class="mt-2 text-sm font-medium">
           Alimentation recommandée: {{ report.recommended_food_type }} -
           {{ report.recommended_food_quantity }}{{ report.food_unit }}
         </p>
-        <p
-          *ngIf="report.additional_details"
-          class="mt-1 text-sm text-gray-600 italic"
-        >
+        @if (report.additional_details) {
+        <p class="mt-1 text-sm text-gray-600 italic">
           "{{ report.additional_details }}"
         </p>
+        }
       </div>
+      }
     </div>
+    }
 
     <!-- Nouveau rapport -->
-    <div *ngIf="activeTab() === 'new'">
+    @if (activeTab() === 'new') {
+    <div>
       <h2 class="text-xl font-semibold text-gray-800 mb-4">Nouveau Rapport</h2>
       <form [formGroup]="reportForm" class="space-y-3">
         <div>
@@ -250,6 +240,7 @@
         </div>
       </form>
     </div>
+    }
   </div>
 </div>
 
