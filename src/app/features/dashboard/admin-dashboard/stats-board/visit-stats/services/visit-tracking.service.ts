@@ -1,20 +1,26 @@
 // src/app/features/dashboard/admin-dashboard/stats-board/visit-stats/services/visit-tracking.service.ts
 
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { AnimalService } from 'app/features/animal/service/animal.service';
 import { HabitatService } from 'app/features/habitats/service/habitat.service';
 import { ServiceService } from 'app/features/zoo-services/service/service.service';
 import { environment } from 'environments/environment';
-import { BehaviorSubject, Observable, forkJoin } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { Animal } from '../../../animal-management/model/animal.model';
 import { Habitat } from '../../../habitat-management/model/habitat.model';
 import { Service } from '../../../service-management/model/service.model';
-import { VisitResponse, VisitStats } from '../interfaces/visit-stats.interface';
+import {
+  CategoryType,
+  VisitResponse,
+  VisitStats,
+  VisitStatsResponse,
+  VisitTrackingData,
+} from '../interfaces/visit-stats.interface';
 
 export interface Visit {
   categoryName: string;
-  categoryType: 'animal' | 'habitat' | 'service';
+  categoryType: CategoryType;
   pageId: string;
   startTime: Date;
   endTime?: Date;
@@ -25,7 +31,6 @@ export interface Visit {
   providedIn: 'root',
 })
 export class VisitTrackingService {
-  private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/api/visits`;
   private readonly _visitStats = new BehaviorSubject<VisitStats[]>([]);
   readonly visitStats$ = this._visitStats.asObservable();
@@ -34,7 +39,7 @@ export class VisitTrackingService {
   private readonly habitatService = inject(HabitatService);
   private readonly serviceService = inject(ServiceService);
 
-  constructor() {
+  constructor(private readonly http: HttpClient) {
     // Charger les données initiales depuis les services existants
     this.loadInitialStats();
   }
@@ -90,7 +95,7 @@ export class VisitTrackingService {
 
   startTracking(
     categoryName: string,
-    categoryType: 'animal' | 'habitat' | 'service',
+    categoryType: CategoryType,
     pageId: string
   ): void {
     const visit: Visit = {
@@ -145,23 +150,30 @@ export class VisitTrackingService {
     });
   }
 
-  getVisitStats(): Observable<VisitStats[]> {
+  getAllStats(): Observable<VisitStats[]> {
     return this.http.get<VisitStats[]>(`${this.apiUrl}/stats`);
   }
 
-  getVisitsByCategory(categoryType: string): Observable<VisitStats[]> {
-    return this.http.get<VisitStats[]>(`${this.apiUrl}/stats/${categoryType}`);
+  getStatsByCategory(categoryType: CategoryType): Observable<VisitStats[]> {
+    return this.http.get<VisitStats[]>(
+      `${this.apiUrl}/stats/category/${categoryType}`
+    );
   }
 
-  getVisitsByDateRange(
+  getStatsByDateRange(
     startDate: Date,
     endDate: Date
   ): Observable<VisitStats[]> {
+    const params = new HttpParams()
+      .set('startDate', startDate.toISOString())
+      .set('endDate', endDate.toISOString());
+
     return this.http.get<VisitStats[]>(`${this.apiUrl}/stats/range`, {
-      params: {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-      },
+      params,
     });
+  }
+
+  trackVisit(data: VisitTrackingData): Observable<VisitStatsResponse> {
+    return this.http.post<VisitStatsResponse>(`${this.apiUrl}/track`, data);
   }
 }
