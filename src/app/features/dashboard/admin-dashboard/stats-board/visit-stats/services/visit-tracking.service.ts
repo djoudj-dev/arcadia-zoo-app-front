@@ -46,15 +46,27 @@ export class VisitTrackingService {
   }
 
   loadStats(): void {
+    console.log('Chargement des statistiques...');
     this.getAllStats().subscribe({
       next: (stats) => {
-        if (stats && stats.length > 0) {
-          this._visitStats.next(stats);
+        console.log('Statistiques reçues du backend:', stats);
+        if (stats && Array.isArray(stats)) {
+          if (stats.length > 0) {
+            console.log('Mise à jour des statistiques avec les données reçues');
+            this._visitStats.next(stats);
+          } else {
+            console.log(
+              'Aucune statistique reçue, initialisation avec des données vides'
+            );
+            this.initializeEmptyStats();
+          }
         } else {
+          console.error('Format de données invalide reçu:', stats);
           this.initializeEmptyStats();
         }
       },
-      error: () => {
+      error: (error) => {
+        console.error('Erreur lors du chargement des statistiques:', error);
         this.initializeEmptyStats();
       },
     });
@@ -64,12 +76,19 @@ export class VisitTrackingService {
   refreshStats = this.loadStats;
 
   private initializeEmptyStats(): void {
+    console.log('Initialisation des statistiques vides...');
     forkJoin({
       animals: this.animalService.getAnimals(),
       habitats: this.habitatService.getHabitats(),
       services: this.serviceService.getServices(),
     }).subscribe({
       next: ({ animals, habitats, services }) => {
+        console.log('Données récupérées pour initialisation:', {
+          animalsCount: animals.length,
+          habitatsCount: habitats.length,
+          servicesCount: services.length,
+        });
+
         const stats: VisitStats[] = [
           ...animals.map((animal) => ({
             category_name: animal.name,
@@ -99,13 +118,17 @@ export class VisitTrackingService {
             last_visit: new Date(),
           })),
         ];
+
+        console.log('Statistiques initialisées:', stats);
         this._visitStats.next(stats);
       },
-      error: (error) =>
+      error: (error) => {
         console.error(
-          'Erreur lors du chargement des données initiales:',
+          "Erreur lors de l'initialisation des statistiques:",
           error
-        ),
+        );
+        this._visitStats.next([]);
+      },
     });
   }
 
@@ -155,6 +178,7 @@ export class VisitTrackingService {
   }
 
   getAllStats(): Observable<VisitStats[]> {
+    console.log('Appel API getAllStats:', `${this.apiUrl}/stats`);
     return this.http.get<VisitStats[]>(`${this.apiUrl}/stats`).pipe(
       catchError((error) => {
         console.error('Erreur lors de la récupération des stats:', error);
