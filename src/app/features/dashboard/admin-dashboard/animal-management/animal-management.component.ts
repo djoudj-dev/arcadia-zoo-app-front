@@ -11,6 +11,7 @@ import { Habitat } from '../habitat-management/model/habitat.model';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Animal } from './model/animal.model';
 import { AnimalManagementService } from './service/animal-management.service';
+import { VisitCounterComponent } from '../../../../shared/components/visit-counter/visit-counter.component';
 
 /**
  * Composant de gestion des animaux
@@ -26,6 +27,7 @@ import { AnimalManagementService } from './service/animal-management.service';
     FormsModule,
     ToastComponent,
     ButtonComponent,
+    VisitCounterComponent,
   ],
   templateUrl: './animal-management.component.html',
 })

@@ -33,13 +33,19 @@
             [routerLink]="['/animal', animal.id_animal]"
             class="block relative group"
           >
-            <div class="aspect-square overflow-hidden">
-              <img
-                [src]="animal.images"
-                [alt]="animal.name"
-                loading="lazy"
-                class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+            <div class="relative group rounded-xl overflow-hidden">
+              <app-visit-counter
+                [categoryType]="'animal'"
+                [pageId]="animal.id_animal"
               />
+              <div class="aspect-square overflow-hidden">
+                <img
+                  [src]="animal.images"
+                  [alt]="animal.name"
+                  loading="lazy"
+                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
             </div>
 
             <div
