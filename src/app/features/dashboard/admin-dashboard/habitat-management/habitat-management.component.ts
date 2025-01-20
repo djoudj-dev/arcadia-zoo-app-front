@@ -1,11 +1,9 @@
-import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
@@ -20,13 +18,7 @@ import { HabitatManagementService } from './service/habitat-management.service';
 @Component({
   selector: 'app-habitat-management',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    SlicePipe,
-    ToastComponent,
-    ButtonComponent,
-  ],
+  imports: [ReactiveFormsModule, FormsModule, ButtonComponent],
   templateUrl: './habitat-management.component.html',
 })
 export class HabitatManagementComponent implements OnInit {
@@ -250,10 +242,10 @@ export class HabitatManagementComponent implements OnInit {
     this.selectedFile.set(null);
   }
 
-  /** Annule l'édition en cours */
-  cancel() {
+  /** Annule la modification en cours */
+  cancelEdit() {
     this.resetForm();
-    this.toastService.showSuccess('Formulaire réinitialisé');
+    this.toastService.showSuccess('Modification annulée');
   }
 
   /** Gère l'affichage de la description */

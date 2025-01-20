@@ -16,7 +16,6 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { VisitCounterComponent } from '../../../../shared/components/visit-counter/visit-counter.component';
 import { Habitat } from '../../../habitats/models/habitat.model';
 import { HabitatService } from '../../../habitats/service/habitat.service';
 import { User } from '../../admin-dashboard/account-management/model/user.model';
@@ -39,7 +38,6 @@ import { AnimalFeedingManagementService } from './services/animal-feeding-manage
     ToastComponent,
     FeedingHistoryComponent,
     ButtonComponent,
-    VisitCounterComponent,
   ],
   templateUrl: './animal-feeding-management.component.html',
 })

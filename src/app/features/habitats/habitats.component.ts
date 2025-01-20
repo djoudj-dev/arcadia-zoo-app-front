@@ -3,8 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { HabitatService } from './service/habitat.service';
-import { VisitCounterComponent } from '../../shared/components/visit-counter/visit-counter.component';
-
 /**
  * Composant listant tous les habitats
  * Affiche une grille des habitats disponibles dans le zoo
@@ -12,7 +10,7 @@ import { VisitCounterComponent } from '../../shared/components/visit-counter/vis
 @Component({
   selector: 'app-habitats',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, VisitCounterComponent],
+  imports: [RouterLink, ButtonComponent],
   templateUrl: './habitats.component.html',
 })
 export class HabitatsComponent implements OnInit {

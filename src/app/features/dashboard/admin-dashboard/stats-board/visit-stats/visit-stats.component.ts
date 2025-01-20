@@ -159,7 +159,6 @@ export class VisitStatsComponent {
 
   readonly filteredData = computed(() => {
     const allData = this.visitData();
-    console.log('Toutes les données:', allData);
     return this.currentFilter() === 'all'
       ? allData
       : allData.filter((item) => item.extra.type === this.currentFilter());
@@ -167,7 +166,6 @@ export class VisitStatsComponent {
 
   readonly chartData = computed(() => {
     const data = this.filteredData();
-    console.log('Données du graphique:', data);
     return data;
   });
 
@@ -195,50 +193,25 @@ export class VisitStatsComponent {
 
   private loadAnimals(): void {
     this.animalService.getAnimals().subscribe((animals: Animal[]) => {
-      console.log('Animals loaded:', animals);
       this.animals.set(animals);
-      if (animals.length > 0) {
-        console.log(
-          'Premier animal avec image:',
-          animals[0].name,
-          animals[0].images
-        );
-      }
     });
   }
 
   private loadHabitats(): void {
     this.habitatService.getHabitats().subscribe((habitats: Habitat[]) => {
-      console.log('Habitats loaded:', habitats);
       this.habitats.set(habitats);
-      if (habitats.length > 0) {
-        console.log(
-          'Premier habitat avec image:',
-          habitats[0].name,
-          habitats[0].images
-        );
-      }
     });
   }
 
   private loadServices(): void {
     this.serviceService.getServices().subscribe((services: Service[]) => {
-      console.log('Services loaded:', services);
       this.services.set(services);
-      if (services.length > 0) {
-        console.log(
-          'Premier service avec image:',
-          services[0].name,
-          services[0].images
-        );
-      }
     });
   }
 
   private loadVisitStats(): void {
     this.trackingService.visitStats$.subscribe({
       next: (stats: VisitStats[]) => {
-        console.log('Stats reçues:', stats);
         const formattedData = stats.map((item) => ({
           name: item.category_name,
           value: item.visit_count || 0,
@@ -247,7 +220,6 @@ export class VisitStatsComponent {
             type: item.category_type,
           },
         }));
-        console.log('Données formatées:', formattedData);
         this.visitData.set(formattedData);
       },
       error: (error: Error) =>
@@ -259,7 +231,6 @@ export class VisitStatsComponent {
   }
 
   private getImageUrl(type: string, name: string): string {
-    console.log(`Recherche image pour ${type} ${name}`);
     const baseUrl = `${environment.apiUrl}/api/uploads`;
 
     switch (type) {
@@ -276,7 +247,6 @@ export class VisitStatsComponent {
 
   private getAnimalImage(name: string, baseUrl: string): string {
     const animal = this.animals().find((a) => a.name === name);
-    console.log('Found animal:', animal?.name, animal?.images);
     return animal?.images
       ? `${baseUrl}/animals/${animal.images.split('/').pop()}`
       : `${baseUrl}/animals/default.webp`;
@@ -284,7 +254,6 @@ export class VisitStatsComponent {
 
   private getHabitatImage(name: string, baseUrl: string): string {
     const habitat = this.habitats().find((h) => h.name === name);
-    console.log('Found habitat:', habitat?.name, habitat?.images);
     return habitat?.images
       ? `${baseUrl}/habitats/${habitat.images.split('/').pop()}`
       : `${baseUrl}/habitats/default.webp`;
@@ -292,7 +261,6 @@ export class VisitStatsComponent {
 
   private getServiceImage(name: string, baseUrl: string): string {
     const service = this.services().find((s) => s.name === name);
-    console.log('Found service:', service?.name, service?.images);
     return service?.images
       ? `${baseUrl}/services/${service.images.split('/').pop()}`
       : `${baseUrl}/services/default.webp`;
