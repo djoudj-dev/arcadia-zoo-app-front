@@ -1,4 +1,5 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
+import { CategoryType } from '../interfaces/visit-stats.interface';
 import { VisitTrackingService } from '../services/visit-tracking.service';
 
 @Directive({
@@ -7,21 +8,62 @@ import { VisitTrackingService } from '../services/visit-tracking.service';
 })
 export class VisitTrackerDirective implements OnInit, OnDestroy {
   @Input() categoryName!: string;
-  @Input() categoryType!: 'animal' | 'habitat' | 'service';
+  @Input() categoryType!: CategoryType;
+  @Input() pageId!: string | number;
 
-  private readonly pageId = crypto.randomUUID();
+  private startTime!: Date;
 
-  constructor(private readonly trackingService: VisitTrackingService) {}
+  constructor(private visitTrackingService: VisitTrackingService) {}
 
   ngOnInit() {
-    this.trackingService.startTracking(
-      this.categoryName,
-      this.categoryType,
-      this.pageId
-    );
+    this.startTime = new Date();
+    this.trackVisitStart();
   }
 
   ngOnDestroy() {
-    this.trackingService.stopTracking(this.pageId);
+    this.trackVisitEnd();
+  }
+
+  private getFormattedPageId(): string {
+    if (typeof this.pageId === 'string') return this.pageId;
+
+    // Convertir l'ID numérique en string avec le bon préfixe selon le type
+    switch (this.categoryType) {
+      case 'animal':
+        return `animal_${this.pageId}`;
+      case 'habitat':
+        return `habitat_${this.pageId}`;
+      case 'service':
+        return `service_${this.pageId}`;
+      default:
+        return String(this.pageId);
+    }
+  }
+
+  private trackVisitStart() {
+    this.visitTrackingService
+      .trackVisit({
+        categoryName: this.categoryName,
+        categoryType: this.categoryType,
+        pageId: this.getFormattedPageId(),
+        startTime: this.startTime,
+      })
+      .subscribe();
+  }
+
+  private trackVisitEnd() {
+    const endTime = new Date();
+    const duration = (endTime.getTime() - this.startTime.getTime()) / 1000; // durée en secondes
+
+    this.visitTrackingService
+      .trackVisit({
+        categoryName: this.categoryName,
+        categoryType: this.categoryType,
+        pageId: this.getFormattedPageId(),
+        startTime: this.startTime,
+        endTime: endTime,
+        duration: duration,
+      })
+      .subscribe();
   }
 }
