@@ -107,7 +107,6 @@ export class AddUserOpinionsComponent implements OnInit {
     if (this.opinionForm.valid) {
       const userOpinions = {
         ...this.opinionForm.value,
-        date: new Date().toISOString().split('T')[0],
       };
       this.userOpinionsService.addUserOpinions(userOpinions).subscribe({
         next: () => {

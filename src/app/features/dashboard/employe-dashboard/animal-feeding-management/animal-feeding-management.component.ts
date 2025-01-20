@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/services/auth.service';
@@ -10,11 +18,13 @@ import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import {
   finalize,
   firstValueFrom,
-  forkJoin,
+  from,
   map,
+  mergeMap,
   Subject,
   switchMap,
   takeUntil,
+  toArray,
 } from 'rxjs';
 import { Habitat } from '../../../habitats/models/habitat.model';
 import { HabitatService } from '../../../habitats/service/habitat.service';
@@ -66,6 +76,7 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
 
   /** Subject pour la gestion de la destruction */
   private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private readonly habitatService: HabitatService,
@@ -136,22 +147,25 @@ export class FeedingDataComponent implements OnInit, OnDestroy {
     this.habitatService
       .getHabitats()
       .pipe(
-        switchMap((habitats) =>
-          forkJoin(
-            habitats.map((habitat) =>
-              this.habitatService
-                .getAnimalsByHabitatId(habitat.id_habitat)
-                .pipe(
-                  map((animals) => ({
-                    ...habitat,
-                    animals,
-                    images: habitat.images ?? undefined,
-                  }))
-                )
-            )
-          )
-        ),
-        takeUntil(this.destroy$),
+        switchMap((habitats) => {
+          return from(habitats).pipe(
+            mergeMap(
+              (habitat) =>
+                this.habitatService
+                  .getAnimalsByHabitatId(habitat.id_habitat)
+                  .pipe(
+                    map((animals) => ({
+                      ...habitat,
+                      animals,
+                      images: habitat.images ?? undefined,
+                    }))
+                  ),
+              3 // Limite de concurrence
+            ),
+            takeUntilDestroyed(this.destroyRef),
+            toArray()
+          );
+        }),
         finalize(() => this.isLoading.set(false))
       )
       .subscribe({

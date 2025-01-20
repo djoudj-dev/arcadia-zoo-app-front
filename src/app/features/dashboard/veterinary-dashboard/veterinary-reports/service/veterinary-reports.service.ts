@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
 
@@ -14,6 +14,9 @@ export class VeterinaryReportsService {
   private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
   private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
   private readonly http = inject(HttpClient);
+  private readonly animalCache = new Map<number, Animal>();
+  private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private readonly lastCacheUpdate = new Map<number, number>();
 
   constructor(private readonly tokenService: TokenService) {}
 
@@ -25,14 +28,23 @@ export class VeterinaryReportsService {
     });
   }
 
-  getAllReports(): Observable<VeterinaryReports[]> {
+  getAllReports(
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<{ data: VeterinaryReports[]; total: number }> {
     const headers = this.getHeaders();
-    return this.http.get<VeterinaryReports[]>(this.apiUrl, { headers }).pipe(
-      catchError((error) => {
-        console.error('Erreur lors de la récupération des rapports:', error);
-        return throwError(() => error);
+    const params = { page: page.toString(), pageSize: pageSize.toString() };
+    return this.http
+      .get<{ data: VeterinaryReports[]; total: number }>(this.apiUrl, {
+        headers,
+        params,
       })
-    );
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur lors de la récupération des rapports:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   getReportById(id: string): Observable<VeterinaryReports> {
@@ -63,15 +75,21 @@ export class VeterinaryReportsService {
   }
 
   fetchAnimalDetails(animalId: number): Observable<Animal> {
-    const headers = this.getHeaders();
-    return this.http
-      .get<Animal>(`${this.animalApiUrl}/${animalId}`, { headers })
-      .pipe(
-        map((animal) => ({
-          ...animal,
-          images: this.formatImageUrl(animal.images),
-        }))
-      );
+    const cachedAnimal = this.animalCache.get(animalId);
+    const lastUpdate = this.lastCacheUpdate.get(animalId);
+    const now = Date.now();
+
+    if (cachedAnimal && lastUpdate && now - lastUpdate < this.cacheTimeout) {
+      return of(cachedAnimal);
+    }
+
+    return this.http.get<Animal>(`${this.apiUrl}/animals/${animalId}`).pipe(
+      tap((animal) => {
+        this.animalCache.set(animalId, animal);
+        this.lastCacheUpdate.set(animalId, now);
+      }),
+      shareReplay(1)
+    );
   }
 
   updateReportStatus(
@@ -113,5 +131,15 @@ export class VeterinaryReportsService {
     // Supprimer le préfixe 'uploads/animals' s'il existe
     const cleanPath = imagePath.replace(/^uploads\/animals\//, '');
     return `${environment.apiUrl}/api/uploads/animals/${cleanPath}`;
+  }
+
+  clearCache(animalId?: number) {
+    if (animalId) {
+      this.animalCache.delete(animalId);
+      this.lastCacheUpdate.delete(animalId);
+    } else {
+      this.animalCache.clear();
+      this.lastCacheUpdate.clear();
+    }
   }
 }
