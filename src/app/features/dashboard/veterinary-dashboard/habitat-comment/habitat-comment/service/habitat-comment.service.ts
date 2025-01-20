@@ -10,8 +10,7 @@ import { HabitatComment } from '../model/habitat-comment.model';
   providedIn: 'root',
 })
 export class HabitatCommentService {
-  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/habitat-comments`;
-  private readonly habitatApiUrl = `${environment.apiUrl}/api/habitats`;
+  private readonly apiUrl = `${environment.apiUrl}/veterinary/habitat-comments`;
 
   constructor(
     private readonly http: HttpClient,
@@ -27,12 +26,9 @@ export class HabitatCommentService {
   }
 
   getCommentsByHabitatId(habitatId: number): Observable<HabitatComment[]> {
-    console.log('Récupération des commentaires pour habitat:', habitatId);
-    return this.http
-      .get<HabitatComment[]>(`${this.apiUrl}/${habitatId}`, {
-        headers: this.getHeaders(),
-      })
-      .pipe(tap((comments) => console.log('Commentaires reçus:', comments)));
+    return this.http.get<HabitatComment[]>(`${this.apiUrl}/${habitatId}`, {
+      headers: this.getHeaders(),
+    });
   }
 
   createHabitatComment(

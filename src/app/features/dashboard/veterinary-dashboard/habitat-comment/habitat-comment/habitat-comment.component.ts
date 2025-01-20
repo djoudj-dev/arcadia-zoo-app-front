@@ -44,10 +44,10 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
     'Nécessite des améliorations',
   ] as const;
 
-  private commentStatusService = inject(CommentStatusService);
+  private readonly commentStatusService = inject(CommentStatusService);
   private statusSubscription: Subscription | undefined;
 
-  constructor(private habitatComments: HabitatCommentService) {}
+  constructor(private readonly habitatComments: HabitatCommentService) {}
 
   ngOnInit() {
     if (this.habitatId) {
@@ -85,7 +85,6 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
   }
 
   loadHabitatsComments() {
-    console.log("Chargement des commentaires pour l'habitat:", this.habitatId);
     this.habitatComments.getCommentsByHabitatId(this.habitatId).subscribe({
       next: (comments) => {
         console.log("Commentaires reçus pour l'habitat:", comments);
