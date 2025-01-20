@@ -6,10 +6,12 @@ import {
   Input,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -18,14 +20,25 @@ import { ToastService } from 'app/shared/components/toast/services/toast.service
 import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { Animal } from '../../admin-dashboard/animal-management/model/animal.model';
-import { AnimalState } from './model/veterinary-reports.model';
+import { FeedingHistory } from './model/feeding-history.model';
+import {
+  AnimalState,
+  VeterinaryReports,
+} from './model/veterinary-reports.model';
 import { VeterinaryReportsService } from './service/veterinary-reports.service';
+import { AnimalHealthService } from './services/animal-health.service';
 
 @Component({
   selector: 'app-veterinary-reports',
-  templateUrl: './veterinary-reports.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ToastComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ToastComponent,
+    ButtonComponent,
+  ],
+  templateUrl: './veterinary-reports.component.html',
 })
 export class VeterinaryReportsComponent implements OnInit {
   @Input() animalId?: number | null;
@@ -33,6 +46,9 @@ export class VeterinaryReportsComponent implements OnInit {
 
   reportForm!: FormGroup;
   isModalOpen = true;
+  activeTab = signal<'feeding' | 'veterinary'>('veterinary');
+  veterinaryReports = signal<VeterinaryReports[]>([]);
+  feedingHistory = signal<FeedingHistory[]>([]);
 
   // États possibles pour un animal
   animalStates = Object.values(AnimalState);
@@ -40,10 +56,15 @@ export class VeterinaryReportsComponent implements OnInit {
   // Unités de nourriture possibles
   foodUnits = ['kg', 'g'];
 
+  AnimalState = AnimalState;
+  selectedState = signal<AnimalState>(AnimalState.GOOD_HEALTH);
+  selectedAnimalId = signal<number | null>(null);
+
   private readonly fb = inject(FormBuilder);
   private readonly veterinaryReportsService = inject(VeterinaryReportsService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
+  private readonly animalHealthService = inject(AnimalHealthService);
 
   ngOnInit() {
     console.log('VeterinaryReportsComponent initialized');
@@ -51,6 +72,8 @@ export class VeterinaryReportsComponent implements OnInit {
     this.initForm();
     if (this.animalId) {
       this.loadAnimalDetails();
+      this.loadVeterinaryReports();
+      this.loadFeedingHistory();
     }
   }
 
@@ -81,6 +104,44 @@ export class VeterinaryReportsComponent implements OnInit {
       error: (error: Error) =>
         console.error("Erreur lors de la récupération de l'animal:", error),
     });
+  }
+
+  private loadVeterinaryReports() {
+    if (!this.animalId) return;
+
+    this.veterinaryReportsService
+      .getReportsByAnimalId(this.animalId)
+      .subscribe({
+        next: (reports: VeterinaryReports[]) =>
+          this.veterinaryReports.set(reports),
+        error: (error: Error) => {
+          this.toastService.showError(
+            'Erreur lors du chargement des rapports vétérinaires'
+          );
+          console.error(error);
+        },
+      });
+  }
+
+  private loadFeedingHistory() {
+    if (!this.animalId) return;
+
+    // Implémenter le service pour charger l'historique des repas
+    this.feedingHistory.set([]); // À remplacer par l'appel au service
+  }
+
+  getStateClass(state: string): string {
+    const baseClasses = 'px-3 py-1 rounded-full text-sm font-semibold';
+    switch (state.toLowerCase()) {
+      case AnimalState.GOOD_HEALTH.toLowerCase():
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case AnimalState.INJURED.toLowerCase():
+        return `${baseClasses} bg-yellow-100 text-yellow-800`;
+      case AnimalState.SICK.toLowerCase():
+        return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800`;
+    }
   }
 
   closeModal() {
@@ -124,5 +185,29 @@ export class VeterinaryReportsComponent implements OnInit {
         },
       });
     }
+  }
+
+  updateHealthState() {
+    if (!this.selectedAnimalId()) {
+      this.toastService.showError('Veuillez sélectionner un animal');
+      return;
+    }
+
+    this.animalHealthService
+      .updateAnimalHealth(this.selectedAnimalId()!, this.selectedState())
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('État de santé mis à jour avec succès');
+        },
+        error: (error) => {
+          console.error(
+            "Erreur lors de la mise à jour de l'état de santé:",
+            error
+          );
+          this.toastService.showError(
+            "Erreur lors de la mise à jour de l'état de santé"
+          );
+        },
+      });
   }
 }
