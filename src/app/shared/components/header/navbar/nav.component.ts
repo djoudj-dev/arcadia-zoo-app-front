@@ -80,9 +80,13 @@ export class NavComponent {
 
     // Vérifie si le clic est sur un bouton de menu hamburger
     const isMenuToggleClick = target.closest('#menu-toggler');
+    // Vérifie si c'est un clic sur un bouton de sous-menu
+    const isDropdownToggleClick = target.closest(
+      'button[class*="hover:text-quaternary"]'
+    );
 
-    // Si c'est un clic sur le bouton hamburger, on laisse le toggle gérer l'ouverture/fermeture
-    if (isMenuToggleClick) {
+    // Si c'est un clic sur le bouton hamburger ou un bouton de sous-menu, on ne fait rien
+    if (isMenuToggleClick || isDropdownToggleClick) {
       return;
     }
 
@@ -97,9 +101,10 @@ export class NavComponent {
       return;
     }
 
-    // Si le clic est sur un lien ou un bouton de navigation, on ferme le menu
-    if (target.closest('a') || target.closest('button:not(#menu-toggler)')) {
+    // Si le clic est sur un lien de navigation (mais pas un bouton), on ferme le menu
+    if (target.closest('a')) {
       this.isMenuOpen = false;
+      this.activeDropdown = null;
     }
   }
 }
