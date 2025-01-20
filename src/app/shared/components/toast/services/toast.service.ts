@@ -37,11 +37,11 @@ export class ToastService {
     this.toastSubject.next({ message, type: 'error', duration });
   }
 
-  showAuthLogin(message: string, duration: number = 5000) {
+  showAuthLogin(message: string, duration: number = 3000) {
     this.toastSubject.next({ message, type: 'auth-login', duration });
   }
 
-  showAuthLogout(message: string, duration: number = 5000) {
+  showAuthLogout(message: string, duration: number = 3000) {
     this.toastSubject.next({ message, type: 'auth-logout', duration });
   }
 
