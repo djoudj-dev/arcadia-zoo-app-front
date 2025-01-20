@@ -68,7 +68,11 @@
             </span>
             <button
               (click)="toggleReportStatus(report)"
-              [class]="getStatusButtonClass(report.is_processed ?? false)"
+              [class]="
+                report.is_processed
+                  ? getProcessedButtonClass()
+                  : getPendingButtonClass()
+              "
               class="px-3 py-1 rounded-full text-sm font-medium transition-colors"
             >
               {{ report.is_processed ? "Traité" : "Non traité" }}

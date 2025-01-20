@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
+import { environment } from 'environments/environment';
 import { forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { VeterinaryReports } from '../../veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
@@ -23,8 +24,8 @@ export class ReportsVeterinaryManagement implements OnInit {
   error: string | null = null;
 
   constructor(
-    private veterinaryReportsService: VeterinaryReportsService,
-    private toastService: ToastService
+    private readonly veterinaryReportsService: VeterinaryReportsService,
+    private readonly toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -54,7 +55,7 @@ export class ReportsVeterinaryManagement implements OnInit {
                 .pipe(
                   map((animal) => ({
                     ...report,
-                    animal_photo: animal.images || '',
+                    animal_photo: this.formatImageUrl(animal.images),
                     animal_name: animal.name,
                   }))
                 )
@@ -75,6 +76,17 @@ export class ReportsVeterinaryManagement implements OnInit {
           this.toastService.showError('Erreur lors du chargement des rapports');
         },
       });
+  }
+
+  private formatImageUrl(imagePath: string | null): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) {
+      return imagePath.replace(
+        `${environment.apiUrl}/api/${environment.apiUrl}/api/`,
+        `${environment.apiUrl}/api/`
+      );
+    }
+    return `${environment.apiUrl}/api/uploads/animals/${imagePath}`;
   }
 
   /**
@@ -125,7 +137,7 @@ export class ReportsVeterinaryManagement implements OnInit {
    * @param report Rapport à modifier
    */
   toggleReportStatus(report: VeterinaryReports) {
-    const reportId = report._id || report.id_veterinary_reports;
+    const reportId = report._id ?? report.id_veterinary_reports;
 
     if (!reportId) {
       this.toastService.showError('ID du rapport non défini');
@@ -155,14 +167,11 @@ export class ReportsVeterinaryManagement implements OnInit {
       });
   }
 
-  /**
-   * Détermine les classes CSS pour le bouton de statut
-   * @param isProcessed État de traitement du rapport
-   * @returns Classes CSS pour le bouton
-   */
-  getStatusButtonClass(isProcessed: boolean): string {
-    return isProcessed
-      ? 'bg-green-100 text-green-700 hover:bg-green-200'
-      : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
+  getProcessedButtonClass(): string {
+    return 'bg-green-100 text-green-700 hover:bg-green-200';
+  }
+
+  getPendingButtonClass(): string {
+    return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
   }
 }

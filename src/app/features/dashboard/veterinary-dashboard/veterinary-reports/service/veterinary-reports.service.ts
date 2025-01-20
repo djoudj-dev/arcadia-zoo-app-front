@@ -70,9 +70,7 @@ export class VeterinaryReportsService {
       .pipe(
         map((animal) => ({
           ...animal,
-          images: animal.images
-            ? `${environment.apiUrl}/api/${animal.images}`
-            : '',
+          images: this.formatImageUrl(animal.images),
         }))
       );
   }
@@ -87,5 +85,20 @@ export class VeterinaryReportsService {
       { is_treated: is_processed },
       { headers }
     );
+  }
+
+  private formatImageUrl(imagePath: string | null): string {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) {
+      // Éviter la duplication de l'URL de base
+      return imagePath.replace(
+        `${environment.apiUrl}/api/${environment.apiUrl}/api/`,
+        `${environment.apiUrl}/api/`
+      );
+    }
+
+    // Supprimer le préfixe 'uploads/animals' s'il existe
+    const cleanPath = imagePath.replace(/^uploads\/animals\//, '');
+    return `${environment.apiUrl}/api/uploads/animals/${cleanPath}`;
   }
 }
