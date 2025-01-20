@@ -117,6 +117,7 @@
             [color]="'tertiary'"
             [text]="'Rouvrir le ticket'"
             (click)="$event.preventDefault(); reopenComment(comment._id)"
+            (keydown)="$event.preventDefault(); reopenComment(comment._id)"
             [rounded]="true"
             class="w-full sm:w-auto min-w-[160px]"
           />
@@ -140,6 +141,7 @@
             [color]="'success'"
             [text]="'Valider la résolution'"
             (click)="$event.preventDefault(); markAsResolved(comment._id)"
+            (keydown)="$event.preventDefault(); markAsResolved(comment._id)"
             [rounded]="true"
             class="w-full sm:w-auto min-w-[160px]"
           />
