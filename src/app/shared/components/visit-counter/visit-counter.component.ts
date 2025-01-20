@@ -1,14 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { VisitTrackingService } from '../../../features/dashboard/admin-dashboard/stats-board/visit-stats/services/visit-tracking.service';
 
 @Component({
   selector: 'app-visit-counter',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   providers: [VisitTrackingService],
   template: `
     <div
-      class="absolute top-2 right-2 bg-tertiary/80 backdrop-blur-sm px-2 py-1 rounded-full"
+      class="absolute top-2 right-2 bg-tertiary/80 backdrop-blur-sm px-2 py-1 rounded-full z-10"
     >
       <span class="text-xs text-primary font-medium flex items-center">
         <i class="fas fa-eye mr-1"></i>
