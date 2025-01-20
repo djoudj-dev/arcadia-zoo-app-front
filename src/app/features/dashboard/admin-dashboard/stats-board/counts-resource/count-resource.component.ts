@@ -1,5 +1,6 @@
 // src/app/admin-dashboard/stats/stats.component.ts
 import { Component, OnInit } from '@angular/core';
+import { VisitStatsComponent } from '../visit-stats/visit-stats.component';
 import { CountResourceService } from './services/count-resource.service';
 
 /**
@@ -9,7 +10,7 @@ import { CountResourceService } from './services/count-resource.service';
 @Component({
   standalone: true,
   selector: 'app-count-resource',
-  imports: [],
+  imports: [VisitStatsComponent],
   templateUrl: './count-resource.component.html',
 })
 export class CountResourceComponent implements OnInit {
@@ -26,15 +27,7 @@ export class CountResourceComponent implements OnInit {
   loadCountResource() {
     this.countResourceService.getStats().subscribe({
       next: () => {
-        console.table([
-          {
-            animaux: this.countResourceService.totalAnimals(),
-            habitats: this.countResourceService.totalHabitats(),
-            services: this.countResourceService.totalServices(),
-            employes: this.countResourceService.totalEmploye(),
-            veterinaires: this.countResourceService.totalVet(),
-          },
-        ]);
+        // Traitement des statistiques
       },
       error: (error) => {
         console.error(

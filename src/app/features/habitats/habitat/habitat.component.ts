@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Animal } from '../../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/model/habitat.model';
+import { VisitTrackerDirective } from '../../dashboard/admin-dashboard/stats-board/visit-stats/directives/visit-tracker.directive';
 import { HabitatService } from '../service/habitat.service';
 
 /**
@@ -12,7 +13,7 @@ import { HabitatService } from '../service/habitat.service';
 @Component({
   selector: 'app-habitat',
   standalone: true,
-  imports: [RouterLink, ButtonComponent],
+  imports: [RouterLink, ButtonComponent, VisitTrackerDirective],
   templateUrl: './habitat.component.html',
 })
 export class HabitatComponent implements OnInit {
@@ -23,9 +24,9 @@ export class HabitatComponent implements OnInit {
   animals = signal<Animal[]>([]);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private habitatService: HabitatService
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly habitatService: HabitatService
   ) {}
 
   /** Initialise le composant en chargeant les données de l'habitat */

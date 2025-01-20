@@ -1,10 +1,11 @@
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Animal } from '../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
+import { VisitTrackerDirective } from '../dashboard/admin-dashboard/stats-board/visit-stats/directives/visit-tracker.directive';
 import { VeterinaryReports } from '../dashboard/veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
 import { VeterinaryReportsService } from '../dashboard/veterinary-dashboard/veterinary-reports/service/veterinary-reports.service';
 import { AnimalService } from './service/animal.service';
@@ -16,7 +17,7 @@ import { AnimalService } from './service/animal.service';
 @Component({
   selector: 'app-animal',
   standalone: true,
-  imports: [ButtonComponent, DatePipe],
+  imports: [CommonModule, ButtonComponent, DatePipe, VisitTrackerDirective],
   templateUrl: './animal.component.html',
   styles: [],
 })

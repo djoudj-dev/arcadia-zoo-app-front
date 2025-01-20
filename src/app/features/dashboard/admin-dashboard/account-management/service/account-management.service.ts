@@ -14,9 +14,9 @@ import { User } from '../model/user.model';
 })
 export class AccountManagementService {
   /** URL de base pour les endpoints de gestion des comptes */
-  private apiUrl = `${environment.apiUrl}/api/admin/account-management`;
+  private readonly apiUrl = `${environment.apiUrl}/api/admin/account-management`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   /**
    * Récupère la liste complète des utilisateurs

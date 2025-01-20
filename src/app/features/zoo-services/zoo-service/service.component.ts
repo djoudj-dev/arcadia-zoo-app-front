@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Feature } from 'app/features/dashboard/admin-dashboard/service-management/model/feature.model';
 import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { VisitTrackerDirective } from '../../dashboard/admin-dashboard/stats-board/visit-stats/directives/visit-tracker.directive';
 import { ServiceService } from '../service/service.service';
 
 /**
@@ -11,7 +12,7 @@ import { ServiceService } from '../service/service.service';
  */
 @Component({
   standalone: true,
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, VisitTrackerDirective],
   selector: 'app-service',
   templateUrl: './service.component.html',
 })
@@ -23,9 +24,9 @@ export class ServiceComponent implements OnInit {
   features = signal<Feature[]>([]);
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private serviceService: ServiceService
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly serviceService: ServiceService
   ) {}
 
   /** Initialise le composant en chargeant les données du service */

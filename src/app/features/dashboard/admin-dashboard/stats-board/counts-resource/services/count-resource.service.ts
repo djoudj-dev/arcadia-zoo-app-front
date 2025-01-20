@@ -21,7 +21,7 @@ interface Stats {
 })
 export class CountResourceService {
   /** URL de base pour les endpoints des statistiques */
-  private apiUrl = `${environment.apiUrl}/api/stats/count-resource`;
+  private readonly apiUrl = `${environment.apiUrl}/api/stats/count-resource`;
 
   /** Signaux pour la gestion d'état réactive */
   totalAnimals = signal<number>(0);
@@ -30,7 +30,7 @@ export class CountResourceService {
   totalEmploye = signal<number>(0);
   totalVet = signal<number>(0);
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   /**
    * Récupère les statistiques depuis l'API
