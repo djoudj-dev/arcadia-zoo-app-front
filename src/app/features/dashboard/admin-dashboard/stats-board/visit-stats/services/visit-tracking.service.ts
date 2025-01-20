@@ -1,21 +1,22 @@
 // src/app/features/dashboard/admin-dashboard/stats-board/visit-stats/services/visit-tracking.service.ts
 
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AnimalService } from 'app/features/animal/service/animal.service';
 import { HabitatService } from 'app/features/habitats/service/habitat.service';
 import { ServiceService } from 'app/features/zoo-services/service/service.service';
 import { environment } from 'environments/environment';
-import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
-import { Animal } from '../../../animal-management/model/animal.model';
-import { Habitat } from '../../../habitat-management/model/habitat.model';
-import { Service } from '../../../service-management/model/service.model';
+import { BehaviorSubject, catchError, forkJoin, Observable, of } from 'rxjs';
 import {
   CategoryType,
   VisitResponse,
   VisitStats,
-  VisitStatsResponse,
   VisitTrackingData,
+  VisitTrackingResponse,
 } from '../interfaces/visit-stats.interface';
 
 export interface Visit {
@@ -34,18 +35,35 @@ export class VisitTrackingService {
   private readonly apiUrl = `${environment.apiUrl}/api/visits`;
   private readonly _visitStats = new BehaviorSubject<VisitStats[]>([]);
   readonly visitStats$ = this._visitStats.asObservable();
-  private readonly activeVisits = new Map<string, Visit>();
+  private readonly http = inject(HttpClient);
   private readonly animalService = inject(AnimalService);
   private readonly habitatService = inject(HabitatService);
   private readonly serviceService = inject(ServiceService);
+  private readonly activeVisits = new Map<string, Visit>();
 
-  constructor(private readonly http: HttpClient) {
-    // Charger les données initiales depuis les services existants
-    this.loadInitialStats();
+  constructor() {
+    this.loadStats();
   }
 
-  private loadInitialStats(): void {
-    // Charger les données depuis les services existants
+  loadStats(): void {
+    this.getAllStats().subscribe({
+      next: (stats) => {
+        if (stats && stats.length > 0) {
+          this._visitStats.next(stats);
+        } else {
+          this.initializeEmptyStats();
+        }
+      },
+      error: () => {
+        this.initializeEmptyStats();
+      },
+    });
+  }
+
+  // Alias pour la compatibilité avec le code existant
+  refreshStats = this.loadStats;
+
+  private initializeEmptyStats(): void {
     forkJoin({
       animals: this.animalService.getAnimals(),
       habitats: this.habitatService.getHabitats(),
@@ -53,27 +71,27 @@ export class VisitTrackingService {
     }).subscribe({
       next: ({ animals, habitats, services }) => {
         const stats: VisitStats[] = [
-          ...animals.map((animal: Animal) => ({
+          ...animals.map((animal) => ({
             category_name: animal.name,
-            category_type: 'animal' as const,
+            category_type: 'animal',
             visit_count: 0,
             visit_percentage: 0,
             total_duration: 0,
             average_duration: 0,
             last_visit: new Date(),
           })),
-          ...habitats.map((habitat: Habitat) => ({
+          ...habitats.map((habitat) => ({
             category_name: habitat.name,
-            category_type: 'habitat' as const,
+            category_type: 'habitat',
             visit_count: 0,
             visit_percentage: 0,
             total_duration: 0,
             average_duration: 0,
             last_visit: new Date(),
           })),
-          ...services.map((service: Service) => ({
+          ...services.map((service) => ({
             category_name: service.name,
-            category_type: 'service' as const,
+            category_type: 'service',
             visit_count: 0,
             visit_percentage: 0,
             total_duration: 0,
@@ -81,8 +99,6 @@ export class VisitTrackingService {
             last_visit: new Date(),
           })),
         ];
-
-        console.log('Stats initiales générées:', stats);
         this._visitStats.next(stats);
       },
       error: (error) =>
@@ -131,33 +147,23 @@ export class VisitTrackingService {
     return this.http.post<VisitResponse>(`${this.apiUrl}/track`, visit);
   }
 
-  refreshStats(): void {
-    // Essayer d'abord de charger depuis l'API
-    this.http.get<VisitStats[]>(`${this.apiUrl}/stats`).subscribe({
-      next: (stats) => {
-        if (stats && stats.length > 0) {
-          console.log('Statistiques chargées depuis la base:', stats);
-          this._visitStats.next(stats);
-        } else {
-          // Si pas de données, recharger les stats initiales
-          this.loadInitialStats();
-        }
-      },
-      error: () => {
-        // En cas d'erreur, charger les stats initiales
-        this.loadInitialStats();
-      },
-    });
+  private handleError<T>(operation = 'operation') {
+    return (error: HttpErrorResponse): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      return of([] as unknown as T);
+    };
   }
 
   getAllStats(): Observable<VisitStats[]> {
-    return this.http.get<VisitStats[]>(`${this.apiUrl}/stats`);
+    return this.http
+      .get<VisitStats[]>(`${this.apiUrl}/stats`)
+      .pipe(catchError(() => of([])));
   }
 
   getStatsByCategory(categoryType: CategoryType): Observable<VisitStats[]> {
-    return this.http.get<VisitStats[]>(
-      `${this.apiUrl}/stats/category/${categoryType}`
-    );
+    return this.http
+      .get<VisitStats[]>(`${this.apiUrl}/stats/category/${categoryType}`)
+      .pipe(catchError(() => of([])));
   }
 
   getStatsByDateRange(
@@ -168,12 +174,18 @@ export class VisitTrackingService {
       .set('startDate', startDate.toISOString())
       .set('endDate', endDate.toISOString());
 
-    return this.http.get<VisitStats[]>(`${this.apiUrl}/stats/range`, {
-      params,
-    });
+    return this.http
+      .get<VisitStats[]>(`${this.apiUrl}/stats/range`, { params })
+      .pipe(catchError(() => of([])));
   }
 
-  trackVisit(data: VisitTrackingData): Observable<VisitStatsResponse> {
-    return this.http.post<VisitStatsResponse>(`${this.apiUrl}/track`, data);
+  trackVisit(data: VisitTrackingData): Observable<VisitTrackingResponse> {
+    return this.http
+      .post<VisitTrackingResponse>(`${this.apiUrl}/track`, data)
+      .pipe(
+        catchError(() =>
+          of({ success: false, message: 'Une erreur est survenue' })
+        )
+      );
   }
 }
