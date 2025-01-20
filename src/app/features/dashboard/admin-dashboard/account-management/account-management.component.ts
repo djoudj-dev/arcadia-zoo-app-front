@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Role } from './model/role.model';
@@ -17,7 +16,7 @@ import { AccountManagementService } from './service/account-management.service';
 @Component({
   selector: 'app-account-management',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, ToastComponent, ButtonComponent],
+  imports: [ReactiveFormsModule, FormsModule, ButtonComponent],
   templateUrl: './account-management.component.html',
 })
 export class AccountManagementComponent implements OnInit {
