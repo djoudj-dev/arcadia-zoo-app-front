@@ -155,15 +155,26 @@ export class VisitTrackingService {
   }
 
   getAllStats(): Observable<VisitStats[]> {
-    return this.http
-      .get<VisitStats[]>(`${this.apiUrl}/stats`)
-      .pipe(catchError(() => of([])));
+    return this.http.get<VisitStats[]>(`${this.apiUrl}/stats`).pipe(
+      catchError((error) => {
+        console.error('Erreur lors de la récupération des stats:', error);
+        return of([]);
+      })
+    );
   }
 
   getStatsByCategory(categoryType: CategoryType): Observable<VisitStats[]> {
     return this.http
       .get<VisitStats[]>(`${this.apiUrl}/stats/category/${categoryType}`)
-      .pipe(catchError(() => of([])));
+      .pipe(
+        catchError((error) => {
+          console.error(
+            'Erreur lors de la récupération des stats par catégorie:',
+            error
+          );
+          return of([]);
+        })
+      );
   }
 
   getStatsByDateRange(
@@ -176,16 +187,25 @@ export class VisitTrackingService {
 
     return this.http
       .get<VisitStats[]>(`${this.apiUrl}/stats/range`, { params })
-      .pipe(catchError(() => of([])));
+      .pipe(
+        catchError((error) => {
+          console.error(
+            'Erreur lors de la récupération des stats par date:',
+            error
+          );
+          return of([]);
+        })
+      );
   }
 
   trackVisit(data: VisitTrackingData): Observable<VisitTrackingResponse> {
     return this.http
       .post<VisitTrackingResponse>(`${this.apiUrl}/track`, data)
       .pipe(
-        catchError(() =>
-          of({ success: false, message: 'Une erreur est survenue' })
-        )
+        catchError((error) => {
+          console.error('Erreur lors du tracking de la visite:', error);
+          return of({ success: false, message: 'Une erreur est survenue' });
+        })
       );
   }
 }
