@@ -9,9 +9,9 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class HabitatHistoryService {
-  private apiUrl = `${environment.apiUrl}/api/habitat-comment`;
-  private http = inject(HttpClient);
-  private commentStatusService = inject(CommentStatusService);
+  private readonly apiUrl = `${environment.apiUrl}/api/habitat-comments`;
+  private readonly http = inject(HttpClient);
+  private readonly commentStatusService = inject(CommentStatusService);
 
   constructor() {}
 

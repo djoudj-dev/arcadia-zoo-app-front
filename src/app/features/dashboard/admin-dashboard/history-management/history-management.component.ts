@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
+import { firstValueFrom } from 'rxjs';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HabitatComment } from '../../veterinary-dashboard/habitat-comment/habitat-comment/model/habitat-comment.model';
 import { HabitatHistoryService } from './services/history-management.service';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 /**
  * Composant de gestion de l'historique des commentaires d'habitats
@@ -19,8 +20,8 @@ export class HistoryManagementComponent implements OnInit {
   /** Liste des commentaires d'habitats */
   commentHistory: HabitatComment[] = [];
 
-  private historyService = inject(HabitatHistoryService);
-  private toastService = inject(ToastService);
+  private readonly historyService = inject(HabitatHistoryService);
+  private readonly toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.loadCommentHistory();
@@ -56,7 +57,9 @@ export class HistoryManagementComponent implements OnInit {
     }
 
     try {
-      await this.historyService.markCommentAsResolved(commentId).toPromise();
+      await firstValueFrom(
+        this.historyService.markCommentAsResolved(commentId)
+      );
       this.loadCommentHistory();
       this.toastService.showSuccess('Commentaire marqué comme résolu');
     } catch (error) {
@@ -78,7 +81,7 @@ export class HistoryManagementComponent implements OnInit {
     }
 
     try {
-      await this.historyService.reopenComment(commentId).toPromise();
+      await firstValueFrom(this.historyService.reopenComment(commentId));
       this.loadCommentHistory();
       this.toastService.showSuccess('Commentaire rouvert avec succès');
     } catch (error) {

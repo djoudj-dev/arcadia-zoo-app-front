@@ -14,9 +14,9 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 })
 export class HabitatHistoryService {
   /** URL de base pour les endpoints des commentaires d'habitats */
-  private apiUrl = `${environment.apiUrl}/api/habitat-comment`;
-  private http = inject(HttpClient);
-  private commentStatusService = inject(CommentStatusService);
+  private readonly apiUrl = `${environment.apiUrl}/api/habitat-comments`;
+  private readonly http = inject(HttpClient);
+  private readonly commentStatusService = inject(CommentStatusService);
 
   /**
    * Récupère l'historique complet des commentaires d'habitats
