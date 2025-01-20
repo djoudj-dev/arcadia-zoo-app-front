@@ -67,10 +67,9 @@ export class VeterinaryReportsComponent implements OnInit {
   private readonly animalHealthService = inject(AnimalHealthService);
 
   ngOnInit() {
-    console.log('VeterinaryReportsComponent initialized');
-    console.log('Modal state:', this.isModalOpen);
     this.initForm();
     if (this.animalId) {
+      this.selectedAnimalId.set(this.animalId);
       this.loadAnimalDetails();
       this.loadVeterinaryReports();
       this.loadFeedingHistory();
@@ -79,12 +78,15 @@ export class VeterinaryReportsComponent implements OnInit {
 
   private initForm() {
     this.reportForm = this.fb.group({
-      id_animal: ['', Validators.required],
+      id_animal: [null, Validators.required],
       animal_name: ['', Validators.required],
-      visit_date: ['', Validators.required],
+      visit_date: [new Date(), Validators.required],
       animal_state: ['', Validators.required],
       recommended_food_type: ['', Validators.required],
-      recommended_food_quantity: ['', [Validators.required, Validators.min(0)]],
+      recommended_food_quantity: [
+        null,
+        [Validators.required, Validators.min(0)],
+      ],
       food_unit: ['', Validators.required],
       additional_details: [''],
     });
@@ -112,13 +114,19 @@ export class VeterinaryReportsComponent implements OnInit {
     this.veterinaryReportsService
       .getReportsByAnimalId(this.animalId)
       .subscribe({
-        next: (reports: VeterinaryReports[]) =>
-          this.veterinaryReports.set(reports),
-        error: (error: Error) => {
+        next: (reports) => {
+          if (reports && reports.length > 0) {
+            this.veterinaryReports.set(reports);
+          } else {
+            this.veterinaryReports.set([]);
+          }
+        },
+        error: (error) => {
+          console.error('Erreur lors du chargement des rapports:', error);
           this.toastService.showError(
             'Erreur lors du chargement des rapports vétérinaires'
           );
-          console.error(error);
+          this.veterinaryReports.set([]);
         },
       });
   }
