@@ -16,40 +16,29 @@ export class HabitatHistoryService {
   constructor() {}
 
   getHabitatCommentHistory(): Observable<HabitatComment[]> {
-    return this.http.get<HabitatComment[]>(this.apiUrl).pipe(
-      tap((comments) => {
-        console.log('Tous les commentaires récupérés:', comments);
-      })
-    );
+    return this.http.get<HabitatComment[]>(this.apiUrl);
   }
 
   markCommentAsResolved(commentId: string) {
     const url = `${this.apiUrl}/${commentId}/resolve`;
-    console.log('Tentative de résolution du commentaire:', commentId);
-
     return this.http.patch<HabitatComment>(url, {}).pipe(
       tap({
         next: (response) => {
-          console.log('Commentaire marqué comme résolu:', response);
           this.commentStatusService.emitCommentStatusChange(response);
         },
-        error: (error) => console.error('Erreur lors de la résolution:', error),
+        error: () => {},
       })
     );
   }
 
   reopenComment(commentId: string) {
     const url = `${this.apiUrl}/${commentId}/reopen`;
-    console.log('Tentative de réouverture du commentaire:', commentId);
-
     return this.http.patch<HabitatComment>(url, {}).pipe(
       tap({
         next: (response) => {
-          console.log('Commentaire rouvert:', response);
           this.commentStatusService.emitCommentStatusChange(response);
         },
-        error: (error) =>
-          console.error('Erreur lors de la réouverture:', error),
+        error: () => {},
       })
     );
   }

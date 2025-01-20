@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Observable, throwError } from 'rxjs';
@@ -13,11 +13,9 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
 export class VeterinaryReportsService {
   private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
   private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
+  private readonly http = inject(HttpClient);
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly tokenService: TokenService
-  ) {}
+  constructor(private readonly tokenService: TokenService) {}
 
   private getHeaders(): HttpHeaders {
     const token = this.tokenService.getToken();
@@ -44,9 +42,10 @@ export class VeterinaryReportsService {
     });
   }
 
-  createReport(report: VeterinaryReports): Observable<VeterinaryReports> {
-    const headers = this.getHeaders();
-    return this.http.post<VeterinaryReports>(this.apiUrl, report, { headers });
+  createReport(
+    reportData: Partial<VeterinaryReports>
+  ): Observable<VeterinaryReports> {
+    return this.http.post<VeterinaryReports>(this.apiUrl, reportData);
   }
 
   updateReport(
@@ -84,6 +83,12 @@ export class VeterinaryReportsService {
       `${this.apiUrl}/${id}/status`,
       { is_treated: is_processed },
       { headers }
+    );
+  }
+
+  getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
+    return this.http.get<VeterinaryReports[]>(
+      `${this.apiUrl}/animal/${animalId}`
     );
   }
 
