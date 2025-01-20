@@ -34,9 +34,18 @@ export class HabitatCommentService {
   createHabitatComment(
     comment: Partial<HabitatComment>
   ): Observable<HabitatComment> {
-    console.log('Création du commentaire:', comment);
+    const token = this.tokenService.getToken();
+    const tokenData = token ? JSON.parse(atob(token.split('.')[1])) : null;
+    const userId = tokenData?.sub;
+
+    const commentWithUserId = {
+      ...comment,
+      id_user: userId,
+    };
+
+    console.log('Création du commentaire:', commentWithUserId);
     return this.http
-      .post<HabitatComment>(this.apiUrl, comment, {
+      .post<HabitatComment>(this.apiUrl, commentWithUserId, {
         headers: this.getHeaders(),
       })
       .pipe(tap((response) => console.log('Réponse création:', response)));
