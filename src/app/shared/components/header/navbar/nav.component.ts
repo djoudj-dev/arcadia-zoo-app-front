@@ -77,8 +77,13 @@ export class NavComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.relative')) {
+    const dropdownButton = target.closest('button');
+    const dropdownContainer = target.closest('.relative');
+
+    // Si le clic n'est pas sur un bouton de menu et n'est pas dans un conteneur de dropdown
+    if (!dropdownButton && !dropdownContainer) {
       this.activeDropdown = null;
+      this.isMenuOpen = false;
     }
   }
 }
