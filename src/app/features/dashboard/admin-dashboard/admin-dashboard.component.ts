@@ -1,7 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { CountResourceComponent } from './stats-board/counts-resource/count-resource.component';
+import { StatsComponent } from './stats-board/stats.component';
 
 /** Interface pour les éléments de navigation */
 interface NavigationItem {
@@ -17,12 +17,17 @@ interface NavigationItem {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [ButtonComponent, CountResourceComponent, RouterOutlet],
+  imports: [RouterOutlet, CommonModule, StatsComponent],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
   /** Liste des éléments de navigation disponibles */
   navigationItems: NavigationItem[] = [
+    {
+      text: 'Statistiques',
+      route: '',
+      description: 'Voir les statistiques du zoo',
+    },
     {
       text: 'Animaux',
       route: 'animal-management',
@@ -65,7 +70,8 @@ export class AdminDashboardComponent {
 
   constructor(readonly router: Router) {
     // Initialise l'onglet actif en fonction de la route courante
-    this.activeRoute.set(this.router.url.split('/').pop() ?? '');
+    const currentRoute = this.router.url.split('/').pop();
+    this.activeRoute.set(currentRoute === 'admin' ? '' : currentRoute ?? '');
   }
 
   /**
@@ -73,8 +79,13 @@ export class AdminDashboardComponent {
    * @param route Chemin de route vers lequel naviguer
    */
   navigateTo(route: string): void {
-    this.activeRoute.set(route);
-    this.router.navigate(['/admin', route]);
+    if (route === '') {
+      this.activeRoute.set('');
+      this.router.navigate(['/admin']);
+    } else {
+      this.activeRoute.set(route);
+      this.router.navigate(['/admin', route]);
+    }
   }
 
   /**
@@ -91,5 +102,19 @@ export class AdminDashboardComponent {
    */
   isActiveRoute(route: string): boolean {
     return this.activeRoute() === route;
+  }
+
+  getIcon(text: string): string {
+    const iconMap: { [key: string]: string } = {
+      Statistiques: 'fa-chart-bar',
+      Animaux: 'fa-paw',
+      Habitats: 'fa-tree',
+      Services: 'fa-concierge-bell',
+      Comptes: 'fa-users',
+      "Horaires d'ouverture": 'fa-clock',
+      'Rapports vétérinaires': 'fa-stethoscope',
+      'Historique des actions': 'fa-history',
+    };
+    return iconMap[text] || 'fa-circle';
   }
 }

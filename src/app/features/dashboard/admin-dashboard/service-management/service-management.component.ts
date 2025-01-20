@@ -1,15 +1,12 @@
-import { SlicePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
-import { ModalComponent } from 'app/shared/components/modal/modal.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment';
 import { firstValueFrom } from 'rxjs';
-import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { Feature } from './model/feature.model';
 import { Service } from './model/service.model';
 import { ServiceManagementService } from './service/service.management.service';
@@ -22,13 +19,7 @@ import { ServiceManagementService } from './service/service.management.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [
-    FormsModule,
-    SlicePipe,
-    ModalComponent,
-    ButtonComponent,
-    ToastComponent,
-  ],
+  imports: [FormsModule, ButtonComponent],
   templateUrl: './service-management.component.html',
 })
 export class ServiceManagementComponent implements OnInit {
@@ -326,5 +317,11 @@ export class ServiceManagementComponent implements OnInit {
       this.deleteService(this.serviceToDelete);
       this.serviceToDelete = null;
     }
+  }
+
+  /** Annule la modification en cours */
+  cancelEdit() {
+    this.resetForm();
+    this.toastService.showSuccess('Modification annulée');
   }
 }

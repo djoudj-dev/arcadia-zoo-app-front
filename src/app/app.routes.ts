@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/guard/auth.guard';
+import { AdminDashboardComponent } from './features/dashboard/admin-dashboard/admin-dashboard.component';
+import { AnimalManagementComponent } from './features/dashboard/admin-dashboard/animal-management/animal-management.component';
 import { OpeningHoursManagementComponent } from './features/dashboard/admin-dashboard/opening-hours-management/opening-hours-management.component';
 import { VeterinaryDashboardComponent } from './features/dashboard/veterinary-dashboard/veterinary-dashboard.component';
 import { HomeComponent } from './features/home/home.component';
@@ -61,18 +63,11 @@ const publicRoutes: Routes = [
 const adminRoutes: Routes = [
   {
     path: 'admin',
-    loadComponent: () =>
-      import(
-        './features/dashboard/admin-dashboard/admin-dashboard.component'
-      ).then((m) => m.AdminDashboardComponent),
-    title: 'Admin',
-    canActivate: [authGuard],
-    data: { roles: ['Admin'] },
+    component: AdminDashboardComponent,
     children: [
       {
-        path: '',
-        redirectTo: 'account-management',
-        pathMatch: 'full',
+        path: 'animal-management',
+        component: AnimalManagementComponent,
       },
       {
         path: 'account-management',
@@ -97,14 +92,6 @@ const adminRoutes: Routes = [
             './features/dashboard/admin-dashboard/habitat-management/habitat-management.component'
           ).then((m) => m.HabitatManagementComponent),
         title: 'Gestion des habitats',
-      },
-      {
-        path: 'animal-management',
-        loadComponent: () =>
-          import(
-            './features/dashboard/admin-dashboard/animal-management/animal-management.component'
-          ).then((m) => m.AnimalManagementComponent),
-        title: 'Gestion des animaux',
       },
       {
         path: 'veterinary-reports',

@@ -1,364 +1,159 @@
-<main
-  class="service-management mb-8 sm:mb-12 px-4 sm:px-6 py-6 bg-secondary rounded-lg shadow-xl shadow-tertiary"
-  aria-labelledby="serviceManagementTitle"
+<section
+  class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-8"
 >
-  <h2
-    id="serviceManagementTitle"
-    class="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8 text-center"
-  >
-    Gestion des services
-  </h2>
-  <app-toast />
-  <!-- Bouton pour ouvrir le modal -->
-  <div class="flex justify-end mb-4">
-    <app-button
-      [text]="'Ajouter un service'"
-      [type]="'button'"
-      [color]="'tertiary'"
-      [rounded]="true"
-      [customClass]="'px-4 py-2 hover:shadow-lg transition-all duration-300'"
-      (click)="openNewServiceModal()"
-      (keydown)="$event.key === 'Enter' && openNewServiceModal()"
-    ></app-button>
-  </div>
+  <div class="container mx-auto px-4">
+    <div class="text-center space-y-4 mb-12">
+      <h1
+        class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
+      >
+        Gestion des Services
+      </h1>
+      <p
+        class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
+      >
+        Gérez les services du zoo
+      </p>
+    </div>
 
-  <!-- Liste des services -->
-  <div class="bg-gray-100 p-4 sm:p-6 rounded-lg shadow-sm">
-    <h3 class="text-lg sm:text-xl font-semibold mb-6 text-center text-gray-800">
-      Liste des services
-    </h3>
-
-    <!-- Grid pour les cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
       @for (service of services(); track service.id_service) {
       <div
-        class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 relative"
+        class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
       >
-        <!-- Image du service -->
-        <div class="relative h-48 overflow-hidden">
+        <div class="relative h-48">
           <img
-            [src]="
-              service.images || '/public/images/img_services/restaurant.webp'
-            "
-            [alt]="'Service ' + service.name"
+            [src]="service.images"
+            [alt]="service.name"
             class="w-full h-full object-cover"
           />
-          <!-- Overlay avec le nom du service -->
-          <div
-            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4"
-          >
-            <h4 class="text-lg font-semibold text-white">{{ service.name }}</h4>
+          <div class="absolute bottom-0 left-0 right-0 bg-black/50 p-4">
+            <h3 class="text-white font-serif text-xl">{{ service.name }}</h3>
           </div>
         </div>
-
-        <!-- Contenu de la card -->
         <div class="p-4">
-          <!-- Description -->
-          <div class="mb-4">
-            <p class="text-sm text-gray-600">
-              @if (!service.showFullDescription) {
-              {{ service.description | slice : 0 : 100 }}...
-              <button
-                class="text-tertiary hover:text-quaternary font-medium ml-1"
-                (click)="toggleDescription(service.id_service!)"
-              >
-                Lire la suite
-              </button>
-              } @else {
-              {{ service.description }}
-              <button
-                class="text-tertiary hover:text-quaternary font-medium ml-1"
-                (click)="toggleDescription(service.id_service!)"
-              >
-                Voir moins
-              </button>
-              }
-            </p>
-          </div>
-
-          <!-- Boutons d'action -->
-          <div class="flex justify-end space-x-2 mt-4">
+          <p class="text-gray-600 mb-4 line-clamp-3">
+            {{ service.description }}
+          </p>
+          <div class="flex justify-end space-x-2">
             <app-button
-              [text]="'Modifier'"
-              [type]="'button'"
-              [color]="'secondary'"
-              [rounded]="true"
-              [customClass]="
-                'px-4 py-2 hover:shadow-lg transition-all duration-300'
-              "
               (click)="editService(service.id_service!)"
-              (keydown)="
-                $event.key === 'Enter' && editService(service.id_service!)
-              "
-            ></app-button>
-            <app-button
-              [text]="'Supprimer'"
-              [type]="'button'"
-              [color]="'red'"
+              (keydown)="editService(service.id_service!)"
+              [text]="'Modifier'"
+              [color]="'tertiary'"
               [rounded]="true"
-              [customClass]="
-                'px-4 py-2 hover:shadow-lg transition-all duration-300'
-              "
+              [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+            >
+            </app-button>
+            <app-button
               (click)="confirmDeleteService(service.id_service!)"
-              (keydown)="
-                $event.key === 'Enter' &&
-                  confirmDeleteService(service.id_service!)
-              "
-            ></app-button>
+              (keydown)="confirmDeleteService(service.id_service!)"
+              [text]="'Supprimer'"
+              [color]="'danger'"
+              [rounded]="true"
+              [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+            >
+            </app-button>
           </div>
-
-          <!-- Confirmation de suppression -->
-          @if (serviceToDelete === service.id_service) {
-          <div
-            class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4 shadow-sm"
-          >
-            <p class="text-red-700 mb-3">
-              Êtes-vous sûr de vouloir supprimer le service "{{ service.name }}"
-              ?
-            </p>
-            <div class="flex justify-end gap-3">
-              <button
-                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300"
-                (click)="deleteServiceConfirmed()"
-              >
-                Confirmer
-              </button>
-              <button
-                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-300"
-                (click)="cancelDelete()"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-          }
         </div>
       </div>
       }
     </div>
-  </div>
 
-  <!-- Modal pour le formulaire -->
-  <app-modal [isOpen]="showModal" (close)="toggleModal()">
-    <!-- En-tête du modal -->
-    <div class="bg-tertiary px-6 py-4 rounded-t-lg">
-      <div class="flex items-center justify-between">
-        <h3 class="text-xl font-semibold text-white">
-          {{
-            newServiceData.id_service
-              ? "Modifier le service"
-              : "Créer un service"
-          }}
-        </h3>
-        <button
-          class="text-white hover:text-gray-200 transition-colors"
-          (click)="toggleModal()"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
+    <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6">
+      <h3 class="text-2xl font-serif font-semibold text-tertiary mb-6">
+        {{
+          newServiceData.id_service
+            ? "Modifier le service"
+            : "Ajouter un service"
+        }}
+      </h3>
 
-    <!-- Corps du modal -->
-    <div class="p-6 bg-white rounded-b-lg">
       <form
+        class="space-y-6"
         (ngSubmit)="
           newServiceData.id_service ? updateService() : createService()
         "
         enctype="multipart/form-data"
       >
-        <div class="space-y-6">
-          <!-- Nom du service -->
-          <div>
-            <label
-              for="serviceName"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Nom du service
-            </label>
-            <input
-              id="serviceName"
-              type="text"
-              [(ngModel)]="newServiceData.name"
-              name="name"
-              required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent transition-all duration-200"
-              placeholder="Entrez le nom du service"
-            />
-          </div>
-
-          <!-- Description -->
-          <div>
-            <label
-              for="serviceDescription"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Description
-            </label>
-            <textarea
-              id="serviceDescription"
-              [(ngModel)]="newServiceData.description"
-              name="description"
-              required
-              rows="4"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent transition-all duration-200 resize-none"
-              placeholder="Décrivez le service"
-            ></textarea>
-          </div>
-
-          <!-- Menu déroulant pour les features -->
-          <div class="relative">
-            <label
-              for="serviceFeatures"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Caractéristiques
-            </label>
-            <button
-              id="serviceFeatures"
-              type="button"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left flex justify-between items-center hover:border-tertiary transition-colors duration-200"
-              (click)="toggleFeatureDropdown()"
-            >
-              <span class="text-gray-700">
-                {{
-                  isFeatureDropdownOpen
-                    ? "Fermer la sélection"
-                    : "Sélectionner les caractéristiques"
-                }}
-              </span>
-              <span
-                class="transform transition-transform duration-200"
-                [class.rotate-180]="isFeatureDropdownOpen"
-              >
-                <svg
-                  class="w-5 h-5 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </span>
-            </button>
-
-            @if (isFeatureDropdownOpen) {
-            <div
-              class="absolute z-20 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-            >
-              @for (feature of allFeatures(); track feature.id_feature) {
-              <div class="p-3 hover:bg-gray-50 transition-colors duration-150">
-                <label class="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    [value]="feature.id_feature"
-                    (change)="onFeatureChange(feature, $event)"
-                    [checked]="isFeatureSelected(feature)"
-                    class="w-4 h-4 text-tertiary border-gray-300 rounded focus:ring-tertiary"
-                  />
-                  <span class="text-gray-700">{{ feature.name }}</span>
-                </label>
-              </div>
-              }
-            </div>
-            }
-          </div>
-
-          <!-- Upload d'image -->
-          <div class="mb-4">
-            <label
-              for="serviceImage"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Image du service
-            </label>
-            <div class="flex items-center justify-center w-full">
-              <label
-                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-300"
-              >
-                @if(!newServiceData.images) {
-                <div
-                  class="flex flex-col items-center justify-center pt-5 pb-6"
-                >
-                  <svg
-                    class="w-8 h-8 mb-4 text-gray-500"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />
-                  </svg>
-                  <p class="mb-2 text-sm text-gray-500">
-                    <span class="font-semibold">Cliquez pour télécharger</span>
-                    ou glissez-déposez
-                  </p>
-                  <p class="text-xs text-gray-500">
-                    PNG, JPG ou WEBP (MAX. 5MB)
-                  </p>
-                </div>
-                } @else {
-                <img
-                  [src]="newServiceData.images"
-                  alt="Aperçu"
-                  class="w-full h-full object-cover rounded-lg"
-                />
-                }
-                <input
-                  id="serviceImage"
-                  type="file"
-                  accept="image/*"
-                  class="hidden"
-                  (change)="onFileChange($event)"
-                />
-              </label>
-            </div>
-          </div>
+        <div>
+          <label
+            for="name"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Nom du service
+          </label>
+          <input
+            type="text"
+            id="name"
+            [(ngModel)]="newServiceData.name"
+            name="name"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            placeholder="Nom du service"
+          />
         </div>
 
-        <!-- Boutons d'action -->
-        <div class="flex space-x-3 mt-8">
+        <div>
+          <label
+            for="description"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Description
+          </label>
+          <textarea
+            id="description"
+            [(ngModel)]="newServiceData.description"
+            name="description"
+            required
+            rows="4"
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            placeholder="Description du service"
+          ></textarea>
+        </div>
+
+        <div>
+          <label
+            for="image"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            (change)="onFileChange($event)"
+            accept="image/*"
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+          />
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          @if (newServiceData.id_service) {
           <app-button
-            [text]="newServiceData.id_service ? 'Modifier' : 'Créer'"
-            [type]="'submit'"
-            [color]="'tertiary'"
-            [rounded]="true"
-            class="flex-1"
-          ></app-button>
-          <app-button
+            type="button"
+            (click)="cancelEdit()"
+            (keydown)="cancelEdit()"
             [text]="'Annuler'"
-            [type]="'button'"
             [color]="'secondary'"
             [rounded]="true"
-            class="flex-1"
-            (click)="toggleModal()"
-            (keydown)="$event.key === 'Enter' && toggleModal()"
-          ></app-button>
+            [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+          >
+          </app-button>
+          }
+          <app-button
+            type="submit"
+            (keydown)="
+              $event.key === 'Enter' &&
+                (newServiceData.id_service ? updateService() : createService())
+            "
+            [text]="newServiceData.id_service ? 'Mettre à jour' : 'Créer'"
+            [color]="'tertiary'"
+            [rounded]="true"
+            [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+          >
+          </app-button>
         </div>
       </form>
     </div>
-  </app-modal>
-</main>
+  </div>
+</section>

@@ -1,9 +1,9 @@
-import { SlicePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { ToastComponent } from 'app/shared/components/toast/toast.component';
 import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { HabitatService } from '../../../habitats/service/habitat.service';
@@ -11,8 +11,6 @@ import { Habitat } from '../habitat-management/model/habitat.model';
 import { CountResourceService } from '../stats-board/counts-resource/services/count-resource.service';
 import { Animal } from './model/animal.model';
 import { AnimalManagementService } from './service/animal-management.service';
-import { VisitCounterComponent } from '../../../../shared/components/visit-counter/visit-counter.component';
-
 /**
  * Composant de gestion des animaux
  * Permet la création, modification et suppression des animaux
@@ -22,12 +20,11 @@ import { VisitCounterComponent } from '../../../../shared/components/visit-count
   selector: 'app-animal-management',
   standalone: true,
   imports: [
-    SlicePipe,
-    ReactiveFormsModule,
+    CommonModule,
     FormsModule,
-    ToastComponent,
+    ReactiveFormsModule,
+    RouterModule,
     ButtonComponent,
-    VisitCounterComponent,
   ],
   templateUrl: './animal-management.component.html',
 })
@@ -131,13 +128,6 @@ export class AnimalManagementComponent implements OnInit {
     if (this.validateAnimalData(true)) {
       const formData = this.buildFormData();
       const animalId = this.newAnimalData().id_animal!.toString();
-
-      // Vérification des données avant envoi
-      console.log('Données à envoyer:', {
-        id: animalId,
-        name: formData.get('name'),
-        species: formData.get('species'),
-      });
 
       this.animalManagement.updateAnimal(animalId, formData).subscribe({
         next: (updatedAnimal) => {

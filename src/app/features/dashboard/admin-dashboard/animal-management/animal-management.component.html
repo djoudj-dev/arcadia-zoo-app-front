@@ -3,7 +3,6 @@
   class="w-full bg-gradient-to-b from-secondary to-primary shadow-lg py-8"
 >
   <div class="container mx-auto px-4">
-    <!-- En-tête avec titre et sous-titre -->
     <div class="text-center space-y-4 mb-12">
       <h1
         class="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-quinary"
@@ -13,354 +12,243 @@
       <p
         class="text-lg md:text-xl text-tertiary font-serif italic max-w-4xl mx-auto"
       >
-        Gérez les animaux du zoo et leurs habitats
+        Gérez les animaux du zoo
       </p>
-      <app-toast />
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Panneau gauche : Formulaire de gestion -->
-      <div class="w-full lg:w-1/2 bg-white rounded-2xl shadow-lg p-6 space-y-6">
-        <h3 class="text-2xl font-serif font-semibold text-tertiary mb-6">
-          {{
-            newAnimalData().id_animal
-              ? "Modifier l'animal"
-              : "Ajouter un animal"
-          }}
-        </h3>
-
-        <!-- Formulaire avec validation et gestion des fichiers -->
-        <form
-          class="space-y-6"
-          (ngSubmit)="
-            newAnimalData().id_animal ? updateAnimal() : createAnimal()
-          "
-          enctype="multipart/form-data"
-        >
-          <!-- Nom de l'animal -->
-          <div>
-            <label
-              for="name"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Nom de l'animal
-            </label>
-            <input
-              type="text"
-              id="name"
-              [(ngModel)]="newAnimalData().name"
-              name="name"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-              placeholder="Nom de l'animal"
-            />
-          </div>
-
-          <!-- Espèce -->
-          <div>
-            <label
-              for="species"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Espèce
-            </label>
-            <input
-              type="text"
-              id="species"
-              [(ngModel)]="newAnimalData().species"
-              name="species"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-              placeholder="Espèce de l'animal"
-            />
-          </div>
-
-          <!-- Photo -->
-          <div class="form-group">
-            <label
-              for="animalImage"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Image de l'animal
-            </label>
-            <div class="flex items-center justify-center w-full">
-              <label
-                class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-300"
-              >
-                @if(!newAnimalData().images) {
-                <div
-                  class="flex flex-col items-center justify-center pt-5 pb-6"
-                >
-                  <svg
-                    class="w-8 h-8 mb-4 text-gray-500"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />
-                  </svg>
-                  <p class="mb-2 text-sm text-gray-500">
-                    <span class="font-semibold">Cliquez pour télécharger</span>
-                    ou glissez-déposez
-                  </p>
-                  <p class="text-xs text-gray-500">
-                    PNG, JPG ou WEBP (MAX. 5MB)
-                  </p>
-                </div>
-                } @else {
-                <img
-                  [src]="newAnimalData().images"
-                  alt="Aperçu"
-                  class="w-full h-full object-cover rounded-lg"
-                />
-                }
-                <input
-                  id="animalImage"
-                  type="file"
-                  accept="image/*"
-                  class="hidden"
-                  (change)="onFileSelected($event)"
-                />
-              </label>
-            </div>
-          </div>
-
-          <!-- Habitat -->
-          <div>
-            <label
-              for="animal-habitat"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Habitat
-            </label>
-            <select
-              id="animal-habitat"
-              [(ngModel)]="newAnimalData().habitat_id"
-              name="habitat_id"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-            >
-              <option value="">Sélectionner un habitat</option>
-              @for (habitat of habitats(); track habitat.id_habitat) {
-              <option [value]="habitat.id_habitat">{{ habitat.name }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Caractéristiques -->
-          <div>
-            <label
-              for="characteristics"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Caractéristiques
-            </label>
-            <textarea
-              id="characteristics"
-              [(ngModel)]="newAnimalData().characteristics"
-              name="characteristics"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-              rows="3"
-              placeholder="Ex: sociable, actif, joueur"
-            ></textarea>
-          </div>
-
-          <!-- Poids -->
-          <div>
-            <label
-              for="weight-range"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Fourchette de poids
-            </label>
-            <input
-              type="text"
-              id="weight-range"
-              [(ngModel)]="newAnimalData().weightRange"
-              name="weightRange"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-              placeholder="Ex: 150 à 300 kg"
-            />
-          </div>
-
-          <!-- Régime alimentaire -->
-          <div>
-            <label
-              for="diet"
-              class="block text-lg font-medium text-tertiary mb-2"
-            >
-              Régime alimentaire
-            </label>
-            <select
-              id="diet"
-              [(ngModel)]="newAnimalData().diet"
-              name="diet"
-              required
-              class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
-            >
-              <option value="">Sélectionner un régime</option>
-              <option value="Herbivore">Herbivore</option>
-              <option value="Carnivore">Carnivore</option>
-              <option value="Omnivore">Omnivore</option>
-            </select>
-          </div>
-
-          <!-- Boutons d'action -->
-          <div class="flex gap-4 pt-4">
-            <app-button
-              [text]="newAnimalData().id_animal ? 'Modifier' : 'Créer'"
-              [type]="'submit'"
-              [color]="'tertiary'"
-              [rounded]="true"
-              class="w-1/2"
-            ></app-button>
-            <app-button
-              [text]="'Annuler'"
-              [type]="'button'"
-              [color]="'secondary'"
-              [rounded]="true"
-              class="w-1/2"
-              (click)="cancel()"
-              (keydown)="$event.key === 'Enter' && cancel()"
-            ></app-button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Panneau droit : Liste des animaux par habitat -->
-      <div class="w-full lg:w-1/2 space-y-8">
-        @for (habitat of habitats(); track habitat.id_habitat) {
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-          <h3
-            class="text-2xl font-serif font-semibold text-tertiary mb-6 text-center"
-          >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      @for (habitat of habitats(); track habitat.id_habitat) {
+      <div
+        class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden"
+      >
+        <div class="p-4">
+          <h3 class="text-xl font-serif font-semibold text-tertiary mb-4">
             {{ habitat.name }}
           </h3>
 
+          @if (groupedAnimals()[habitat.id_habitat].length) {
           <div class="space-y-4">
-            @for (animal of groupedAnimals()[habitat.id_habitat] || []; track
-            animal.id_animal) { @if (visibleAnimals()[habitat.id_habitat] ||
-            groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
-            <div class="relative bg-white rounded-2xl shadow-lg p-6">
-              <app-visit-counter
-                [categoryType]="'animal'"
-                [pageId]="animal.id_animal"
+            @for (animal of groupedAnimals()[habitat.id_habitat]; track
+            animal.id_animal) {
+            <div
+              class="flex items-center gap-4 p-2 rounded-lg hover:bg-white/50 transition-colors"
+            >
+              <img
+                [src]="animal.images"
+                [alt]="animal.name"
+                class="w-16 h-16 object-cover rounded-lg shadow"
               />
-              <div class="flex flex-col sm:flex-row items-center gap-4">
-                <img
-                  [src]="animal.images"
-                  [alt]="animal.name"
-                  class="w-32 h-32 object-cover rounded-lg shadow-md"
-                />
-                <div class="flex-1 space-y-2">
-                  <h4 class="text-lg font-bold text-tertiary">
-                    {{ animal.name }}
-                  </h4>
-                  <p class="text-gray-600">{{ animal.species }}</p>
-                  <p class="text-sm text-gray-600">
-                    <span class="font-semibold">Description:</span>
-                    <span>
-                      @if (!animal.showTime) {
-                      {{ animal.characteristics | slice : 0 : 30 }}... } @else {
-                      {{ animal.characteristics }}
-                      }
-                    </span>
-                    <button
-                      class="text-tertiary hover:text-tertiary/80 ml-2 underline"
-                      (click)="toggleAnimal(animal.id_animal)"
-                    >
-                      @if (!animal.showTime) { Lire la suite } @else { Voir
-                      moins }
-                    </button>
-                  </p>
-                </div>
-                <div class="flex gap-2">
-                  <app-button
-                    [text]="'Modifier'"
-                    [type]="'button'"
-                    [color]="'secondary'"
-                    [rounded]="true"
-                    [customClass]="'text-xs px-2 py-1'"
-                    (click)="editAnimal(animal.id_animal)"
-                    (keydown)="
-                      $event.key === 'Enter' && editAnimal(animal.id_animal)
-                    "
-                  ></app-button>
-                  <app-button
-                    [text]="'Supprimer'"
-                    [type]="'button'"
-                    [color]="'red'"
-                    [rounded]="true"
-                    [customClass]="'text-xs px-2 py-1'"
-                    (click)="confirmDeleteAnimal(animal.id_animal)"
-                    (keydown)="
-                      $event.key === 'Enter' &&
-                        confirmDeleteAnimal(animal.id_animal)
-                    "
-                  ></app-button>
-                </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-base font-semibold text-tertiary truncate">
+                  {{ animal.name }}
+                </h4>
+                <p class="text-sm text-gray-600">{{ animal.species }}</p>
               </div>
-              <!-- Confirmation de suppression -->
-              @if (animalToDelete === animal.id_animal) {
-              <div class="mt-4 p-4 bg-red-100 rounded-lg">
-                <p>
-                  Êtes-vous sûr de vouloir supprimer l'animal "{{
-                    animal.name
-                  }}" ?
-                </p>
-                <div class="flex justify-end gap-2 mt-2">
-                  <button
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    (click)="deleteAnimalConfirmed()"
-                  >
-                    Supprimer
-                  </button>
-                  <button
-                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-                    (click)="cancelDelete()"
-                  >
-                    Annuler
-                  </button>
-                </div>
+              <div class="flex gap-2">
+                <app-button
+                  (click)="editAnimal(animal.id_animal)"
+                  (keydown)="editAnimal(animal.id_animal)"
+                  [text]="'Modifier'"
+                  [color]="'tertiary'"
+                  [rounded]="true"
+                  [customClass]="'px-3 py-1 text-sm'"
+                >
+                </app-button>
+                <app-button
+                  (click)="confirmDeleteAnimal(animal.id_animal)"
+                  (keydown)="confirmDeleteAnimal(animal.id_animal)"
+                  [text]="'Supprimer'"
+                  [color]="'danger'"
+                  [rounded]="true"
+                  [customClass]="'px-3 py-1 text-sm'"
+                >
+                </app-button>
               </div>
-              }
             </div>
-            } } @if ((groupedAnimals()[habitat.id_habitat] || []).length > 1) {
-            <div class="text-center mt-4">
-              <app-button
-                [text]="
-                  visibleAnimals()[habitat.id_habitat]
-                    ? 'Voir moins'
-                    : 'Voir plus'
-                "
-                [type]="'button'"
-                [color]="'tertiary'"
-                [rounded]="true"
-                (click)="toggleVisibility(habitat.id_habitat)"
-                (keydown)="
-                  $event.key === 'Enter' && toggleVisibility(habitat.id_habitat)
-                "
-                [customClass]="'px-4 py-2'"
-              ></app-button>
-            </div>
-            } @if (!(groupedAnimals()[habitat.id_habitat] || []).length) {
-            <p class="text-center text-gray-500 italic">
-              Aucun animal dans cet habitat
-            </p>
             }
           </div>
+          } @else {
+          <p class="text-center text-gray-500 italic">
+            Aucun animal dans cet habitat
+          </p>
+          }
         </div>
-        }
       </div>
+      }
+    </div>
+
+    <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6">
+      <h3 class="text-2xl font-serif font-semibold text-tertiary mb-6">
+        {{
+          newAnimalData().id_animal ? "Modifier l'animal" : "Ajouter un animal"
+        }}
+      </h3>
+
+      <form
+        class="space-y-6"
+        (ngSubmit)="newAnimalData().id_animal ? updateAnimal() : createAnimal()"
+        enctype="multipart/form-data"
+      >
+        <!-- Nom de l'animal -->
+        <div>
+          <label
+            for="name"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Nom de l'animal
+          </label>
+          <input
+            type="text"
+            id="name"
+            [(ngModel)]="newAnimalData().name"
+            name="name"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            placeholder="Nom de l'animal"
+          />
+        </div>
+
+        <!-- Espèce -->
+        <div>
+          <label
+            for="species"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Espèce
+          </label>
+          <input
+            type="text"
+            id="species"
+            [(ngModel)]="newAnimalData().species"
+            name="species"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            placeholder="Espèce de l'animal"
+          />
+        </div>
+
+        <!-- Habitat -->
+        <div>
+          <label
+            for="animal-habitat"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Habitat
+          </label>
+          <select
+            id="animal-habitat"
+            [(ngModel)]="newAnimalData().habitat_id"
+            name="habitat_id"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+          >
+            <option value="">Sélectionner un habitat</option>
+            @for (habitat of habitats(); track habitat.id_habitat) {
+            <option [value]="habitat.id_habitat">{{ habitat.name }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Caractéristiques -->
+        <div>
+          <label
+            for="characteristics"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Caractéristiques
+          </label>
+          <textarea
+            id="characteristics"
+            [(ngModel)]="newAnimalData().characteristics"
+            name="characteristics"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            rows="3"
+            placeholder="Ex: sociable, actif, joueur"
+          ></textarea>
+        </div>
+
+        <!-- Poids -->
+        <div>
+          <label
+            for="weight-range"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Fourchette de poids
+          </label>
+          <input
+            type="text"
+            id="weight-range"
+            [(ngModel)]="newAnimalData().weightRange"
+            name="weightRange"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+            placeholder="Ex: 150 à 300 kg"
+          />
+        </div>
+
+        <!-- Régime alimentaire -->
+        <div>
+          <label
+            for="diet"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Régime alimentaire
+          </label>
+          <select
+            id="diet"
+            [(ngModel)]="newAnimalData().diet"
+            name="diet"
+            required
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+          >
+            <option value="">Sélectionner un régime</option>
+            <option value="Herbivore">Herbivore</option>
+            <option value="Carnivore">Carnivore</option>
+            <option value="Omnivore">Omnivore</option>
+          </select>
+        </div>
+
+        <!-- Image -->
+        <div>
+          <label
+            for="image"
+            class="block text-lg font-medium text-tertiary mb-2"
+          >
+            Image
+          </label>
+          <input
+            type="file"
+            id="image"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            class="w-full p-3 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+          />
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          @if (newAnimalData().id_animal) {
+          <app-button
+            type="button"
+            (click)="cancel()"
+            (keydown)="cancel()"
+            [text]="'Annuler'"
+            [color]="'secondary'"
+            [rounded]="true"
+            [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+          >
+          </app-button>
+          }
+          <app-button
+            type="submit"
+            [text]="newAnimalData().id_animal ? 'Mettre à jour' : 'Créer'"
+            [color]="'tertiary'"
+            [rounded]="true"
+            [customClass]="'px-6 min-w-[120px] text-lg font-medium'"
+          >
+          </app-button>
+        </div>
+      </form>
     </div>
   </div>
 </section>
