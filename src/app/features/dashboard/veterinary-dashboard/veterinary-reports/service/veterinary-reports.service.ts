@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
+import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
@@ -18,7 +19,10 @@ export class VeterinaryReportsService {
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
   private readonly lastCacheUpdate = new Map<number, number>();
 
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly tokenService: TokenService,
+    private readonly toastService: ToastService
+  ) {}
 
   private getHeaders(): HttpHeaders {
     const token = this.tokenService.getToken();
@@ -42,6 +46,9 @@ export class VeterinaryReportsService {
       .pipe(
         catchError((error) => {
           console.error('Erreur lors de la récupération des rapports:', error);
+          this.toastService.showError(
+            'Erreur lors de la récupération des rapports'
+          );
           return throwError(() => error);
         })
       );

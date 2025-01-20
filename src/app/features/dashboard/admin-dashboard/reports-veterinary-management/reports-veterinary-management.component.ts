@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment';
-import { from, mergeMap, toArray } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { EMPTY, from, mergeMap, toArray } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { VeterinaryReports } from '../../veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
 import { VeterinaryReportsService } from '../../veterinary-dashboard/veterinary-reports/service/veterinary-reports.service';
 
@@ -25,6 +25,7 @@ export class ReportsVeterinaryManagement implements OnInit {
   currentPage = 1;
   pageSize = 10;
   totalItems = 0;
+  latestVeterinaryReport = signal<VeterinaryReports | undefined>(undefined);
 
   constructor(
     private readonly veterinaryReportsService: VeterinaryReportsService,
@@ -190,5 +191,44 @@ export class ReportsVeterinaryManagement implements OnInit {
 
   getPendingButtonClass(): string {
     return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
+  }
+
+  private loadVeterinaryReports(animalId: number) {
+    if (!animalId) {
+      console.error('ID animal manquant');
+      return;
+    }
+
+    this.veterinaryReportsService
+      .getAllReports()
+      .pipe(
+        map((response) => {
+          // Filtrer les rapports pour cet animal
+          const animalReports = response.data.filter(
+            (report) => report.id_animal === animalId
+          );
+
+          // Trier par date et prendre le plus récent
+          const sortedReports = [...animalReports].sort(
+            (a, b) =>
+              new Date(b.visit_date).getTime() -
+              new Date(a.visit_date).getTime()
+          );
+
+          return sortedReports[0];
+        }),
+        catchError((error) => {
+          console.error('Erreur lors du chargement des rapports:', error);
+          this.toastService.showError(
+            'Impossible de charger les rapports vétérinaires'
+          );
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: (latestReport) => {
+          this.latestVeterinaryReport.set(latestReport || undefined);
+        },
+      });
   }
 }
