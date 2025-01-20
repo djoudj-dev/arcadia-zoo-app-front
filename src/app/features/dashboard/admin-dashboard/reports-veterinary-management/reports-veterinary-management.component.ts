@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment';
-import { forkJoin } from 'rxjs';
+import { from, mergeMap, toArray } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { VeterinaryReports } from '../../veterinary-dashboard/veterinary-reports/model/veterinary-reports.model';
 import { VeterinaryReportsService } from '../../veterinary-dashboard/veterinary-reports/service/veterinary-reports.service';
@@ -22,6 +22,9 @@ export class ReportsVeterinaryManagement implements OnInit {
   reports: VeterinaryReports[] = [];
   isLoading = true;
   error: string | null = null;
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
 
   constructor(
     private readonly veterinaryReportsService: VeterinaryReportsService,
@@ -35,31 +38,40 @@ export class ReportsVeterinaryManagement implements OnInit {
   /**
    * Charge les rapports vétérinaires avec les détails des animaux
    */
-  loadReports() {
+  loadReports(page: number = 1) {
     this.isLoading = true;
     this.veterinaryReportsService
-      .getAllReports()
+      .getAllReports(page, this.pageSize)
       .pipe(
-        map((reports) =>
-          reports.map((report) => ({
+        switchMap((response) => {
+          this.totalItems = response.total;
+          const processedReports = response.data.map((report) => ({
             ...report,
             id_veterinary_reports: report._id,
             is_processed: report.is_treated || false,
-          }))
-        ),
-        switchMap((reports) => {
-          return forkJoin(
-            reports.map((report) =>
-              this.veterinaryReportsService
-                .fetchAnimalDetails(report.id_animal)
-                .pipe(
-                  map((animal) => ({
-                    ...report,
-                    animal_photo: this.formatImageUrl(animal.images),
-                    animal_name: animal.name,
-                  }))
-                )
-            )
+          }));
+
+          const uniqueAnimalIds = [
+            ...new Set(processedReports.map((r) => r.id_animal)),
+          ];
+
+          return from(uniqueAnimalIds).pipe(
+            mergeMap(
+              (animalId) =>
+                this.veterinaryReportsService.fetchAnimalDetails(animalId),
+              3 // Limite de concurrence à 3 appels simultanés
+            ),
+            map((animal) => {
+              return processedReports
+                .filter((report) => report.id_animal === animal.id_animal)
+                .map((report) => ({
+                  ...report,
+                  animal_photo: this.formatImageUrl(animal.images),
+                  animal_name: animal.name,
+                }));
+            }),
+            toArray(),
+            map((arrays) => arrays.flat())
           );
         })
       )
@@ -76,6 +88,11 @@ export class ReportsVeterinaryManagement implements OnInit {
           this.toastService.showError('Erreur lors du chargement des rapports');
         },
       });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadReports(page);
   }
 
   private formatImageUrl(imagePath: string | null): string {

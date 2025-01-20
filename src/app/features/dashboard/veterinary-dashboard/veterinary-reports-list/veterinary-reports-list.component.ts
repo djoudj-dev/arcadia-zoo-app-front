@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { VeterinaryReports } from '../veterinary-reports/model/veterinary-reports.model';
 import { VeterinaryReportsService } from '../veterinary-reports/service/veterinary-reports.service';
@@ -102,29 +101,26 @@ export class VeterinaryReportsListComponent implements OnInit {
   }
 
   loadReports() {
+    if (!this.animalId) return;
+
     this.veterinaryReportsService
-      .getReportsByAnimalId(this.animalId)
+      .fetchAnimalDetails(this.animalId)
       .pipe(
-        map((reports) =>
-          reports.map((report) => ({
-            ...report,
-            is_processed: report.is_treated || false,
-          }))
-        ),
-        switchMap((reports) =>
-          forkJoin(
-            reports.map((report) =>
-              this.veterinaryReportsService
-                .fetchAnimalDetails(this.animalId)
-                .pipe(
-                  map((animal) => ({
+        switchMap((animal) =>
+          this.veterinaryReportsService
+            .getReportsByAnimalId(this.animalId)
+            .pipe(
+              map((reports) =>
+                reports
+                  .filter((report) => report.id_animal === this.animalId)
+                  .map((report) => ({
                     ...report,
-                    animal_photo: animal.images ?? '',
-                    animal_name: animal.name,
+                    is_processed: report.is_treated || false,
+                    animal_photo: animal?.images ?? '',
+                    animal_name: animal?.name ?? '',
                   }))
-                )
+              )
             )
-          )
         )
       )
       .subscribe({

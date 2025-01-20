@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from 'app/features/dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { environment } from 'environments/environment';
-import { map, Observable, ReplaySubject, shareReplay, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-management/models/feeding-data.model';
 
 /**
@@ -15,19 +15,17 @@ import { FeedingData } from '../../dashboard/employe-dashboard/animal-feeding-ma
 })
 export class AnimalService {
   /** URL de base de l'API des animaux */
-  readonly apiUrl = `${environment.apiUrl}/api/animals`;
+  private readonly apiUrl = `${environment.apiUrl}/api/animals`;
 
   /** URL de base de l'API des habitats */
-  readonly habitatUrl = `${environment.apiUrl}/api/habitats`;
+  private readonly habitatUrl = `${environment.apiUrl}/api/habitats`;
 
   /** URL de base pour les images */
-  readonly imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
+  private readonly imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
 
-  /** Cache pour stocker les données des animaux */
-  readonly animalsCache$ = new ReplaySubject<Animal[]>(1);
-
-  /** Indique si le cache est chargé */
-  private cacheLoaded = false;
+  // Signaux pour le cache
+  private readonly animalsSignal = signal<Animal[]>([]);
+  private readonly cacheLoadedSignal = signal<boolean>(false);
 
   constructor(readonly http: HttpClient) {}
 
@@ -45,7 +43,7 @@ export class AnimalService {
    * Utilise un cache pour éviter les appels réseau répétés.
    */
   getAnimals(): Observable<Animal[]> {
-    if (!this.cacheLoaded) {
+    if (!this.cacheLoadedSignal()) {
       this.http
         .get<Animal[]>(this.apiUrl)
         .pipe(
@@ -54,16 +52,18 @@ export class AnimalService {
               ...animal,
               images: this.formatImageUrl(animal.images),
             }))
-          ),
-          shareReplay(1),
-          tap((animals) => {
-            this.animalsCache$.next(animals);
-            this.cacheLoaded = true;
-          })
+          )
         )
-        .subscribe();
+        .subscribe({
+          next: (animals) => {
+            this.animalsSignal.set(animals);
+            this.cacheLoadedSignal.set(true);
+          },
+          error: (error) => console.error('Erreur de chargement:', error),
+        });
     }
-    return this.animalsCache$;
+
+    return of(this.animalsSignal());
   }
 
   getAnimalById(id: number): Observable<Animal | undefined> {
@@ -129,8 +129,8 @@ export class AnimalService {
    * Appelé après la création, modification ou suppression d'un animal.
    */
   clearCache(): void {
-    this.animalsCache$.next([]);
-    this.cacheLoaded = false; // Réinitialise le drapeau pour indiquer que le cache doit être rechargé
+    this.animalsSignal.set([]);
+    this.cacheLoadedSignal.set(false);
   }
 
   markAnimalAsFed(

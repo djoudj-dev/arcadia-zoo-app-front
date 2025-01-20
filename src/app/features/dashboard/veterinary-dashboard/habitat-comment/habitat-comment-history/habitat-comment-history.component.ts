@@ -164,7 +164,7 @@ export class HabitatCommentHistoryComponent implements OnInit {
 
   comments = signal<HabitatComment[]>([]);
 
-  constructor(private habitatCommentService: HabitatCommentService) {}
+  constructor(private readonly habitatCommentService: HabitatCommentService) {}
 
   ngOnInit() {
     this.loadComments();

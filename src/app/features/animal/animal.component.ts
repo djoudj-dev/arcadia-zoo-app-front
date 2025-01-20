@@ -95,8 +95,8 @@ export class AnimalComponent implements OnInit {
       .getAllReports()
       .pipe(
         map(
-          (reports) =>
-            reports
+          (response) =>
+            response.data
               .filter((report) => report.id_animal === animalId)
               .sort(
                 (a, b) =>

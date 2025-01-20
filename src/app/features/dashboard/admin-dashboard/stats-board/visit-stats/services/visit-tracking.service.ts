@@ -10,7 +10,14 @@ import { AnimalService } from 'app/features/animal/service/animal.service';
 import { HabitatService } from 'app/features/habitats/service/habitat.service';
 import { ServiceService } from 'app/features/zoo-services/service/service.service';
 import { environment } from 'environments/environment';
-import { BehaviorSubject, catchError, forkJoin, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 import {
   CategoryType,
   VisitResponse,
@@ -65,20 +72,11 @@ export class VisitTrackingService {
   refreshStats = this.loadStats;
 
   private initializeEmptyStats(): void {
-    forkJoin({
-      animals: this.animalService.getAnimals(),
-      habitats: this.habitatService.getHabitats(),
-      services: this.serviceService.getServices(),
-    }).subscribe({
-      next: ({ animals, habitats, services }) => {
-        console.log('Données récupérées pour initialisation:', {
-          animalsCount: animals.length,
-          habitatsCount: habitats.length,
-          servicesCount: services.length,
-        });
-
-        const stats: VisitStats[] = [
-          ...animals.map((animal) => ({
+    this.animalService
+      .getAnimals()
+      .pipe(
+        switchMap((animals) => {
+          const animalStats = animals.map((animal) => ({
             category_name: animal.name,
             category_type: 'animal',
             visit_count: 0,
@@ -86,38 +84,62 @@ export class VisitTrackingService {
             total_duration: 0,
             average_duration: 0,
             last_visit: new Date(),
-          })),
-          ...habitats.map((habitat) => ({
-            category_name: habitat.name,
-            category_type: 'habitat',
-            visit_count: 0,
-            visit_percentage: 0,
-            total_duration: 0,
-            average_duration: 0,
-            last_visit: new Date(),
-          })),
-          ...services.map((service) => ({
-            category_name: service.name,
-            category_type: 'service',
-            visit_count: 0,
-            visit_percentage: 0,
-            total_duration: 0,
-            average_duration: 0,
-            last_visit: new Date(),
-          })),
-        ];
+          }));
 
-        console.log('Statistiques initialisées:', stats);
-        this._visitStats.next(stats);
-      },
-      error: (error) => {
-        console.error(
-          "Erreur lors de l'initialisation des statistiques:",
-          error
-        );
-        this._visitStats.next([]);
-      },
-    });
+          return this.habitatService.getHabitats().pipe(
+            map((habitats) => ({
+              animals: animalStats,
+              habitats: habitats.map((habitat) => ({
+                category_name: habitat.name,
+                category_type: 'habitat',
+                visit_count: 0,
+                visit_percentage: 0,
+                total_duration: 0,
+                average_duration: 0,
+                last_visit: new Date(),
+              })),
+            }))
+          );
+        }),
+        switchMap(({ animals, habitats }) =>
+          this.serviceService.getServices().pipe(
+            map((services) => ({
+              animals,
+              habitats,
+              services: services.map((service) => ({
+                category_name: service.name,
+                category_type: 'service',
+                visit_count: 0,
+                visit_percentage: 0,
+                total_duration: 0,
+                average_duration: 0,
+                last_visit: new Date(),
+              })),
+            }))
+          )
+        )
+      )
+      .subscribe({
+        next: ({ animals, habitats, services }) => {
+          console.log('Données récupérées pour initialisation:', {
+            animalsCount: animals.length,
+            habitatsCount: habitats.length,
+            servicesCount: services.length,
+          });
+
+          const stats: VisitStats[] = [...animals, ...habitats, ...services];
+
+          console.log('Statistiques initialisées:', stats);
+          this._visitStats.next(stats);
+        },
+        error: (error) => {
+          console.error(
+            "Erreur lors de l'initialisation des statistiques:",
+            error
+          );
+          this._visitStats.next([]);
+        },
+      });
   }
 
   startTracking(
