@@ -77,12 +77,28 @@ export class NavComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    const dropdownButton = target.closest('button');
-    const dropdownContainer = target.closest('.relative');
 
-    // Si le clic n'est pas sur un bouton de menu et n'est pas dans un conteneur de dropdown
-    if (!dropdownButton && !dropdownContainer) {
+    // Vérifie si le clic est sur un bouton de menu hamburger
+    const isMenuToggleClick = target.closest('#menu-toggler');
+
+    // Si c'est un clic sur le bouton hamburger, on laisse le toggle gérer l'ouverture/fermeture
+    if (isMenuToggleClick) {
+      return;
+    }
+
+    // Vérifie si le clic est dans la zone de navigation
+    const isClickInNavigation =
+      target.closest('#main-navlist-mobile') || target.closest('#main-nav');
+
+    // Si le clic est en dehors de la navigation, on ferme tout
+    if (!isClickInNavigation) {
+      this.isMenuOpen = false;
       this.activeDropdown = null;
+      return;
+    }
+
+    // Si le clic est sur un lien ou un bouton de navigation, on ferme le menu
+    if (target.closest('a') || target.closest('button:not(#menu-toggler)')) {
       this.isMenuOpen = false;
     }
   }
