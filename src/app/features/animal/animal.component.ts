@@ -1,8 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { catchError, EMPTY, map } from 'rxjs';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ToastService } from '../../shared/components/toast/services/toast.service';
 import { Animal } from '../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { VisitTrackerDirective } from '../dashboard/admin-dashboard/stats-board/visit-stats/directives/visit-tracker.directive';
@@ -31,7 +32,8 @@ export class AnimalComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly animalService: AnimalService,
-    private readonly veterinaryReportsService: VeterinaryReportsService
+    private readonly veterinaryReportsService: VeterinaryReportsService,
+    private readonly toastService: ToastService
   ) {}
 
   /** Initialise le composant en chargeant les données de l'animal */
@@ -46,17 +48,35 @@ export class AnimalComponent implements OnInit {
   private loadAnimal() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.animalService.getAnimalById(id).subscribe({
-      next: (animal) => {
-        this.animal.set(animal);
-        if (animal) {
-          this.loadHabitat(animal.habitat_id);
-          this.loadVeterinaryReports(animal.id_animal);
-        }
-      },
-      error: (error) =>
-        console.error("Erreur lors de la récupération de l'animal :", error),
-    });
+    if (!id || isNaN(id)) {
+      console.error('ID animal invalide');
+      this.toastService.showError('ID animal invalide');
+      return;
+    }
+
+    this.animalService
+      .getAnimalById(id)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 404) {
+            this.toastService.showError('Animal non trouvé');
+          } else {
+            this.toastService.showError(
+              'Erreur lors de la récupération des données'
+            );
+          }
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: (animal) => {
+          if (animal) {
+            this.animal.set(animal);
+            this.loadHabitat(animal.habitat_id);
+            this.loadVeterinaryReports(animal.id_animal);
+          }
+        },
+      });
   }
 
   /**
@@ -91,27 +111,33 @@ export class AnimalComponent implements OnInit {
    * @param animalId - ID de l'animal dont on veut récupérer le rapport
    */
   private loadVeterinaryReports(animalId: number) {
+    if (!animalId) return;
+
     this.veterinaryReportsService
       .getAllReports()
       .pipe(
-        map(
-          (response) =>
-            response.data
-              .filter((report) => report.id_animal === animalId)
-              .sort(
-                (a, b) =>
-                  new Date(b.visit_date).getTime() -
-                  new Date(a.visit_date).getTime()
-              )[0]
-        )
+        map((response) => {
+          const filteredReports = response.data?.filter(
+            (report) => report.id_animal === animalId
+          );
+          if (!filteredReports?.length) return undefined;
+          return [...filteredReports].sort(
+            (a, b) =>
+              new Date(b.visit_date).getTime() -
+              new Date(a.visit_date).getTime()
+          )[0];
+        }),
+        catchError((error) => {
+          console.error('Erreur lors du chargement des rapports:', error);
+          this.toastService.showError(
+            'Impossible de charger les rapports vétérinaires'
+          );
+          return EMPTY;
+        })
       )
       .subscribe({
-        next: (latestReport) => this.latestVeterinaryReport.set(latestReport),
-        error: (error) =>
-          console.error(
-            'Erreur lors du chargement du dernier rapport vétérinaire:',
-            error
-          ),
+        next: (latestReport) =>
+          this.latestVeterinaryReport.set(latestReport || undefined),
       });
   }
 
