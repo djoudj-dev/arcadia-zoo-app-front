@@ -1,5 +1,6 @@
 export type CategoryType = 'animal' | 'habitat' | 'service';
 
+// Interface pour l'enregistrement d'une visite (POST /api/visits/track)
 export interface VisitTrackingData {
   categoryName: string;
   categoryType: CategoryType;
@@ -9,6 +10,13 @@ export interface VisitTrackingData {
   duration?: number;
 }
 
+// Réponse de l'API pour le tracking
+export interface VisitTrackingResponse {
+  success: boolean;
+  message: string;
+}
+
+// Format des statistiques de visite (GET /api/visits/stats)
 export interface VisitStats {
   category_name: string;
   category_type: string;

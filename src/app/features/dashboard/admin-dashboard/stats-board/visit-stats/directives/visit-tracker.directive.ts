@@ -11,17 +11,18 @@ export class VisitTrackerDirective implements OnInit, OnDestroy {
   @Input() categoryType!: CategoryType;
   @Input() pageId!: string | number;
 
-  private startTime!: Date;
-
-  constructor(private visitTrackingService: VisitTrackingService) {}
+  constructor(private readonly visitTrackingService: VisitTrackingService) {}
 
   ngOnInit() {
-    this.startTime = new Date();
-    this.trackVisitStart();
+    this.visitTrackingService.startTracking(
+      this.categoryName,
+      this.categoryType,
+      this.getFormattedPageId()
+    );
   }
 
   ngOnDestroy() {
-    this.trackVisitEnd();
+    this.visitTrackingService.stopTracking(this.getFormattedPageId());
   }
 
   private getFormattedPageId(): string {
@@ -38,32 +39,5 @@ export class VisitTrackerDirective implements OnInit, OnDestroy {
       default:
         return String(this.pageId);
     }
-  }
-
-  private trackVisitStart() {
-    this.visitTrackingService
-      .trackVisit({
-        categoryName: this.categoryName,
-        categoryType: this.categoryType,
-        pageId: this.getFormattedPageId(),
-        startTime: this.startTime,
-      })
-      .subscribe();
-  }
-
-  private trackVisitEnd() {
-    const endTime = new Date();
-    const duration = (endTime.getTime() - this.startTime.getTime()) / 1000; // durée en secondes
-
-    this.visitTrackingService
-      .trackVisit({
-        categoryName: this.categoryName,
-        categoryType: this.categoryType,
-        pageId: this.getFormattedPageId(),
-        startTime: this.startTime,
-        endTime: endTime,
-        duration: duration,
-      })
-      .subscribe();
   }
 }
