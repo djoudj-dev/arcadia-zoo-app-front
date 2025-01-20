@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
@@ -87,9 +87,17 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    return this.http.get<VeterinaryReports[]>(
-      `${this.apiUrl}/animal/${animalId}`
-    );
+    const headers = this.getHeaders();
+    return this.http
+      .get<VeterinaryReports[]>(`${this.apiUrl}?animalId=${animalId}`, {
+        headers,
+      })
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur lors de la récupération des rapports:', error);
+          return of([]); // Retourne un tableau vide en cas d'erreur
+        })
+      );
   }
 
   private formatImageUrl(imagePath: string | null): string {
