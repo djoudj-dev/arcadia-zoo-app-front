@@ -38,7 +38,7 @@ export class VeterinaryReportsComponent implements OnInit {
 
   reportForm!: FormGroup;
   isModalOpen = true;
-  activeTab = signal<'feeding' | 'veterinary'>('veterinary');
+  activeTab = signal<'feeding' | 'veterinary' | 'new'>('veterinary');
   veterinaryReports = signal<VeterinaryReports[]>([]);
   feedingHistory = signal<FeedingHistory[]>([]);
 
