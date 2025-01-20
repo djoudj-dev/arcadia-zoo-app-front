@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Habitat } from '../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { HabitatService } from './service/habitat.service';
+import { VisitCounterComponent } from '../../shared/components/visit-counter/visit-counter.component';
 
 /**
  * Composant listant tous les habitats
@@ -11,14 +12,17 @@ import { HabitatService } from './service/habitat.service';
 @Component({
   selector: 'app-habitats',
   standalone: true,
-  imports: [RouterLink, ButtonComponent],
+  imports: [RouterLink, ButtonComponent, VisitCounterComponent],
   templateUrl: './habitats.component.html',
 })
 export class HabitatsComponent implements OnInit {
   /** Signal pour stocker la liste des habitats **/
   habitats = signal<Habitat[]>([]);
 
-  constructor(private habitatService: HabitatService, private router: Router) {}
+  constructor(
+    private readonly habitatService: HabitatService,
+    private readonly router: Router
+  ) {}
 
   /** Initialise le composant en chargeant la liste des habitats **/
   ngOnInit(): void {

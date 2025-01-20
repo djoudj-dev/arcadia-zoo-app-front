@@ -250,9 +250,11 @@
             @for (animal of groupedAnimals()[habitat.id_habitat] || []; track
             animal.id_animal) { @if (visibleAnimals()[habitat.id_habitat] ||
             groupedAnimals()[habitat.id_habitat].indexOf(animal) === 0) {
-            <div
-              class="bg-gray-50 rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 relative"
-            >
+            <div class="relative bg-white rounded-2xl shadow-lg p-6">
+              <app-visit-counter
+                [categoryType]="'animal'"
+                [pageId]="animal.id_animal"
+              />
               <div class="flex flex-col sm:flex-row items-center gap-4">
                 <img
                   [src]="animal.images"

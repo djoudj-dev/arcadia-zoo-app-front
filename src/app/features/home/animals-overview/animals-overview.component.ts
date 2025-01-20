@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../../../environments/environment';
+import { VisitCounterComponent } from '../../../shared/components/visit-counter/visit-counter.component';
 import { RandomAnimalsDirective } from '../../../shared/directives/random-animals/random-animals.directive';
 import { Animal } from '../../dashboard/admin-dashboard/animal-management/model/animal.model';
 import { AnimalOverviewService } from './service/animal-overview.service';
@@ -12,7 +13,7 @@ import { AnimalOverviewService } from './service/animal-overview.service';
 @Component({
   selector: 'app-animals-overview',
   standalone: true,
-  imports: [RouterLink, RandomAnimalsDirective],
+  imports: [RouterLink, RandomAnimalsDirective, VisitCounterComponent],
   templateUrl: './animals-overview.component.html',
 })
 export class AnimalsOverviewComponent implements OnInit {
