@@ -101,22 +101,23 @@
           </div>
         </div>
 
-        <div>
+        <div class="mb-4">
           <label
             for="health-state"
-            class="block text-sm font-medium text-gray-700"
-            >État de santé de l'animal</label
+            class="block text-sm font-medium text-gray-700 mb-1"
           >
+            État de santé de l'animal
+          </label>
           <select
             id="health-state"
-            [ngModel]="selectedState()"
-            (ngModelChange)="selectedState.set($event)"
-            (change)="updateHealthState()"
-            class="w-full p-2 border border-gray-300 rounded-md text-sm"
+            formControlName="animal_state"
+            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-tertiary/50"
           >
-            <option [value]="AnimalState.GOOD_HEALTH">Bonne santé</option>
-            <option [value]="AnimalState.INJURED">Blessé</option>
-            <option [value]="AnimalState.SICK">Malade</option>
+            <option value="">Sélectionner un état</option>
+            <option value="Bonne santé">Bonne santé</option>
+            <option value="Malade">Malade</option>
+            <option value="En traitement">En traitement</option>
+            <option value="En observation">En observation</option>
           </select>
         </div>
 

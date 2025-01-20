@@ -211,4 +211,23 @@ export class VeterinaryReportsComponent implements OnInit {
         },
       });
   }
+
+  updateAnimalState(newState: string) {
+    if (!this.animalId) return;
+
+    this.animalHealthService
+      .updateAnimalHealth(this.animalId, newState as AnimalState)
+      .subscribe({
+        next: () => {
+          this.toastService.showSuccess('État de santé mis à jour avec succès');
+          this.loadVeterinaryReports(); // Recharger les rapports
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour:', error);
+          this.toastService.showError(
+            "Erreur lors de la mise à jour de l'état de santé"
+          );
+        },
+      });
+  }
 }

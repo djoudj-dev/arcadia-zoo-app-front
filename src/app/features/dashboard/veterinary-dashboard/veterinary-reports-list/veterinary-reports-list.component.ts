@@ -58,10 +58,10 @@ import { VeterinaryReportsComponent } from '../veterinary-reports/veterinary-rep
               {{ report.animal_state }}
             </span>
             <span
-              [class]="getStatusButtonClass(report.is_processed ?? false)"
+              [class]="getStatusDisplay(report).class"
               class="px-3 py-1 rounded-full text-sm font-medium"
             >
-              {{ report.is_processed ? 'Traité' : 'Non traité' }}
+              {{ getStatusDisplay(report).text }}
             </span>
           </div>
         </div>
@@ -87,7 +87,9 @@ export class VeterinaryReportsListComponent implements OnInit {
 
   reports: VeterinaryReports[] = [];
 
-  constructor(private veterinaryReportsService: VeterinaryReportsService) {}
+  constructor(
+    private readonly veterinaryReportsService: VeterinaryReportsService
+  ) {}
 
   ngOnInit() {
     this.loadReports();
@@ -101,7 +103,7 @@ export class VeterinaryReportsListComponent implements OnInit {
 
   loadReports() {
     this.veterinaryReportsService
-      .getAllReports()
+      .getReportsByAnimalId(this.animalId)
       .pipe(
         map((reports) =>
           reports.map((report) => ({
@@ -109,24 +111,21 @@ export class VeterinaryReportsListComponent implements OnInit {
             is_processed: report.is_treated || false,
           }))
         ),
-        switchMap((reports) => {
-          const filteredReports = reports.filter(
-            (report) => report.id_animal === this.animalId
-          );
-          return forkJoin(
-            filteredReports.map((report) =>
+        switchMap((reports) =>
+          forkJoin(
+            reports.map((report) =>
               this.veterinaryReportsService
-                .fetchAnimalDetails(report.id_animal)
+                .fetchAnimalDetails(this.animalId)
                 .pipe(
                   map((animal) => ({
                     ...report,
-                    animal_photo: animal.images || '',
+                    animal_photo: animal.images ?? '',
                     animal_name: animal.name,
                   }))
                 )
             )
-          );
-        })
+          )
+        )
       )
       .subscribe({
         next: (reportsWithImages) => {
@@ -180,14 +179,36 @@ export class VeterinaryReportsListComponent implements OnInit {
     }
   }
 
-  getStatusButtonClass(isProcessed: boolean): string {
-    return isProcessed
-      ? 'bg-green-100 text-green-700 hover:bg-green-200'
-      : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
+  getProcessedStatusText(): string {
+    return 'Traité';
+  }
+
+  getPendingStatusText(): string {
+    return 'Non traité';
+  }
+
+  getStatusDisplay(report: VeterinaryReports): { class: string; text: string } {
+    return report.is_processed
+      ? {
+          class: this.getProcessedStatusClass(),
+          text: this.getProcessedStatusText(),
+        }
+      : {
+          class: this.getPendingStatusClass(),
+          text: this.getPendingStatusText(),
+        };
+  }
+
+  getProcessedStatusClass(): string {
+    return 'bg-green-100 text-green-700 hover:bg-green-200';
+  }
+
+  getPendingStatusClass(): string {
+    return 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200';
   }
 
   toggleReportStatus(report: VeterinaryReports) {
-    const reportId = report._id || report.id_veterinary_reports;
+    const reportId = report._id ?? report.id_veterinary_reports;
 
     if (!reportId) {
       console.error('ID du rapport non défini:', report);
