@@ -31,24 +31,28 @@ export class HabitatCommentService {
     });
   }
 
+  // Dans votre service Angular HabitatCommentService, modifiez la méthode createHabitatComment :
+
   createHabitatComment(
     comment: Partial<HabitatComment>
   ): Observable<HabitatComment> {
     const token = this.tokenService.getToken();
     const tokenData = token ? JSON.parse(atob(token.split('.')[1])) : null;
-    const userId = tokenData?.sub;
 
-    const commentWithUserId = {
+    // Ajoutez ces lignes pour extraire le username du token
+    const userId = tokenData?.sub;
+    const username = tokenData?.username;
+
+    // Modifiez l'objet envoyé pour inclure le username
+    const commentWithUserData = {
       ...comment,
       id_user: userId,
+      user_name: username, // Ajoutez cette ligne
     };
 
-    console.log('Création du commentaire:', commentWithUserId);
-    return this.http
-      .post<HabitatComment>(this.apiUrl, commentWithUserId, {
-        headers: this.getHeaders(),
-      })
-      .pipe(tap((response) => console.log('Réponse création:', response)));
+    return this.http.post<HabitatComment>(this.apiUrl, commentWithUserData, {
+      headers: this.getHeaders(),
+    });
   }
 
   getAllComments(): Observable<HabitatComment[]> {
