@@ -50,16 +50,20 @@ export class HabitatCommentService {
   ): Observable<HabitatComment> {
     const token = this.tokenService.getToken();
     const tokenData = token ? JSON.parse(atob(token.split('.')[1])) : null;
-    const userId = tokenData?.sub;
-    const username = tokenData?.username;
+
+    console.log('Token décodé:', tokenData);
+
+    if (!tokenData) {
+      return throwError(() => new Error('Token non valide'));
+    }
 
     const commentWithUserData = {
       ...comment,
-      id_user: userId,
-      user_name: username,
+      id_user: tokenData.sub,
+      user_name: tokenData.username || tokenData.name,
     };
 
-    console.log('Envoi du commentaire:', commentWithUserData);
+    console.log('Données du commentaire à envoyer:', commentWithUserData);
 
     return this.http
       .post<HabitatComment>(this.apiUrl, commentWithUserData, {
