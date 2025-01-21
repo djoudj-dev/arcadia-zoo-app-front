@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { EMPTY, Observable, map, of, throwError } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
@@ -12,7 +12,7 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private readonly apiUrl = `${environment.apiUrl}/api`;
+  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
   private readonly http = inject(HttpClient);
   private readonly animalCache = new Map<number, Animal>();
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
@@ -40,15 +40,15 @@ export class VeterinaryReportsService {
       .set('limit', pageSize.toString());
 
     return this.http
-      .get<{ data: VeterinaryReports[]; total: number }>(
-        `${this.apiUrl}/veterinary/reports`,
-        { params, headers: this.getHeaders() }
-      )
+      .get<{ data: VeterinaryReports[]; total: number }>(this.apiUrl, {
+        params,
+        headers: this.getHeaders(),
+      })
       .pipe(
         catchError((error) => {
           console.error('Erreur lors de la récupération des rapports:', error);
           this.toastService.showError('Erreur lors du chargement des rapports');
-          return throwError(() => error);
+          return of({ data: [], total: 0 });
         })
       );
   }
@@ -113,9 +113,9 @@ export class VeterinaryReportsService {
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
     return this.getAllReports().pipe(
       map((response) => {
-        const reports = response.data.filter(
-          (report) => report.id_animal === animalId
-        );
+        const reports =
+          response?.data?.filter((report) => report.id_animal === animalId) ??
+          [];
         return reports.sort(
           (a, b) =>
             new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
@@ -123,7 +123,7 @@ export class VeterinaryReportsService {
       }),
       catchError((error) => {
         console.error('Erreur lors de la récupération des rapports:', error);
-        return EMPTY;
+        return of([]);
       })
     );
   }
