@@ -12,8 +12,8 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private readonly apiUrl = `${environment.apiUrl}/veterinary/reports`;
-  private readonly animalApiUrl = `${environment.apiUrl}/animals`;
+  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
+  private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
   private readonly http = inject(HttpClient);
   private readonly animalCache = new Map<number, Animal>();
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
