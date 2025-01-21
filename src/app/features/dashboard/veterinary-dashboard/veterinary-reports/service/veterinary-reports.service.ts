@@ -128,9 +128,45 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    return this.http.get<VeterinaryReports[]>(
-      `${this.apiUrl}/animal/${animalId}`
+    const headers = this.getHeaders();
+    console.log(
+      `Tentative de récupération des rapports pour l'animal ${animalId}`
     );
+    console.log('URL appelée:', `${this.apiUrl}/animal/${animalId}`);
+
+    return this.http
+      .get<VeterinaryReports[]>(`${this.apiUrl}/animal/${animalId}`, {
+        headers,
+      })
+      .pipe(
+        tap((reports) => {
+          console.log(`Rapports reçus pour l'animal ${animalId}:`, reports);
+        }),
+        map((reports) => {
+          const sortedReports = [...reports].sort(
+            (a, b) =>
+              new Date(b.visit_date).getTime() -
+              new Date(a.visit_date).getTime()
+          );
+          return sortedReports;
+        }),
+        catchError((error) => {
+          console.error(
+            'Erreur lors de la récupération des rapports vétérinaires:',
+            error
+          );
+          console.error("Détails de l'erreur:", {
+            status: error.status,
+            statusText: error.statusText,
+            message: error.message,
+            url: error.url,
+          });
+          this.toastService.showError(
+            'Impossible de charger les rapports vétérinaires pour cet animal'
+          );
+          return of([]);
+        })
+      );
   }
 
   private formatImageUrl(imagePath: string | null): string {
