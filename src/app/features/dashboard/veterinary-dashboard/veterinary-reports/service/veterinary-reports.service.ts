@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { Observable, map, of, throwError } from 'rxjs';
+import { EMPTY, Observable, map, of, throwError } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
@@ -12,8 +12,7 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
-  private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
+  private readonly apiUrl = `${environment.apiUrl}/api`;
   private readonly http = inject(HttpClient);
   private readonly animalCache = new Map<number, Animal>();
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
@@ -43,7 +42,7 @@ export class VeterinaryReportsService {
     return this.http
       .get<{ data: VeterinaryReports[]; total: number }>(
         `${this.apiUrl}/veterinary/reports`,
-        { params }
+        { params, headers: this.getHeaders() }
       )
       .pipe(
         catchError((error) => {
@@ -121,6 +120,10 @@ export class VeterinaryReportsService {
           (a, b) =>
             new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
         );
+      }),
+      catchError((error) => {
+        console.error('Erreur lors de la récupération des rapports:', error);
+        return EMPTY;
       })
     );
   }
