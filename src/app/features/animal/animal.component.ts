@@ -114,19 +114,9 @@ export class AnimalComponent implements OnInit {
     if (!animalId) return;
 
     this.veterinaryReportsService
-      .getAllReports()
+      .getReportsByAnimalId(animalId)
       .pipe(
-        map((response) => {
-          const filteredReports = response.data?.filter(
-            (report) => report.id_animal === animalId
-          );
-          if (!filteredReports?.length) return undefined;
-          return [...filteredReports].sort(
-            (a, b) =>
-              new Date(b.visit_date).getTime() -
-              new Date(a.visit_date).getTime()
-          )[0];
-        }),
+        map((reports) => reports[0]), // Prendre le plus récent
         catchError((error) => {
           console.error('Erreur lors du chargement des rapports:', error);
           this.toastService.showError(
@@ -136,8 +126,7 @@ export class AnimalComponent implements OnInit {
         })
       )
       .subscribe({
-        next: (latestReport) =>
-          this.latestVeterinaryReport.set(latestReport || undefined),
+        next: (latestReport) => this.latestVeterinaryReport.set(latestReport),
       });
   }
 
