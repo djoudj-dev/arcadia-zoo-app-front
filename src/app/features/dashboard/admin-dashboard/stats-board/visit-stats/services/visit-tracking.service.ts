@@ -1,11 +1,6 @@
 // src/app/features/dashboard/admin-dashboard/stats-board/visit-stats/services/visit-tracking.service.ts
 
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-  HttpParams,
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { AnimalService } from 'app/features/animal/service/animal.service';
@@ -193,17 +188,16 @@ export class VisitTrackingService {
     });
   }
 
-  private handleError<T>(operation = 'operation') {
-    return (error: HttpErrorResponse): Observable<T> => {
-      console.error(`${operation} failed:`, error);
-      return of([] as unknown as T);
-    };
+  private getPublicHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
   }
 
   getAllStats(): Observable<VisitStats[]> {
     return this.http
       .get<VisitStats[]>(`${this.apiUrl}/stats`, {
-        headers: this.getHeaders(),
+        headers: this.getPublicHeaders(),
       })
       .pipe(
         catchError((error) => {
@@ -216,7 +210,7 @@ export class VisitTrackingService {
   getStatsByCategory(categoryType: CategoryType): Observable<VisitStats[]> {
     return this.http
       .get<VisitStats[]>(`${this.apiUrl}/stats/category/${categoryType}`, {
-        headers: this.getHeaders(),
+        headers: this.getPublicHeaders(),
       })
       .pipe(
         catchError((error) => {
@@ -240,7 +234,7 @@ export class VisitTrackingService {
     return this.http
       .get<VisitStats[]>(`${this.apiUrl}/stats/range`, {
         params,
-        headers: this.getHeaders(),
+        headers: this.getPublicHeaders(),
       })
       .pipe(
         catchError((error) => {
