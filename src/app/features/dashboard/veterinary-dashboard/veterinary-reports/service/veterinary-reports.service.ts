@@ -130,7 +130,7 @@ export class VeterinaryReportsService {
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<VeterinaryReports[]>(`${this.apiUrl}/animal/${animalId}`, {
+      .get<VeterinaryReports[]>(`${this.apiUrl}/api/animal/${animalId}`, {
         headers,
       })
       .pipe(
