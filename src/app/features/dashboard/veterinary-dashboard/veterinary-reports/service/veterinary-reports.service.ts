@@ -1,9 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TokenService } from 'app/core/token/token.service';
 import { Animal } from 'app/features/dashboard/admin-dashboard/animal-management/model/animal.model';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, map, of, throwError } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../../../../../../environments/environment';
 import { VeterinaryReports } from '../model/veterinary-reports.model';
@@ -36,19 +36,19 @@ export class VeterinaryReportsService {
     page: number = 1,
     pageSize: number = 10
   ): Observable<{ data: VeterinaryReports[]; total: number }> {
-    const headers = this.getHeaders();
-    const params = { page: page.toString(), pageSize: pageSize.toString() };
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', pageSize.toString());
+
     return this.http
-      .get<{ data: VeterinaryReports[]; total: number }>(this.apiUrl, {
-        headers,
-        params,
-      })
+      .get<{ data: VeterinaryReports[]; total: number }>(
+        `${this.apiUrl}/veterinary/reports`,
+        { params }
+      )
       .pipe(
         catchError((error) => {
           console.error('Erreur lors de la récupération des rapports:', error);
-          this.toastService.showError(
-            'Erreur lors de la récupération des rapports'
-          );
+          this.toastService.showError('Erreur lors du chargement des rapports');
           return throwError(() => error);
         })
       );
@@ -112,17 +112,17 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    const headers = this.getHeaders();
-    return this.http
-      .get<VeterinaryReports[]>(`${this.apiUrl}?animalId=${animalId}`, {
-        headers,
+    return this.getAllReports().pipe(
+      map((response) => {
+        const reports = response.data.filter(
+          (report) => report.id_animal === animalId
+        );
+        return reports.sort(
+          (a, b) =>
+            new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
+        );
       })
-      .pipe(
-        catchError((error) => {
-          console.error('Erreur lors de la récupération des rapports:', error);
-          return of([]); // Retourne un tableau vide en cas d'erreur
-        })
-      );
+    );
   }
 
   private formatImageUrl(imagePath: string | null): string {
