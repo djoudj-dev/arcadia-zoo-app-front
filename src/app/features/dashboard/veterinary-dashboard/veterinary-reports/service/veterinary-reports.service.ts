@@ -46,6 +46,15 @@ export class VeterinaryReportsService {
         headers: this.getHeaders(),
       })
       .pipe(
+        map((response) => {
+          if (!response) {
+            return { data: [], total: 0 };
+          }
+          return {
+            data: response.data || [],
+            total: response.total || 0,
+          };
+        }),
         catchError((error) => {
           console.error('Erreur lors de la récupération des rapports:', error);
           this.toastService.showError('Erreur lors du chargement des rapports');
@@ -119,21 +128,28 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    return this.getAllReports().pipe(
-      map((response) => {
-        const reports =
-          response?.data?.filter((report) => report.id_animal === animalId) ??
-          [];
-        return reports.sort(
-          (a, b) =>
-            new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
-        );
-      }),
-      catchError((error) => {
-        console.error('Erreur lors de la récupération des rapports:', error);
-        return of([]);
+    const headers = this.getHeaders();
+    return this.http
+      .get<VeterinaryReports[]>(`${this.apiUrl}/animal/${animalId}`, {
+        headers,
       })
-    );
+      .pipe(
+        map((reports) => {
+          const sortedReports = [...reports].sort(
+            (a, b) =>
+              new Date(b.visit_date).getTime() -
+              new Date(a.visit_date).getTime()
+          );
+          return sortedReports;
+        }),
+        catchError((error) => {
+          console.error('Erreur lors de la récupération des rapports:', error);
+          this.toastService.showError(
+            'Impossible de charger les rapports vétérinaires'
+          );
+          return of([]);
+        })
+      );
   }
 
   private formatImageUrl(imagePath: string | null): string {
