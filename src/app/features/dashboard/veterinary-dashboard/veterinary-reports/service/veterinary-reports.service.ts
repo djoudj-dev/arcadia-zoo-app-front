@@ -12,8 +12,8 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
   providedIn: 'root',
 })
 export class VeterinaryReportsService {
-  private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
-  private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
+  private readonly apiUrl = `${environment.apiUrl}/veterinary/reports`;
+  private readonly animalApiUrl = `${environment.apiUrl}/animals`;
   private readonly http = inject(HttpClient);
   private readonly animalCache = new Map<number, Animal>();
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
@@ -26,6 +26,16 @@ export class VeterinaryReportsService {
 
   private getHeaders(): HttpHeaders {
     const token = this.tokenService.getToken();
+    console.log('Token récupéré:', token ? 'présent' : 'null');
+
+    if (!token) {
+      console.warn('Aucun token trouvé dans le sessionStorage');
+      this.toastService.showError(
+        'Votre session a expiré, veuillez vous reconnecter'
+      );
+      // Rediriger vers la page de connexion ou rafraîchir le token
+    }
+
     return new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
@@ -128,45 +138,59 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    const headers = this.getHeaders();
     console.log(
       `Tentative de récupération des rapports pour l'animal ${animalId}`
     );
-    console.log('URL appelée:', `${this.apiUrl}/animal/${animalId}`);
 
-    return this.http
-      .get<VeterinaryReports[]>(`${this.apiUrl}/animal/${animalId}`, {
-        headers,
+    const headers = this.getHeaders();
+    console.log('Headers de la requête:', {
+      contentType: headers.get('Content-Type'),
+      authorization: headers.get('Authorization')?.startsWith('Bearer ')
+        ? 'Bearer présent'
+        : 'Bearer manquant',
+    });
+
+    const url = `${this.apiUrl}/animal/${animalId}`;
+    console.log('URL appelée:', url);
+    console.log("URL de base de l'API:", environment.apiUrl);
+
+    return this.http.get<VeterinaryReports[]>(url, { headers }).pipe(
+      tap((reports) => {
+        console.log(`Rapports reçus pour l'animal ${animalId}:`, reports);
+      }),
+      map((reports) => {
+        const sortedReports = [...reports].sort(
+          (a, b) =>
+            new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
+        );
+        return sortedReports;
+      }),
+      catchError((error) => {
+        console.error(
+          'Erreur lors de la récupération des rapports vétérinaires:',
+          error
+        );
+        console.error("Détails de l'erreur:", {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error, // Ajouter le corps de l'erreur
+        });
+
+        let errorMessage =
+          'Impossible de charger les rapports vétérinaires pour cet animal';
+
+        if (error.status === 404) {
+          errorMessage = 'Aucun rapport trouvé pour cet animal';
+        } else if (error.status === 401) {
+          errorMessage = 'Votre session a expiré, veuillez vous reconnecter';
+        }
+
+        this.toastService.showError(errorMessage);
+        return of([]);
       })
-      .pipe(
-        tap((reports) => {
-          console.log(`Rapports reçus pour l'animal ${animalId}:`, reports);
-        }),
-        map((reports) => {
-          const sortedReports = [...reports].sort(
-            (a, b) =>
-              new Date(b.visit_date).getTime() -
-              new Date(a.visit_date).getTime()
-          );
-          return sortedReports;
-        }),
-        catchError((error) => {
-          console.error(
-            'Erreur lors de la récupération des rapports vétérinaires:',
-            error
-          );
-          console.error("Détails de l'erreur:", {
-            status: error.status,
-            statusText: error.statusText,
-            message: error.message,
-            url: error.url,
-          });
-          this.toastService.showError(
-            'Impossible de charger les rapports vétérinaires pour cet animal'
-          );
-          return of([]);
-        })
-      );
+    );
   }
 
   private formatImageUrl(imagePath: string | null): string {
