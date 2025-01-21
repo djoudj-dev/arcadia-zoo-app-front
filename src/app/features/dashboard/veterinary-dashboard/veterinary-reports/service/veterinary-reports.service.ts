@@ -130,7 +130,7 @@ export class VeterinaryReportsService {
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
     const headers = this.getHeaders();
     return this.http
-      .get<VeterinaryReports[]>(`${this.apiUrl}/api/animal/${animalId}`, {
+      .get<VeterinaryReports[]>(`${this.apiUrl}/animal/${animalId}`, {
         headers,
       })
       .pipe(
@@ -157,7 +157,7 @@ export class VeterinaryReportsService {
     if (imagePath.startsWith('http')) {
       // Éviter la duplication de l'URL de base
       return imagePath.replace(
-        `${environment.apiUrl}/api/${environment.apiUrl}/api/`,
+        `${environment.apiUrl}/api/`,
         `${environment.apiUrl}/api/`
       );
     }
