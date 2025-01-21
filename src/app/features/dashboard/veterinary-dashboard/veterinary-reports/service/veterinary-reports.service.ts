@@ -13,6 +13,7 @@ import { VeterinaryReports } from '../model/veterinary-reports.model';
 })
 export class VeterinaryReportsService {
   private readonly apiUrl = `${environment.apiUrl}/api/veterinary/reports`;
+  private readonly animalApiUrl = `${environment.apiUrl}/api/animals`;
   private readonly http = inject(HttpClient);
   private readonly animalCache = new Map<number, Animal>();
   private readonly cacheTimeout = 5 * 60 * 1000; // 5 minutes
@@ -89,10 +90,17 @@ export class VeterinaryReportsService {
       return of(cachedAnimal);
     }
 
-    return this.http.get<Animal>(`${this.apiUrl}/animals/${animalId}`).pipe(
+    return this.http.get<Animal>(`${this.animalApiUrl}/${animalId}`).pipe(
       tap((animal) => {
         this.animalCache.set(animalId, animal);
         this.lastCacheUpdate.set(animalId, now);
+      }),
+      catchError((error) => {
+        console.error("Erreur lors de la récupération de l'animal:", error);
+        this.toastService.showError(
+          "Impossible de récupérer les informations de l'animal"
+        );
+        throw error;
       }),
       shareReplay(1)
     );
