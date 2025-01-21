@@ -3,18 +3,20 @@
 import {
   HttpClient,
   HttpErrorResponse,
+  HttpHeaders,
   HttpParams,
 } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { TokenService } from 'app/core/token/token.service';
 import { AnimalService } from 'app/features/animal/service/animal.service';
 import { HabitatService } from 'app/features/habitats/service/habitat.service';
 import { ServiceService } from 'app/features/zoo-services/service/service.service';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
+  Observable,
   catchError,
   map,
-  Observable,
   of,
   switchMap,
 } from 'rxjs';
@@ -46,6 +48,7 @@ export class VisitTrackingService {
   private readonly animalService = inject(AnimalService);
   private readonly habitatService = inject(HabitatService);
   private readonly serviceService = inject(ServiceService);
+  private readonly tokenService = inject(TokenService);
   private readonly activeVisits = new Map<string, Visit>();
 
   constructor() {
@@ -177,7 +180,17 @@ export class VisitTrackingService {
   }
 
   private saveVisit(visit: Visit): Observable<VisitResponse> {
-    return this.http.post<VisitResponse>(`${this.apiUrl}/track`, visit);
+    return this.http.post<VisitResponse>(`${this.apiUrl}/track`, visit, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token = this.tokenService.getToken();
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    });
   }
 
   private handleError<T>(operation = 'operation') {
@@ -188,17 +201,23 @@ export class VisitTrackingService {
   }
 
   getAllStats(): Observable<VisitStats[]> {
-    return this.http.get<VisitStats[]>(`${this.apiUrl}/stats`).pipe(
-      catchError((error) => {
-        console.error('Erreur lors de la récupération des stats:', error);
-        return of([]);
+    return this.http
+      .get<VisitStats[]>(`${this.apiUrl}/stats`, {
+        headers: this.getHeaders(),
       })
-    );
+      .pipe(
+        catchError((error) => {
+          console.error('Erreur lors de la récupération des stats:', error);
+          return of([]);
+        })
+      );
   }
 
   getStatsByCategory(categoryType: CategoryType): Observable<VisitStats[]> {
     return this.http
-      .get<VisitStats[]>(`${this.apiUrl}/stats/category/${categoryType}`)
+      .get<VisitStats[]>(`${this.apiUrl}/stats/category/${categoryType}`, {
+        headers: this.getHeaders(),
+      })
       .pipe(
         catchError((error) => {
           console.error(
@@ -219,7 +238,10 @@ export class VisitTrackingService {
       .set('endDate', endDate.toISOString());
 
     return this.http
-      .get<VisitStats[]>(`${this.apiUrl}/stats/range`, { params })
+      .get<VisitStats[]>(`${this.apiUrl}/stats/range`, {
+        params,
+        headers: this.getHeaders(),
+      })
       .pipe(
         catchError((error) => {
           console.error(
@@ -233,7 +255,9 @@ export class VisitTrackingService {
 
   trackVisit(data: VisitTrackingData): Observable<VisitTrackingResponse> {
     return this.http
-      .post<VisitTrackingResponse>(`${this.apiUrl}/track`, data)
+      .post<VisitTrackingResponse>(`${this.apiUrl}/track`, data, {
+        headers: this.getHeaders(),
+      })
       .pipe(
         catchError((error) => {
           console.error('Erreur lors du tracking de la visite:', error);
