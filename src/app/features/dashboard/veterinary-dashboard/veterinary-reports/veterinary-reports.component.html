@@ -27,9 +27,11 @@
         <p class="font-medium">
           {{ meal.food_type }} - {{ meal.quantity }}{{ meal.unit }}
         </p>
-        <p *ngIf="meal.notes" class="mt-1 text-sm text-gray-600">
+        @if (meal.notes) {
+        <p class="mt-1 text-sm text-gray-600">
           {{ meal.notes }}
         </p>
+        }
       </div>
       }
     </section>
@@ -51,12 +53,11 @@
           Alimentation recommandée: {{ report.recommended_food_type }} -
           {{ report.recommended_food_quantity }}{{ report.food_unit }}
         </p>
-        <p
-          *ngIf="report.additional_details"
-          class="mt-1 text-sm text-gray-600 italic"
-        >
+        @if (report.additional_details) {
+        <p class="mt-1 text-sm text-gray-600 italic">
           "{{ report.additional_details }}"
         </p>
+        }
       </div>
       }
     </section>

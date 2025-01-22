@@ -46,7 +46,7 @@ export class VeterinaryReportsComponent implements OnInit {
 
   reportForm!: FormGroup;
   isModalOpen = true;
-  activeTab: TabId = 'veterinary';
+  activeTab: 'feeding' | 'veterinary' | 'new' = 'veterinary';
   veterinaryReports = signal<VeterinaryReports[]>([]);
   feedingHistory = signal<FeedingHistory[]>([]);
 
@@ -72,14 +72,6 @@ export class VeterinaryReportsComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly animalHealthService = inject(AnimalHealthService);
-
-  get meals() {
-    return this.feedingHistory();
-  }
-
-  get reports() {
-    return this.veterinaryReports();
-  }
 
   ngOnInit() {
     this.initForm();
@@ -256,7 +248,7 @@ export class VeterinaryReportsComponent implements OnInit {
       });
   }
 
-  setActiveTab(tabId: TabId) {
+  setActiveTab(tabId: 'feeding' | 'veterinary' | 'new') {
     this.activeTab = tabId;
   }
 }
