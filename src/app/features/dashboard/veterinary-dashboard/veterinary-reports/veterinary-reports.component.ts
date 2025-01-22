@@ -27,6 +27,13 @@ import {
 import { VeterinaryReportsService } from './service/veterinary-reports.service';
 import { AnimalHealthService } from './services/animal-health.service';
 
+type TabId = 'feeding' | 'veterinary' | 'new';
+
+interface TabItem {
+  id: TabId;
+  label: string;
+}
+
 @Component({
   selector: 'app-veterinary-reports',
   standalone: true,
@@ -39,7 +46,7 @@ export class VeterinaryReportsComponent implements OnInit {
 
   reportForm!: FormGroup;
   isModalOpen = true;
-  activeTab = signal<'feeding' | 'veterinary' | 'new'>('veterinary');
+  activeTab: TabId = 'veterinary';
   veterinaryReports = signal<VeterinaryReports[]>([]);
   feedingHistory = signal<FeedingHistory[]>([]);
 
@@ -49,15 +56,30 @@ export class VeterinaryReportsComponent implements OnInit {
   // Unités de nourriture possibles
   foodUnits = ['kg', 'g'];
 
+  tabs: TabItem[] = [
+    { id: 'feeding', label: 'Historique des repas' },
+    { id: 'veterinary', label: 'Rapports vétérinaires' },
+    { id: 'new', label: 'Nouveau rapport' },
+  ];
+
   AnimalState = AnimalState;
   selectedState = signal<AnimalState>(AnimalState.GOOD_HEALTH);
   selectedAnimalId = signal<number | null>(null);
+  isSubmitting = signal<boolean>(false);
 
   private readonly fb = inject(FormBuilder);
   private readonly veterinaryReportsService = inject(VeterinaryReportsService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly animalHealthService = inject(AnimalHealthService);
+
+  get meals() {
+    return this.feedingHistory();
+  }
+
+  get reports() {
+    return this.veterinaryReports();
+  }
 
   ngOnInit() {
     this.initForm();
@@ -151,6 +173,7 @@ export class VeterinaryReportsComponent implements OnInit {
 
   onSubmit() {
     if (this.reportForm.valid) {
+      this.isSubmitting.set(true);
       const currentUser = this.authService.user();
 
       if (!currentUser?.id) {
@@ -168,6 +191,7 @@ export class VeterinaryReportsComponent implements OnInit {
       this.veterinaryReportsService.createReport(reportData).subscribe({
         next: (response) => {
           console.log('Rapport créé avec succès', response);
+          this.isSubmitting.set(false);
           const closePromise = new Promise<void>((resolve) => {
             this.toastService.showSuccess(
               'Rapport vétérinaire enregistré avec succès'
@@ -180,6 +204,7 @@ export class VeterinaryReportsComponent implements OnInit {
           });
         },
         error: () => {
+          this.isSubmitting.set(false);
           this.toastService.showError(
             "Erreur lors de l'enregistrement du rapport"
           );
@@ -229,5 +254,9 @@ export class VeterinaryReportsComponent implements OnInit {
           );
         },
       });
+  }
+
+  setActiveTab(tabId: TabId) {
+    this.activeTab = tabId;
   }
 }
