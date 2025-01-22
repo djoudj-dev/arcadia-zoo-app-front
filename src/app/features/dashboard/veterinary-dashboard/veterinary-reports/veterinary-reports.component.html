@@ -7,7 +7,9 @@
       [color]="activeTab === tab.id ? 'tertiary' : 'secondary'"
       (click)="setActiveTab(tab.id)"
       (keyup)="setActiveTab(tab.id)"
-      [customClass]="'flex-1 py-2 px-4 rounded-lg text-sm font-medium'"
+      [customClass]="
+        'flex-1 py-2 px-4 rounded-lg text-sm font-medium hover:opacity-90 transition-all'
+      "
     ></app-button>
     }
   </nav>
@@ -189,7 +191,7 @@
         <div class="flex justify-end gap-2">
           <button
             type="button"
-            class="px-4 py-2 text-sm rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200"
+            class="px-4 py-2 text-sm rounded-md bg-secondary text-white hover:bg-opacity-90 transition-all"
             (click)="closeModal()"
           >
             Annuler
@@ -197,7 +199,7 @@
           <button
             type="submit"
             [disabled]="!reportForm.valid || isSubmitting()"
-            class="px-4 py-2 text-sm rounded-md bg-green-500 text-white hover:bg-green-600 disabled:opacity-50"
+            class="px-4 py-2 text-sm rounded-md bg-tertiary text-white hover:bg-opacity-90 transition-all disabled:opacity-50"
           >
             {{ isSubmitting() ? "Enregistrement..." : "Enregistrer" }}
           </button>
