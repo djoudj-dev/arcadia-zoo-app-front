@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 18
 
-      # Étape 3 : Installer les dépendances et construire le projet NestJS
+      # Étape 3 : Installer les dépendances et construire le projet
       - name: Install dependencies and build Angular
         run: |
           npm ci

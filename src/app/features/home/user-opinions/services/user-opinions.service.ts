@@ -41,7 +41,6 @@ export class UserOpinionsService {
         map((opinions) => opinions.map(this.transformOpinion)),
 
         catchError((error) => {
-          console.error('Erreur lors de la récupération des avis:', error);
           this.toastService.showError(
             'Impossible de charger les avis utilisateurs'
           );
@@ -51,14 +50,11 @@ export class UserOpinionsService {
   }
 
   addUserOpinions(userOpinions: UserOpinion): Observable<UserOpinion> {
-    console.log('Opinion à envoyer:', userOpinions);
     return this.http.post<UserOpinion>(this.apiUrl, userOpinions).pipe(
-      tap((opinion) => {
-        console.log('Avis ajouté avec succès:', opinion);
+      tap(() => {
         this.toastService.showSuccess('Votre avis a été ajouté avec succès');
       }),
       catchError((error) => {
-        console.error("Erreur lors de l'envoi de l'avis", error);
         this.toastService.showError(
           "Une erreur est survenue lors de l'envoi de votre avis"
         );
@@ -71,13 +67,11 @@ export class UserOpinionsService {
     return this.http
       .patch<UserOpinion>(`${this.apiUrl}/validate/${id}`, {})
       .pipe(
-        tap((opinion) => {
-          console.log('Avis validé avec succès:', opinion);
+        tap(() => {
           this.toastService.showSuccess('Avis validé avec succès');
           this.notifyOpinionsUpdated();
         }),
         catchError((error) => {
-          console.error("Erreur lors de la validation de l'avis", error);
           this.toastService.showError(
             "Une erreur est survenue lors de la validation de l'avis"
           );
@@ -96,7 +90,6 @@ export class UserOpinionsService {
       .pipe(
         map((opinions) => opinions.map(this.transformOpinion)),
         catchError((error) => {
-          console.error('Erreur lors de la récupération des avis:', error);
           this.toastService.showError('Impossible de charger les avis');
           throw error;
         })
@@ -105,11 +98,8 @@ export class UserOpinionsService {
   getPendingOpinions(): Observable<UserOpinion[]> {
     return this.http.get<UserOpinion[]>(`${this.apiUrl}/pending`).pipe(
       map((opinions) => opinions.map(this.transformOpinion)),
-      tap((opinions) => {
-        console.log('Liste finale des avis transformés:', opinions);
-      }),
+      tap(() => {}),
       catchError((error) => {
-        console.error('Erreur lors de la récupération des avis:', error);
         this.toastService.showError(
           'Impossible de charger les avis en attente'
         );
@@ -120,12 +110,10 @@ export class UserOpinionsService {
 
   rejectUserOpinions(id: string): Observable<UserOpinion> {
     return this.http.patch<UserOpinion>(`${this.apiUrl}/reject/${id}`, {}).pipe(
-      tap((opinion) => {
-        console.log('Avis rejeté avec succès:', opinion);
+      tap(() => {
         this.notifyOpinionsUpdated();
       }),
       catchError((error) => {
-        console.error("Erreur lors du rejet de l'avis", error);
         this.toastService.showError(
           "Une erreur est survenue lors du rejet de l'avis"
         );

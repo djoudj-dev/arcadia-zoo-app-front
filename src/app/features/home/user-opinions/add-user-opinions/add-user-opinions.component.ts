@@ -14,10 +14,6 @@ import { ToastService } from '../../../../shared/components/toast/services/toast
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { UserOpinionsService } from '../services/user-opinions.service';
 
-/**
- * Composant pour l'ajout d'avis utilisateur
- * Gère un formulaire avec validation pour la soumission d'avis
- */
 @Component({
   selector: 'app-add-user-opinions',
   standalone: true,
@@ -31,19 +27,11 @@ import { UserOpinionsService } from '../services/user-opinions.service';
   ],
 })
 export class AddUserOpinionsComponent implements OnInit {
-  /** Formulaire réactif pour la saisie d'avis */
   opinionForm: FormGroup;
-
-  /** Date du jour formatée en YYYY-MM-DD */
   currentDate: string;
 
-  /** Input pour contrôler si la modal est ouverte */
   @Input() isOpen = false;
-
-  /** Event emitter pour notifier quand un avis est ajouté */
   @Output() opinionAdded = new EventEmitter<void>();
-
-  /** Event emitter pour fermer la modal */
   @Output() closeModal = new EventEmitter<void>();
 
   constructor(
@@ -52,7 +40,7 @@ export class AddUserOpinionsComponent implements OnInit {
     private readonly toastService: ToastService
   ) {
     this.currentDate = new Date().toISOString().split('T')[0];
-    this.opinionForm = this.fb.group({}); // Initialisation requise
+    this.opinionForm = this.fb.group({});
   }
 
   /** Initialise le formulaire avec les validations */

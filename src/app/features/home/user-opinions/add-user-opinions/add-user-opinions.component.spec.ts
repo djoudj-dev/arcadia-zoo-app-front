@@ -132,6 +132,7 @@ describe('AddUserOpinionsComponent', () => {
         date: new Date('2024-03-20'),
         validated: false,
         rejected: false,
+        status: 'pending',
       })
     );
     spyOn(component.opinionAdded, 'emit');

@@ -34,7 +34,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
         color: gold;
       }
       .read-only {
-        cursor: default; /* Rend les étoiles non interactives */
+        cursor: default;
       }
     `,
   ],
