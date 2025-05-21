@@ -26,9 +26,9 @@
             {{ habitat.name }}
           </h3>
 
-          @if (groupedAnimals()[habitat.id_habitat].length) {
+          @if (groupedAnimals()[habitat.id_habitat]?.length) {
           <div class="space-y-4">
-            @for (animal of groupedAnimals()[habitat.id_habitat]; track
+            @for (animal of groupedAnimals()[habitat.id_habitat] || []; track
             animal.id_animal) {
             <div
               class="flex items-center gap-4 p-2 rounded-lg hover:bg-white/50 transition-colors"

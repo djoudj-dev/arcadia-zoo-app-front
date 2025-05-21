@@ -62,10 +62,22 @@ export class AnimalManagementComponent implements OnInit {
     this.loadAnimals();
   }
 
+  /** Initialise la visibilité pour tous les habitats */
+  private initializeVisibility() {
+    const visibility: Record<number, boolean> = {};
+    this.habitats().forEach(habitat => {
+      visibility[habitat.id_habitat] = false;
+    });
+    this.visibleAnimals.set(visibility);
+  }
+
   /** Charge la liste des habitats */
   loadHabitats() {
     this.habitatService.getHabitats().subscribe({
-      next: (habitats) => this.habitats.set(habitats),
+      next: (habitats) => {
+        this.habitats.set(habitats);
+        this.initializeVisibility();
+      },
       error: (err) => {
         console.error('Erreur de chargement des habitats :', err);
         this.toastService.showError('Erreur lors du chargement des habitats');
@@ -253,13 +265,15 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Vérifie si un animal doit être affiché */
   isAnimalVisible(animal: Animal): boolean {
+    if (!animal || !animal.habitat_id) return false;
     return this.visibleAnimals()[animal.habitat_id] ?? false;
   }
 
   /** Vérifie si la description complète doit être affichée */
   shouldShowFullDescription(animal: Animal): boolean {
+    if (!animal) return false;
     const isShown = Boolean(animal.showTime);
-    console.log(`Vérification description pour ${animal.name}:`, isShown);
+    console.log(`Vérification description pour ${animal.name || 'animal inconnu'}:`, isShown);
     return isShown;
   }
 
@@ -302,13 +316,20 @@ export class AnimalManagementComponent implements OnInit {
 
   /** Groupe les animaux par habitat */
   private groupAnimals() {
-    const grouped = this.animals().reduce((acc, animal) => {
-      if (!acc[animal.habitat_id]) {
-        acc[animal.habitat_id] = [];
+    // Initialiser avec tous les habitats, même ceux sans animaux
+    const grouped: Record<number, Animal[]> = {};
+
+    // Initialiser un tableau vide pour chaque habitat
+    this.habitats().forEach(habitat => {
+      grouped[habitat.id_habitat] = [];
+    });
+
+    // Ajouter les animaux à leurs habitats respectifs
+    this.animals().forEach(animal => {
+      if (animal.habitat_id) {
+        grouped[animal.habitat_id].push({ ...animal });
       }
-      acc[animal.habitat_id].push({ ...animal });
-      return acc;
-    }, {} as Record<number, Animal[]>);
+    });
 
     this.groupedAnimals.set(grouped);
   }
