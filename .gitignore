@@ -41,7 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-
+# Environments
+src/environments/*
 
 .nx/cache
 .nx/workspace-datadocker-compose.yml
