@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.nedellec-julien.fr',
+  apiUrl: 'https://arcadia-api.nedellec-julien.fr',
 };
