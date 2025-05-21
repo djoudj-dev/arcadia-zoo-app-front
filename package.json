@@ -1,5 +1,5 @@
 {
-  "name": "arcadia-zoo-app-font",
+  "name": "arcadia-zoo-app-front",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -12,17 +12,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^18.2.13",
-    "@angular/cdk": "^18.2.0",
-    "@angular/common": "^18.2.13",
-    "@angular/compiler": "^18.2.0",
-    "@angular/core": "^18.2.0",
-    "@angular/forms": "^18.2.0",
-    "@angular/platform-browser": "^18.2.0",
-    "@angular/platform-browser-dynamic": "^18.2.0",
-    "@angular/router": "^18.2.0",
+    "@angular/animations": "^19.2.0",
+    "@angular/cdk": "^19.2.0",
+    "@angular/common": "^19.2.0",
+    "@angular/compiler": "^19.2.0",
+    "@angular/core": "^19.2.0",
+    "@angular/forms": "^19.2.0",
+    "@angular/platform-browser": "^19.2.0",
+    "@angular/platform-browser-dynamic": "^19.2.0",
+    "@angular/router": "^19.2.0",
     "@auth0/angular-jwt": "^5.2.0",
-    "@swimlane/ngx-charts": "^21.1.2",
     "@types/jwt-decode": "^2.2.1",
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.7",
@@ -30,18 +29,15 @@
     "jwt-decode": "^4.0.0",
     "readdirp": "^4.0.2",
     "rxjs": "~7.8.0",
-    "zone.js": "~0.14.4"
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.13",
-    "@angular-devkit/core": "^18.2.0",
-    "@angular-devkit/schematics": "^18.2.0",
-    "@angular-eslint/eslint-plugin": "^18.4.1",
-    "@angular-eslint/eslint-plugin-template": "^18.4.1",
-    "@angular/cli": "^18.2.0",
-    "@angular/compiler-cli": "^18.2.0",
-    "@angular/platform-browser-dynamic": "^18.2.0",
-    "@schematics/angular": "^18.2.0",
+    "@angular-eslint/eslint-plugin": "^19.0.0",
+    "@angular-eslint/eslint-plugin-template": "^19.0.0",
+    "@angular/cli": "^19.2.0",
+    "@angular/compiler-cli": "^19.2.0",
+    "@schematics/angular": "^19.2.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/bcrypt": "^5.0.2",
     "@types/bonjour": "^3.5.13",
@@ -61,7 +57,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "tailwindcss": "^3.4.12",
-    "typescript": "~5.4.2",
+    "typescript": "~5.5.0",
     "webpack": "^5.97.1"
   }
 }
