@@ -241,11 +241,25 @@ export class ServiceManagementComponent implements OnInit {
   /** Gère le changement de sélection des caractéristiques */
   onFeatureChange(feature: Feature, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
-    this.newServiceData.features = isChecked
-      ? [...(this.newServiceData.features || []), feature]
-      : this.newServiceData.features?.filter(
-          (f) => f.id_feature !== feature.id_feature
-        );
+
+    if (isChecked) {
+      // Créer une copie de la feature avec la valeur actuelle (si elle existe)
+      const featureWithValue = {
+        ...feature,
+        value: feature.value || '' // Assurer que value est défini
+      };
+
+      // Ajouter la feature à la liste
+      this.newServiceData.features = [
+        ...(this.newServiceData.features || []),
+        featureWithValue
+      ];
+    } else {
+      // Retirer la feature de la liste
+      this.newServiceData.features = this.newServiceData.features?.filter(
+        (f) => f.id_feature !== feature.id_feature
+      );
+    }
   }
 
   /** Navigation */

@@ -127,6 +127,45 @@
           />
         </div>
 
+        <div>
+          <label class="block text-lg font-medium text-tertiary mb-2">
+            Caractéristiques
+          </label>
+          <div class="space-y-3 max-h-60 overflow-y-auto p-2 border border-secondary/30 rounded-lg">
+            @for (feature of allFeatures(); track feature.id_feature) {
+              <div class="flex flex-col space-y-2 p-2 border-b border-secondary/20">
+                <div class="flex items-center">
+                  <input
+                    type="checkbox"
+                    [id]="'feature-' + feature.id_feature"
+                    [checked]="isFeatureSelected(feature)"
+                    (change)="onFeatureChange(feature, $event)"
+                    class="mr-2 h-5 w-5 text-tertiary focus:ring-tertiary"
+                  />
+                  <label [for]="'feature-' + feature.id_feature" class="text-tertiary font-medium">
+                    {{ feature.name }} ({{ feature.type }})
+                  </label>
+                </div>
+
+                @if (isFeatureSelected(feature)) {
+                  <div class="ml-7">
+                    <input
+                      type="text"
+                      [(ngModel)]="feature.value"
+                      [name]="'feature-value-' + feature.id_feature"
+                      placeholder="Valeur (ex: oui, gratuit, etc.)"
+                      class="w-full p-2 border border-secondary/30 rounded-lg focus:ring-2 focus:ring-tertiary focus:border-transparent"
+                    />
+                  </div>
+                }
+              </div>
+            }
+            @if (allFeatures().length === 0) {
+              <p class="text-gray-500 italic text-center py-2">Aucune caractéristique disponible</p>
+            }
+          </div>
+        </div>
+
         <div class="flex justify-end space-x-4">
           @if (newServiceData.id_service) {
           <app-button
