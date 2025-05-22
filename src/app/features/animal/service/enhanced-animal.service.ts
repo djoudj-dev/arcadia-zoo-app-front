@@ -73,9 +73,21 @@ export class EnhancedAnimalService {
     }));
   }
 
+  /**
+   * Formate l'URL de l'image pour un animal
+   * @param imagePath - Chemin de l'image
+   * @returns string - URL complète de l'image
+   */
   private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    return `${this.imageBaseUrl}/${imagePath.replace(/^\/+/, '')}`;
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/animals/${imagePath}`;
   }
 }

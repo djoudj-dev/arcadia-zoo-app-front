@@ -2,7 +2,6 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Service } from 'app/features/dashboard/admin-dashboard/service-management/model/service.model';
-import { environment } from 'environments/environment';
 import { ServiceService } from '../../zoo-services/service/service.service';
 
 /**
@@ -32,6 +31,7 @@ export class ServicesOverviewComponent implements OnInit {
   /**
    * Charge tous les services depuis le service
    * Utilise takeUntilDestroyed pour la gestion automatique des souscriptions
+   * Les URLs des images sont déjà formatées par le service
    */
   private loadServices(): void {
     this.serviceService
@@ -39,24 +39,11 @@ export class ServicesOverviewComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.services.set(data.map(this.formatServiceImage));
+          // Les images sont déjà formatées par le service, pas besoin de les reformater ici
+          this.services.set(data);
         },
         error: (error) =>
           console.error('Erreur lors du chargement des services:', error),
       });
-  }
-
-  /**
-   * Formate l'URL de l'image d'un service
-   * @param service - Le service dont l'image doit être formatée
-   * @returns Le service avec l'URL de l'image formatée
-   */
-  private formatServiceImage(service: Service): Service {
-    return {
-      ...service,
-      images: service.images?.startsWith('http')
-        ? service.images
-        : `${environment.apiUrl}/api/${service.images}`,
-    };
   }
 }

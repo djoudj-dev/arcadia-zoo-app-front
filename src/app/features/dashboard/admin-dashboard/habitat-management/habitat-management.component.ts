@@ -49,19 +49,12 @@ export class HabitatManagementComponent implements OnInit {
   loadHabitats() {
     this.habitatManagement.getAllHabitats().subscribe({
       next: (habitats) => {
-        const getImageUrl = (imagePath: string | null | undefined) => {
-          if (!imagePath) return null;
-          return imagePath.startsWith('http')
-            ? imagePath
-            : `${this.imageBaseUrl}/${imagePath.replace(/^\/+/, '')}`;
-        };
-
         this.habitats.set(
           habitats.map((habitat) => ({
             ...habitat,
             showDescription: false,
             showDeleteConfirmation: false,
-            images: getImageUrl(habitat.images),
+            images: this.formatImageUrl(habitat.images),
           }))
         );
       },
@@ -168,15 +161,22 @@ export class HabitatManagementComponent implements OnInit {
     }
   }
 
+  /**
+   * Formate l'URL de l'image pour un habitat
+   * @param imagePath - Chemin de l'image
+   * @returns string - URL complète de l'image
+   */
   private formatImageUrl(imagePath: string | null): string {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    // Suppression des doublons potentiels dans le chemin
-    const cleanPath = imagePath.replace(
-      /uploads\/habitats\/uploads\/habitats\//,
-      'uploads/habitats/'
-    );
-    return `${this.imageBaseUrl}/${cleanPath}`;
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/habitats/${imagePath}`;
   }
 
   /** Prépare le formulaire pour la modification */

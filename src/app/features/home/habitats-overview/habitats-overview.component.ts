@@ -1,7 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { environment } from '../../../../environments/environment';
 import { Habitat } from '../../dashboard/admin-dashboard/habitat-management/model/habitat.model';
 import { HabitatService } from '../../habitats/service/habitat.service';
 
@@ -32,6 +31,7 @@ export class HabitatsOverviewComponent implements OnInit {
   /**
    * Charge tous les habitats depuis le service
    * Utilise takeUntilDestroyed pour la gestion automatique des souscriptions
+   * Les URLs des images sont déjà formatées par le service
    */
   private loadHabitats(): void {
     this.habitatService
@@ -39,29 +39,11 @@ export class HabitatsOverviewComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.habitats.set(data.map(this.formatHabitatImage));
+          // Les images sont déjà formatées par le service, pas besoin de les reformater ici
+          this.habitats.set(data);
         },
         error: (error) =>
           console.error('Erreur lors du chargement des habitats:', error),
       });
-  }
-
-  /**
-   * Formate l'URL de l'image d'un habitat
-   * @param habitat - L'habitat dont l'image doit être formatée
-   * @returns L'habitat avec l'URL de l'image formatée
-   */
-  private formatHabitatImage(habitat: Habitat): Habitat {
-    let formattedImage = '';
-    if (habitat.images) {
-      formattedImage = habitat.images.startsWith('http')
-        ? habitat.images
-        : `${environment.apiUrl}/uploads/${habitat.images}`;
-    }
-
-    return {
-      ...habitat,
-      images: formattedImage,
-    };
   }
 }

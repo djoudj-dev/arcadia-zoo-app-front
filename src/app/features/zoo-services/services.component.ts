@@ -1,6 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { environment } from 'environments/environment';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Service } from '../dashboard/admin-dashboard/service-management/model/service.model';
 import { ServiceService } from './service/service.service';
@@ -28,20 +27,13 @@ export class ServicesComponent implements OnInit {
 
   /**
    * Charge tous les services depuis le service
-   * Formate les URLs des images pour l'affichage
+   * Les URLs des images sont déjà formatées par le service
    */
   private loadServices() {
     this.serviceService.getServices().subscribe({
       next: (data) => {
-        this.services.set(
-          data.map((service) => ({
-            ...service,
-            images:
-              service.images?.startsWith('http') || false
-                ? service.images
-                : `${environment.apiUrl}/api/${service.images}`,
-          }))
-        );
+        // Les images sont déjà formatées par le service, pas besoin de les reformater ici
+        this.services.set(data);
       },
       error: (error) =>
         console.error('Erreur lors du chargement des services:', error),

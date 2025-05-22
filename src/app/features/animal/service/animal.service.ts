@@ -57,17 +57,15 @@ export class AnimalService {
     );
   }
 
+  /**
+   * Récupère un animal par son ID.
+   * Les images sont déjà formatées par getAnimals().
+   * @param id - ID de l'animal à récupérer
+   * @returns Observable<Animal | undefined> - L'animal trouvé ou undefined
+   */
   getAnimalById(id: number): Observable<Animal | undefined> {
     return this.getAnimals().pipe(
-      map((animals) => {
-        const animal = animals.find((animal) => animal.id_animal === id);
-        if (animal?.images) {
-          animal.images = animal.images.startsWith('http')
-            ? animal.images
-            : `${this.imageBaseUrl}/${animal.images}`;
-        }
-        return animal;
-      })
+      map((animals) => animals.find((animal) => animal.id_animal === id))
     );
   }
 

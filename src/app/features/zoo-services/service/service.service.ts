@@ -29,7 +29,7 @@ export class ServiceService {
       map((services) =>
         services.map((service) => ({
           ...service,
-          image: service.images
+          images: service.images
             ? this.formatImageUrl('services', service.images)
             : '',
           // Utilise une chaîne vide si `images` est `undefined`
@@ -50,7 +50,7 @@ export class ServiceService {
       tap((service) => {
         if (service) {
           service.images = service.images
-            ? this.formatImageUrl('folderName', service.images)
+            ? this.formatImageUrl('services', service.images)
             : '';
         }
       })
@@ -58,8 +58,8 @@ export class ServiceService {
   }
 
   /**
-   * Formate l'URL de l'image pour un dossier spécifique (habitats, animals).
-   * @param folder - Dossier de l'image (ex: 'animals' ou 'habitats')
+   * Formate l'URL de l'image pour un dossier spécifique (services, habitats, animals).
+   * @param folder - Dossier de l'image (ex: 'services', 'habitats', 'animals')
    * @param imagePath - Chemin de l'image
    * @returns string - URL complète de l'image
    */
@@ -68,7 +68,14 @@ export class ServiceService {
     if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
       return imagePath;
     }
-    return `${this.imageBaseUrl}/${imagePath}`;
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 
   clearCache(): void {

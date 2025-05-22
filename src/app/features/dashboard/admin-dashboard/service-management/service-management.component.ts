@@ -56,7 +56,7 @@ export class ServiceManagementComponent implements OnInit {
           services.map((service) => ({
             ...service,
             showFullDescription: false,
-            images: `${this.imageBaseUrl}/${service.images}`,
+            images: this.formatImageUrl('services', service.images),
           }))
         );
       },
@@ -65,6 +65,27 @@ export class ServiceManagementComponent implements OnInit {
         this.toastService.showError('Erreur lors du chargement des services');
       },
     });
+  }
+
+  /**
+   * Formate l'URL de l'image pour un dossier spécifique (services, habitats, animals).
+   * @param folder - Dossier de l'image (ex: 'services', 'habitats', 'animals')
+   * @param imagePath - Chemin de l'image
+   * @returns string - URL complète de l'image
+   */
+  private formatImageUrl(folder: string, imagePath: string): string {
+    // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 
   /** Charge la liste des caractéristiques */
@@ -182,7 +203,11 @@ export class ServiceManagementComponent implements OnInit {
   editService(id_service: number) {
     const service = this.services().find((s) => s.id_service === id_service);
     if (service) {
-      this.newServiceData = { ...service, features: service.features || [] };
+      // Directly assign service with features defaulting to empty array if undefined
+      this.newServiceData = {
+        ...service,
+        features: service.features || []
+      };
       this.showModal = true;
       this.toastService.showSuccess('Service sélectionné pour modification');
     }
