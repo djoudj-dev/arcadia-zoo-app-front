@@ -29,7 +29,9 @@ export class HabitatManagementService {
    */
   getAllHabitats(): Observable<Habitat[]> {
     return this.http.get<Habitat[]>(this.apiUrl).pipe(
-      tap((response) => console.log('Habitats reçus:', response)),
+      tap((response) => {
+        console.log('Réponse du serveur (chargement):', response);
+      }),
       catchError((error) => this.handleError('chargement des habitats', error))
     );
   }
@@ -58,6 +60,7 @@ export class HabitatManagementService {
    * Gère l'upload d'image et la mise à jour du cache
    * @param id Identifiant de l'habitat à modifier
    * @param data FormData contenant les données mises à jour et la nouvelle image éventuelle
+   * @param image
    * @returns Observable<Habitat> Habitat mis à jour avec ses informations complètes
    */
   updateHabitat(
