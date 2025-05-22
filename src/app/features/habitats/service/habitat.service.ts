@@ -58,8 +58,8 @@ export class HabitatService {
 
   /**
    * Récupère les animaux associés à un habitat par ID et construit leurs URLs d'images.
-   * @param animalId - ID de l'animal
    * @returns Observable<Animal[]>
+   * @param habitatId
    */
   getAnimalsByHabitatId(habitatId: number): Observable<Animal[]> {
     return this.http.get<Animal[]>(`${this.apiUrl}/${habitatId}/animals`).pipe(
@@ -86,7 +86,14 @@ export class HabitatService {
     if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
       return imagePath;
     }
-    return `${this.imageBaseUrl}/${imagePath}`;
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 
   clearCache(): void {

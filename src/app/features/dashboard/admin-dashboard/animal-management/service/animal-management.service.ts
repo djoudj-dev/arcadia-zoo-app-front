@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
 import { AnimalService } from '../../../../animal/service/animal.service';
 import { Animal } from '../model/animal.model';
@@ -15,6 +15,7 @@ import { Animal } from '../model/animal.model';
 })
 export class AnimalManagementService {
   private readonly apiUrl = `${environment.apiUrl}/api/admin/animals`;
+  private readonly imageBaseUrl = `${environment.apiUrl}/api`;
 
   constructor(
     private readonly http: HttpClient,
@@ -25,6 +26,12 @@ export class AnimalManagementService {
     return this.http
       .get<Animal[]>(this.apiUrl)
       .pipe(
+        map((animals) =>
+          animals.map((animal) => ({
+            ...animal,
+            images: this.formatImageUrl(animal.images)
+          }))
+        ),
         catchError((error) => this.handleError('chargement des animaux', error))
       );
   }
@@ -82,6 +89,28 @@ export class AnimalManagementService {
       tap(() => this.animalService.clearCache()),
       catchError((error) => this.handleError("suppression de l'animal", error))
     );
+  }
+
+  /**
+   * Formate l'URL de l'image pour un animal
+   * @param imagePath - Chemin de l'image
+   * @returns string - URL complète de l'image
+   */
+  private formatImageUrl(imagePath: string | null): string | null {
+    if (!imagePath) return null;
+
+    // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/animals/${imagePath}`;
   }
 
   private handleError(
