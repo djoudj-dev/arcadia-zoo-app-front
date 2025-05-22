@@ -29,7 +29,7 @@ export class AnimalManagementService {
         map((animals) =>
           animals.map((animal) => ({
             ...animal,
-            images: this.formatImageUrl(animal.images)
+            images: this.formatImageUrl(animal.images, 'animals')
           }))
         ),
         catchError((error) => this.handleError('chargement des animaux', error))
@@ -92,11 +92,12 @@ export class AnimalManagementService {
   }
 
   /**
-   * Formate l'URL de l'image pour un animal
+   * Formate l'URL de l'image pour un dossier spécifique (animals, habitats, services).
    * @param imagePath - Chemin de l'image
+   * @param folder - Dossier de l'image (ex: 'animals')
    * @returns string - URL complète de l'image
    */
-  private formatImageUrl(imagePath: string | null): string | null {
+  private formatImageUrl(imagePath: string | null, folder: string = 'animals'): string | null {
     if (!imagePath) return null;
 
     // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
@@ -110,7 +111,7 @@ export class AnimalManagementService {
       imagePath = parts[parts.length - 1];
     }
 
-    return `${this.imageBaseUrl}/uploads/animals/${imagePath}`;
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 
   private handleError(

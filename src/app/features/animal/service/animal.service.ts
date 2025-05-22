@@ -21,7 +21,7 @@ export class AnimalService {
   private readonly habitatUrl = `${environment.apiUrl}/api/habitats`;
 
   /** URL de base pour les images */
-  private readonly imageBaseUrl = `${environment.apiUrl}/api/uploads/animals`;
+  private readonly imageBaseUrl = `${environment.apiUrl}/api`;
 
   // Signaux pour le cache
   private readonly animalsSignal = signal<Animal[]>([]);
@@ -29,13 +29,27 @@ export class AnimalService {
 
   constructor(readonly http: HttpClient) {}
 
-  private formatImageUrl(imagePath: string | null): string {
+  /**
+   * Formate l'URL de l'image pour un dossier spécifique (animals, habitats, services).
+   * @param folder - Dossier de l'image (ex: 'animals')
+   * @param imagePath - Chemin de l'image
+   * @returns string - URL complète de l'image
+   */
+  private formatImageUrl(imagePath: string | null, folder: string = 'animals'): string {
     if (!imagePath) return '';
-    if (imagePath.startsWith('http')) return imagePath;
 
-    // Supprimer le préfixe 'uploads/animals' s'il existe
-    const cleanPath = imagePath.replace(/^uploads\/animals\//, '');
-    return `${this.imageBaseUrl}/${cleanPath}`;
+    // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
+
+    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
+    if (imagePath.includes('uploads')) {
+      const parts = imagePath.split('/');
+      imagePath = parts[parts.length - 1];
+    }
+
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 
   /**
@@ -47,7 +61,7 @@ export class AnimalService {
       map((animals) =>
         animals.map((animal) => ({
           ...animal,
-          images: this.formatImageUrl(animal.images),
+          images: this.formatImageUrl(animal.images, 'animals'),
         }))
       ),
       tap((animals) => {

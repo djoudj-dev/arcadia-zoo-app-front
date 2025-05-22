@@ -50,7 +50,7 @@ export class EnhancedAnimalService {
     return this.http.put<Animal>(`${this.apiUrl}/${animalId}`, formData).pipe(
       map((animal) => ({
         ...animal,
-        images: this.formatImageUrl(animal.images),
+        images: this.formatImageUrl(animal.images, 'animals'),
       })),
       tap((updatedAnimal) => {
         // Mise à jour optimisée du signal
@@ -69,18 +69,23 @@ export class EnhancedAnimalService {
   private formatAnimalImages(animals: Animal[]): Animal[] {
     return animals.map((animal) => ({
       ...animal,
-      images: this.formatImageUrl(animal.images),
+      images: this.formatImageUrl(animal.images, 'animals'),
     }));
   }
 
   /**
-   * Formate l'URL de l'image pour un animal
+   * Formate l'URL de l'image pour un dossier spécifique (animals, habitats, services).
    * @param imagePath - Chemin de l'image
+   * @param folder - Dossier de l'image (ex: 'animals')
    * @returns string - URL complète de l'image
    */
-  private formatImageUrl(imagePath: string | null): string {
+  private formatImageUrl(imagePath: string | null, folder: string = 'animals'): string {
     if (!imagePath) return '';
-    if (imagePath.startsWith('http')) return imagePath;
+
+    // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
+    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
+      return imagePath;
+    }
 
     // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
     if (imagePath.includes('uploads')) {
@@ -88,6 +93,6 @@ export class EnhancedAnimalService {
       imagePath = parts[parts.length - 1];
     }
 
-    return `${this.imageBaseUrl}/uploads/animals/${imagePath}`;
+    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
   }
 }
