@@ -29,8 +29,7 @@ export class HabitatManagementService {
    */
   getAllHabitats(): Observable<Habitat[]> {
     return this.http.get<Habitat[]>(this.apiUrl).pipe(
-      tap((response) => {
-        console.log('Réponse du serveur (chargement):', response);
+      tap(() => {
       }),
       catchError((error) => this.handleError('chargement des habitats', error))
     );
