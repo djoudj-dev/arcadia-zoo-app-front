@@ -14,8 +14,18 @@ import { AuthService } from '../../../core/auth/services/auth.service';
   imports: [ReactiveFormsModule, CommonModule],
   template: `
     <div
-      class="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-full max-w-md mx-auto border border-secondary/20"
+      class="relative bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-full max-w-md mx-auto border border-secondary/20"
     >
+      <!-- Bouton de fermeture -->
+      <button
+        type="button"
+        (click)="closeForm()"
+        class="absolute top-3 right-3 text-tertiary/60 hover:text-tertiary transition-colors"
+        aria-label="Fermer"
+      >
+        <i class="fas fa-times fa-lg"></i>
+      </button>
+
       <div class="p-8">
         <h2
           class="text-center text-3xl font-bold mb-8 text-tertiary font-serif"
@@ -113,6 +123,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class LoginFormComponent {
   @Output() loginSuccess = new EventEmitter<void>();
   @Output() forgotPasswordClick = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>(); // 🔹 nouvel output
 
   showPassword = false;
   private readonly authService = inject(AuthService);
@@ -130,6 +141,10 @@ export class LoginFormComponent {
 
   forgotPassword(): void {
     this.forgotPasswordClick.emit();
+  }
+
+  closeForm(): void {
+    this.close.emit();
   }
 
   onSubmit() {
