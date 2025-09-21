@@ -18,7 +18,6 @@ import { ServiceManagementService } from './service/service.management.service';
  */
 @Component({
   selector: 'app-service-management',
-  standalone: true,
   imports: [FormsModule, ButtonComponent],
   templateUrl: './service-management.component.html',
 })

@@ -8,7 +8,6 @@ import { CountResourceComponent } from './counts-resource/count-resource.compone
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
-  standalone: true,
   imports: [CountResourceComponent],
 })
 export class StatsComponent {}

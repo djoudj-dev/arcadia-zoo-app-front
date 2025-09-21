@@ -15,7 +15,6 @@ import { AccountManagementService } from './service/account-management.service';
  */
 @Component({
   selector: 'app-account-management',
-  standalone: true,
   imports: [ReactiveFormsModule, FormsModule, ButtonComponent],
   templateUrl: './account-management.component.html',
 })

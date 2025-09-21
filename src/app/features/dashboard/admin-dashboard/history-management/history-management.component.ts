@@ -11,7 +11,6 @@ import { HabitatHistoryService } from './services/history-management.service';
  * Permet de consulter, résoudre et rouvrir les commentaires
  */
 @Component({
-  standalone: true,
   imports: [DatePipe, ButtonComponent],
   selector: 'app-history-management',
   templateUrl: './history-management.component.html',

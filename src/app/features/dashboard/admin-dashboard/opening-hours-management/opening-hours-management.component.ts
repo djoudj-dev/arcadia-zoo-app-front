@@ -16,7 +16,6 @@ import { OpeningHoursService } from './services/opening-hours.service';
 
 @Component({
   selector: 'app-opening-hours-management',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './opening-hours-management.component.html',
 })
@@ -186,7 +185,9 @@ export class OpeningHoursManagementComponent implements OnInit {
         this.patchForm(response); // Met à jour le formulaire avec la nouvelle réponse
         this.toastService.showSuccess('Horaires créés avec succès');
       } else {
-        throw new Error("La création n'a pas retourné d'ID valide.");
+        console.error("La création n'a pas retourné d'ID valide.");
+        this.toastService.showError('Erreur lors de la création des horaires');
+        return;
       }
     } catch (error) {
       console.error('Erreur lors de la création des horaires:', error);
@@ -222,8 +223,7 @@ export class OpeningHoursManagementComponent implements OnInit {
 
   async ensureOpeningHoursExist(): Promise<string> {
     try {
-      const id = await this.openingHoursService.getOpeningHoursId();
-      return id;
+      return await this.openingHoursService.getOpeningHoursId();
     } catch {
       // Si aucun horaire n'existe, en créer un nouveau
       const defaultData: OpeningHoursFormData = {

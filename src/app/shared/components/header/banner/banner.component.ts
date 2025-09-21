@@ -5,7 +5,6 @@ import { ToastComponent } from '../../toast/toast.component';
 
 @Component({
   selector: 'app-banner',
-  standalone: true,
   imports: [ToastComponent],
   templateUrl: './banner.component.html',
 })

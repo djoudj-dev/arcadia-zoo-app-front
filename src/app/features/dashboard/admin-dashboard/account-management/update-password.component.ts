@@ -22,7 +22,6 @@ import { AccountManagementService } from './service/account-management.service';
  */
 @Component({
   selector: 'app-update-password',
-  standalone: true,
   imports: [ReactiveFormsModule, CommonModule, ButtonComponent, ToastComponent],
   templateUrl: './update-password.component.html',
 })

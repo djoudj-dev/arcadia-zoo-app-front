@@ -17,7 +17,6 @@ import { HabitatManagementService } from './service/habitat-management.service';
  */
 @Component({
   selector: 'app-habitat-management',
-  standalone: true,
   imports: [ReactiveFormsModule, FormsModule, ButtonComponent],
   templateUrl: './habitat-management.component.html',
 })

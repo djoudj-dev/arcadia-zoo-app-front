@@ -16,7 +16,6 @@ interface NavigationItem {
  */
 @Component({
   selector: 'app-admin-dashboard',
-  standalone: true,
   imports: [RouterOutlet, StatsComponent],
   templateUrl: './admin-dashboard.component.html',
 })

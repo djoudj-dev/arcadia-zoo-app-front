@@ -4,7 +4,6 @@ import { VisitTrackingService } from '../services/visit-tracking.service';
 
 @Directive({
   selector: '[appVisitTracker]',
-  standalone: true,
 })
 export class VisitTrackerDirective implements OnInit, OnDestroy {
   @Input() categoryName!: string;

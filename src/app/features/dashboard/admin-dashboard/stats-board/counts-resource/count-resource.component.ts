@@ -8,7 +8,6 @@ import { CountResourceService } from './services/count-resource.service';
  * Affiche les compteurs pour les différentes ressources du zoo
  */
 @Component({
-  standalone: true,
   selector: 'app-count-resource',
   imports: [VisitStatsComponent],
   templateUrl: './count-resource.component.html',

@@ -23,7 +23,6 @@ interface ChartData {
 
 @Component({
   selector: 'app-visit-stats',
-  standalone: true,
   imports: [NgxChartsModule, ButtonComponent],
   template: `
     <div class="bg-white p-6 rounded-lg shadow-md">

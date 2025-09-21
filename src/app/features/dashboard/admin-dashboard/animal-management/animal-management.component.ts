@@ -18,7 +18,6 @@ import { AnimalManagementService } from './service/animal-management.service';
  */
 @Component({
   selector: 'app-animal-management',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
