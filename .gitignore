@@ -43,6 +43,7 @@ Thumbs.db
 
 # Environments
 src/environments/*
+!src/environments/*.template.ts
 
 .nx/cache
 .nx/workspace-datadocker-compose.yml

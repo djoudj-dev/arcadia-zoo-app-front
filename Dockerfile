@@ -9,6 +9,10 @@ COPY package*.json ./
 RUN npm install
 # Copie tout le code source
 COPY . .
+# Copie les fichiers template vers les vrais fichiers d'environnement
+RUN cp src/environments/environment.template.ts src/environments/environment.ts && \
+    cp src/environments/environment.prod.template.ts src/environments/environment.prod.ts && \
+    cp src/environments/environment.development.template.ts src/environments/environment.development.ts
 # Build l'application Angular en mode production
 RUN npm run build -- --configuration production
 
