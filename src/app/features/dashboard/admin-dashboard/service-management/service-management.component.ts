@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
+import { ImageUrlService } from 'app/core/services/image-url.service';
 import { ButtonComponent } from 'app/shared/components/button/button.component';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from 'environments/environment';
@@ -39,7 +40,8 @@ export class ServiceManagementComponent implements OnInit {
     readonly serviceManagement: ServiceManagementService,
     readonly toastService: ToastService,
     readonly imageOptimizer: ImageOptimizerService,
-    readonly fileSecurityService: FileScanner
+    readonly fileSecurityService: FileScanner,
+    readonly imageUrlService: ImageUrlService
   ) {}
 
   ngOnInit() {
@@ -68,23 +70,17 @@ export class ServiceManagementComponent implements OnInit {
 
   /**
    * Formate l'URL de l'image pour un dossier spécifique (services, habitats, animals).
-   * @param folder - Dossier de l'image (ex: 'services', 'habitats', 'animals')
+   * @param _folder - Dossier de l'image (ex: 'services', 'habitats', 'animals')
    * @param imagePath - Chemin de l'image
    * @returns string - URL complète de l'image
    */
-  private formatImageUrl(folder: string, imagePath: string): string {
-    // Si l'URL de l'image commence déjà par "http" ou "https", ne rien ajouter
-    if (imagePath.startsWith('http') || imagePath.startsWith('https')) {
-      return imagePath;
-    }
+  private formatImageUrl(_folder: string, imagePath: string): string {
+    return this.imageUrlService.getImageUrl(imagePath);
+  }
 
-    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
-    if (imagePath.includes('uploads')) {
-      const parts = imagePath.split('/');
-      imagePath = parts[parts.length - 1];
-    }
-
-    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
+  /** Récupère l'URL complète de l'image */
+  getImageUrl(imagePath: string | undefined): string {
+    return this.imageUrlService.getImageUrl(imagePath);
   }
 
   /** Charge la liste des caractéristiques */
