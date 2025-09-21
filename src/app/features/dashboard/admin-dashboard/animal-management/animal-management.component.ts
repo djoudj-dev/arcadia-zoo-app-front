@@ -3,6 +3,7 @@ import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
+import { ImageUrlService } from 'app/core/services/image-url.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -52,7 +53,8 @@ export class AnimalManagementComponent implements OnInit {
     readonly habitatService: HabitatService,
     readonly countResourceService: CountResourceService,
     readonly toastService: ToastService,
-    readonly fileSecurityService: FileScanner
+    readonly fileSecurityService: FileScanner,
+    readonly imageUrlService: ImageUrlService
   ) {}
 
   ngOnInit() {
@@ -375,5 +377,10 @@ export class AnimalManagementComponent implements OnInit {
       this.deleteAnimal(this.animalToDelete);
       this.animalToDelete = null;
     }
+  }
+
+  /** Récupère l'URL complète de l'image */
+  getImageUrl(imagePath: string | undefined): string {
+    return this.imageUrlService.getImageUrl(imagePath);
   }
 }
