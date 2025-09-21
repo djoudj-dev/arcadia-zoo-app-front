@@ -1,6 +1,6 @@
 # ---- Étape de build ----
-# Utilise Node.js 18 avec Alpine comme image de base pour le build
-FROM node:18-alpine AS build
+# Utilise Node.js 20 avec Alpine comme image de base pour le build
+FROM node:20-alpine AS build
 # Définit le répertoire de travail dans le conteneur
 WORKDIR /app
 # Copie les fichiers package.json et package-lock.json
