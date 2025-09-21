@@ -11,9 +11,9 @@ RUN npm install
 COPY . .
 # Copie les fichiers template vers les vrais fichiers d'environnement
 RUN ls -la src/environments/ && \
-    cp src/environments/environment.ts src/environments/environment.ts && \
-    cp src/environments/environment.prod.ts src/environments/environment.prod.ts && \
-    cp src/environments/environment.development.ts src/environments/environment.development.ts && \
+    cp src/environments/environment.template.ts src/environments/environment.ts && \
+    cp src/environments/environment.prod.template.ts src/environments/environment.prod.ts && \
+    cp src/environments/environment.development.template.ts src/environments/environment.development.ts && \
     ls -la src/environments/
 # Build l'application Angular en mode production
 RUN npm run build -- --configuration production
