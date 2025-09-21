@@ -1,1 +1,0 @@
-import{a}from"./chunk-EWDR5VPA.js";import"./chunk-ZKKSB4BP.js";import"./chunk-DRNBQNPL.js";import"./chunk-VV7GXU3B.js";import"./chunk-OTF63C3I.js";import"./chunk-M6XTAS6A.js";import"./chunk-IVPOVWWL.js";import"./chunk-RMHEMJYH.js";export{a as ServiceManagementComponent};

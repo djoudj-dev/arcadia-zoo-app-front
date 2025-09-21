@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FileScanner } from 'app/core/services/file-security.service';
 import { ImageOptimizerService } from 'app/core/services/image-optimizer.service';
+import { ImageUrlService } from 'app/core/services/image-url.service';
 import { ToastService } from 'app/shared/components/toast/services/toast.service';
 import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -37,7 +38,8 @@ export class HabitatManagementComponent implements OnInit {
     readonly countResourceService: CountResourceService,
     readonly toastService: ToastService,
     readonly fileSecurityService: FileScanner,
-    readonly imageOptimizer: ImageOptimizerService
+    readonly imageOptimizer: ImageOptimizerService,
+    readonly imageUrlService: ImageUrlService
   ) {}
 
   ngOnInit() {
@@ -166,16 +168,12 @@ export class HabitatManagementComponent implements OnInit {
    * @returns string - URL complète de l'image
    */
   private formatImageUrl(imagePath: string | null): string {
-    if (!imagePath) return '';
-    if (imagePath.startsWith('http')) return imagePath;
+    return this.imageUrlService.getImageUrl(imagePath);
+  }
 
-    // Si le chemin contient déjà "uploads", on extrait juste le nom du fichier
-    if (imagePath.includes('uploads')) {
-      const parts = imagePath.split('/');
-      imagePath = parts[parts.length - 1];
-    }
-
-    return `${this.imageBaseUrl}/uploads/habitats/${imagePath}`;
+  /** Récupère l'URL complète de l'image */
+  getImageUrl(imagePath: string | undefined): string {
+    return this.imageUrlService.getImageUrl(imagePath);
   }
 
   /** Prépare le formulaire pour la modification */
