@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
@@ -19,12 +19,11 @@ import { UserOpinionsService } from '../services/user-opinions.service';
   standalone: true,
   templateUrl: './add-user-opinions.component.html',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     ButtonComponent,
     RateComponent,
-    ToastComponent,
-  ],
+    ToastComponent
+],
 })
 export class AddUserOpinionsComponent implements OnInit {
   opinionForm: FormGroup;

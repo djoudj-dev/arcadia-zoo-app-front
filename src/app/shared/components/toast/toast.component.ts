@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ToastService } from './services/toast.service';
@@ -11,13 +11,13 @@ import { ToastService } from './services/toast.service';
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
-    @if(visible) {
+    @if (visible) {
     <div [class]="customClass" role="alert">
       <div [class]="getTypeClass()">
         {{ message }}
-        @if(type === 'confirm') {
+        @if (type === 'confirm') {
         <div class="flex justify-end gap-2 mt-4">
           <button
             class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"

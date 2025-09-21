@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   DestroyRef,
@@ -42,13 +42,12 @@ import { AnimalFeedingManagementService } from './services/animal-feeding-manage
   selector: 'app-animal-feeding-management',
   standalone: true,
   imports: [
-    CommonModule,
     ModalComponent,
     FormsModule,
     ToastComponent,
     FeedingHistoryComponent,
-    ButtonComponent,
-  ],
+    ButtonComponent
+],
   templateUrl: './animal-feeding-management.component.html',
 })
 export class FeedingDataComponent implements OnInit, OnDestroy {

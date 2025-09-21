@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { StatsComponent } from './stats-board/stats.component';
@@ -17,7 +17,7 @@ interface NavigationItem {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, StatsComponent],
+  imports: [RouterOutlet, StatsComponent],
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent {
@@ -112,7 +112,7 @@ export class AdminDashboardComponent {
       Services: 'fa-concierge-bell',
       Comptes: 'fa-users',
       "Horaires d'ouverture": 'fa-clock',
-      'Rapports vétérinaires': 'fa-stethoscope',
+      'Rapports veterinaires': 'fa-stethoscope',
       'Historique des actions': 'fa-history',
     };
     return iconMap[text] || 'fa-circle';

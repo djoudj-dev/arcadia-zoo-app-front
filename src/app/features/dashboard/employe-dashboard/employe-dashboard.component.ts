@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, signal } from '@angular/core';
 import { ServiceManagementComponent } from '../admin-dashboard/service-management/service-management.component';
 import { FeedingDataComponent } from './animal-feeding-management/animal-feeding-management.component';
@@ -22,11 +22,10 @@ interface NavigationItem {
   selector: 'app-employe-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     UserOpinionManagementComponent,
     ServiceManagementComponent,
-    FeedingDataComponent,
-  ],
+    FeedingDataComponent
+],
   templateUrl: './employe-dashboard.component.html',
 })
 export class EmployeDashboardComponent {

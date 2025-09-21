@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import {
   FormBuilder,
@@ -15,7 +15,7 @@ import { ToastComponent } from '../toast/toast.component';
 @Component({
   selector: 'app-password-reset',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ToastComponent],
+  imports: [ReactiveFormsModule, ToastComponent],
   template: `
     <div
       class="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-full max-w-md mx-auto border border-secondary/20"

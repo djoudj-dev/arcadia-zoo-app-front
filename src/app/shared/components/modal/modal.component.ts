@@ -1,6 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -20,7 +20,7 @@ import {
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <ng-template #modalTemplate>
       <div

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import {
   FormBuilder,
@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule],
   template: `
     <div
       class="relative bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl w-full max-w-md mx-auto border border-secondary/20"

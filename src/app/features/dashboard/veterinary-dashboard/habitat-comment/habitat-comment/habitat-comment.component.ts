@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -20,7 +20,7 @@ import { HabitatCommentService } from './service/habitat-comment.service';
 @Component({
   selector: 'app-habitat-comment',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, ToastComponent],
+  imports: [FormsModule, ButtonComponent, ToastComponent],
   templateUrl: './habitat-comment.component.html',
 })
 export class HabitatCommentComponent implements OnInit, OnDestroy {

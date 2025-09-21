@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormBuilder,
   FormGroup,
@@ -13,7 +13,7 @@ import { NotificationService } from './service/notification.service';
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
 })
 export class ContactComponent {
   contactForm: FormGroup;

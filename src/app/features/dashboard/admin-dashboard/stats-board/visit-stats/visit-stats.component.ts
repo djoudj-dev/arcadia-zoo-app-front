@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { AnimalService } from 'app/features/animal/service/animal.service';
@@ -24,7 +24,7 @@ interface ChartData {
 @Component({
   selector: 'app-visit-stats',
   standalone: true,
-  imports: [CommonModule, NgxChartsModule, ButtonComponent],
+  imports: [NgxChartsModule, ButtonComponent],
   template: `
     <div class="bg-white p-6 rounded-lg shadow-md">
       <!-- En-tête simple -->
@@ -112,20 +112,6 @@ interface ChartData {
         display: block;
         width: 100%;
       }
-
-      ::ng-deep {
-        .ngx-charts {
-          .grid-line-path {
-            stroke: #e5e7eb;
-            stroke-width: 0.5;
-          }
-
-          .tick text {
-            font-size: 12px;
-            fill: #6b7280;
-          }
-        }
-      }
     `,
   ],
 })
@@ -165,8 +151,7 @@ export class VisitStatsComponent {
   });
 
   readonly chartData = computed(() => {
-    const data = this.filteredData();
-    return data;
+    return this.filteredData();
   });
 
   constructor() {

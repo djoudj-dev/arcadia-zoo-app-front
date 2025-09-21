@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -20,12 +20,11 @@ import { AnimalManagementService } from './service/animal-management.service';
   selector: 'app-animal-management',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    ButtonComponent,
-  ],
+    ButtonComponent
+],
   templateUrl: './animal-management.component.html',
 })
 export class AnimalManagementComponent implements OnInit {

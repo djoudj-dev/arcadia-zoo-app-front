@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
@@ -18,14 +18,13 @@ import { VeterinaryReportsComponent } from './veterinary-reports/veterinary-repo
   selector: 'app-veterinary-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
     ModalComponent,
     FeedingHistoryVetComponent,
     HabitatCommentComponent,
     ButtonComponent,
     HabitatCommentHistoryComponent,
-    VeterinaryReportsComponent,
-  ],
+    VeterinaryReportsComponent
+],
   templateUrl: './veterinary-dashboard.component.html',
 })
 export class VeterinaryDashboardComponent implements OnInit {
