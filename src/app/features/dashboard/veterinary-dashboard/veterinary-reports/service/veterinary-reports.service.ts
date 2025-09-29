@@ -213,7 +213,7 @@ export class VeterinaryReportsService {
 
     // Supprimer le préfixe 'uploads/animals' s'il existe
     const cleanPath = imagePath.replace(/^uploads\/animals\//, '');
-    return `${environment.apiUrl}/api/uploads/animals/${cleanPath}`;
+    return `${environment.apiUrl}/api/images/${cleanPath}`;
   }
 
   clearCache(animalId?: number) {

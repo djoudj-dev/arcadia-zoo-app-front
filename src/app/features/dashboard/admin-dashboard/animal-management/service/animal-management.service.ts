@@ -111,7 +111,7 @@ export class AnimalManagementService {
       imagePath = parts[parts.length - 1];
     }
 
-    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
+    return `${this.imageBaseUrl}/images/${folder}/${imagePath}`;
   }
 
   private handleError(

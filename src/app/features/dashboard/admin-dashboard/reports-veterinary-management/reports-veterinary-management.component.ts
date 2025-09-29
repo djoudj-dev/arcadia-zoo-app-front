@@ -103,7 +103,7 @@ export class ReportsVeterinaryManagement implements OnInit {
         `${environment.apiUrl}/api/`
       );
     }
-    return `${environment.apiUrl}/api/uploads/animals/${imagePath}`;
+    return `${environment.apiUrl}/api/images/${imagePath}`;
   }
 
   /**
