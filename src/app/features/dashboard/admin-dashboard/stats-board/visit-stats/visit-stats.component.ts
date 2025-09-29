@@ -215,7 +215,7 @@ export class VisitStatsComponent {
   }
 
   private getImageUrl(type: string, name: string): string {
-    const baseUrl = `${environment.apiUrl}/api/uploads`;
+    const baseUrl = `${environment.apiUrl}/api/images`;
 
     switch (type) {
       case 'animal':

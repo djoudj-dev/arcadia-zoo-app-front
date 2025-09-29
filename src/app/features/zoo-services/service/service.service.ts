@@ -75,7 +75,7 @@ export class ServiceService {
       imagePath = parts[parts.length - 1];
     }
 
-    return `${this.imageBaseUrl}/uploads/${folder}/${imagePath}`;
+    return `${this.imageBaseUrl}/images/${folder}/${imagePath}`;
   }
 
   clearCache(): void {

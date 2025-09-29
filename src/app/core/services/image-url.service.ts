@@ -33,10 +33,12 @@ export class ImageUrlService {
 
     // Fallback vers l'API locale
     if (imagePath.startsWith('uploads/')) {
-      return `${environment.apiUrl}/api/${imagePath}`;
+      // Ancien format - rediriger vers le nouveau proxy
+      const cleanPath = imagePath.replace('uploads/', '');
+      return `${environment.apiUrl}/api/images/${cleanPath}`;
     }
 
-    return `${environment.apiUrl}/api/uploads/${imagePath}`;
+    return `${environment.apiUrl}/api/images/${imagePath}`;
   }
 
   /**
