@@ -127,9 +127,7 @@ export class VeterinaryReportsListComponent implements OnInit {
         next: (reportsWithImages) => {
           this.reports = reportsWithImages;
         },
-        error: (error) => {
-          console.error('Erreur lors du chargement des rapports:', error);
-        },
+        error: (error) => {},
       });
   }
 
@@ -207,7 +205,6 @@ export class VeterinaryReportsListComponent implements OnInit {
     const reportId = report._id ?? report.id_veterinary_reports;
 
     if (!reportId) {
-      console.error('ID du rapport non défini:', report);
       return;
     }
 
@@ -219,10 +216,8 @@ export class VeterinaryReportsListComponent implements OnInit {
         next: () => {
           report.is_processed = newStatus;
           report.is_treated = newStatus;
-          console.log('Statut du rapport mis à jour avec succès');
         },
         error: (error) => {
-          console.error('Erreur lors de la mise à jour du statut:', error);
           report.is_processed = !newStatus;
           report.is_treated = !newStatus;
         },

@@ -119,22 +119,10 @@ export class VisitTrackingService {
       )
       .subscribe({
         next: ({ animals, habitats, services }) => {
-          console.log('Données récupérées pour initialisation:', {
-            animalsCount: animals.length,
-            habitatsCount: habitats.length,
-            servicesCount: services.length,
-          });
-
           const stats: VisitStats[] = [...animals, ...habitats, ...services];
-
-          console.log('Statistiques initialisées:', stats);
           this._visitStats.next(stats);
         },
         error: (error) => {
-          console.error(
-            "Erreur lors de l'initialisation des statistiques:",
-            error
-          );
           this._visitStats.next([]);
         },
       });
@@ -152,7 +140,6 @@ export class VisitTrackingService {
       startTime: new Date(),
     };
     this.activeVisits.set(pageId, visit);
-    console.log(`Début du tracking pour ${categoryType} ${categoryName}`);
   }
 
   stopTracking(pageId: string): void {
@@ -162,13 +149,9 @@ export class VisitTrackingService {
       visit.duration = visit.endTime.getTime() - visit.startTime.getTime();
       this.saveVisit(visit).subscribe({
         next: () => {
-          console.log(
-            `Visite enregistrée pour ${visit.categoryType} ${visit.categoryName}`
-          );
           this.refreshStats();
         },
-        error: (error) =>
-          console.error("Erreur lors de l'enregistrement de la visite:", error),
+        error: (error) => {},
       });
       this.activeVisits.delete(pageId);
     }
@@ -201,7 +184,6 @@ export class VisitTrackingService {
       })
       .pipe(
         catchError((error) => {
-          console.error('Erreur lors de la récupération des stats:', error);
           return of([]);
         })
       );
@@ -214,10 +196,6 @@ export class VisitTrackingService {
       })
       .pipe(
         catchError((error) => {
-          console.error(
-            'Erreur lors de la récupération des stats par catégorie:',
-            error
-          );
           return of([]);
         })
       );
@@ -238,10 +216,6 @@ export class VisitTrackingService {
       })
       .pipe(
         catchError((error) => {
-          console.error(
-            'Erreur lors de la récupération des stats par date:',
-            error
-          );
           return of([]);
         })
       );
@@ -254,7 +228,6 @@ export class VisitTrackingService {
       })
       .pipe(
         catchError((error) => {
-          console.error('Erreur lors du tracking de la visite:', error);
           return of({ success: false, message: 'Une erreur est survenue' });
         })
       );

@@ -110,8 +110,7 @@ export class VeterinaryReportsComponent implements OnInit {
           });
         }
       },
-      error: (error: Error) =>
-        console.error("Erreur lors de la récupération de l'animal:", error),
+      error: (error: Error) => {},
     });
   }
 
@@ -129,7 +128,6 @@ export class VeterinaryReportsComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Erreur lors du chargement des rapports:', error);
           this.toastService.showError(
             'Erreur lors du chargement des rapports vétérinaires'
           );
@@ -169,7 +167,6 @@ export class VeterinaryReportsComponent implements OnInit {
       const currentUser = this.authService.user();
 
       if (!currentUser?.id) {
-        console.error('Utilisateur non connecté');
         return;
       }
 
@@ -182,7 +179,6 @@ export class VeterinaryReportsComponent implements OnInit {
 
       this.veterinaryReportsService.createReport(reportData).subscribe({
         next: (response) => {
-          console.log('Rapport créé avec succès', response);
           this.isSubmitting.set(false);
           const closePromise = new Promise<void>((resolve) => {
             this.toastService.showSuccess(
@@ -218,10 +214,6 @@ export class VeterinaryReportsComponent implements OnInit {
           this.toastService.showSuccess('État de santé mis à jour avec succès');
         },
         error: (error) => {
-          console.error(
-            "Erreur lors de la mise à jour de l'état de santé:",
-            error
-          );
           this.toastService.showError(
             "Erreur lors de la mise à jour de l'état de santé"
           );
@@ -240,7 +232,6 @@ export class VeterinaryReportsComponent implements OnInit {
           this.loadVeterinaryReports(); // Recharger les rapports
         },
         error: (error) => {
-          console.error('Erreur lors de la mise à jour:', error);
           this.toastService.showError(
             "Erreur lors de la mise à jour de l'état de santé"
           );

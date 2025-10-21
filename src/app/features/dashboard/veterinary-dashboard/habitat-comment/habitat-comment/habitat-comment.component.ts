@@ -59,11 +59,6 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
     this.statusSubscription =
       this.commentStatusService.commentStatusChanged$.subscribe(
         (updatedComment) => {
-          console.log(
-            'Mise à jour du commentaire reçue dans le composant vétérinaire:',
-            updatedComment
-          );
-
           // Recharger immédiatement les commentaires
           this.loadHabitatsComments();
 
@@ -87,7 +82,6 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
   loadHabitatsComments() {
     this.habitatComments.getCommentsByHabitatId(this.habitatId).subscribe({
       next: (comments) => {
-        console.log("Commentaires reçus pour l'habitat:", comments);
         // Trier les commentaires par date de création (plus récents en premier)
         const sortedComments = [...comments].sort(
           (a, b) =>
@@ -95,17 +89,11 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
         );
         this.habitatsComments.set(sortedComments);
       },
-      error: (error) =>
-        console.error(
-          'Erreur lors de la récupération des commentaires:',
-          error
-        ),
+      error: (error) => {},
     });
   }
 
   submitComment() {
-    console.log('Données à envoyer:', this.newHabitatCommentData);
-
     if (
       !this.newHabitatCommentData.comment ||
       !this.newHabitatCommentData.id_habitat
@@ -118,7 +106,6 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
       .createHabitatComment(this.newHabitatCommentData)
       .subscribe({
         next: (response) => {
-          console.log('Commentaire créé:', response);
           this.loadHabitatsComments();
           this.newHabitatCommentData = {
             id_habitat: this.habitatId,
@@ -128,7 +115,6 @@ export class HabitatCommentComponent implements OnInit, OnDestroy {
           this.showToast('Commentaire ajouté avec succès', 'success');
         },
         error: (error) => {
-          console.error("Erreur lors de l'ajout du commentaire:", error);
           this.showToast("Erreur lors de l'ajout du commentaire", 'error');
         },
       });

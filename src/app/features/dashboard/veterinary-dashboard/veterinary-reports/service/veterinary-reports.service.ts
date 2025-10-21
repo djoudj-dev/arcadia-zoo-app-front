@@ -26,10 +26,8 @@ export class VeterinaryReportsService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.tokenService.getToken();
-    console.log('Token récupéré:', token ? 'présent' : 'null');
 
     if (!token) {
-      console.warn('Aucun token trouvé dans le sessionStorage');
       this.toastService.showError(
         'Votre session a expiré, veuillez vous reconnecter'
       );
@@ -72,7 +70,6 @@ export class VeterinaryReportsService {
           };
         }),
         catchError((error) => {
-          console.error('Erreur lors de la récupération des rapports:', error);
           this.toastService.showError('Erreur lors du chargement des rapports');
           return of({ data: [], total: 0 });
         })
@@ -129,7 +126,6 @@ export class VeterinaryReportsService {
           this.lastCacheUpdate.set(animalId, now);
         }),
         catchError((error) => {
-          console.error("Erreur lors de la récupération de l'animal:", error);
           this.toastService.showError(
             "Impossible de récupérer les informations de l'animal"
           );
@@ -152,19 +148,11 @@ export class VeterinaryReportsService {
   }
 
   getReportsByAnimalId(animalId: number): Observable<VeterinaryReports[]> {
-    console.log(
-      `Tentative de récupération des rapports pour l'animal ${animalId}`
-    );
-
     const url = `${this.apiUrl}/animal/${animalId}`;
-    console.log('URL appelée:', url);
 
     return this.http
       .get<VeterinaryReports[]>(url, { headers: this.getPublicHeaders() })
       .pipe(
-        tap((reports) => {
-          console.log(`Rapports reçus pour l'animal ${animalId}:`, reports);
-        }),
         map((reports) => {
           const sortedReports = [...reports].sort(
             (a, b) =>
@@ -174,18 +162,6 @@ export class VeterinaryReportsService {
           return sortedReports;
         }),
         catchError((error) => {
-          console.error(
-            'Erreur lors de la récupération des rapports vétérinaires:',
-            error
-          );
-          console.error("Détails de l'erreur:", {
-            status: error.status,
-            statusText: error.statusText,
-            message: error.message,
-            url: error.url,
-            error: error.error, // Ajouter le corps de l'erreur
-          });
-
           let errorMessage =
             'Impossible de charger les rapports vétérinaires pour cet animal';
 

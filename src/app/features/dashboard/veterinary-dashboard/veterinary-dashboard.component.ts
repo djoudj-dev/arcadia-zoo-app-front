@@ -63,16 +63,14 @@ export class VeterinaryDashboardComponent implements OnInit {
   private loadHabitats(): void {
     this.habitatService.getHabitats().subscribe({
       next: (habitats) => this.habitats.set(habitats),
-      error: (error) =>
-        console.error('Erreur lors du chargement des habitats:', error),
+      error: (error) => {},
     });
   }
 
   private loadAnimals(): void {
     this.animalService.getAnimals().subscribe({
       next: (animals) => this.animals.set(animals),
-      error: (error) =>
-        console.error('Erreur lors du chargement des animaux:', error),
+      error: (error) => {},
     });
   }
 
@@ -110,9 +108,7 @@ export class VeterinaryDashboardComponent implements OnInit {
         currentMap.set(habitatId, comments);
         this.habitatCommentsMap.set(currentMap);
       },
-      error: (error) => {
-        console.error('Erreur lors du chargement des commentaires:', error);
-      },
+      error: (error) => {},
     });
   }
 
@@ -163,7 +159,6 @@ export class VeterinaryDashboardComponent implements OnInit {
   }
 
   viewConsultations(animalId: number) {
-    console.log("Voir les consultations pour l'animal:", animalId);
   }
 
   getHabitatComments(habitatId: number): HabitatComment[] {
@@ -185,9 +180,7 @@ export class VeterinaryDashboardComponent implements OnInit {
       next: (history) => {
         this.hasHistory.set(history.length > 0);
       },
-      error: (error) => {
-        console.error("Erreur lors du chargement de l'historique:", error);
-      },
+      error: (error) => {},
     });
   }
 

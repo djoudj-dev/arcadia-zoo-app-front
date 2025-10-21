@@ -45,12 +45,8 @@ export class ServiceManagementService {
    * @returns Observable<Service> Service créé
    */
   createService(formData: FormData): Observable<Service> {
-    console.log('Données envoyées au serveur:', formData);
-
     return this.http.post<Service>(`${this.apiUrl}`, formData).pipe(
-      tap(() => console.log('Service créé avec succès')),
       catchError((error) => {
-        console.log('Erreur détaillée:', error.error); // Pour voir le message d'erreur du serveur
         return this.handleError('création du service')(error);
       })
     );
@@ -63,9 +59,6 @@ export class ServiceManagementService {
    */
   createFeature(feature: Feature): Observable<Feature> {
     return this.http.post<Feature>(`${this.apiUrl}/features`, feature).pipe(
-      tap((newFeature) =>
-        console.log('Caractéristique créée avec succès:', newFeature)
-      ),
       catchError(this.handleError('création de la caractéristique'))
     );
   }
@@ -78,9 +71,6 @@ export class ServiceManagementService {
    */
   updateService(serviceId: number, formData: FormData): Observable<Service> {
     return this.http.put<Service>(`${this.apiUrl}/${serviceId}`, formData).pipe(
-      tap((updatedService) =>
-        console.log('Service mis à jour avec succès:', updatedService)
-      ),
       catchError(this.handleError('mise à jour du service'))
     );
   }
@@ -92,7 +82,6 @@ export class ServiceManagementService {
    */
   deleteService(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => console.log('Service supprimé avec succès')),
       catchError(this.handleError('suppression du service'))
     );
   }
@@ -102,7 +91,6 @@ export class ServiceManagementService {
    * À implémenter si nécessaire
    */
   clearCache(): void {
-    console.log('Cache des services effacé');
   }
 
   /**
@@ -112,7 +100,6 @@ export class ServiceManagementService {
    */
   private handleError(operation: string) {
     return (error: HttpErrorResponse): Observable<never> => {
-      console.error(`Erreur lors de la ${operation}:`, error);
       return throwError(() => new Error(`Erreur lors de la ${operation}`));
     };
   }

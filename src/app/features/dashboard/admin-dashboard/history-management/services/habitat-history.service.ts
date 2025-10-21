@@ -24,9 +24,6 @@ export class HabitatHistoryService {
    */
   getHabitatCommentHistory(): Observable<HabitatComment[]> {
     return this.http.get<HabitatComment[]>(this.apiUrl).pipe(
-      tap((comments) => {
-        console.log('Commentaires récupérés:', comments);
-      }),
       catchError((error) =>
         this.handleError('chargement des commentaires', error)
       )
@@ -40,12 +37,10 @@ export class HabitatHistoryService {
    */
   markCommentAsResolved(commentId: string): Observable<HabitatComment> {
     const url = `${this.apiUrl}/${commentId}/resolve`;
-    console.log('Tentative de résolution du commentaire:', commentId);
 
     return this.http.patch<HabitatComment>(url, {}).pipe(
       tap({
         next: (response) => {
-          console.log('Commentaire résolu:', response);
           this.commentStatusService.emitCommentStatusChange(response);
         },
       }),
@@ -62,12 +57,10 @@ export class HabitatHistoryService {
    */
   reopenComment(commentId: string): Observable<HabitatComment> {
     const url = `${this.apiUrl}/${commentId}/reopen`;
-    console.log('Tentative de réouverture du commentaire:', commentId);
 
     return this.http.patch<HabitatComment>(url, {}).pipe(
       tap({
         next: (response) => {
-          console.log('Commentaire rouvert:', response);
           this.commentStatusService.emitCommentStatusChange(response);
         },
       }),
@@ -87,7 +80,6 @@ export class HabitatHistoryService {
     action: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    console.error(`Erreur lors de ${action}:`, error);
     return throwError(() => new Error(`Erreur lors de ${action}`));
   }
 }

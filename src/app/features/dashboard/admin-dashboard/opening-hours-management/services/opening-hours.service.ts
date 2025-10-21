@@ -38,7 +38,6 @@ export class OpeningHoursService {
     this.getCurrentOpeningHours()
       .pipe(
         catchError((error) => {
-          console.error('Erreur lors du chargement des horaires:', error);
           return EMPTY;
         })
       )
@@ -98,18 +97,8 @@ export class OpeningHoursService {
       statusMessage: data.statusMessage ?? '',
     };
 
-    console.log('Payload envoyé pour création:', payload);
-
     return this.http.post<OpeningHours>(this.apiUrl, payload).pipe(
-      tap((response) => console.log("Réponse de l'API (création) :", response)),
       catchError((error) => {
-        console.error('Erreur API lors de la création :', error);
-        if (error.error) {
-          console.error(
-            "Détails de l'erreur renvoyée par l'API :",
-            error.error
-          );
-        }
         return throwError(
           () => new Error('Erreur lors de la création des horaires.')
         );
@@ -220,7 +209,6 @@ export class OpeningHoursService {
     action: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    console.error(`Erreur lors de ${action}:`, error);
     return throwError(() => new Error(`Erreur lors de ${action}`));
   }
 }

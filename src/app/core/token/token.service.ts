@@ -74,7 +74,6 @@ export class TokenService {
     try {
       return jwtDecode<Token>(token);
     } catch (error) {
-      console.error('Erreur lors du décodage du token:', error);
       return null;
     }
   }
@@ -83,7 +82,6 @@ export class TokenService {
    * (Optionnel) Préparez une méthode de rafraîchissement du token
    */
   refreshToken(): void {
-    console.log('Préparez une logique pour rafraîchir le token.');
     // Implémentez ici une requête vers votre backend pour renouveler le token.
   }
 

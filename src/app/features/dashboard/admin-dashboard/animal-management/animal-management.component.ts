@@ -79,7 +79,6 @@ export class AnimalManagementComponent implements OnInit {
         this.initializeVisibility();
       },
       error: (err) => {
-        console.error('Erreur de chargement des habitats :', err);
         this.toastService.showError('Erreur lors du chargement des habitats');
       },
     });
@@ -99,7 +98,6 @@ export class AnimalManagementComponent implements OnInit {
         this.groupAnimals();
       },
       error: (error) => {
-        console.error('Erreur de chargement des animaux :', error);
         this.toastService.showError('Erreur lors du chargement des animaux');
       },
     });
@@ -126,7 +124,6 @@ export class AnimalManagementComponent implements OnInit {
           this.toastService.showSuccess('Animal créé avec succès');
         },
         error: (error) => {
-          console.error("Erreur de création de l'animal :", error);
           this.toastService.showError("Erreur lors de la création de l'animal");
         },
       });
@@ -166,7 +163,6 @@ export class AnimalManagementComponent implements OnInit {
           this.toastService.showSuccess('Animal mis à jour avec succès');
         },
         error: (error) => {
-          console.error("Erreur lors de la mise à jour de l'animal:", error);
           this.toastService.showError(
             "Erreur lors de la mise à jour de l'animal"
           );
@@ -209,7 +205,6 @@ export class AnimalManagementComponent implements OnInit {
           this.toastService.showSuccess('Animal supprimé avec succès');
         },
         error: (error) => {
-          console.error("Erreur de suppression de l'animal :", error);
           this.toastService.showError(
             "Erreur lors de la suppression de l'animal"
           );
@@ -237,7 +232,6 @@ export class AnimalManagementComponent implements OnInit {
     const currentAnimal = this.animals().find((a) => a.id_animal === animalId);
 
     if (!currentAnimal) {
-      console.error('Animal non trouvé:', animalId);
       return;
     }
 
@@ -273,7 +267,6 @@ export class AnimalManagementComponent implements OnInit {
   shouldShowFullDescription(animal: Animal): boolean {
     if (!animal) return false;
     const isShown = Boolean(animal.showTime);
-    console.log(`Vérification description pour ${animal.name || 'animal inconnu'}:`, isShown);
     return isShown;
   }
 
@@ -359,7 +352,6 @@ export class AnimalManagementComponent implements OnInit {
 
       this.toastService.showSuccess('Image sélectionnée avec succès');
     } catch (error) {
-      console.error('Erreur lors du traitement du fichier:', error);
       this.toastService.showError('Erreur lors du traitement du fichier');
     }
   }

@@ -63,19 +63,11 @@ export class AnimalManagementService {
       }
     });
 
-    console.log('Données à envoyer:', {
-      id,
-      name: dataToSend.get('name'),
-      species: dataToSend.get('species'),
-    });
-
     return this.http.put<Animal>(`${this.apiUrl}/${id}`, dataToSend).pipe(
       tap((response) => {
-        console.log('Réponse du serveur (mise à jour):', response);
         this.animalService.clearCache();
       }),
       catchError((error) => {
-        console.error('Erreur détaillée (mise à jour):', error);
         if (error.status === 413) {
           return throwError(() => new Error('Fichier trop volumineux'));
         }
@@ -129,7 +121,6 @@ export class AnimalManagementService {
       }
     }
 
-    console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 }

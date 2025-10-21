@@ -76,15 +76,12 @@ export class OpeningHoursManagementComponent implements OnInit {
 
           if (hours._id) {
             this.openingHoursId.set(hours._id);
-          } else {
-            console.warn("L'ID des horaires n'a pas été retourné par l'API.");
           }
 
           this.patchForm(hours);
         }
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des horaires:', error);
         this.toastService.showError('Erreur lors du chargement des horaires');
       },
     });
@@ -121,13 +118,11 @@ export class OpeningHoursManagementComponent implements OnInit {
       const id = await this.openingHoursService.getOpeningHoursId();
 
       if (!id) {
-        console.error("L'ID des horaires est manquant.");
         this.toastService.showError('ID des horaires non défini');
         return;
       }
 
       if (this.hoursForm.invalid) {
-        console.error('Formulaire invalide:', this.hoursForm.errors);
         this.toastService.showError(
           'Veuillez corriger les erreurs du formulaire'
         );
@@ -146,7 +141,6 @@ export class OpeningHoursManagementComponent implements OnInit {
         this.toastService.showSuccess('Horaires mis à jour avec succès');
       }
     } catch (error) {
-      console.error('Erreur complète lors de la mise à jour:', error);
       this.toastService.showError('Erreur lors de la mise à jour des horaires');
     }
   }
@@ -171,7 +165,6 @@ export class OpeningHoursManagementComponent implements OnInit {
    */
   async createNewHours(): Promise<void> {
     const formData = this.prepareFormData(); // Prépare les données
-    console.log('Données préparées pour création:', formData);
 
     try {
       const response = await firstValueFrom(
@@ -179,18 +172,15 @@ export class OpeningHoursManagementComponent implements OnInit {
       );
 
       if (response?._id) {
-        console.log('Réponse de création:', response);
         this.openingHoursId.set(response._id); // Définit le nouvel ID
         this.openingHours.set([response]);
         this.patchForm(response); // Met à jour le formulaire avec la nouvelle réponse
         this.toastService.showSuccess('Horaires créés avec succès');
       } else {
-        console.error("La création n'a pas retourné d'ID valide.");
         this.toastService.showError('Erreur lors de la création des horaires');
         return;
       }
     } catch (error) {
-      console.error('Erreur lors de la création des horaires:', error);
       this.toastService.showError('Erreur lors de la création des horaires');
     }
   }
@@ -210,13 +200,11 @@ export class OpeningHoursManagementComponent implements OnInit {
       const openingHoursId = this.openingHoursId();
 
       if (!openingHoursId) {
-        console.log('Aucun ID trouvé, création de nouveaux horaires.');
         await this.createNewHours(); // Appelle createNewHours si aucun ID
       } else {
         await this.updateHours(); // Appelle updateHours si un ID est défini
       }
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
       this.toastService.showError('Erreur lors de la sauvegarde des horaires');
     }
   }
@@ -267,10 +255,6 @@ export class OpeningHoursManagementComponent implements OnInit {
         return newHours._id as string;
       }
     } catch (error) {
-      console.error(
-        'Erreur lors de la récupération ou de la création des horaires:',
-        error
-      );
       throw new Error('Aucun ID trouvé pour les horaires');
     }
   }

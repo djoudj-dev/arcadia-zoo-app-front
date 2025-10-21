@@ -50,7 +50,6 @@ export class InactivityService {
   public stopMonitoring(): void {
     if (this.inactivitySubscription) {
       this.inactivitySubscription.unsubscribe();
-      console.log("Surveillance d'inactivité arrêtée.");
     }
   }
 }

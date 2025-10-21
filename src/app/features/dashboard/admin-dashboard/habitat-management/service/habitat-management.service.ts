@@ -44,11 +44,9 @@ export class HabitatManagementService {
   createHabitat(formData: FormData): Observable<Habitat> {
     return this.http.post<Habitat>(this.apiUrl, formData).pipe(
       tap((response) => {
-        console.log('Réponse du serveur (création):', response);
         this.habitatService.clearCache();
       }),
       catchError((error) => {
-        console.error('Erreur détaillée (création):', error);
         return this.handleError("création de l'habitat", error);
       })
     );
@@ -88,11 +86,9 @@ export class HabitatManagementService {
 
     return this.http.put<Habitat>(`${this.apiUrl}/${id}`, formData).pipe(
       tap((response) => {
-        console.log('Réponse du serveur (mise à jour):', response);
         this.habitatService.clearCache();
       }),
       catchError((error) => {
-        console.error('Erreur détaillée (mise à jour):', error);
         return this.handleError("mise à jour de l'habitat", error);
       })
     );
@@ -107,11 +103,9 @@ export class HabitatManagementService {
   deleteHabitat(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
-        console.log('Habitat supprimé avec succès:', id);
         this.habitatService.clearCache();
       }),
       catchError((error) => {
-        console.error('Erreur lors de la suppression:', error);
         return this.handleError("suppression de l'habitat", error);
       })
     );
@@ -128,7 +122,6 @@ export class HabitatManagementService {
     operation: string,
     error: HttpErrorResponse
   ): Observable<never> {
-    console.error(`Erreur lors de ${operation}:`, error);
     return throwError(() => new Error(`Erreur lors de ${operation}`));
   }
 }
